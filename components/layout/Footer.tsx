@@ -78,15 +78,15 @@ export default function Footer({ initialSettings }: { initialSettings?: StoreSet
       title: "Company",
       links: [
         { href: "/about", label: "About Us" },
-        { href: "/blog", label: "Library" },
+        { href: "/blog", label: "Mixology" },
         { href: "/contact", label: "Support" },
       ],
     },
     {
       title: "Logistics",
       links: [
-        { href: "/rider/dashboard", label: "Rider Command" },
-        { href: "/track", label: "Global Tracking" },
+        { href: "/rider/dashboard", label: "Runner Command" },
+        { href: "/track", label: "Live Tracking" },
       ],
     },
     {
@@ -106,11 +106,11 @@ export default function Footer({ initialSettings }: { initialSettings?: StoreSet
         <div className="py-12 border-b border-border" id="footer-newsletter">
           <div className="max-w-2xl mx-auto text-center">
             <h3 className="text-2xl font-black uppercase tracking-tighter text-foreground mb-4">
-              Join the Elite
+              Join the VIP Club
             </h3>
             <p className="text-muted-foreground mb-6 font-medium">
-              Subscribe to our newsletter for exclusive tech offers, new gadget arrivals,
-              and early access to flash sales.
+              Subscribe for exclusive drink offers, new vintage arrivals,
+              and early access to happy hour deals.
             </p>
             <form
               onSubmit={handleNewsletterSubmit}
@@ -150,26 +150,26 @@ export default function Footer({ initialSettings }: { initialSettings?: StoreSet
               <Link
                 className="text-2xl tracking-tighter font-black text-foreground hover:text-primary transition-colors uppercase"
                 href="/"
-                aria-label="Apexstores Home"
+                aria-label="Online Bar Home"
               >
-                Apex<span className="text-primary">stores</span>
+                Online<span className="text-primary">Bar</span>
               </Link>
               <p className="text-muted-foreground mt-4 mb-6 max-w-sm font-medium leading-relaxed">
-                Premium electronics and mobile accessories engineered for excellence. Performance and design in every gadget.
+                Premium wine, spirits and late night snacks delivered to your doorstep. Chilled and ready for your celebration.
               </p>
 
               <div className="space-y-3">
                 <div className="flex items-center gap-3 text-sm text-muted-foreground font-medium">
                   <MapPin className="h-4 w-4 text-primary" />
-                  <span>{loading ? '...' : settings.contact.address}</span>
+                  <span>{loading ? '...' : (settings?.contact?.address || 'Nairobi, Kenya')}</span>
                 </div>
                 <div className="flex items-center gap-3 text-sm text-muted-foreground font-medium">
                   <Phone className="h-4 w-4 text-primary" />
-                  <span>+{loading ? '...' : settings.contact.whatsapp}</span>
+                  <span>+{loading ? '...' : (settings?.contact?.whatsapp || '254700000000')}</span>
                 </div>
                 <div className="flex items-center gap-3 text-sm text-muted-foreground font-medium">
                   <Mail className="h-4 w-4 text-primary" />
-                  <span>{loading ? '...' : settings.contact.email}</span>
+                  <span>{loading ? '...' : (settings?.contact?.email || 'support@onlinebar.co.ke')}</span>
                 </div>
               </div>
             </div>
@@ -204,23 +204,23 @@ export default function Footer({ initialSettings }: { initialSettings?: StoreSet
         <div className="py-8 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="text-center md:text-left">
             <div className="flex items-center justify-center md:justify-start gap-2 text-xs font-black uppercase tracking-widest text-slate-400">
-              <span>© 2026 Apexstores™. Made with</span>
+              <span>© 2026 Online Bar™. Made with</span>
               <Heart className="h-3 w-3 text-rose-500 fill-current" />
               <span>All Rights Reserved.</span>
             </div>
             <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight mt-2">
-                Developed by <a href={loading ? "#" : settings.branding.portfolio_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">{loading ? "..." : settings.branding.owner_name}</a>
+                Developed by <a href={loading ? "#" : (settings?.branding?.portfolio_url || "#")} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">{loading ? "..." : (settings?.branding?.owner_name || "David")}</a>
             </p>
           </div>
 
           <div className="flex items-center gap-3">
               <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 rounded-lg border border-slate-100">
                   <Zap className="h-3 w-3 text-primary" />
-                  <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">Fast Dispatch</span>
+                  <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">Chilled Dispatch</span>
               </div>
               <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 rounded-lg border border-slate-100">
                   <ShieldCheck className="h-3 w-3 text-emerald-500" />
-                  <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">Verified Tech</span>
+                  <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">Genuine Spirits</span>
               </div>
           </div>
         </div>

@@ -67,6 +67,8 @@ interface Rider {
     max_deliveries: number;
     weekly_salary: number;
     health_score: number;
+    runner_xp: number;
+    runner_level: number;
     acceptance_rate?: number;
     wallet?: { balance: number; total_earned: number };
     can_accept_orders: boolean;
@@ -460,7 +462,11 @@ export default function AdminDispatchPage() {
                                                 </div>
                                                 <div className="min-w-0 flex-1">
                                                     <h3 className="font-black text-foreground uppercase text-base tracking-tight truncate">{rider.rider_name}</h3>
-                                                    <p className="text-[9px] font-black uppercase text-muted-foreground tracking-widest whitespace-nowrap">{rider.status}</p>
+                                                    <div className="flex items-center gap-2">
+                                                        <p className="text-[9px] font-black uppercase text-muted-foreground tracking-widest">{rider.status}</p>
+                                                        <div className="h-1 w-1 rounded-full bg-slate-200" />
+                                                        <span className="text-[9px] font-black text-primary uppercase tracking-tighter">Lvl {rider.runner_level || 1}</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div className="px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border bg-primary/5 text-primary border-primary/10">
@@ -548,7 +554,11 @@ export default function AdminDispatchPage() {
                                     </div>
                                     <div>
                                         <h2 className="text-3xl font-black text-foreground uppercase tracking-tighter leading-none">{selectedRider.rider_name}</h2>
-                                        <p className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mt-2">Runner Status: {selectedRider.status}</p>
+                                        <div className="flex items-center gap-3 mt-2">
+                                            <p className="text-[10px] font-black text-primary uppercase tracking-[0.3em]">Status: {selectedRider.status}</p>
+                                            <div className="h-1 w-1 rounded-full bg-slate-200" />
+                                            <span className="px-2 py-0.5 rounded-md bg-primary text-white text-[8px] font-black uppercase">Level {selectedRider.runner_level || 1}</span>
+                                        </div>
                                     </div>
                                 </div>
                                 <button onClick={() => setSelectedRider(null)} className="h-10 w-10 rounded-xl hover:bg-secondary flex items-center justify-center text-muted transition-colors border border-border"><XCircle className="h-6 w-6" /></button>
@@ -622,7 +632,7 @@ export default function AdminDispatchPage() {
                                             <span className="text-xs font-bold text-foreground truncate max-w-[150px]">AMAYA AM-05 + 1 Other</span>
                                         </div>
                                         <div className="flex justify-between items-center">
-                                            <span className="text-[10px] font-black uppercase text-muted-foreground">ETA to Extraction</span>
+                                            <span className="text-[10px] font-black uppercase text-muted-foreground">ETA to Delivery</span>
                                             <span className="text-sm font-black text-primary uppercase">12 Minutes</span>
                                         </div>
                                     </div>

@@ -47,6 +47,7 @@ export default function RelatedProducts({ product }: RelatedProductsProps) {
           base_price: p.price,
           image: p.image || p.image_url || '',
           quantity: 1,
+          category: p.category,
           size: 'Standard'
       });
 
@@ -61,7 +62,7 @@ export default function RelatedProducts({ product }: RelatedProductsProps) {
                 <Sparkles className="h-4 w-4 text-primary" />
                 <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Elite Curations</span>
             </div>
-            <h2 className="text-4xl font-black text-foreground uppercase tracking-tighter">Complete Your Setup</h2>
+            <h2 className="text-4xl font-black text-foreground uppercase tracking-tighter">Perfect Pairings</h2>
         </div>
         <Link href="/shop" className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-primary transition-colors mb-2">
             View All Collections →

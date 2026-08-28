@@ -308,9 +308,9 @@ export default function AdminOrdersPage() {
   };
 
   const handleDownloadReceipt = async (order: OrderRecord) => {
-      const productName = order.order_items?.[0] ? productNameMap.get(order.order_items[0].product_id) : 'Multiple Gadgets';
+      const productName = order.order_items?.[0] ? productNameMap.get(order.order_items[0].product_id) : 'Multiple Beverages';
       const doc = await generateReceiptPDF({...order, product_name: productName} as Parameters<typeof generateReceiptPDF>[0]);
-      doc.save(`Receipt_Apexstores_${order.id}.pdf`);
+      doc.save(`Receipt_OnlineBar_${order.id}.pdf`);
   };
 
   const handleShareOnWhatsApp = (order: OrderRecord) => {
@@ -351,7 +351,7 @@ export default function AdminOrdersPage() {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `Apexstores_Orders_${new Date().toISOString().split('T')[0]}.csv`);
+    link.setAttribute("download", `OnlineBar_Orders_${new Date().toISOString().split('T')[0]}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -397,6 +397,7 @@ export default function AdminOrdersPage() {
       return;
     }
 
+    await logAuditAction(email || 'system', 'CREATE_MANUAL_ORDER', { customer: manualOrder.customer_name, total: totalPrice });
     await loadOrders();
     setManualOrder(initialManualOrder);
     setStatusMessage({ type: 'success', text: 'Manual order saved.' });
@@ -752,9 +753,9 @@ export default function AdminOrdersPage() {
                                 <td className="px-8 py-8">
                                     <span className={cn(
                                         "px-3 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest border shadow-sm",
-                                        (order as any).captured_by === 'system' ? "bg-slate-50 text-slate-400 border-slate-100" : "bg-primary/5 text-primary border-primary/10"
+                                        (order as unknown as Record<string, unknown>).captured_by === 'system' ? "bg-slate-50 text-slate-400 border-slate-100" : "bg-primary/5 text-primary border-primary/10"
                                     )}>
-                                        {(order as any).captured_by?.split('@')[0] || 'System'}
+                                        {(order as unknown as Record<string, unknown>).captured_by?.toString().split('@')[0] || 'System'}
                                     </span>
                                 </td>
                                 {canSeeMoney && (

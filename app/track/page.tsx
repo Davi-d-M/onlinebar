@@ -24,11 +24,11 @@ interface OrderDetails {
 }
 
 const STEPS = [
-    { id: 'Pending', label: 'Order Received', icon: Clock, detail: 'Securing your items in our elite warehouse...' },
+    { id: 'Pending', label: 'Order Received', icon: Clock, detail: 'Securing your beverages in our cellar...' },
     { id: 'Paid', label: 'Payment Verified', icon: ShieldCheck, detail: 'M-Pesa sync complete. Funds verified.' },
-    { id: 'Processing', label: 'Quality Check', icon: Package, detail: 'Zero-defect inspection in progress.' },
-    { id: 'Dispatched', label: 'Out for Delivery', icon: Truck, detail: 'Fast dispatch active. Rider approaching.' },
-    { id: 'Delivered', label: 'Handed Over', icon: CheckCircle, detail: 'Tech secured. Welcome to the Apex Club.' },
+    { id: 'Processing', label: 'Chill Check', icon: Package, detail: 'Temperature and quality inspection in progress.' },
+    { id: 'Dispatched', label: 'Out for Delivery', icon: Truck, detail: 'Fast dispatch active. Runner approaching.' },
+    { id: 'Delivered', label: 'Handed Over', icon: CheckCircle, detail: 'Beverages secured. Welcome to the Bar Club.' },
 ];
 
 function TrackingContent() {
@@ -153,7 +153,7 @@ function TrackingContent() {
 
   const handleWhatsAppDispatch = () => {
       if (!order) return;
-      const message = `Hello Apexstores! I am tracking Order #${order.id} and it says it's Out for Delivery. What is the ETA?`;
+      const message = `Hello Online Bar! I am tracking Order #${order.id} and it says it's Out for Delivery. What is the ETA?`;
       window.open(`https://wa.me/${settings.contact.whatsapp}?text=${encodeURIComponent(message)}`, '_blank');
   };
 
@@ -162,8 +162,8 @@ function TrackingContent() {
       <div className="max-w-4xl mx-auto">
 
         <div className="mb-12">
-            <h1 className="text-5xl font-black tracking-tighter text-foreground uppercase mb-4">Track Gadget</h1>
-            <p className="text-slate-500 font-medium text-lg italic">Elite real-time visibility into your tech dispatch.</p>
+            <h1 className="text-5xl font-black tracking-tighter text-foreground uppercase mb-4">Track Delivery</h1>
+            <p className="text-slate-500 font-medium text-lg italic">Real-time visibility into your beverage dispatch.</p>
         </div>
 
         <Card className="rounded-[3rem] border-slate-100 shadow-2xl shadow-slate-200/50 mb-16 overflow-hidden">
@@ -279,10 +279,10 @@ function TrackingContent() {
                                     <div className="h-12 w-12 rounded-2xl bg-white flex items-center justify-center text-indigo-600 shadow-sm"><Truck className="h-6 w-6" /></div>
                                     <div>
                                         <p className="font-black text-foreground uppercase text-sm tracking-tight">
-                                            {order.rider_name ? `Rider ${order.rider_name} is moving!` : 'Your tech is moving!'}
+                                            {order.rider_name ? `Runner ${order.rider_name} is moving!` : 'Your delivery is moving!'}
                                         </p>
                                         <p className="text-indigo-600 text-[10px] font-bold uppercase">
-                                            {order.rider_name ? 'Our elite rider is approaching your location.' : 'Our rider is approaching your location.'}
+                                            {order.rider_name ? 'Our elite runner is approaching your location.' : 'Our runner is approaching your location.'}
                                         </p>
                                     </div>
                                 </div>
@@ -311,13 +311,13 @@ function TrackingContent() {
                                                 <ShieldCheck className="h-6 w-6" />
                                             </div>
                                             <div>
-                                                <h3 className="text-xl font-black uppercase tracking-tighter leading-none">Apex Warranty</h3>
-                                                <p className="text-[9px] font-black text-primary uppercase tracking-[0.2em] mt-1.5">Digital Protection Active</p>
+                                                <h3 className="text-xl font-black uppercase tracking-tighter leading-none">Bar Quality Guarantee</h3>
+                                                <p className="text-[9px] font-black text-primary uppercase tracking-[0.2em] mt-1.5">Genuine Product Verified</p>
                                             </div>
                                         </div>
                                         <div className="text-right">
                                             <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Serial Key</p>
-                                            <p className="text-[10px] font-black text-foreground uppercase">APX-{order.id}-{new Date(order.created_at).getTime().toString().slice(-4)}</p>
+                                            <p className="text-[10px] font-black text-foreground uppercase">OB-{order.id}-{new Date(order.created_at).getTime().toString().slice(-4)}</p>
                                         </div>
                                     </div>
 
@@ -326,26 +326,26 @@ function TrackingContent() {
                                             <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Status</p>
                                             <p className="text-sm font-bold text-emerald-600 uppercase flex items-center gap-2">
                                                 <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                                                Fully Protected
+                                                Authenticity Verified
                                             </p>
                                         </div>
 
                                         <div className="grid grid-cols-2 gap-4">
                                             <div className="p-5 bg-white rounded-2xl border border-slate-100 shadow-sm">
-                                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Valid Until</p>
+                                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Delivered On</p>
                                                 <p className="text-sm font-bold text-foreground uppercase">
-                                                    {new Date(new Date(order.created_at).getTime() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString()}
+                                                    {new Date(order.created_at).toLocaleDateString()}
                                                 </p>
                                             </div>
                                             <div className="p-5 bg-white rounded-2xl border border-slate-100 shadow-sm">
                                                 <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Coverage</p>
-                                                <p className="text-sm font-bold text-foreground uppercase">Replacement</p>
+                                                <p className="text-sm font-bold text-foreground uppercase">Full Refund/Exchange</p>
                                             </div>
                                         </div>
                                     </div>
 
                                     <p className="mt-8 text-[10px] text-slate-400 font-medium italic leading-relaxed">
-                                        &quot;Zero-defect guarantee. If your tech has a manufacturer flaw, our elite team will replace it instantly within 7 days.&quot;
+                                        &quot;Genuine spirits guarantee. If your selection is not up to our standard, our elite team will replace it instantly within 24 hours.&quot;
                                     </p>
                                 </div>
                             </div>
@@ -354,7 +354,7 @@ function TrackingContent() {
                 </div>
 
                 <div className="text-center space-y-6">
-                    <p className="text-slate-400 text-sm font-medium italic">Apexstores guarantees zero-defect dispatch for every gadget.</p>
+                    <p className="text-slate-400 text-sm font-medium italic">Online Bar guarantees genuine products and chilled dispatch.</p>
                     <div className="flex justify-center gap-4">
                         <Link href="/">
                             <Button variant="ghost" className="rounded-xl h-12 px-6 font-black uppercase text-[9px] tracking-widest text-slate-400 hover:text-foreground">
@@ -363,7 +363,7 @@ function TrackingContent() {
                         </Link>
                         <Link href="/contact">
                             <Button variant="outline" className="rounded-xl h-12 px-8 font-black uppercase text-[9px] tracking-widest border-slate-200 hover:bg-slate-50">
-                                Technical Support
+                                Customer Support
                             </Button>
                         </Link>
                     </div>

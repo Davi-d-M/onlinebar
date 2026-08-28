@@ -18,7 +18,7 @@ import {
     Gem,
     Trophy,
     ShoppingBag,
-    Smartphone,
+    Wine,
     MessageSquare,
     Users,
     Rocket,
@@ -36,13 +36,13 @@ import { logAuditAction } from '@/lib/auditService';
 const DEFAULTS = {
     streak: {
         milestone_days: 14,
-        milestone_reward_label: "KSh 500 Voucher",
+        milestone_reward_label: "KSh 500 Bar Voucher",
         xp_per_day: 10
     },
     missions: [
-        { type: 'buy-accessory', label: 'Buy Any Accessory', xp: 100, target: 2 },
-        { type: 'review-product', label: 'Review Product', xp: 50, target: 5 },
-        { type: 'watch-video', label: 'Watch Product Video', xp: 30, target: 1 },
+        { type: 'buy-mixers', label: 'Buy Any Mixer', xp: 100, target: 2 },
+        { type: 'review-product', label: 'Review Beverage', xp: 50, target: 5 },
+        { type: 'watch-video', label: 'Watch Tasting Video', xp: 30, target: 1 },
         { type: 'refer-friend', label: 'Refer Friend', xp: 200, target: 1 },
         { type: 'wishlist-items', label: 'Wishlist 5 Items', xp: 40, target: 5 },
         { type: 'share-product', label: 'Share Product', xp: 25, target: 1 },
@@ -63,26 +63,29 @@ const DEFAULTS = {
         ]
     },
     tiers: [
-        { id: 'explorer', label: 'Explorer', threshold: 0, icon: 'Star' },
-        { id: 'silver', label: 'Silver', threshold: 500, icon: 'ShieldCheck' },
-        { id: 'gold', label: 'Gold', threshold: 1000, icon: 'Crown' },
-        { id: 'elite', label: 'Elite', threshold: 2000, icon: 'Gem' },
-        { id: 'legend', label: 'Legend', threshold: 5000, icon: 'Trophy' },
+        { id: 'patron', label: 'Patron', threshold: 0, icon: 'Star' },
+        { id: 'silver', label: 'Silver VIP', threshold: 500, icon: 'ShieldCheck' },
+        { id: 'gold', label: 'Gold VIP', threshold: 1000, icon: 'Crown' },
+        { id: 'elite', label: 'Elite VIP', threshold: 2000, icon: 'Gem' },
+        { id: 'legend', label: 'Mixology Legend', threshold: 5000, icon: 'Trophy' },
     ],
     badges: [
-        { key: 'first-purchase', label: 'First Purchase', icon: 'ShoppingBag', desc: 'Your first tech extraction complete.' },
-        { key: 'gadget-hunter', label: 'Gadget Hunter', icon: 'Smartphone', desc: 'Own 5+ elite devices.' },
-        { key: 'reviewer', label: 'Reviewer', icon: 'MessageSquare', desc: 'Shared expertise on 5+ gadgets.' },
-        { key: 'influencer', label: 'Influencer', icon: 'Users', desc: 'Referred a friend successfully.' },
-        { key: 'vip-shopper', label: 'VIP Shopper', icon: 'Rocket', desc: 'Spent over KSh 50,000.' },
-        { key: 'tech-master', label: 'Tech Master', icon: 'Gem', desc: 'Achieved Diamond Rank.' },
+        { key: 'first-pour', label: 'First Pour', icon: 'ShoppingBag', desc: 'Your first bar order complete.' },
+        { key: 'bar-regular', label: 'Bar Regular', icon: 'Wine', desc: 'Ordered 5+ times this month.' },
+        { key: 'connoisseur', label: 'Connoisseur', icon: 'MessageSquare', desc: 'Shared expertise on 5+ beverages.' },
+        { key: 'social-patron', label: 'Social Patron', icon: 'Users', desc: 'Referred a friend successfully.' },
+        { key: 'vvip-shopper', label: 'VVIP Patron', icon: 'Rocket', desc: 'Spent over KSh 50,000.' },
+        { key: 'mixology-master', label: 'Mixology Master', icon: 'Gem', desc: 'Achieved Diamond Rank.' },
+    ],
+    seasons: [
+        { id: 'S01', name: 'Nairobi Nights', status: 'Active', multiplier: 1.5 },
     ]
 };
 
-const ICON_OPTIONS = ['Star', 'ShieldCheck', 'Crown', 'Gem', 'Trophy', 'ShoppingBag', 'Smartphone', 'MessageSquare', 'Users', 'Rocket'];
+const ICON_OPTIONS = ['Star', 'ShieldCheck', 'Crown', 'Gem', 'Trophy', 'ShoppingBag', 'Wine', 'MessageSquare', 'Users', 'Rocket'];
 
 const IconMap: Record<string, React.ElementType> = {
-    Star, ShieldCheck, Crown, Gem, Trophy, ShoppingBag, Smartphone, MessageSquare, Users, Rocket
+    Star, ShieldCheck, Crown, Gem, Trophy, ShoppingBag, Wine, MessageSquare, Users, Rocket
 };
 
 export default function AdminGamificationPage() {
@@ -92,7 +95,7 @@ export default function AdminGamificationPage() {
     const [message, setMessage] = React.useState<{ type: 'success' | 'error', text: string } | null>(null);
 
     const [config, setConfig] = React.useState(DEFAULTS);
-    const [activeTab, setActiveTab] = React.useState<'streaks' | 'missions' | 'rewards' | 'tiers' | 'simulator'>('streaks');
+    const [activeTab, setActiveTab] = React.useState<'streaks' | 'missions' | 'rewards' | 'tiers' | 'seasons' | 'simulator'>('streaks');
 
     // Simulator State
     const [simPurchase, setSimPurchase] = React.useState('5000');
@@ -104,7 +107,7 @@ export default function AdminGamificationPage() {
         const points = Math.floor(xp * 1.5);
 
         // Find Rank
-        const rank = [...config.tiers].sort((a, b) => b.threshold - a.threshold).find(t => xp >= t.threshold)?.label || 'Explorer';
+        const rank = [...config.tiers].sort((a, b) => b.threshold - a.threshold).find(t => xp >= t.threshold)?.label || 'Patron';
         const voucher = amount >= 5000 ? 'KSh 200 Voucher' : 'No Voucher';
 
         setSimResults({ xp, points, rank, voucher });
@@ -136,7 +139,7 @@ export default function AdminGamificationPage() {
 
             if (error) throw error;
             await logAuditAction(email, 'UPDATE_GAMIFICATION', config);
-            setMessage({ type: 'success', text: "Gamification protocols updated successfully." });
+            setMessage({ type: 'success', text: "Bar Reward protocols updated successfully." });
         } catch (err: unknown) {
             const error = err as Error;
             setMessage({ type: 'error', text: error.message });
@@ -157,8 +160,8 @@ export default function AdminGamificationPage() {
         <div className="p-8 space-y-10 bg-slate-50 min-h-screen text-left pb-40">
             <header className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 border-b border-slate-200 pb-8">
                 <div>
-                    <h1 className="text-4xl font-black text-foreground uppercase tracking-tighter">Reward Engine</h1>
-                    <p className="text-slate-500 text-sm font-medium mt-1">Configure user engagement loops and automated loyalty triggers.</p>
+                    <h1 className="text-4xl font-black text-foreground uppercase tracking-tighter">Bar Club Engine</h1>
+                    <p className="text-slate-500 text-sm font-medium mt-1">Configure patron engagement loops and automated VIP rewards.</p>
                 </div>
                 <div className="flex gap-2">
                     <Button onClick={handleSave} disabled={saving} className="rounded-xl h-12 px-8 bg-primary text-white font-black uppercase text-[10px] tracking-widest hover:bg-primary/90 shadow-xl shadow-primary/20 transition-all">
@@ -181,17 +184,18 @@ export default function AdminGamificationPage() {
                 </div>
             )}
 
-            <div className="flex gap-2 p-1 bg-white rounded-2xl border border-slate-100 shadow-sm overflow-x-auto no-scrollbar max-w-4xl">
+            <div className="flex gap-2 p-1 bg-white rounded-2xl border border-slate-100 shadow-sm overflow-x-auto no-scrollbar max-w-4xl text-left">
                 {[
-                    { id: 'streaks', label: 'Streaks', icon: Flame },
-                    { id: 'missions', label: 'Daily Missions', icon: Target },
-                    { id: 'rewards', label: 'Interaction Odds', icon: Dices },
-                    { id: 'tiers', label: 'Tiers & Badges', icon: Crown },
-                    { id: 'simulator', label: 'Reward Simulator', icon: Zap },
+                    { id: 'streaks', label: 'Patron Streaks', icon: Flame },
+                    { id: 'missions', label: 'Bar Missions', icon: Target },
+                    { id: 'rewards', label: 'Reward Odds', icon: Dices },
+                    { id: 'tiers', label: 'VIP Tiers', icon: Crown },
+                    { id: 'seasons', label: 'Seasons', icon: Rocket },
+                    { id: 'simulator', label: 'Value Simulator', icon: Zap },
                 ].map(tab => (
                     <button
                         key={tab.id}
-                        onClick={() => setActiveTab(tab.id as 'streaks' | 'missions' | 'rewards' | 'tiers' | 'simulator')}
+                        onClick={() => setActiveTab(tab.id as 'streaks' | 'missions' | 'rewards' | 'tiers' | 'seasons' | 'simulator')}
                         className={cn(
                             "flex items-center gap-3 px-6 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shrink-0 border-2 border-transparent",
                             activeTab === tab.id ? "bg-primary text-white border-primary shadow-lg shadow-primary/20" : "text-slate-400 hover:bg-slate-50 hover:text-foreground"
@@ -208,9 +212,9 @@ export default function AdminGamificationPage() {
 
                     {activeTab === 'streaks' && (
                         <Card className="rounded-[3rem] border border-slate-100 p-10 bg-white shadow-sm space-y-8 animate-in fade-in slide-in-from-left-4 duration-500">
-                            <h2 className="text-xl font-black text-foreground uppercase flex items-center gap-3"><Flame className="h-5 w-5 text-rose-500" /> Streak Logic</h2>
+                            <h2 className="text-xl font-black text-foreground uppercase flex items-center gap-3"><Flame className="h-5 w-5 text-rose-500" /> Patron Streak Logic</h2>
                             <div className="grid sm:grid-cols-2 gap-8">
-                                <div className="space-y-2">
+                                <div className="space-y-2 text-left">
                                     <label className="text-[10px] font-black uppercase text-slate-400">Milestone Days</label>
                                     <Input
                                         type="number"
@@ -219,8 +223,8 @@ export default function AdminGamificationPage() {
                                         className="h-14 rounded-2xl bg-slate-50 border-slate-100 font-black text-lg"
                                     />
                                 </div>
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase text-slate-400">Daily Login XP</label>
+                                <div className="space-y-2 text-left">
+                                    <label className="text-[10px] font-black uppercase text-slate-400">Daily Visit XP</label>
                                     <Input
                                         type="number"
                                         value={config.streak.xp_per_day}
@@ -228,7 +232,7 @@ export default function AdminGamificationPage() {
                                         className="h-14 rounded-2xl bg-slate-50 border-slate-100 font-black text-lg"
                                     />
                                 </div>
-                                <div className="space-y-2 sm:col-span-2">
+                                <div className="space-y-2 sm:col-span-2 text-left">
                                     <label className="text-[10px] font-black uppercase text-slate-400">Milestone Reward Label</label>
                                     <Input
                                         value={config.streak.milestone_reward_label}
@@ -242,10 +246,10 @@ export default function AdminGamificationPage() {
 
                     {activeTab === 'missions' && (
                         <Card className="rounded-[3rem] border border-slate-100 p-10 bg-white shadow-sm space-y-8 animate-in fade-in slide-in-from-left-4 duration-500">
-                             <h2 className="text-xl font-black text-foreground uppercase flex items-center gap-3"><Target className="h-5 w-5 text-primary" /> Active Missions</h2>
+                             <h2 className="text-xl font-black text-foreground uppercase flex items-center gap-3"><Target className="h-5 w-5 text-primary" /> Active Bar Missions</h2>
                              <div className="space-y-4">
                                  {config.missions.map((m, i) => (
-                                     <div key={m.type} className="p-6 rounded-3xl bg-slate-50 border border-slate-100 grid sm:grid-cols-3 gap-6 items-end group">
+                                     <div key={m.type} className="p-6 rounded-3xl bg-slate-50 border border-slate-100 grid sm:grid-cols-3 gap-6 items-end group text-left">
                                          <div className="space-y-2">
                                              <label className="text-[8px] font-black uppercase text-slate-400">Mission Label</label>
                                              <Input value={m.label} onChange={e => {
@@ -254,7 +258,7 @@ export default function AdminGamificationPage() {
                                                  setConfig({...config, missions: newMissions});
                                              }} className="h-12 rounded-xl bg-white border-none font-bold text-xs" />
                                          </div>
-                                         <div className="space-y-2">
+                                         <div className="space-y-2 text-left">
                                              <label className="text-[8px] font-black uppercase text-slate-400">Target Count</label>
                                              <Input type="number" value={m.target} onChange={e => {
                                                  const newMissions = [...config.missions];
@@ -262,7 +266,7 @@ export default function AdminGamificationPage() {
                                                  setConfig({...config, missions: newMissions});
                                              }} className="h-12 rounded-xl bg-white border-none font-black text-xs" />
                                          </div>
-                                         <div className="space-y-2">
+                                         <div className="space-y-2 text-left">
                                              <label className="text-[8px] font-black uppercase text-slate-400">XP Reward</label>
                                              <Input type="number" value={m.xp} onChange={e => {
                                                  const newMissions = [...config.missions];
@@ -278,17 +282,17 @@ export default function AdminGamificationPage() {
 
                     {activeTab === 'tiers' && (
                         <div className="space-y-10 animate-in fade-in slide-in-from-left-4 duration-500">
-                            {/* Loyalty Tiers Editor */}
+                            {/* VIP Tiers Editor */}
                             <Card className="rounded-[3rem] border border-slate-100 p-10 bg-white shadow-sm space-y-8">
-                                <div className="flex justify-between items-center">
-                                    <h2 className="text-xl font-black text-foreground uppercase flex items-center gap-3"><Crown className="h-5 w-5 text-primary" /> Loyalty Pathway</h2>
+                                <div className="flex justify-between items-center text-left">
+                                    <h2 className="text-xl font-black text-foreground uppercase flex items-center gap-3"><Crown className="h-5 w-5 text-primary" /> VIP Pathway</h2>
                                     <Button onClick={() => setConfig({...config, tiers: [...config.tiers, { id: 'new', label: 'New Rank', threshold: 0, icon: 'Star' }]})} variant="outline" className="h-10 rounded-xl text-[8px] font-black uppercase"><Plus className="h-3 w-3 mr-2" /> Add Tier</Button>
                                 </div>
                                 <div className="space-y-6">
                                     {config.tiers.map((t, i) => {
                                         const Icon = IconMap[t.icon] || Star;
                                         return (
-                                            <div key={i} className="p-6 rounded-3xl bg-slate-50 border border-slate-100 grid sm:grid-cols-4 gap-6 items-end group relative">
+                                            <div key={i} className="p-6 rounded-3xl bg-slate-50 border border-slate-100 grid sm:grid-cols-4 gap-6 items-end group relative text-left">
                                                 <div className="space-y-2">
                                                     <label className="text-[8px] font-black uppercase text-slate-400">Rank Label</label>
                                                     <Input value={t.label} onChange={e => {
@@ -297,7 +301,7 @@ export default function AdminGamificationPage() {
                                                         setConfig({...config, tiers: newTiers});
                                                     }} className="h-12 rounded-xl bg-white border-none font-bold text-xs" />
                                                 </div>
-                                                <div className="space-y-2">
+                                                <div className="space-y-2 text-left">
                                                     <label className="text-[8px] font-black uppercase text-slate-400">XP Threshold</label>
                                                     <Input type="number" value={t.threshold} onChange={e => {
                                                         const newTiers = [...config.tiers];
@@ -305,7 +309,7 @@ export default function AdminGamificationPage() {
                                                         setConfig({...config, tiers: newTiers});
                                                     }} className="h-12 rounded-xl bg-white border-none font-black text-xs" />
                                                 </div>
-                                                <div className="space-y-2">
+                                                <div className="space-y-2 text-left">
                                                     <label className="text-[8px] font-black uppercase text-slate-400">Visual Icon</label>
                                                     <select
                                                         value={t.icon}
@@ -335,20 +339,20 @@ export default function AdminGamificationPage() {
 
                             {/* Achievement Badges Editor */}
                             <Card className="rounded-[3rem] border border-slate-100 p-10 bg-white shadow-sm space-y-8">
-                                <div className="flex justify-between items-center">
-                                    <h2 className="text-xl font-black text-foreground uppercase flex items-center gap-3"><Trophy className="h-5 w-5 text-amber-500" /> Achievement Badges</h2>
+                                <div className="flex justify-between items-center text-left">
+                                    <h2 className="text-xl font-black text-foreground uppercase flex items-center gap-3"><Trophy className="h-5 w-5 text-amber-500" /> Patron Badges</h2>
                                     <Button onClick={() => setConfig({...config, badges: [...config.badges, { key: 'new', label: 'New Badge', icon: 'Rocket', desc: 'Badge description here.' }]})} variant="outline" className="h-10 rounded-xl text-[8px] font-black uppercase"><Plus className="h-3 w-3 mr-2" /> Add Badge</Button>
                                 </div>
-                                <div className="grid sm:grid-cols-2 gap-6">
+                                <div className="grid sm:grid-cols-2 gap-6 text-left">
                                     {config.badges.map((b, i) => {
                                         const Icon = IconMap[b.icon] || Rocket;
                                         return (
-                                            <div key={i} className="p-8 rounded-[2.5rem] bg-slate-50 border border-slate-100 space-y-6 group relative overflow-hidden">
-                                                <div className="flex gap-4 items-start">
+                                            <div key={i} className="p-8 rounded-[2.5rem] bg-slate-50 border border-slate-100 space-y-6 group relative overflow-hidden text-left">
+                                                <div className="flex gap-4 items-start text-left">
                                                     <div className="h-16 w-16 rounded-2xl bg-white flex items-center justify-center text-primary shadow-sm shrink-0">
                                                         <Icon className="h-8 w-8" />
                                                     </div>
-                                                    <div className="flex-1 space-y-4">
+                                                    <div className="flex-1 space-y-4 text-left">
                                                         <div className="space-y-1">
                                                             <label className="text-[8px] font-black uppercase text-slate-400">Badge Label</label>
                                                             <Input value={b.label} onChange={e => {
@@ -357,7 +361,7 @@ export default function AdminGamificationPage() {
                                                                 setConfig({...config, badges: newBadges});
                                                             }} className="h-10 rounded-xl bg-white border-none font-bold text-xs" />
                                                         </div>
-                                                        <div className="space-y-1">
+                                                        <div className="space-y-1 text-left">
                                                             <label className="text-[8px] font-black uppercase text-slate-400">Icon Key</label>
                                                             <select
                                                                 value={b.icon}
@@ -373,7 +377,7 @@ export default function AdminGamificationPage() {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div className="space-y-1">
+                                                <div className="space-y-1 text-left">
                                                     <label className="text-[8px] font-black uppercase text-slate-400 ml-1">Requirement / Description</label>
                                                     <Input value={b.desc} onChange={e => {
                                                         const newBadges = [...config.badges];
@@ -392,17 +396,46 @@ export default function AdminGamificationPage() {
                         </div>
                     )}
 
+                    {activeTab === 'seasons' && (
+                        <Card className="rounded-[3rem] border border-slate-100 p-10 bg-white shadow-sm space-y-8 animate-in fade-in slide-in-from-left-4 duration-500">
+                            <div className="flex justify-between items-center">
+                                <h2 className="text-xl font-black text-foreground uppercase flex items-center gap-3"><Rocket className="h-5 w-5 text-indigo-500" /> Season Hub</h2>
+                                <Button onClick={() => setConfig({...config, seasons: [...(config.seasons || []), { id: 'NEW', name: 'New Season', status: 'Draft', multiplier: 1.0 }]})} variant="outline" className="h-10 rounded-xl text-[8px] font-black uppercase"><Plus className="h-3 w-3 mr-2" /> Start Season</Button>
+                            </div>
+                            <div className="space-y-4">
+                                {(config.seasons || []).map((s, i) => (
+                                    <div key={i} className="p-8 rounded-[2.5rem] bg-slate-50 border border-slate-100 flex items-center justify-between group">
+                                        <div className="flex items-center gap-6">
+                                            <div className="h-14 w-14 rounded-2xl bg-white flex items-center justify-center text-indigo-500 shadow-sm font-black">{s.id}</div>
+                                            <div>
+                                                <h3 className="font-black text-foreground uppercase">{s.name}</h3>
+                                                <p className="text-[10px] font-bold text-slate-400 uppercase mt-1">{s.status}</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-8">
+                                            <div className="text-right">
+                                                <p className="text-[8px] font-black uppercase text-primary">XP Multiplier</p>
+                                                <p className="text-lg font-black text-foreground">{s.multiplier}x</p>
+                                            </div>
+                                            <Button variant="ghost" size="icon" className="h-12 w-12 rounded-xl border border-slate-200 group-hover:bg-primary group-hover:text-white transition-all"><SettingsIcon size={18} /></Button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </Card>
+                    )}
+
                     {activeTab === 'simulator' && (
                         <Card className="rounded-[3rem] border border-border p-10 bg-white shadow-sm space-y-10 animate-in fade-in slide-in-from-left-4 duration-500 text-left">
                             <div className="flex items-center gap-3">
                                 <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shadow-sm"><Zap className="h-5 w-5" /></div>
-                                <h2 className="text-xl font-black text-foreground uppercase">Reward Simulator</h2>
+                                <h2 className="text-xl font-black text-foreground uppercase">Patron Reward Simulator</h2>
                             </div>
 
-                            <div className="grid sm:grid-cols-2 gap-10 items-start">
-                                <div className="space-y-6">
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Mock Purchase Amount</label>
+                            <div className="grid sm:grid-cols-2 gap-10 items-start text-left">
+                                <div className="space-y-6 text-left">
+                                    <div className="space-y-2 text-left">
+                                        <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Mock Order Amount</label>
                                         <div className="relative">
                                             <Input
                                                 value={simPurchase}
@@ -418,23 +451,19 @@ export default function AdminGamificationPage() {
                                 </div>
 
                                 {simResults && (
-                                    <div className="space-y-6 animate-in zoom-in-95 duration-500">
-                                        <div className="p-8 rounded-[2.5rem] bg-secondary border border-border space-y-8">
+                                    <div className="space-y-6 animate-in zoom-in-95 duration-500 text-left">
+                                        <div className="p-8 rounded-[2.5rem] bg-secondary border border-border space-y-8 text-left">
                                             <div className="flex justify-between items-center pb-4 border-b border-border">
                                                 <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">XP Yield</span>
                                                 <span className="text-2xl font-black text-foreground">+{simResults.xp} XP</span>
                                             </div>
                                             <div className="flex justify-between items-center pb-4 border-b border-border">
-                                                <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Loyalty Points</span>
+                                                <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Bar Points</span>
                                                 <span className="text-2xl font-black text-foreground">{simResults.points} pts</span>
                                             </div>
                                             <div className="flex justify-between items-center pb-4 border-b border-border">
-                                                <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Predicted Rank</span>
+                                                <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Predicted VIP Rank</span>
                                                 <span className="text-lg font-black text-primary italic uppercase">{simResults.rank}</span>
-                                            </div>
-                                            <div className="flex justify-between items-center">
-                                                <span className="text-[10px] font-black uppercase text-primary tracking-widest">Unlocked Perk</span>
-                                                <span className="text-xs font-black text-emerald-500 uppercase">{simResults.voucher}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -446,32 +475,28 @@ export default function AdminGamificationPage() {
                 </div>
 
                 <div className="lg:col-span-4 space-y-8 text-left">
-                    <Card className="p-8 rounded-[3rem] bg-white text-foreground border border-slate-100 shadow-xl relative overflow-hidden group">
-                        <div className="relative z-10 space-y-6">
+                    <Card className="p-8 rounded-[3rem] bg-white text-foreground border border-slate-100 shadow-xl relative overflow-hidden group text-left">
+                        <div className="relative z-10 space-y-6 text-left">
                             <h3 className="text-[10px] font-black uppercase text-slate-400 tracking-[0.4em]">Engine Status</h3>
-                            <div className="space-y-4">
+                            <div className="space-y-4 text-left">
                                 <div className="flex justify-between items-center py-4 border-b border-slate-50">
-                                    <span className="text-[10px] font-black uppercase text-slate-400">Total Users Tracked</span>
+                                    <span className="text-[10px] font-black uppercase text-slate-400">Total Patrons Tracked</span>
                                     <span className="text-lg font-black text-foreground">---</span>
                                 </div>
                                 <div className="flex justify-between items-center py-4 border-b border-slate-50">
-                                    <span className="text-[10px] font-black uppercase text-slate-400">XP Inflation</span>
+                                    <span className="text-[10px] font-black uppercase text-slate-400">VVIP Density</span>
                                     <span className="text-xs font-black text-primary">Normal</span>
-                                </div>
-                                <div className="flex justify-between items-center">
-                                    <span className="text-[10px] font-black uppercase text-slate-400">Voucher Burn</span>
-                                    <span className="text-xs font-black text-foreground italic">0.0% Daily</span>
                                 </div>
                             </div>
                         </div>
                         <Zap className="absolute -bottom-10 -right-10 h-48 w-48 text-primary/10 rotate-12" />
                     </Card>
 
-                    <div className="p-8 rounded-[3rem] bg-white border border-slate-100 shadow-sm space-y-4">
+                    <div className="p-8 rounded-[3rem] bg-white border border-slate-100 shadow-sm space-y-4 text-left">
                         <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary"><SettingsIcon className="h-5 w-5" /></div>
                         <h4 className="text-lg font-black uppercase tracking-tighter text-foreground">Optimization Tip</h4>
-                        <p className="text-[10px] text-slate-500 font-medium leading-relaxed italic">
-                            &quot;Keep the Milestone reward high and the interaction odds balanced to maximize user retention without draining margins.&quot;
+                        <p className="text-[10px] text-slate-500 font-medium leading-relaxed italic text-left">
+                            &quot;Keep the Milestone reward high and ensure VIP tiers provide tangible beverage discounts to maximize patron retention.&quot;
                         </p>
                     </div>
                 </div>

@@ -413,7 +413,7 @@ function RiderDashboardContent() {
                                         handleCompleteMission(activeMission.id); // Fallback
                                     }
                                 }}
-                                className="w-full h-24 rounded-[2.5rem] bg-indigo-600 hover:bg-indigo-700 text-white font-black uppercase text-sm tracking-[0.5em] shadow-[0_20px_40px_-10px_rgba(91,91,255,0.3)] active:scale-95 transition-all relative overflow-hidden group"
+                                className="w-full h-24 rounded-[2.5rem] bg-primary hover:bg-primary/90 text-white font-black uppercase text-sm tracking-[0.5em] shadow-[0_20px_40px_-10px_rgba(255,107,0,0.3)] active:scale-95 transition-all relative overflow-hidden group"
                             >
                                 <span className="relative z-10">Secure Handover</span>
                                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_2s_infinite]" />

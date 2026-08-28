@@ -1,13 +1,27 @@
 import { supabase } from './supabaseClient';
+import { emitEvent } from './engines/eventEngine';
 
 /**
  * Logs a staff action for accountability with enterprise metadata
  */
-export async function logAuditAction(email: string, action: string, details: Record<string, unknown>) {
+export async function logAuditAction(
+    email: string,
+    action: string,
+    details: Record<string, unknown>,
+    resource?: { type: string, id: string },
+    diff?: { old: any, new: any }
+) {
   if (!supabase || !email) return;
 
   try {
-    // Attempt to get IP from multiple sources
+    // 1. Get Actor ID
+    const { data: staff } = await supabase.from('staff').select('id').eq('email', email).maybeSingle();
+
+    // 2. Correlation Metadata
+    const correlationId = (global as any).currentCorrelationId || 'CORR-INTERNAL';
+    const requestId = (global as any).currentRequestId || 'REQ-INTERNAL';
+
+    // 3. Attempt to get IP from multiple sources
     let ip = 'server-internal';
 
     if (typeof window !== 'undefined') {
@@ -42,12 +56,26 @@ export async function logAuditAction(email: string, action: string, details: Rec
       .from('audit_logs')
       .insert([{
         staff_email: email,
+        actor_id: staff?.id,
         action,
         details,
+        resource_type: resource?.type,
+        resource_id: resource?.id,
+        old_value: diff?.old,
+        new_value: diff?.new,
+        correlation_id: correlationId,
+        request_id: requestId,
         ip_address: ip,
         device_info: deviceInfo,
         created_at: new Date().toISOString()
       }]);
+
+    // 🚀 [ENGINES] Emit System Event for real-time automation
+    await emitEvent('SECURITY_ALERT', {
+        userId: email,
+        details: { action, ...details },
+    }, { ip, deviceInfo });
+
   } catch (err) {
     console.error("Audit Log Error:", err);
   }

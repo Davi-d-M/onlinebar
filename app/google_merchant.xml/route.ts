@@ -14,7 +14,7 @@ interface Product {
 }
 
 export async function GET() {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://tech-paxv.onrender.com';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://onlinebar.co.ke';
 
   let products: Product[] = [];
   if (supabase) {
@@ -27,21 +27,21 @@ export async function GET() {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
   <channel>
-    <title>Apexstores | Elite Tech Kenya</title>
+    <title>Online Bar | Premium Drinks Nairobi</title>
     <link>${baseUrl}</link>
-    <description>Authentic AirPods, high-speed chargers, and elite phone accessories in Nairobi.</description>
+    <description>Authentic wine, spirits, and late-night snacks delivered chilled in Nairobi.</description>
     ${products?.map(product => `
     <item>
       <g:id>${product.id}</g:id>
       <g:title>${product.name}</g:title>
-      <g:description>${product.description?.replace(/<[^>]*>?/gm, '') || 'Premium tech essential'}</g:description>
+      <g:description>${product.description?.replace(/<[^>]*>?/gm, '') || 'Premium beverage essential'}</g:description>
       <g:link>${baseUrl}/product/${product.id}</g:link>
       <g:image_link>${product.image_url}</g:image_link>
       <g:condition>new</g:condition>
       <g:availability>${product.stock > 0 ? 'in_stock' : 'out_of_stock'}</g:availability>
       <g:price>${product.price} KES</g:price>
-      <g:brand>${product.brand || 'Apexstores'}</g:brand>
-      <g:google_product_category>Electronics &gt; Communications &gt; Telephony &gt; Mobile Phone Accessories</g:google_product_category>
+      <g:brand>${product.brand || 'Online Bar'}</g:brand>
+      <g:google_product_category>Food, Beverages &amp; Tobacco &gt; Beverages &gt; Alcoholic Beverages</g:google_product_category>
     </item>`).join('')}
   </channel>
 </rss>`;

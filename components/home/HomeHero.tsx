@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Zap, ShieldCheck, Trophy, Sparkles, Smartphone } from "lucide-react";
+import { ArrowRight, Zap, ShieldCheck, Trophy, Sparkles, Wine } from "lucide-react";
 import Link from "next/link";
 import { useSettings } from "@/lib/useSettings";
 import CountdownTimer from "./CountdownTimer";
@@ -22,12 +22,12 @@ export default function HomeHero() {
           <div className="space-y-8 animate-in fade-in slide-in-from-left-8 duration-1000">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-50 border border-slate-100 shadow-sm">
                 <Sparkles className="h-4 w-4 text-primary animate-pulse" />
-                <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">The New Era of Tech is Here</span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">The Premium Bar is Open</span>
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black tracking-tighter text-foreground uppercase leading-[1.1] sm:leading-[0.9]">
-              Future <span className="text-primary italic">Sound.</span><br />
-              Total <span className="text-slate-400">Power.</span>
+              Elite <span className="text-primary italic">Vintages.</span><br />
+              Chilled <span className="text-slate-400">Spirits.</span>
             </h1>
 
             {Boolean(promotions?.is_active) && promotions?.flash_sale_end && (
@@ -35,13 +35,13 @@ export default function HomeHero() {
             )}
 
             <p className="text-lg text-slate-500 font-medium max-w-lg leading-relaxed">
-              Experience authentic tech engineered for excellence. From premium AirPods to high-speed charging solutions, we power your digital lifestyle.
+              Experience authentic wine and elite spirits curated for excellence. From premium champagne to chilled local brews, we power your celebrations.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
               <Link href="/shop">
                 <Button className="h-16 px-10 rounded-[1.5rem] bg-primary text-white font-black uppercase tracking-widest text-xs shadow-2xl shadow-primary/20 hover:bg-primary/90 active:scale-95 transition-all group">
-                  Explore Catalog <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                  Explore Menu <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
               <Link href="/shop/category/new-arrivals">
@@ -62,13 +62,13 @@ export default function HomeHero() {
                     <div className="h-8 w-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600">
                         <ShieldCheck className="h-4 w-4" />
                     </div>
-                    <p className="text-[10px] font-black uppercase tracking-tighter text-foreground">100% Authentic</p>
+                    <p className="text-[10px] font-black uppercase tracking-tighter text-foreground">100% Genuine</p>
                 </div>
                 <div className="space-y-2">
                     <div className="h-8 w-8 rounded-lg bg-amber-50 flex items-center justify-center text-amber-600">
                         <Trophy className="h-4 w-4" />
                     </div>
-                    <p className="text-[10px] font-black uppercase tracking-tighter text-foreground">Elite Tech</p>
+                    <p className="text-[10px] font-black uppercase tracking-tighter text-foreground">Bar Selection</p>
                 </div>
             </div>
           </div>
@@ -77,14 +77,14 @@ export default function HomeHero() {
           <div className="relative animate-in zoom-in-95 duration-1000 delay-200">
               <div className="aspect-square rounded-[4rem] bg-slate-50 border border-slate-100 flex items-center justify-center p-12 overflow-hidden shadow-inner group">
                   <div className="flex flex-col items-center gap-4 text-slate-200">
-                      <Smartphone className="h-24 w-24 opacity-20" />
+                      <Wine className="h-24 w-24 opacity-20" />
                       <p className="text-[10px] font-black uppercase tracking-widest text-slate-300 italic">&quot;Upload Hero via Admin&quot;</p>
                   </div>
 
                   {/* Floating Price Tag */}
-                  <div className="absolute bottom-10 right-10 bg-white p-6 rounded-3xl shadow-2xl border border-slate-50 animate-bounce delay-1000">
+                  <div className="absolute bottom-10 right-10 bg-white p-6 rounded-3xl shadow-2xl border border-slate-50 animate-bounce delay-1000 text-left">
                       <p className="text-[10px] font-black uppercase text-slate-400 mb-1">Starting from</p>
-                      <p className="text-2xl font-black text-foreground tracking-tighter">Ksh 4,500</p>
+                      <p className="text-2xl font-black text-foreground tracking-tighter">Ksh 2,500</p>
                   </div>
               </div>
 

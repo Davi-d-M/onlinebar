@@ -2,24 +2,18 @@
 
 import * as React from 'react';
 import {
-  TrendingUp,
-  ShoppingCart,
-  Plus,
-  DollarSign,
   History as HistoryIcon,
-  Wine,
-  ArrowUpRight,
+  Send,
+  ShieldCheck,
   Loader2,
   Package,
   Truck,
-  Send,
-  GlassWater
+  GlassWater,
+  Plus
 } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
-import { formatPrice, cn } from '@/lib/utils';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { useAdmin } from '@/context/AdminContext';
 import dynamic from 'next/dynamic';
 
@@ -32,16 +26,24 @@ const YAxis = dynamic(() => import('recharts').then(mod => mod.YAxis), { ssr: fa
 const CartesianGrid = dynamic(() => import('recharts').then(mod => mod.CartesianGrid), { ssr: false });
 const Tooltip = dynamic(() => import('recharts').then(mod => mod.Tooltip), { ssr: false });
 const ResponsiveContainer = dynamic(() => import('recharts').then(mod => mod.ResponsiveContainer), { ssr: false });
-const LineChart = dynamic(() => import('recharts').then(mod => mod.LineChart), { ssr: false });
-const Line = dynamic(() => import('recharts').then(mod => mod.Line), { ssr: false });
 
 import TodayCommandCenter from '@/components/admin/TodayCommandCenter';
 import ExceptionCenter from '@/components/admin/ExceptionCenter';
-import SystemPulseWidget from '@/components/admin/SystemPulseWidget';
 import ApexIntelligence from '@/components/admin/ApexIntelligence2';
 import AskApex from '@/components/admin/AskApex';
 import SentimentSentinel from '@/components/admin/SentimentSentinel';
 import ActiveAdmins from '@/components/admin/ActiveAdmins';
+import AutonomousSwitch from '@/components/admin/AutonomousSwitch';
+import CampaignCommand from '@/components/admin/CampaignCommand';
+import AICommanderBrief from '@/components/admin/AICommanderBrief';
+import WorkforceHub from '@/components/admin/WorkforceHub';
+import SystemHealthMonitor from '@/components/admin/SystemHealthMonitor';
+import SystemPulseWidget from '@/components/admin/SystemPulseWidget';
+import FinancePulse from '@/components/admin/FinancePulse';
+import DataGovernance from '@/components/admin/DataGovernance';
+import ExperimentLab from '@/components/admin/ExperimentLab';
+import CustomerJourney from '@/components/admin/CustomerJourney';
+import SnackCommandCenter from '@/components/admin/SnackCommandCenter';
 import { runSecurityScan } from '@/lib/apex-os/security-shield';
 
 interface OrderRecord {
@@ -82,8 +84,8 @@ export default function AdminDashboard() {
   const [auditLogs, setAuditLogs] = React.useState<AuditLog[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const [mounted, setMounted] = React.useState(false);
-  const [latency, setLatency] = React.useState(0);
-  if (latency) {}
+  const [peakHours, setPeakHours] = React.useState<{ hour: string; count: number }[]>([]);
+  const [categoryMix, setCategoryBreakdown] = React.useState<{ name: string; value: number }[]>([]);
 
   React.useEffect(() => {
       setMounted(true);
@@ -96,7 +98,6 @@ export default function AdminDashboard() {
         return;
       }
 
-      const start = performance.now();
       try {
         const thirtyDaysAgo = new Date();
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
@@ -111,11 +112,29 @@ export default function AdminDashboard() {
           supabase.from('audit_logs').select('id, action, staff_email, created_at').order('created_at', { ascending: false }).limit(2)
         ]);
 
-        if (ordersRes.data) setOrders(ordersRes.data as OrderRecord[]);
+        if (ordersRes.data) {
+            setOrders(ordersRes.data as OrderRecord[]);
+
+            // Peak Hour Logic (Last 30 days)
+            const hours: Record<string, number> = {};
+            ordersRes.data.forEach(o => {
+                const hour = new Date(o.created_at).getHours();
+                const label = `${hour}:00`;
+                hours[label] = (hours[label] || 0) + 1;
+            });
+            setPeakHours(Object.entries(hours).map(([hour, count]) => ({ hour, count })).sort((a,b) => parseInt(a.hour) - parseInt(b.hour)));
+
+            // Category Mix Logic
+            const cats: Record<string, number> = {};
+            ordersRes.data.forEach(o => {
+                const cat = o.order_items?.[0]?.product_id ? 'Spirits' : 'Other';
+                cats[cat] = (cats[cat] || 0) + 1;
+            });
+            setCategoryBreakdown(Object.entries(cats).map(([name, value]) => ({ name, value })));
+        }
         if (productsRes.data) setProducts(productsRes.data as ProductRecord[]);
         if (auditRes.data) setAuditLogs(auditRes.data);
 
-        setLatency(Math.round(performance.now() - start));
       } catch (err) {
         console.error('Error loading dashboard stats:', err);
       } finally {
@@ -131,38 +150,6 @@ export default function AdminDashboard() {
 
     return () => clearInterval(shieldScan);
   }, []);
-
-  const stats = React.useMemo(() => {
-    const deliveredOrders = orders.filter(o => o.status === 'Delivered' || o.status === 'Completed');
-
-    const totalRevenue = deliveredOrders.reduce((sum, o) => sum + Number(o.total_price || 0), 0);
-    const totalCost = deliveredOrders.reduce((sum, o) => {
-        const itemCost = o.order_items?.reduce((s, item) => s + (Number(item.unit_cost) * (item.quantity || 1)), 0) || 0;
-        return sum + itemCost;
-    }, 0);
-
-    const netProfit = totalRevenue - totalCost;
-    const profitMargin = totalRevenue > 0 ? (netProfit / totalRevenue) * 100 : 0;
-    const lowStockItems = products.filter(p => p.stock <= 5).length;
-
-    // Calculate Growth (vs Previous 7 Days)
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-    const fourteenDaysAgo = new Date();
-    fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
-
-    const currentPeriodRev = orders
-        .filter(o => o.status === 'Delivered' && new Date(o.created_at) >= sevenDaysAgo)
-        .reduce((sum, o) => sum + Number(o.total_price || 0), 0);
-
-    const prevPeriodRev = orders
-        .filter(o => o.status === 'Delivered' && new Date(o.created_at) >= fourteenDaysAgo && new Date(o.created_at) < sevenDaysAgo)
-        .reduce((sum, o) => sum + Number(o.total_price || 0), 0);
-
-    const growth = prevPeriodRev > 0 ? ((currentPeriodRev - prevPeriodRev) / prevPeriodRev) * 100 : 0;
-
-    return { totalRevenue, netProfit, profitMargin, lowStockItems, growth };
-  }, [orders, products]);
 
   const sparklineData = React.useMemo(() => {
       const days = [...Array(7)].map((_, i) => {
@@ -192,27 +179,26 @@ export default function AdminDashboard() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50dvh] gap-4">
         <Loader2 className="h-10 w-10 text-primary animate-spin" />
-        <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest animate-pulse">Establishing Data Uplink...</p>
+        <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest animate-pulse">Accessing Control Tower...</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-12 animate-in fade-in duration-700 bg-slate-50 min-h-screen p-8 pb-20">
+    <div className="space-y-12 animate-in fade-in duration-700 bg-slate-50 min-h-screen p-8 pb-20 text-left selection:bg-primary/20">
 
       {/* EXECUTIVE HEADER */}
       <header className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 border-b border-slate-200 pb-10">
           <div className="text-left">
-              <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mb-2">Online Bar Operations</p>
-              <h1 className="text-5xl font-black text-foreground uppercase tracking-tighter leading-none">Good Morning, <span className="text-primary">{email?.split('@')[0]}</span> 🍷</h1>
+              <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mb-2">Online Bar Control</p>
+              <h1 className="text-5xl font-black text-foreground uppercase tracking-tighter leading-none">Control <span className="text-primary">Tower</span> 🏰</h1>
               <div className="flex items-center gap-4 mt-4">
-                  <div className="flex items-center gap-2">
-                      <span className="text-[9px] font-black uppercase text-slate-400">Shift Readiness</span>
-                      <div className="h-1.5 w-32 bg-slate-200 rounded-full overflow-hidden">
-                          <div className="h-full bg-emerald-500 w-[91%]"></div>
-                      </div>
-                      <span className="text-[10px] font-black text-emerald-500">91%</span>
+                  <div className="flex items-center gap-2 text-emerald-500">
+                      <ShieldCheck size={14} />
+                      <span className="text-[9px] font-black uppercase tracking-widest">Fortress Security Active</span>
                   </div>
+                  <div className="h-1 w-1 rounded-full bg-slate-300" />
+                  <p className="text-[10px] font-black uppercase text-slate-400">Authenticated: {email?.split('@')[0]}</p>
               </div>
           </div>
           <div className="flex gap-2">
@@ -224,78 +210,34 @@ export default function AdminDashboard() {
           </div>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
+      {/* COMMAND HUD: REAL-TIME NODES */}
+      <TodayCommandCenter />
 
-        <Card className="p-10 rounded-[3rem] bg-white border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-xl transition-all h-full">
-            <div className="relative z-10 flex flex-col h-full justify-between">
-                <div className="flex justify-between items-start">
-                    <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
-                        <TrendingUp className="h-6 w-6" />
-                    </div>
-                    <div className="h-12 w-24">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <LineChart data={sparklineData}>
-                                <Line type="monotone" dataKey="revenue" stroke="#ff6b00" strokeWidth={2} dot={false} />
-                            </LineChart>
-                        </ResponsiveContainer>
-                    </div>
-                </div>
-                <div className="mt-8">
-                    <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">Total Bar Sales</p>
-                    <h3 className="text-3xl font-black text-foreground tracking-tighter uppercase leading-none">{formatPrice(stats.totalRevenue)}</h3>
-                    <div className={cn(
-                        "flex items-center gap-2 mt-3",
-                        stats.growth >= 0 ? "text-emerald-500" : "text-rose-500"
-                    )}>
-                        <ArrowUpRight className={cn("h-3 w-3", stats.growth < 0 && "rotate-90")} />
-                        <span className="text-[9px] font-black uppercase">{stats.growth === 0 ? 'Stable' : `${Math.abs(stats.growth).toFixed(1)}% vs Last Shift`}</span>
-                    </div>
-                </div>
-            </div>
-            <Wine className="absolute -bottom-6 -right-6 h-32 w-32 text-primary/5 rotate-12 -z-0" />
-        </Card>
+      {/* AI COMMANDER BRIEF: AUTONOMOUS INTELLIGENCE */}
+      <AICommanderBrief />
 
-        <Card className="p-10 rounded-[3rem] bg-white border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-xl transition-all h-full">
-            <div className="relative z-10 flex flex-col h-full justify-between">
-                <div className="flex justify-between items-start">
-                    <div className="h-12 w-12 rounded-2xl bg-primary/5 flex items-center justify-center text-primary group-hover:scale-110 transition-transform shadow-sm">
-                        <DollarSign className="h-6 w-6" />
-                    </div>
-                    <div className="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-500 text-[8px] font-black uppercase tracking-widest">Growth Locked</div>
-                </div>
-                <div className="mt-8">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Bar Margin</p>
-                    <h3 className="text-3xl font-black text-foreground tracking-tighter uppercase leading-none">{formatPrice(stats.netProfit)}</h3>
-                    <p className="text-[9px] font-black text-primary uppercase mt-3">{stats.profitMargin.toFixed(1)}% Pour Efficiency</p>
-                </div>
-            </div>
-        </Card>
+      {/* JOURNEY & CONVERSION: BEHAVIORAL INTELLIGENCE */}
+      <CustomerJourney />
 
-        <Card className="p-10 rounded-[3rem] bg-white border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-xl transition-all h-full">
-            <div className="relative z-10 flex flex-col h-full justify-between">
-                <div className="flex justify-between items-start">
-                    <div className="h-12 w-12 rounded-2xl bg-primary/5 flex items-center justify-center text-primary group-hover:scale-110 transition-transform shadow-sm">
-                        <ShoppingCart className="h-6 w-6" />
-                    </div>
-                    <div className="h-12 w-24">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={sparklineData}>
-                                <Bar dataKey="count" fill="#ff6b00" radius={[4, 4, 4, 4]} />
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </div>
-                </div>
-                <div className="mt-8">
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Order Queue</p>
-                    <h3 className="text-3xl font-black text-foreground tracking-tighter uppercase leading-none">{orders.length}</h3>
-                    <p className="text-[9px] font-black text-primary uppercase mt-3">{orders.filter(o => o.status === 'Pending').length} Awaiting Dispatch</p>
-                </div>
-            </div>
-        </Card>
-
+      {/* WORKFORCE & FINANCIALS: ACCOUNTABILITY NODES */}
+      <div className="grid lg:grid-cols-2 gap-10">
+          <WorkforceHub />
+          <div className="space-y-10">
+              <SystemHealthMonitor />
+              <DataGovernance />
+              <SnackCommandCenter />
+              <FinancePulse />
+          </div>
       </div>
 
-      <TodayCommandCenter />
+      {/* EXPERIMENTATION: OPTIMIZATION HUB */}
+      <ExperimentLab />
+
+      {/* AUTOMATION & CAMPAIGNS: ENGINE CONTROLS */}
+      <div className="grid lg:grid-cols-2 gap-10">
+          <AutonomousSwitch />
+          <CampaignCommand />
+      </div>
 
       <SentimentSentinel />
 
@@ -312,14 +254,16 @@ export default function AdminDashboard() {
                   <div className="flex items-center justify-between mb-12">
                       <div>
                           <h2 className="text-2xl font-black uppercase tracking-tighter text-foreground leading-none">Beverage Flow Trends</h2>
-                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">Sales vs Profit Stream</p>
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">Revenue vs Profit Stream</p>
                       </div>
-                      <Link href="/admin/analytics">
-                          <Button variant="ghost" className="text-[9px] font-black uppercase tracking-widest text-primary hover:bg-primary/5">Deep Analytics &rarr;</Button>
-                      </Link>
+                      <div className="flex gap-2">
+                        <Link href="/admin/analytics">
+                            <Button variant="ghost" className="text-[9px] font-black uppercase tracking-widest text-primary hover:bg-primary/5">Deep Analytics &rarr;</Button>
+                        </Link>
+                      </div>
                   </div>
 
-                  <div className="h-80 w-full">
+                  <div className="h-80 w-full text-left">
                       {mounted && (
                           <ResponsiveContainer width="100%" height="100%">
                               <AreaChart data={sparklineData}>
@@ -341,16 +285,49 @@ export default function AdminDashboard() {
                   </div>
               </section>
 
+              <div className="grid sm:grid-cols-2 gap-10">
+                  <section className="bg-white rounded-[3rem] p-10 border border-slate-100 shadow-sm">
+                      <h3 className="text-sm font-black uppercase tracking-tighter mb-8 text-left">Peak Order Hours</h3>
+                      <div className="h-48 w-full text-left">
+                          {mounted && (
+                              <ResponsiveContainer width="100%" height="100%">
+                                  <BarChart data={peakHours}>
+                                      <Bar dataKey="count" fill="#ff6b00" radius={[4, 4, 0, 0]} />
+                                      <XAxis dataKey="hour" hide />
+                                      <Tooltip />
+                                  </BarChart>
+                              </ResponsiveContainer>
+                          )}
+                      </div>
+                      <p className="text-[9px] font-bold text-slate-400 uppercase mt-4 text-center">Dispatch hotspots identified between 18:00 - 22:00</p>
+                  </section>
+
+                  <section className="bg-white rounded-[3rem] p-10 border border-slate-100 shadow-sm">
+                      <h3 className="text-sm font-black uppercase tracking-tighter mb-8 text-left">Inventory Mix</h3>
+                      <div className="space-y-4">
+                          {categoryMix.map(cat => (
+                              <div key={cat.name} className="flex items-center justify-between">
+                                  <span className="text-[10px] font-black uppercase text-slate-500">{cat.name}</span>
+                                  <div className="h-1.5 flex-1 mx-4 bg-slate-50 rounded-full overflow-hidden">
+                                      <div className="h-full bg-primary" style={{ width: `${(cat.value / (orders.length || 1)) * 100}%` }}></div>
+                                  </div>
+                                  <span className="text-[10px] font-black text-foreground">{cat.value}</span>
+                              </div>
+                          ))}
+                      </div>
+                  </section>
+              </div>
+
               <section id="warehouse-alerts" className="space-y-6">
                   <div className="flex items-center justify-between px-4">
                       <h2 className="text-xl font-black uppercase tracking-tighter text-foreground leading-none">Cellar & Stock Alerts</h2>
-                      <span className="text-[10px] font-black text-rose-500 uppercase tracking-widest animate-pulse">{stats.lowStockItems} Low Units</span>
+                      <span className="text-[10px] font-black text-rose-500 uppercase tracking-widest animate-pulse">Scanning Inventory...</span>
                   </div>
                   <div className="grid sm:grid-cols-2 gap-6">
                       {products.filter(p => p.stock <= 5).slice(0, 4).map(p => (
-                          <Card key={p.id} className="p-8 rounded-[3rem] bg-white border border-slate-100 flex items-center justify-between group hover:border-rose-200 transition-all shadow-sm">
+                          <div key={p.id} className="p-8 rounded-[3rem] bg-white border border-slate-100 flex items-center justify-between group hover:border-rose-200 transition-all shadow-sm">
                               <div className="flex items-center gap-4 min-w-0">
-                                  <div className="h-16 w-16 rounded-[1.5rem] bg-slate-50 p-2 shrink-0 border border-slate-100 flex items-center justify-center">
+                                  <div className="h-16 w-16 rounded-[1.5rem] bg-slate-50 p-2 shrink-0 border border-slate-100 flex items-center justify-center relative overflow-hidden">
                                       {/* eslint-disable-next-line @next/next/no-img-element */}
                                       <img src={p.image_url} alt="" className="max-h-full w-auto object-contain mx-auto" />
                                   </div>
@@ -364,7 +341,7 @@ export default function AdminDashboard() {
                                       <Plus className="h-5 w-5" />
                                   </Button>
                               </Link>
-                          </Card>
+                          </div>
                       ))}
                   </div>
               </section>
@@ -405,10 +382,10 @@ export default function AdminDashboard() {
                           <p className="text-[10px] font-black text-slate-300 uppercase italic text-center py-4">No recent activity detected.</p>
                       ) : (
                           auditLogs.map((log) => (
-                              <div key={log.id} className="flex gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-50 hover:border-slate-100 transition-all">
+                              <div key={log.id} className="flex gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-50 hover:border-slate-100 transition-all text-left">
                                   <div className="h-10 w-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 shadow-sm"><HistoryIcon className="h-5 w-5" /></div>
                                   <div className="text-left min-w-0">
-                                      <p className="text-[11px] font-black text-foreground uppercase leading-tight truncate tracking-tight">{log.action?.replace(/_/g, ' ')}</p>
+                                      <p className="text-[11px] font-black text-foreground uppercase leading-tight truncate tracking-tight">{(log.action || '').replace(/_/g, ' ')}</p>
                                       <p className="text-[9px] font-bold text-slate-400 uppercase mt-1 tracking-widest">
                                           {log.staff_email?.split('@')[0]} &bull; {new Date(log.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                       </p>

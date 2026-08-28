@@ -21,18 +21,34 @@ import { supabase } from '@/lib/supabaseClient';
 import { scanForExceptions, ApexException } from '@/lib/apex-os/intelligence';
 import { ThreatReport } from '@/lib/apex-os/security-shield';
 
+interface AutomationRun {
+    id: string;
+    rule_id: string;
+    event_id: string;
+    status: string;
+    errors: string;
+    executed_actions: any[];
+    created_at: string;
+    automation_rules: { name: string };
+}
+
 export default function ExceptionCenter() {
     const [exceptions, setExceptions] = React.useState<ApexException[]>([]);
     const [threats, setThreats] = React.useState<ThreatReport[]>([]);
+    const [automationReviews, setAutomationReviews] = React.useState<AutomationRun[]>([]);
     const [loading, setLoading] = React.useState(true);
 
     const runScan = React.useCallback(async () => {
-        const [results, threatRes] = await Promise.all([
+        if (!supabase) return;
+
+        const [results, threatRes, automationRes] = await Promise.all([
             scanForExceptions(),
-            supabase ? supabase.from('security_threats').select('*').eq('status', 'Flagged').limit(5) : Promise.resolve({ data: [] })
+            supabase.from('security_threats').select('*').eq('status', 'Flagged').limit(5),
+            supabase.from('automation_runs').select('*, automation_rules(name)').eq('status', 'PENDING_APPROVAL').limit(5)
         ]);
         setExceptions(results);
         setThreats(threatRes.data || []);
+        setAutomationReviews((automationRes.data as any) || []);
         setLoading(false);
     }, []);
 
@@ -56,8 +72,8 @@ export default function ExceptionCenter() {
                     <ShieldCheck className="h-8 w-8" />
                 </div>
                 <div className="space-y-1">
-                    <h2 className="text-xl font-black text-foreground uppercase tracking-tighter leading-none">Ecosystem Integrity: Secure</h2>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">Apex OS detecting zero operational or security anomalies.</p>
+                    <h2 className="text-xl font-black text-foreground uppercase tracking-tighter leading-none">Cellar Integrity: Secure</h2>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">Bar Command detecting zero operational or security anomalies.</p>
                 </div>
             </div>
             <ShieldCheck className="absolute -bottom-10 -right-10 h-64 w-64 text-emerald-500/5 rotate-12 -z-0" />
@@ -88,12 +104,34 @@ export default function ExceptionCenter() {
                     <div className="flex items-center gap-3">
                         <button onClick={runScan} className="h-10 px-4 rounded-xl border border-border text-[9px] font-black uppercase hover:bg-slate-50 transition-all">Re-Scan</button>
                         <span className="text-[10px] font-black text-rose-500 uppercase tracking-widest bg-rose-50 px-4 py-2 rounded-full border border-rose-100">
-                            {exceptions.length + threats.length} Critical Alerts
+                            {exceptions.length + threats.length + automationReviews.length} Alerts
                         </span>
                     </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Automation Approvals (Manual Override Hub) */}
+                    {automationReviews.map(run => (
+                        <Card key={run.id} className="p-8 rounded-[2.5rem] border-2 border-indigo-200 bg-indigo-50/20 shadow-xl relative group">
+                            <div className="flex items-start gap-6">
+                                <div className="h-14 w-14 rounded-2xl bg-indigo-500 flex items-center justify-center text-white">
+                                    <AlertTriangle size={28} />
+                                </div>
+                                <div className="flex-1">
+                                    <div className="flex items-center gap-3 mb-1">
+                                        <span className="bg-indigo-600 text-white text-[7px] font-black uppercase tracking-widest px-2 py-0.5 rounded">Manual Override</span>
+                                        <p className="text-[9px] font-black text-slate-400 uppercase">{new Date(run.created_at).toLocaleTimeString()}</p>
+                                    </div>
+                                    <h4 className="text-sm font-black text-indigo-700 uppercase tracking-tight">Review: {run.automation_rules?.name}</h4>
+                                    <p className="text-[10px] text-indigo-500 font-medium mt-1 leading-relaxed italic">Autonomous action paused for admin verification.</p>
+                                    <div className="flex gap-2 mt-4">
+                                        <Button size="sm" className="h-8 rounded-lg bg-indigo-600 text-white text-[8px] font-black uppercase">Approve Action</Button>
+                                        <Button size="sm" variant="outline" className="h-8 rounded-lg border-indigo-200 text-indigo-600 text-[8px] font-black uppercase">Dismiss</Button>
+                                    </div>
+                                </div>
+                            </div>
+                        </Card>
+                    ))}
                     {/* Security Threats First */}
                     {threats.map(t => (
                         <Card key={t.id} className="p-8 rounded-[2.5rem] border-2 border-rose-200 bg-rose-50/30 shadow-xl relative group animate-pulse">

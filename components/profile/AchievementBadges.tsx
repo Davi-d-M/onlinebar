@@ -38,12 +38,12 @@ export default function AchievementBadges({ userId }: { userId: string }) {
                 } else {
                     // Fallback to internal defaults if settings missing
                     setBadges([
-                        { key: 'first-purchase', label: 'First Purchase', icon: 'ShoppingBag', desc: 'Your first tech extraction complete.' },
-                        { key: 'gadget-hunter', label: 'Gadget Hunter', icon: 'Smartphone', desc: 'Own 5+ elite devices.' },
-                        { key: 'reviewer', label: 'Reviewer', icon: 'MessageSquare', desc: 'Shared expertise on 5+ gadgets.' },
-                        { key: 'influencer', label: 'Influencer', icon: 'Users', desc: 'Referred a friend successfully.' },
-                        { key: 'vip-shopper', label: 'VIP Shopper', icon: 'Rocket', desc: 'Spent over KSh 50,000.' },
-                        { key: 'tech-master', label: 'Tech Master', icon: 'Gem', desc: 'Achieved Diamond Rank.' },
+                        { key: 'first-pour', label: 'First Pour', icon: 'ShoppingBag', desc: 'Your first bar order complete.' },
+                        { key: 'bar-regular', label: 'Bar Regular', icon: 'Wine', desc: 'Ordered 5+ times this month.' },
+                        { key: 'connoisseur', label: 'Connoisseur', icon: 'MessageSquare', desc: 'Shared expertise on 5+ beverages.' },
+                        { key: 'social-patron', label: 'Social Patron', icon: 'Users', desc: 'Referred a friend successfully.' },
+                        { key: 'vvip-shopper', label: 'VVIP Patron', icon: 'Rocket', desc: 'Spent over KSh 50,000.' },
+                        { key: 'mixology-master', label: 'Mixology Master', icon: 'Gem', desc: 'Achieved Diamond Rank.' },
                     ]);
                 }
             } catch (err: unknown) {

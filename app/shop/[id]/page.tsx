@@ -92,7 +92,7 @@ export default async function Page({ params }: Props) {
     const { data } = await supabase
       .from('products')
       .select('*')
-      .eq('category', product.category || 'electronics')
+      .eq('category', product.category || 'spirits')
       .neq('id', id)
       .limit(4);
     related = (data || []).map((p) => ({

@@ -19,6 +19,7 @@ import { useCart } from '@/context/CartContext';
 import { useSettings } from '@/lib/useSettings';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useInteractionTracking } from '@/lib/utils/useInteractionTracking';
 
 interface Suggestion {
     id: number;
@@ -34,6 +35,7 @@ export default function AIConcierge() {
     const [messages, setMessages] = React.useState<{ role: 'user' | 'assistant', text: string, suggestions?: Suggestion[] }[]>([]);
     const [isLoading, setIsLoading] = React.useState(false);
     const { addBundleToCart } = useCart();
+    const { trackClick } = useInteractionTracking();
 
     const scrollRef = React.useRef<HTMLDivElement>(null);
 
@@ -52,6 +54,8 @@ export default function AIConcierge() {
         setMessages(prev => [...prev, { role: 'user', text: userMsg }]);
         setQuery('');
         setIsLoading(true);
+
+        trackClick('ai-concierge-msg', 'AI Concierge Message', { query: userMsg, msg_count: messages.length + 1 });
 
         try {
             // Real Database Vector/Keyword Search Node
@@ -95,7 +99,7 @@ export default function AIConcierge() {
             quantity: 1
         }));
         addBundleToCart(cartItems);
-        setMessages(prev => [...prev, { role: 'assistant', text: "Target payload added to bag. Ready for extraction! 🚀" }]);
+        setMessages(prev => [...prev, { role: 'assistant', text: "Selection added to bag. Ready for dispatch! 🍷" }]);
     };
 
     return (

@@ -3,13 +3,13 @@
 import { useEffect, useState, useMemo } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import ProductCard from './ProductCard';
+import { OB_OS } from '@/lib/onlineBarOS';
 import {
   LayoutGrid,
-  Smartphone,
-  Speaker,
-  BatteryCharging,
-  Watch,
-  Grid2X2,
+  Wine,
+  Beer,
+  GlassWater,
+  Cookie,
   Search,
   ArrowUpDown,
   Filter,
@@ -36,12 +36,12 @@ interface Product {
 }
 
 const CATEGORIES = [
-    { id: 'all', label: 'All Tech', icon: LayoutGrid },
-    { id: 'airpods', label: 'AirPods', icon: Speaker },
-    { id: 'chargers', label: 'Chargers', icon: BatteryCharging },
-    { id: 'cases', label: 'Cases', icon: Smartphone },
-    { id: 'watches', label: 'Watches', icon: Watch },
-    { id: 'accessories', label: 'Others', icon: Grid2X2 },
+    { id: 'all', label: 'All Menu', icon: LayoutGrid },
+    { id: 'wine', label: 'Vintages', icon: Wine },
+    { id: 'whiskey', label: 'Whiskey', icon: GlassWater },
+    { id: 'beer', label: 'Chilled Beers', icon: Beer },
+    { id: 'snacks', label: 'Snacks', icon: Cookie },
+    { id: 'mixers', label: 'Mixers', icon: Zap },
 ];
 
 export default function ProductList({ initialProducts }: { initialProducts?: Product[] }) {
@@ -123,6 +123,30 @@ export default function ProductList({ initialProducts }: { initialProducts?: Pro
     window.addEventListener('apex-search', handleApexSearch);
     return () => window.removeEventListener('apex-search', handleApexSearch);
   }, []);
+
+  // 3. 🚀 [MASTER_OS] Track Search & Discovery
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(async () => {
+        if (!supabase) return;
+        const { data: { session } } = await supabase.auth.getSession();
+        const anonId = localStorage.getItem('ob_anonymous_id');
+
+        if (searchQuery.trim().length >= 2 || activeCategory !== 'all') {
+            await OB_OS.track('PRODUCT_SEARCHED', {
+                userId: session?.user?.id,
+                anonymousId: anonId || undefined,
+                details: {
+                    query: searchQuery,
+                    category: activeCategory,
+                    brand: selectedBrand,
+                    results_count: filteredProducts.length
+                }
+            });
+        }
+    }, 1000); // 1s debounce to avoid spamming the log
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchQuery, activeCategory, selectedBrand, filteredProducts.length]);
 
   // Extract unique brands (first word of product name)
   const brands = useMemo(() => {
@@ -224,7 +248,7 @@ export default function ProductList({ initialProducts }: { initialProducts?: Pro
                   <Input
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search AirPods, chargers, cases..."
+                    placeholder="Search whiskey, wine, beer, mixers..."
                     className="h-14 rounded-2xl border-slate-100 bg-slate-50/50 pl-12 text-sm font-medium"
                   />
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
@@ -322,10 +346,10 @@ export default function ProductList({ initialProducts }: { initialProducts?: Pro
               </div>
               <div className="space-y-2 text-left sm:text-center px-6">
                   <h3 className="text-2xl font-black text-foreground uppercase tracking-tighter">
-                    Warehouse Silent
+                    Cellar Silent
                   </h3>
                   <p className="text-slate-400 text-sm font-medium italic max-w-xs mx-auto">
-                    &quot;We couldn&apos;t locate any gadgets matching those parameters. Try resetting your radar.&quot;
+                    &quot;We couldn&apos;t locate any beverages matching those parameters. Try resetting your radar.&quot;
                   </p>
               </div>
               <button

@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS public.products (
   image_url TEXT,
   images TEXT[] DEFAULT ARRAY[]::TEXT[],
   video_url TEXT,
-  category TEXT DEFAULT 'electronics',
+  category TEXT DEFAULT 'spirits',
   sizes TEXT[] DEFAULT ARRAY['Standard'],
   stock INT DEFAULT 0,
   variant_stock JSONB DEFAULT '{}'::JSONB,

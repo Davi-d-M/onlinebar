@@ -27,7 +27,7 @@ export default function ProposeGadget() {
     const [success, setSuccess] = React.useState(false);
     const [formData, setFormData] = React.useState({
         name: '',
-        category: 'electronics',
+        category: 'spirits',
         price: '',
         cost_price: '',
         stock: '1',

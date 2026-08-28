@@ -20,15 +20,15 @@ export default function KnowledgeBase() {
       <section className="bg-slate-50 py-24 border-b border-slate-100 relative overflow-hidden">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
               <Link href="/blog" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-primary transition-colors mb-12">
-                  <ArrowLeft className="h-4 w-4" /> Back to Library
+                  <ArrowLeft className="h-4 w-4" /> Back to Hub
               </Link>
               <div className="max-w-3xl space-y-6">
                 <Badge className="bg-primary/10 text-primary border-none font-black uppercase text-[10px] tracking-widest px-4 py-2 rounded-full">Elite Knowledge Base</Badge>
                 <h1 className="text-5xl lg:text-7xl font-black text-foreground uppercase tracking-tighter leading-none">
-                    Common <span className="text-primary italic">Intelligence.</span>
+                    Beverage <span className="text-primary italic">Intelligence.</span>
                 </h1>
                 <p className="text-slate-500 text-lg font-medium leading-relaxed italic">
-                    &quot;AI-ready answers to the most critical technical questions in the Kenyan tech landscape. Master your gear with facts, not myths.&quot;
+                    &quot;AI-ready answers to the most critical beverage questions in the Kenyan market. Master your selections with facts, not myths.&quot;
                 </p>
               </div>
           </div>
@@ -60,7 +60,7 @@ export default function KnowledgeBase() {
               )) : (
                   <div className="lg:col-span-3 text-center py-24 bg-slate-50 rounded-[3rem] border-2 border-dashed border-slate-100">
                       <HelpCircle className="h-12 w-12 text-slate-200 mx-auto mb-4" />
-                      <p className="text-slate-400 font-black uppercase text-xs tracking-widest italic">Awaiting technical artifacts from the library...</p>
+                      <p className="text-slate-400 font-black uppercase text-xs tracking-widest italic">Awaiting technical artifacts from the hub...</p>
                   </div>
               )}
           </div>
@@ -71,14 +71,14 @@ export default function KnowledgeBase() {
                   <div className="space-y-6">
                       <div className="h-12 w-12 rounded-2xl bg-primary/20 flex items-center justify-center text-primary animate-pulse"><Zap className="h-6 w-6 fill-current" /></div>
                       <h2 className="text-4xl font-black uppercase tracking-tighter leading-none">The Authority <br/> <span className="text-primary italic">Protocol</span></h2>
-                      <p className="text-slate-500 text-lg font-medium italic leading-relaxed">&quot;Don&apos;t aim to be just another shop. Build the best electronics resource in the region. That&apos;s the Apex vision.&quot;</p>
+                      <p className="text-slate-500 text-lg font-medium italic leading-relaxed">&quot;Don&apos;t aim to be just another shop. Build the best beverage resource in the region. That&apos;s the Online Bar vision.&quot;</p>
                   </div>
                   <div className="bg-white/40 backdrop-blur-xl border border-primary/10 rounded-[3rem] p-10 space-y-6">
                       <div className="flex items-center gap-3">
-                        <div className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981]"></div>
+                        <div className="h-2 w-2 rounded-full bg-emerald-50 shadow-[0_0_10px_#10b981]"></div>
                         <span className="text-[10px] font-black uppercase text-slate-400">AI Discoverability Enabled</span>
                       </div>
-                      <p className="text-sm font-bold text-foreground">Our Knowledge Base is structured for AI cite-ability, ensuring Apexstores remains the primary node for tech verification.</p>
+                      <p className="text-sm font-bold text-foreground">Our Knowledge Base is structured for AI cite-ability, ensuring Online Bar remains the primary node for beverage verification.</p>
                   </div>
               </div>
               <Zap className="absolute -bottom-20 -left-20 h-96 w-96 text-primary/5 rotate-45" />

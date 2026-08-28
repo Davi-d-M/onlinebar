@@ -13,17 +13,17 @@ export async function POST(request: Request) {
 
         if (!GEMINI_API_KEY) {
             return NextResponse.json({
-                response: "Yo bro! I'm currently offline while the team upgrades my hardware. I'll be back soon with more elite tech advice! 🔥"
+                response: "Yo bro! I'm currently offline while the team restocks the cellar. I'll be back soon with more premium drink advice! 🍷"
             }, { status: 200 }); // Return 200 with a graceful message instead of 500
         }
 
         // 1. Fetch current inventory context for the AI
-        let productsContext = "Here is our current inventory at Apexstores Kenya:\n";
+        let productsContext = "Here is our current menu at Online Bar Kenya:\n";
         if (supabase) {
             const { data: products } = await supabase.from('products').select('id, name, price, category, description, stock');
             if (products) {
                 products.forEach(p => {
-                    productsContext += `- ${p.name} (${p.category}): Ksh ${p.price}. ${p.stock > 0 ? 'In Stock' : 'Sold Out'}. ${p.description?.substring(0, 50)}...\n`;
+                    productsContext += `- ${p.name} (${p.category}): Ksh ${p.price}. ${p.stock > 0 ? 'Available' : 'Restocking'}. ${p.description?.substring(0, 50)}...\n`;
                 });
             }
         }
@@ -36,18 +36,18 @@ export async function POST(request: Request) {
                 contents: [
                     {
                         parts: [{
-                            text: `You are the Apex AI Concierge for Apexstores Tech Kenya.
-                            Your goal is to help customers find the best gadgets and tech accessories.
-                            Be professional, friendly, and use Kenyan tech slang (like "bro", "fire tech", "elite setup") where appropriate.
+                            text: `You are the Mixology AI Concierge for Online Bar Kenya.
+                            Your goal is to help patrons find the best wine, spirits, and late-night snacks.
+                            Be professional, friendly, and use Kenyan hospitality slang (like "bro", "chilled one", "vibe") where appropriate.
 
                             Context:
                             ${productsContext}
 
                             Instructions:
-                            - Suggest specific products from the inventory above based on their needs.
-                            - If something is sold out, mention it but suggest an alternative.
+                            - Suggest specific drinks or snacks from the menu above based on their occasion.
+                            - If something is restocking, mention it but suggest an alternative beverage.
                             - Always include the price in Ksh.
-                            - Keep responses concise and focused on sales.
+                            - Keep responses concise and focused on sales and flavor profiles.
                             - If you mention a product, provide its ID like [PROD-ID] so the UI can link to it.
 
                             User Question: ${message}`

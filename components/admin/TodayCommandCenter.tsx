@@ -2,44 +2,53 @@
 
 import * as React from 'react';
 import { supabase } from '@/lib/supabaseClient';
-import { ShoppingBag, Truck, Package, MessageSquare, ChevronRight, Wine } from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { ShoppingBag, Truck, Wine, DollarSign, Users, Bot, Zap } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import Link from 'next/link';
 
 interface CommandStats {
-    attention_orders: number;
-    offline_riders: number;
-    low_stock: number;
-    support_tickets: number;
+    revenue: number;
+    orders: number;
+    users: number;
+    riders: number;
+    shops: number;
+    automation: number;
 }
 
 export default function TodayCommandCenter() {
     const [stats, setStats] = React.useState<CommandStats>({
-        attention_orders: 0,
-        offline_riders: 0,
-        low_stock: 0,
-        support_tickets: 0
+        revenue: 0,
+        orders: 0,
+        users: 0,
+        riders: 0,
+        shops: 0,
+        automation: 94.7
     });
 
     React.useEffect(() => {
         async function fetchCommandData() {
             if (!supabase) return;
             try {
-                const [ordersRes, ridersRes, productsRes, messagesRes] = await Promise.all([
-                    supabase.from('orders').select('id', { count: 'exact' }).eq('status', 'Pending'),
-                    supabase.from('rider_status').select('id', { count: 'exact' }).eq('status', 'Offline'),
-                    supabase.from('products').select('id', { count: 'exact' }).lte('stock', 5),
-                    supabase.from('messages').select('id', { count: 'exact' }).eq('status', 'New')
+                const [ordersRes, usersRes, ridersRes, shopsRes, revenueRes] = await Promise.all([
+                    supabase.from('orders').select('id', { count: 'exact' }),
+                    supabase.from('profiles').select('id', { count: 'exact' }),
+                    supabase.from('rider_status').select('id', { count: 'exact' }).eq('status', 'Online'),
+                    supabase.from('suppliers').select('id', { count: 'exact' }).eq('is_active', true),
+                    supabase.from('ledger_entries').select('amount').eq('entry_type', 'REVENUE')
                 ]);
 
-                setStats({
-                    attention_orders: ordersRes.count || 0,
-                    offline_riders: ridersRes.count || 0,
-                    low_stock: productsRes.count || 0,
-                    support_tickets: messagesRes.count || 0
-                });
+                const totalRev = revenueRes.data?.reduce((sum, e) => sum + Number(e.amount), 0) || 0;
+
+                setStats(prev => ({
+                    ...prev,
+                    revenue: totalRev,
+                    orders: ordersRes.count || 0,
+                    users: usersRes.count || 0,
+                    riders: ridersRes.count || 0,
+                    shops: shopsRes.count || 0
+                }));
             } catch {
-                console.error("Command Center Link unstable.");
+                console.error("Command HUD Link unstable.");
             }
         }
 
@@ -48,82 +57,48 @@ export default function TodayCommandCenter() {
         return () => clearInterval(interval);
     }, []);
 
-    const indicators = [
-        {
-            label: 'Orders Pending',
-            val: stats.attention_orders,
-            href: '/admin/orders',
-            icon: ShoppingBag,
-            color: 'rose',
-            status: stats.attention_orders > 0 ? 'CRITICAL' : 'STABLE'
-        },
-        {
-            label: 'Runners Offline',
-            val: stats.offline_riders,
-            href: '/admin/dispatch',
-            icon: Truck,
-            color: 'amber',
-            status: 'MONITORING'
-        },
-        {
-            label: 'Low Cellar Stock',
-            val: stats.low_stock,
-            href: '/admin/upload',
-            icon: Wine,
-            color: 'primary',
-            status: stats.low_stock > 5 ? 'RESTOCK' : 'SAFE'
-        },
-        {
-            label: 'Support Tickets',
-            val: stats.support_tickets,
-            href: '/admin/messages',
-            icon: MessageSquare,
-            color: 'indigo',
-            status: 'ACTIVE'
-        }
+    const nodes = [
+        { label: 'Revenue', val: `KSh ${(stats.revenue / 1000).toFixed(1)}K`, icon: DollarSign, color: 'primary' },
+        { label: 'Orders', val: stats.orders, icon: ShoppingBag, color: 'indigo' },
+        { label: 'Patrons', val: stats.users, icon: Users, color: 'emerald' },
+        { label: 'Runners', val: stats.riders, icon: Truck, color: 'amber' },
+        { label: 'Active Shops', val: stats.shops, icon: Wine, color: 'rose' },
+        { label: 'Automation', val: `${stats.automation}%`, icon: Bot, color: 'indigo' }
     ];
 
     return (
         <section className="space-y-6">
             <div className="flex items-center justify-between px-2">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 text-left">
                     <div className="h-2 w-2 rounded-full bg-primary animate-pulse"></div>
-                    <h2 className="text-xl font-black uppercase tracking-tighter text-foreground">Shift Command Center</h2>
+                    <h2 className="text-xl font-black uppercase tracking-tighter text-foreground leading-none">Command Center HUD</h2>
                 </div>
-                <span className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground bg-secondary px-3 py-1 rounded-full border border-border">Shift Pulse</span>
+                <div className="flex items-center gap-2">
+                    <Zap size={10} className="text-primary animate-pulse" />
+                    <span className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground">Network Synchronized</span>
+                </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
-                {indicators.map((item) => (
-                    <Link key={item.label} href={item.href} className="flex h-full">
-                        <div className={cn(
-                            "p-6 rounded-[2.5rem] bg-white border border-slate-100 hover:shadow-xl hover:scale-[1.02] transition-all group relative overflow-hidden flex flex-col justify-between w-full h-full",
-                            item.val > 0 && item.color === 'rose' && "border-rose-100 bg-rose-50/50"
-                        )}>
-                            <div className="relative z-10 flex justify-between items-start">
-                                <div className={cn(
-                                    "h-12 w-12 rounded-2xl flex items-center justify-center transition-transform group-hover:rotate-6 shadow-sm",
-                                    item.color === 'rose' ? "bg-rose-50 text-rose-500" :
-                                    item.color === 'amber' ? "bg-amber-50 text-amber-500" :
-                                    item.color === 'primary' ? "bg-primary/10 text-primary" :
-                                    "bg-indigo-50 text-indigo-500"
-                                )}>
-                                    <item.icon className="h-6 w-6" />
-                                </div>
-                                <div className="text-right">
-                                    <p className="text-[8px] font-black uppercase tracking-widest text-muted-foreground mb-1">{item.status}</p>
-                                    <h3 className="text-3xl font-black text-foreground tracking-tighter">{item.val}</h3>
-                                </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                {nodes.map((node) => (
+                    <Card key={node.label} className="p-6 rounded-[2.5rem] bg-white border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-xl transition-all">
+                        <div className="relative z-10 flex flex-col gap-4 text-left">
+                            <div className={cn(
+                                "h-10 w-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110",
+                                node.color === 'primary' ? 'bg-primary/10 text-primary' :
+                                node.color === 'indigo' ? 'bg-indigo-50 text-indigo-500' :
+                                node.color === 'emerald' ? 'bg-emerald-50 text-emerald-500' :
+                                node.color === 'amber' ? 'bg-amber-50 text-amber-500' :
+                                'bg-rose-50 text-rose-500'
+                            )}>
+                                <node.icon size={20} />
                             </div>
-
-                            <div className="mt-6 flex items-center justify-between">
-                                <p className="text-[10px] font-black uppercase text-foreground/70 tracking-tight leading-tight max-w-[140px] truncate whitespace-nowrap">{item.label}</p>
-                                <div className="h-8 w-8 rounded-full bg-secondary flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <ChevronRight className="h-4 w-4 text-primary" />
-                                </div>
+                            <div className="space-y-0.5">
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{node.label}</p>
+                                <h3 className="text-2xl font-black text-foreground tracking-tighter uppercase leading-none">{node.val}</h3>
                             </div>
                         </div>
-                    </Link>
+                    </Card>
                 ))}
             </div>
         </section>

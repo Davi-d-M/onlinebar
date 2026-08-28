@@ -31,6 +31,8 @@ interface Vendor {
     sales_total: number;
     items_count: number;
     commission_rate: number;
+    merchant_level?: number;
+    merchant_xp?: number;
     joined_at: string;
 }
 
@@ -109,27 +111,40 @@ export default function MultiVendorHub() {
                         <div className="flex gap-2">
                             <Button
                                 onClick={async () => {
-                                    if (!newVendor.name || !newVendor.email) return;
+                                    if (!newVendor.name || !newVendor.email || !supabase) return;
                                     setLoading(true);
-                                    await new Promise(r => setTimeout(r, 1500));
-                                    setVendors(prev => [...prev, {
-                                        id: `v${Date.now()}`,
-                                        name: newVendor.name,
-                                        email: newVendor.email,
-                                        status: 'Pending',
-                                        sales_total: 0,
-                                        items_count: 0,
-                                        commission_rate: 10,
-                                        joined_at: new Date().toISOString()
-                                    }]);
-                                    setIsOnboarding(false);
-                                    setNewVendor({ name: '', email: '' });
-                                    setLoading(false);
-                                    setMessage({ type: 'success', text: "Onboarding Payload Sent. Verification Pending." });
-                                    setTimeout(() => setMessage(null), 3000);
+                                    try {
+                                        const { data, error } = await supabase
+                                            .from('marketplace_vendors')
+                                            .insert([{
+                                                name: newVendor.name,
+                                                email: newVendor.email,
+                                                status: 'Pending',
+                                                sales_total: 0,
+                                                items_count: 0,
+                                                commission_rate: 10,
+                                                merchant_level: 1,
+                                                merchant_xp: 0
+                                            }])
+                                            .select()
+                                            .single();
+
+                                        if (error) throw error;
+
+                                        setVendors(prev => [data, ...prev]);
+                                        setIsOnboarding(false);
+                                        setNewVendor({ name: '', email: '' });
+                                        setMessage({ type: 'success', text: "Onboarding Payload Sent. Verification Pending." });
+                                        setTimeout(() => setMessage(null), 3000);
+                                    } catch (err: unknown) {
+                                        setMessage({ type: 'error', text: (err as Error).message });
+                                    } finally {
+                                        setLoading(false);
+                                    }
                                 }}
                                 className="flex-1 h-14 rounded-2xl bg-primary text-white font-black uppercase text-[10px] shadow-lg shadow-primary/20"
                             >
+                                {loading ? <Loader2 className="animate-spin mr-2" /> : null}
                                 Initiate Protocol
                             </Button>
                             <Button onClick={() => setIsOnboarding(false)} variant="outline" className="flex-1 h-14 rounded-2xl border-slate-100 font-black uppercase text-[10px]">Cancel</Button>
@@ -203,7 +218,11 @@ export default function MultiVendorHub() {
                                         </div>
                                         <div>
                                             <p className="text-sm font-black text-foreground uppercase tracking-tight">{v.name}</p>
-                                            <p className="text-[9px] font-bold text-slate-400 uppercase mt-1">{v.email}</p>
+                                            <div className="flex items-center gap-2 mt-1">
+                                                <p className="text-[8px] font-bold text-slate-400 uppercase">{v.email}</p>
+                                                <div className="h-1 w-1 rounded-full bg-slate-200" />
+                                                <span className="text-[8px] font-black text-primary uppercase">Level {v.merchant_level || 1}</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </td>
@@ -247,7 +266,7 @@ export default function MultiVendorHub() {
                             <h3 className="text-xl font-black uppercase tracking-tighter">Settlement Protocol</h3>
                         </div>
                         <p className="text-xs font-medium leading-relaxed opacity-70 italic">
-                            &quot;All partner payouts are autonomously calculated every Monday. Commission is deducted at the source of successful extraction missions.&quot;
+                            &quot;All partner payouts are autonomously calculated every Monday. Commission is deducted at the source of successful delivery missions.&quot;
                         </p>
                         <div className="pt-4 border-t border-white/10 flex justify-between items-center">
                             <span className="text-[8px] font-black uppercase tracking-[0.2em] opacity-60">Status</span>

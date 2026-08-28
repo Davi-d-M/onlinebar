@@ -1,41 +1,41 @@
-# Walkthrough: Admin Panel "Bar" Makeover 🍷📋✨
+# Walkthrough: Ultra-Granular Behavioral Intelligence 📊🎯🔥
 
-We have completed a total transformation of the Admin Panel. Every component, label, and icon has been refined to reflect a professional **Online Bar & Hospitality** operation.
+I have successfully established a robust behavioral tracking system for the Online Bar. This data layer allows you to understand exactly how your patrons interact with the cellar, what they are looking for, and where they need a little nudge to complete their order.
 
-## Major UI/UX Improvements
+## Changes Made
 
-### 🏠 Operations Dashboard
-- **Executive Header**: Rebranded to **Online Bar Operations** with "Shift Readiness" tracking.
-- **Sales Intelligence**: Cards now show **Total Bar Sales**, **Bar Margin** (Net Profit), and **Order Queue**.
-- **Trend Analysis**: Rebranded Market Dynamics to **Beverage Flow Trends**.
-- **Icons**: Swapped tech icons for `Wine`, `GlassWater`, and `Beer` symbols across the entire dashboard.
+### 🔍 1. Discovery & Search Insights
+- **[TRACKED] Search Protocol**: Added tracking for `PRODUCT_SEARCHED` in the [ProductList](file:///C:/Users/hp/AndroidStudioProjects/onlinebar/components/home/ProductList.tsx).
+- **Insight Captured**: You can now see what terms users type (e.g., "Glenfiddich", "Chilled Nuts") and which categories they browse most frequently. This is critical for identifying stock gaps.
 
-### 🍸 Shift Command Center
-- **Shift Pulse**: Real-time monitoring of "Runners Offline", "Low Cellar Stock", and "Orders Pending".
-- **Status Badges**: Updated reorder alerts to **RESTOCK CELLAR**.
+### 🌐 2. Passive Page & Section Tracking
+- **[NEW] Analytics Tracker**: Created a global [AnalyticsTracker](file:///C:/Users/hp/AndroidStudioProjects/onlinebar/components/layout/AnalyticsTracker.tsx) component.
+- **Auto-Logging**: Every time a user navigates between pages, a `PAGE_VIEW` event is recorded.
+- **[NEW] Dwell Time**: Upon leaving a page, a `PAGE_DWELL` event is logged, telling you exactly how many milliseconds they spent looking at your vintages.
+- **[NEW] Heatmap Protocol**: Using `IntersectionObserver`, the system now logs a `SECTION_VISIBLE` event whenever a patron scrolls past a key area like the "Snack Hub" or "Mixology Blog".
 
-### 📦 Hospitality-Focused Order Control
-- **Temperature Badges**: Added smart logic to identify **Chilled** vs. **Dry Shelf** items in the order details based on product names (Wine, Beer, Soda, etc.).
-- **Logistics**: Completely rebranded "Riders" to **Bar Runners**.
-- **Fulfillment**: Updated table headers to "Beverage Details", "Order Margin", and "Dispatch State".
+### 🖱️ 3. Global Interaction Heatmap
+- **[NEW] useInteractionTracking**: A unified hook to capture every critical button press.
+- **[TRACKED] High-Intent Clicks**:
+    - **Product Card**: "Quick Look", "WhatsApp Buy", "Compare", and "Wishlist" toggles.
+    - **Product Detail**: "Buy Now", "WhatsApp Order", and "Share".
+    - **AI Concierge**: Every message sent and every "Add Bundle" click.
+- **Real-time Funnel**: These events directly feed the **Journey Funnel** in your Admin Dashboard, giving you a live view of conversion rates.
 
-### 🍇 Cellar Hub (Inventory)
-- **Inventory Master**: Rebranded from "Stock Control".
-- **Product Entry**: Optimized for beverages with "Brand / Maker" and "Bottle Specifications".
-- **Warehouse**: Updated deployment zones to "Nairobi Central Cellar", "Mombasa Port Depot", etc.
-- **Dynamic Pricing**: Updated the AI engine label to use a `Wine` icon for "Pour Optimization".
-
-### 👥 Staff & Patron Management
-- **Shift Tracking**: Rebranded the active admin widget to **Active Staff On-Shift**.
-- **Support**: Rebranded the message inbox to use **Patron** terminology and **Official Bar Response** labels.
-
-### ⚙️ Global Defaults
-- **Categories**: Updated system defaults to **Vintages**, **Premium Spirits**, **Late Night Snacks**, and **Chilled Beers**.
-- **Store Info**: Updated support emails and store hours to reflect 24/7 delivery.
+### 🔗 4. Identity Stitching
+- **Guest-to-Patron Link**: Updated the [AuthForm](file:///C:/Users/hp/AndroidStudioProjects/onlinebar/components/auth/AuthForm.js) to call the "Identity Stitching" protocol.
+- **Behavioral Continuity**: When a guest browses wines and then decides to sign up, all their previous "guest" views are automatically linked to their new profile.
 
 ## Verification Results
-- [x] **Next.js Integrity**: All icon references (`Wine`, `GlassWater`, `Beer`, `ThermometerSnowflake`) verified.
-- [x] **Android Build**: Successfully executed `gradlew :app_android:assembleDebug`.
-- [x] **System Settings**: Default categories correctly initialized for "Online Bar".
 
-Your Admin Panel is now a tailored powerhouse for your bar business, bro! 🍻🚀
+### 🛡️ Production Readiness
+- [x] **Next.js Build**: Successfully verified with `npm run build`.
+- [x] **Type Safety**: All event payloads are strictly typed for consistent data quality.
+- [x] **Privacy Compliant**: Tracking respects the session-based anonymous IDs until a user explicitly authenticates.
+
+## How to View the Data
+1.  Open your **Supabase Dashboard**.
+2.  Go to the `analytics_events` table.
+3.  You will see a live stream of every click, scroll, and dwell happening in the Bar.
+
+Enjoy the ultimate business intelligence, bro! 🍻🚀

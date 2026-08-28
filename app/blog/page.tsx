@@ -45,7 +45,7 @@ export default function BlogListPage() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-white">
         <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
-        <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Opening Library...</p>
+        <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Opening Hub...</p>
       </div>
     );
   }
@@ -55,12 +55,12 @@ export default function BlogListPage() {
       {/* Hero Header */}
       <section className="bg-slate-50 py-24 border-b border-slate-100 relative overflow-hidden">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-              <Badge className="mb-6 bg-primary/10 text-primary border-none font-black uppercase text-[10px] tracking-widest px-4 py-2 rounded-full">Apex Library</Badge>
+              <Badge className="mb-6 bg-primary/10 text-primary border-none font-black uppercase text-[10px] tracking-widest px-4 py-2 rounded-full">Mixology Hub</Badge>
               <h1 className="text-5xl lg:text-7xl font-black text-foreground uppercase tracking-tighter leading-none mb-8">
-                  Tech <span className="text-primary italic">Guides.</span>
+                  Drink <span className="text-primary italic">Guides.</span>
               </h1>
               <p className="text-slate-500 text-lg font-medium max-w-2xl mx-auto">
-                  Master your gadgets with our elite tutorials, hardware reviews, and authenticity guides for Kenyan tech enthusiasts.
+                  Master your mixology with our elite tutorials, beverage reviews, and pairing guides for Kenyan patrons.
               </p>
           </div>
           <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -z-0"></div>
@@ -85,7 +85,7 @@ export default function BlogListPage() {
                         className="object-cover transform group-hover:scale-110 transition-transform duration-700"
                       />
                       <div className="absolute top-6 left-6 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest border border-white/50">
-                          Tech Tips
+                          Drink Tips
                       </div>
                   </div>
                   <div className="px-2 space-y-3">
@@ -108,8 +108,8 @@ export default function BlogListPage() {
 
       {/* CTA section */}
       <section className="bg-slate-50 py-24 text-center text-foreground border-t border-slate-100">
-          <h2 className="text-4xl font-black uppercase tracking-tighter mb-4">Want the latest tech news?</h2>
-          <p className="text-slate-500 font-medium mb-10 max-w-sm mx-auto">Join 1,000+ shoppers getting weekly elite gadget tips.</p>
+          <h2 className="text-4xl font-black uppercase tracking-tighter mb-4">Want the latest deals?</h2>
+          <p className="text-slate-500 font-medium mb-10 max-w-sm mx-auto">Join 1,000+ patrons getting weekly elite beverage tips.</p>
           <div className="flex justify-center">
               <Button
                 onClick={() => document.getElementById('footer-newsletter')?.scrollIntoView({ behavior: 'smooth' })}

@@ -55,17 +55,33 @@ export default function AIAdAgency() {
     }, []);
 
     const handleAuthorizePivot = async () => {
+        if (!supabase) return;
         setLoading(true);
         try {
-            // Apex OS: Pivot budget nodes across campaigns
-            await new Promise(r => setTimeout(r, 2000));
-            setCampaigns(prev => prev.map(c => {
-                if (c.id === 'ad1') return { ...c, spend: c.spend + 5000, velocity: 'Accelerating' as const };
-                if (c.id === 'ad3') return { ...c, spend: Math.max(0, c.spend - 2000), status: 'Paused' as const };
-                return c;
-            }));
-            await logAuditAction(email || 'Admin', 'AI_AD_BUDGET_PIVOT', { amount: 5000, reason: 'High ROAS Re-allocation' });
-            alert("Pivot Protocol Engaged. Meta Budget Updated. 🚀");
+            // Online Bar OS: Pivot budget nodes across campaigns
+            // Find top performing campaign and bottom performing
+            const sorted = [...campaigns].sort((a, b) => b.roas - a.roas);
+            if (sorted.length < 2) throw new Error("Insufficient campaign data for pivot.");
+
+            const top = sorted[0];
+            const bottom = sorted[sorted.length - 1];
+
+            // Real DB updates
+            await Promise.all([
+                supabase.from('ad_campaigns').update({ spend: top.spend + 5000, velocity: 'Accelerating' }).eq('id', top.id),
+                supabase.from('ad_campaigns').update({ spend: Math.max(0, bottom.spend - 5000), velocity: 'Decelerating' }).eq('id', bottom.id)
+            ]);
+
+            await logAuditAction(email || 'Admin', 'AI_AD_BUDGET_PIVOT', {
+                top: top.product_name,
+                bottom: bottom.product_name,
+                amount: 5000
+            });
+
+            await fetchCampaigns();
+            alert("Pivot Protocol Engaged. Ad Spend Nodes Re-allocated. 🚀");
+        } catch (err: unknown) {
+            alert(`Pivot Failed: ${(err as Error).message}`);
         } finally {
             setLoading(false);
         }

@@ -168,9 +168,9 @@ export default function SupportCaseManagement() {
     });
 
     const getAISuggestion = (item: UniversalItem) => {
-        if (item.type === 'Review') return "Thank you for the elite feedback, bro! 🚀";
-        if (item.body.toLowerCase().includes('delivery')) return "Your mission is currently en route. Estimated extraction in 12 mins. 🚚";
-        return "I'm analyzing your technical payload. Our engineers will assist shortly. 🛡️";
+        if (item.type === 'Review') return "Thank you for the amazing feedback, bro! 🍷";
+        if (item.body.toLowerCase().includes('delivery')) return "Your delivery is currently en route. Estimated arrival in 12 mins. 🚚";
+        return "I'm analyzing your request. Our team will assist shortly. 🛡️";
     };
 
     const updateItemStatus = async (item: UniversalItem, newStatus: string) => {

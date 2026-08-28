@@ -54,8 +54,10 @@ export const metadata: Metadata = {
 
 import PublicLayoutShield from "@/components/layout/PublicLayoutShield";
 import JsonLd from "@/components/seo/JsonLd";
-import { type StoreSettings } from "@/lib/useSettings";
+import AnalyticsTracker from "@/components/layout/AnalyticsTracker";
+import { type StoreSettings, DEFAULT_SETTINGS } from "@/lib/useSettings";
 import { getCachedSettings } from "@/lib/cachedData";
+import { Suspense } from "react";
 
 export default async function RootLayout({
   children,
@@ -64,7 +66,7 @@ export default async function RootLayout({
 }>) {
   // Fetch settings with shared cache
   const { data: settingsRes } = await getCachedSettings();
-  const settings = {} as StoreSettings;
+  const settings = { ...DEFAULT_SETTINGS } as StoreSettings;
   (settingsRes || []).forEach(item => {
       const key = item.key as keyof StoreSettings;
       (settings as unknown as Record<string, unknown>)[key] = item.value;
@@ -75,6 +77,9 @@ export default async function RootLayout({
       <body
         className={`${inter.variable} font-sans antialiased flex flex-col min-h-screen`}
       >
+        <Suspense fallback={null}>
+            <AnalyticsTracker />
+        </Suspense>
         <JsonLd />
         {/* Enterprise Marketing Scripts */}
         {process.env.NEXT_PUBLIC_GA_ID && (

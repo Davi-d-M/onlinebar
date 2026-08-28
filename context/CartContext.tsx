@@ -1,6 +1,8 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { OB_OS } from "@/lib/onlineBarOS";
+import { supabase } from "@/lib/supabaseClient";
 
 export interface CartItem {
   id: number;
@@ -9,6 +11,7 @@ export interface CartItem {
   base_price: number;
   image: string;
   quantity: number;
+  category?: string;
   size?: string;
   wholesale_price?: number;
   wholesale_min_qty?: number;
@@ -42,7 +45,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
 
-  const addToCart = (item: CartItem) => {
+  const addToCart = async (item: CartItem) => {
     // Meta Tracking
     if (typeof window !== 'undefined' && (window as any).fbq) {
         (window as any).fbq('track', 'AddToCart', {
@@ -51,6 +54,19 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
             content_type: 'product',
             value: item.price,
             currency: 'KES'
+        });
+    }
+
+    // 🚀 [MASTER_OS] Track Interaction
+    if (supabase) {
+        const { data: { session } } = await supabase.auth.getSession();
+        const anonId = localStorage.getItem('ob_anonymous_id');
+        await OB_OS.track('ADD_TO_CART' as any, {
+            userId: session?.user?.id,
+            anonymousId: anonId || undefined,
+            productId: item.id,
+            amount: item.price,
+            details: { name: item.name, category: item.category, size: item.size }
         });
     }
 

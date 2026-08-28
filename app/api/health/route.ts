@@ -1,46 +1,49 @@
 import { supabase } from "@/lib/supabaseClient";
 import { NextResponse } from "next/server";
 
+/**
+ * ONLINE BAR: DEEP HEALTH CHECK
+ * Verifies all system dependencies are operational.
+ */
 export async function GET() {
-    interface HealthStatus {
-        status: string;
-        timestamp: string;
-        services: {
-            database: string;
-            resend: string;
-            mpesa: string;
-            gemini: string;
-        }
-    }
-
-    const health: HealthStatus = {
-        status: "Healthy",
-        timestamp: new Date().toISOString(),
-        services: {
-            database: "Unknown",
-            resend: process.env.RESEND_API_KEY ? "Configured" : "Missing",
-            mpesa: (process.env.MPESA_CONSUMER_KEY && process.env.MPESA_CONSUMER_SECRET) ? "Configured" : "Missing",
-            gemini: process.env.GOOGLE_GEMINI_API_KEY ? "Configured" : "Missing"
-        }
-    };
+    const start = performance.now();
+    const reports: Record<string, any> = {};
+    let isHealthy = true;
 
     try {
-        if (supabase) {
-            const { error } = await supabase.from('products').select('count', { count: 'exact', head: true });
-            if (!error) {
-                health.services.database = "Connected";
-            } else {
-                health.services.database = "Error: " + error.message;
-                health.status = "Degraded";
-            }
-        } else {
-            health.services.database = "Not Initialized";
-            health.status = "Down";
-        }
-    } catch {
-        health.services.database = "Connection Failed";
-        health.status = "Down";
-    }
+        // 1. Database Pulse
+        if (!supabase) throw new Error("Supabase Client Not Configured");
+        const dbStart = performance.now();
+        const { error: dbError } = await supabase.from('settings').select('key').limit(1);
+        reports.database = {
+            status: dbError ? 'ERROR' : 'OK',
+            latency: `${Math.round(performance.now() - dbStart)}ms`,
+            error: dbError?.message
+        };
+        if (dbError) isHealthy = false;
 
-    return NextResponse.json(health);
+        // 2. Storage Pulse
+        const storageStart = performance.now();
+        const { error: stError } = await supabase.storage.listBuckets();
+        reports.storage = {
+            status: stError ? 'ERROR' : 'OK',
+            latency: `${Math.round(performance.now() - storageStart)}ms`
+        };
+        if (stError) isHealthy = false;
+
+        // 3. Environment Context
+        reports.environment = process.env.NODE_ENV;
+        reports.total_latency = `${Math.round(performance.now() - start)}ms`;
+
+        return NextResponse.json(
+            { status: isHealthy ? 'HEALTHY' : 'DEGRADED', ...reports },
+            { status: isHealthy ? 200 : 503 }
+        );
+
+    } catch (err: any) {
+        return NextResponse.json(
+            { status: 'DOWN', error: err.message },
+            { status: 500 }
+        );
+    }
 }

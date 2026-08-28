@@ -1,20 +1,19 @@
-# Apexstores Tech Kenya
+# Online Bar - Premium Drinks & Snacks Nairobi
 
-> Premium electronics and mobile accessories engineered for excellence. Authentic tech with fast dispatch across Nairobi.
+Online Bar is Kenya's elite destination for premium wine, spirits, and late-night snacks. We provide 24/7 chilled dispatch across Nairobi.
 
-Apexstores is Kenya's elite destination for high-performance audio, high-speed charging, and mobile protection. We provide verified, high-quality gadgets including AirPods, MagSafe chargers, and premium cases.
+## Key Categories
+- [Vintages](https://onlinebar.co.ke/shop/category/wine): Fine wine and champagne collections.
+- [Premium Spirits](https://onlinebar.co.ke/shop/category/whiskey): Whiskey, Gin, Vodka, and Cognac.
+- [Chilled Beers](https://onlinebar.co.ke/shop/category/beer): Local and international brews.
+- [Late Night Snacks](https://onlinebar.co.ke/shop/category/snacks): Perfect pairings for your drinks.
 
-## Core Categories
-- [AirPods & Audio](https://tech-paxv.onrender.com/shop/category/airpods): High-fidelity wireless audio and noise cancellation gadgets.
-- [Power & Charging](https://tech-paxv.onrender.com/shop/category/chargers): Fast-charging blocks, cables, and MagSafe accessories.
-- [Protection & Style](https://tech-paxv.onrender.com/shop/category/cases): Impact-resistant cases and screen protectors.
-- [Smart Watches](https://tech-paxv.onrender.com/shop/category/watches): Elite wearable tech for tracking and connectivity.
+## Our Values
+- **Genuine Products:** 100% authentic beverages with a quality guarantee.
+- **Chilled Dispatch:** Delivered cold and ready for your celebration.
+- **Fast Delivery:** 1-2 hour delivery standard within Nairobi.
+- **Secure Payment:** M-Pesa and card payments via secure gateways.
 
-## Brand Benefits
-- **Verified Tech:** 100% authentic gadgets with zero-defect guarantee.
-- **Fast Dispatch:** Same-day delivery within Nairobi and 24h upcountry.
-- **Apex Club:** Loyalty points on every purchase and referral rewards.
-
-## Support & Tracking
-- [Track Your Order](https://tech-paxv.onrender.com/track): Real-time visibility into your delivery.
-- [Technical Support](https://tech-paxv.onrender.com/contact): Instant help with your gadgets.
+## Support
+- [Customer Support](https://onlinebar.co.ke/contact): Instant help with your orders.
+- [Mixology Hub](https://onlinebar.co.ke/blog): Expert guides on drinks and pairings.

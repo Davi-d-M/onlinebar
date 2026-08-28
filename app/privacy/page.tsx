@@ -2,7 +2,7 @@
 import React from "react";
 
 export default function PrivacyPolicyPage() {
-  const lastUpdated = "May 2026";
+  const lastUpdated = "August 2026";
 
   return (
     <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8 text-left">
@@ -13,8 +13,8 @@ export default function PrivacyPolicyPage() {
           <h1 className="text-3xl font-extrabold text-foreground tracking-tight uppercase">Privacy Policy</h1>
           <p className="text-sm text-slate-400 mt-2">Last Updated: {lastUpdated}</p>
           <p className="text-slate-600 mt-4 leading-relaxed font-medium">
-            At <strong>Apexstores</strong>, we appreciate the trust you place in us when shopping for premium electronics.
-            This Privacy Policy describes how your personal information is collected, used, and shared when you visit or make a purchase from our gadget store.
+            At <strong>Online Bar</strong>, we appreciate the trust you place in us when shopping for premium beverages.
+            This Privacy Policy describes how your personal information is collected, used, and shared when you visit or make a purchase from our storefront.
           </p>
         </div>
 
@@ -25,11 +25,11 @@ export default function PrivacyPolicyPage() {
           <section>
             <h2 className="text-lg font-bold text-foreground mb-3 uppercase tracking-tight">1. Information We Collect</h2>
             <p className="mb-3 text-slate-500">
-              When you visit or purchase from Apexstores, we collect specific details necessary to complete your order and improve your tech browsing experience:
+              When you visit or purchase from Online Bar, we collect specific details necessary to complete your order and improve your browsing experience:
             </p>
             <ul className="list-disc pl-5 space-y-2 text-slate-500">
-              <li><strong>Device Information:</strong> Your web browser parameters, local IP address, time zone configurations, and relevant tracking cookie details.</li>
-              <li><strong>Order Information:</strong> Your full name, explicit physical delivery address, shipping location details, and a valid telephone number.</li>
+              <li><strong>Connection Information:</strong> Your web browser parameters, local IP address, time zone configurations, and relevant tracking cookie details.</li>
+              <li><strong>Order Information:</strong> Your full name, delivery address, shipping location details, and a valid telephone number.</li>
             </ul>
           </section>
 
@@ -48,7 +48,7 @@ export default function PrivacyPolicyPage() {
           <section className="p-5 bg-indigo-50 border border-indigo-100 rounded-xl">
             <h2 className="text-sm font-bold text-indigo-900 uppercase tracking-wider mb-2">🔒 Payment & M-Pesa Security</h2>
             <p className="text-xs leading-relaxed text-indigo-800 font-medium">
-              Your security is our absolute priority. Apexstores integration frameworks <strong>never</strong> store your private PIN codes or direct financial credentials.
+              Your security is our absolute priority. Online Bar integration frameworks <strong>never</strong> store your private PIN codes or direct financial credentials.
               All financial executions are handled via direct checkout prompts safely through official mobile carrier infrastructure links (such as Safaricom Daraja STK channels).
             </p>
           </section>
@@ -57,7 +57,7 @@ export default function PrivacyPolicyPage() {
           <section>
             <h2 className="text-lg font-bold text-foreground mb-3 uppercase tracking-tight">3. Data Sharing & Third Parties</h2>
             <p className="text-slate-500">
-              We only share your information with localized third parties that are strictly necessary to fulfill your shopping journey (such as providing your delivery details to a dispatch rider or courier service). We do not rent, lease, or sell customer databases to any exterior advertisement agencies.
+              We only share your information with localized third parties that are strictly necessary to fulfill your shopping journey (such as providing your delivery details to a dispatch rider). We do not rent, lease, or sell customer databases to any exterior advertisement agencies.
             </p>
           </section>
 
@@ -65,7 +65,7 @@ export default function PrivacyPolicyPage() {
           <section>
             <h2 className="text-lg font-bold text-foreground mb-3 uppercase tracking-tight">4. Cookies</h2>
             <p className="text-slate-500">
-              Our storefront utilizes temporary data cookies to remember items you have added to your tech bag while moving across pages. Disabling cookies inside your browser preferences may cause your persistent cart items to reset during navigation.
+              Our storefront utilizes temporary data cookies to remember items you have added to your bag while moving across pages. Disabling cookies inside your browser preferences may cause your persistent cart items to reset during navigation.
             </p>
           </section>
 
@@ -82,7 +82,7 @@ export default function PrivacyPolicyPage() {
         {/* Brand Signoff */}
         <div className="border-t mt-10 pt-6 text-center">
           <p className="text-xs font-black text-slate-400 tracking-wider uppercase">
-            © {new Date().getFullYear()} Apexstores. All Rights Reserved.
+            © {new Date().getFullYear()} Online Bar™. All Rights Reserved.
           </p>
         </div>
 

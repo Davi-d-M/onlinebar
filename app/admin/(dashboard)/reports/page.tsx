@@ -8,12 +8,12 @@ import {
   RefreshCcw,
   TrendingUp,
   DollarSign,
-  Package,
   FileText,
   Clock,
   PieChart,
   Loader2,
-  ShieldCheck
+  ShieldCheck,
+  Wine
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -58,8 +58,8 @@ export default function AdminReportsPage() {
 
         // Header
         doc.setFontSize(22);
-        doc.setTextColor(255, 107, 0); // Apex Primary
-        doc.text('APEXSTORES TECH KENYA', 105, 20, { align: 'center' });
+        doc.setTextColor(255, 107, 0); // Bar Primary
+        doc.text('ONLINE BAR NAIROBI', 105, 20, { align: 'center' });
         doc.setFontSize(12);
         doc.setTextColor(100);
         doc.text(`${type === 'Custom' ? 'STRATEGIC' : type.toUpperCase()} PERFORMANCE REPORT`, 105, 28, { align: 'center' });
@@ -106,7 +106,7 @@ export default function AdminReportsPage() {
         if (type === 'Inventory') {
             doc.autoTable({
                 startY: 85,
-                head: [['ID', 'Gadget Name', 'Category', 'Price', 'Stock Level']],
+                head: [['ID', 'Product Name', 'Category', 'Price', 'Stock Level']],
                 body: products.map(p => [p.id, p.name, p.category, p.price, p.stock]),
                 theme: 'striped',
                 headStyles: { fillColor: [255, 107, 0] },
@@ -122,12 +122,12 @@ export default function AdminReportsPage() {
         }
 
         // Footer
-        const finalY = doc.lastAutoTable?.finalY || 150;
+        const finalY = (doc as unknown as Record<string, any>).lastAutoTable?.finalY || 150;
         doc.setFontSize(8);
         doc.setTextColor(150);
-        doc.text('Confidential Internal Report - Apexstores Property', 105, finalY + 20, { align: 'center' });
+        doc.text('Confidential Internal Report - Online Bar Property', 105, finalY + 20, { align: 'center' });
 
-        doc.save(`Apex_Report_${type}_${now.toISOString().split('T')[0]}.pdf`);
+        doc.save(`Bar_Report_${type}_${now.toISOString().split('T')[0]}.pdf`);
         setGenerating(null);
     };
 
@@ -136,19 +136,19 @@ export default function AdminReportsPage() {
             <header className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 border-b border-slate-200 pb-8">
                 <div>
                     <h1 className="text-4xl font-black text-foreground uppercase tracking-tighter">Executive Reports</h1>
-                    <p className="text-slate-500 text-sm font-medium mt-1 italic">High-fidelity data exports for strategic business review.</p>
+                    <p className="text-slate-500 text-sm font-medium mt-1 italic">High-fidelity data exports for strategic beverage review.</p>
                 </div>
                 <Button onClick={fetchData} variant="outline" className="rounded-xl h-12 px-6 border-slate-200 bg-white font-black uppercase text-[10px] tracking-widest transition-all hover:shadow-lg">
-                    <RefreshCcw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} /> Sync Database
+                    <RefreshCcw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} /> Sync Cellar
                 </Button>
             </header>
 
             <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                 {[
-                    { label: 'Daily Pulse', desc: 'Last 24 hours', icon: Clock, type: 'Daily' },
+                    { label: 'Shift Pulse', desc: 'Last 24 hours', icon: Clock, type: 'Daily' },
                     { label: 'Weekly Sync', desc: 'Past 7 days', icon: Calendar, type: 'Weekly' },
                     { label: 'Monthly Audit', desc: 'Full month', icon: FileText, type: 'Monthly' },
-                    { label: 'Inventory', desc: 'Stock mapping', icon: Package, type: 'Inventory' },
+                    { label: 'Cellar Stock', desc: 'Inventory mapping', icon: Wine, type: 'Inventory' },
                 ].map((r) => (
                     <Card key={r.label} className="p-8 rounded-[3rem] border border-slate-100 shadow-sm hover:shadow-2xl transition-all group flex flex-col items-center text-center">
                         <div className="h-12 w-12 sm:h-16 sm:w-16 rounded-2xl sm:rounded-3xl bg-primary/10 flex items-center justify-center text-primary mb-4 sm:mb-6 transition-transform group-hover:scale-110 group-hover:rotate-6">
@@ -173,7 +173,7 @@ export default function AdminReportsPage() {
                     <div className="relative z-10 flex flex-col h-full justify-between gap-12 text-left">
                         <div className="space-y-4">
                             <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest rounded-full border border-primary/10">
-                                <TrendingUp className="h-3 w-3" /> Profit Analytics
+                                <TrendingUp className="h-3 w-3" /> Pour Analytics
                             </div>
                             <h2 className="text-4xl font-black uppercase tracking-tighter leading-none text-left">Automated <br/> <span className="text-primary italic">Monday Dispatch</span></h2>
                             <p className="text-slate-500 font-medium max-w-md italic text-left leading-relaxed">Your Weekly Performance Report is automatically compiled and dispatched to your email every Monday at 08:00 AM.</p>
@@ -235,9 +235,9 @@ export default function AdminReportsPage() {
                         </div>
                     </div>
 
-                    <div className="bg-white border border-slate-100 rounded-[3rem] p-10 text-foreground shadow-sm relative overflow-hidden">
-                        <h4 className="text-[10px] font-black uppercase tracking-widest mb-2 text-primary">Pro Tip</h4>
-                        <p className="text-sm font-bold leading-relaxed italic text-slate-500">&quot;Always check the Inventory Health report before placing orders with suppliers to avoid dead stock.&quot;</p>
+                    <div className="bg-white border border-slate-100 rounded-[3rem] p-10 text-foreground shadow-sm relative overflow-hidden text-left">
+                        <h4 className="text-[10px] font-black uppercase tracking-widest mb-2 text-primary">Bar Tip</h4>
+                        <p className="text-sm font-bold leading-relaxed italic text-slate-500">&quot;Always check the Cellar Health report before placing orders with distributors to avoid dead stock.&quot;</p>
                         <ShieldCheck className="absolute -bottom-4 -right-4 h-24 w-24 text-primary/5 rotate-12" />
                     </div>
                 </div>

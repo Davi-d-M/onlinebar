@@ -8,7 +8,7 @@ export async function unlockAchievement(userId: string, key: string) {
     if (!supabase || !userId) return;
 
     try {
-        // Check if already unlocked
+        // 1. Check if already unlocked
         const { data: existing } = await supabase
             .from('user_achievements')
             .select('*')
@@ -18,8 +18,17 @@ export async function unlockAchievement(userId: string, key: string) {
 
         if (existing) return; // Already achieved
 
-        // Unlock
-        const { error } = await supabase
+        // 2. Fetch Reward Details
+        const { data: achievement } = await supabase
+            .from('achievements')
+            .select('xp_reward, points_reward')
+            .eq('key', key)
+            .single();
+
+        if (!achievement) throw new Error("Achievement blueprint not found.");
+
+        // 3. Unlock & Grant Rewards
+        const { error: unlockError } = await supabase
             .from('user_achievements')
             .insert([{
                 user_id: userId,
@@ -27,9 +36,18 @@ export async function unlockAchievement(userId: string, key: string) {
                 unlocked_at: new Date().toISOString()
             }]);
 
-        if (error) throw error;
+        if (unlockError) throw unlockError;
 
-        console.log(`Achievement Unlocked: ${key} for ${userId} 🏅`);
+        // 4. Update Profile XP & Points
+        const { data: profile } = await supabase.from('profiles').select('xp, loyalty_points').eq('id', userId).single();
+        if (profile) {
+            await supabase.from('profiles').update({
+                xp: (profile.xp || 0) + (achievement.xp_reward || 0),
+                loyalty_points: (profile.loyalty_points || 0) + (achievement.points_reward || 0)
+            }).eq('id', userId);
+        }
+
+        console.log(`Achievement Unlocked: ${key} for ${userId} 🏅 (+${achievement.xp_reward} XP)`);
         return true;
     } catch (err) {
         console.error("Achievement Unlock Failure:", err);
@@ -39,32 +57,40 @@ export async function unlockAchievement(userId: string, key: string) {
 
 /**
  * Post-Checkout Reliability Check
- * Scans user history to grant badges
+ * Scans user history to grant badges and XP
  */
 export async function runPostCheckoutAudit(userId: string, orderTotal: number) {
     if (!supabase || !userId) return;
 
     try {
-        // 1. First Purchase
-        await unlockAchievement(userId, 'first-purchase');
-
-        // 2. VIP Shopper (Spent over 50k)
-        if (orderTotal >= 50000) {
-            await unlockAchievement(userId, 'vip-shopper');
+        // Grant Base XP for Purchase (1 XP per 10 KSh)
+        const purchaseXP = Math.floor(orderTotal / 10);
+        const { data: profile } = await supabase.from('profiles').select('xp').eq('id', userId).single();
+        if (profile) {
+            await supabase.from('profiles').update({
+                xp: (profile.xp || 0) + purchaseXP
+            }).eq('id', userId);
         }
 
-        // 3. Gadget Hunter (Own 5+ unique products)
-        // We'll fetch orders by user_id or linked phone
-        const { data: profile } = await supabase.from('profiles').select('phone_number').eq('id', userId).single();
-        if (profile?.phone_number) {
-            const { count: gadgetCount } = await supabase
+        // 1. First Pour
+        await unlockAchievement(userId, 'first-pour');
+
+        // 2. VVIP Patron (Spent over 50k)
+        if (orderTotal >= 50000) {
+            await unlockAchievement(userId, 'vvip-shopper');
+        }
+
+        // 3. Bar Regular (Own 5+ unique orders)
+        const { data: profileData } = await supabase.from('profiles').select('phone_number').eq('id', userId).single();
+        if (profileData?.phone_number) {
+            const { count: orderCount } = await supabase
                 .from('orders')
                 .select('*', { count: 'exact', head: true })
-                .eq('customer_phone', profile.phone_number)
+                .eq('customer_phone', profileData.phone_number)
                 .eq('status', 'Delivered');
 
-            if (gadgetCount && gadgetCount >= 5) {
-                await unlockAchievement(userId, 'gadget-hunter');
+            if (orderCount && orderCount >= 5) {
+                await unlockAchievement(userId, 'bar-regular');
             }
         }
     } catch (err) {

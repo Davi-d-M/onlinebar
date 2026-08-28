@@ -1,23 +1,11 @@
-- `[x]` Admin Dashboard Makeover (`page.tsx`)
-    - `[x]` Update executive header and card labels
-    - `[x]` Update charts and warehouse section titles
-- `[x]` Shift Command Center Update (`TodayCommandCenter.tsx`)
-    - `[x]` Rename component and labels
-    - `[x]` Update status badges
-- `[x]` Order Control Hospitality Features (`orders/page.tsx`)
-    - `[x]` Add Chilled/Dry temperature badges
-    - `[x]` Rebrand Rider to Bar Runner
-    - `[x]` Rebrand tactical labels
-- `[x]` Widget Makeover
-    - `[x]` `ActiveAdmins.tsx`: Update to "Active Staff On-Shift"
-    - `[x]` `SystemPulseWidget.tsx`: Update to "Cellar Pulse"
-- `[x]` Sidebar & Layout Rebranding (`layout-client.tsx`)
-    - `[x]` Rebrand nav groups (SHIFT CONTROL, PATRONS, etc.)
-    - `[x]` Update bar name options
-- `[x]` Login & Messages Makeover
-    - `[x]` `login/page.tsx`: Update placeholders and links
-    - `[x]` `messages/page.tsx`: Rebrand Member to Patron
-- `[x]` Global Settings Update (`useSettings.ts`)
-    - `[x]` Update default categories (Wine, Spirits, Snacks)
-    - `[x]` Update default store info
-- `[x]` Final Visual Polish (Icons)
+- `[ ]` Implement Ultra-Granular Behavioral Intelligence
+    - `[ ]` Create `useInteractionTracking.ts` utility hook
+    - `[ ]` Update `OnlineBarOS.ts` for new event types and batching
+    - `[ ]` Enhance `AnalyticsTracker.tsx` with Dwell Time & Heatmap logic
+    - `[ ]` Integrate interaction tracking into `ProductCard.tsx`
+    - `[ ]` Integrate interaction tracking into `ProductDetailClient.tsx`
+    - `[ ]` Integrate interaction tracking into `AIConcierge.tsx`
+    - `[ ]` Final production cleanup in `page.tsx`
+- `[ ]` Verification
+    - `[ ]` Verify Next.js build
+    - `[ ]` Verify behavioral logs in database

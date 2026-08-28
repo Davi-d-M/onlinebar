@@ -19,9 +19,9 @@ interface Notification {
 export default function NotificationCenter({ isOpen, setIsOpen }: { isOpen: boolean, setIsOpen: (open: boolean) => void }) {
     const [notifications, setNotifications] = React.useState<Notification[]>([
         { id: '1', type: 'critical', label: 'Payment Discrepancy', meta: 'KES 800 mismatch in Paystack sync', time: '2m ago', url: '/admin/finance', isRead: false },
-        { id: '2', type: 'warning', label: 'Critical Stock Alert', meta: 'SIM Card Tray — 3 units remaining', time: '11m ago', url: '/admin/upload', isRead: false },
-        { id: '3', type: 'info', label: 'Rider Delayed', meta: 'Rider John K. hasn\'t moved for 15m', time: '23m ago', url: '/admin/dispatch', isRead: true },
-        { id: '4', type: 'success', label: 'Campaign Completed', meta: 'Flash Sale broadcast reached 1,240 users', time: '1h ago', url: '/admin/broadcast', isRead: true },
+        { id: '2', type: 'warning', label: 'Critical Stock Alert', meta: 'Chilled Gin — 3 bottles remaining', time: '11m ago', url: '/admin/upload', isRead: false },
+        { id: '3', type: 'info', label: 'Runner Delayed', meta: 'Runner John K. hasn\'t moved for 15m', time: '23m ago', url: '/admin/dispatch', isRead: true },
+        { id: '4', type: 'success', label: 'Campaign Completed', meta: 'Happy Hour broadcast reached 1,240 patrons', time: '1h ago', url: '/admin/broadcast', isRead: true },
     ]);
 
     const markAllRead = () => {
@@ -59,7 +59,7 @@ export default function NotificationCenter({ isOpen, setIsOpen }: { isOpen: bool
                     {notifications.length === 0 ? (
                         <div className="py-20 text-center opacity-30">
                             <CheckCircle2 className="h-10 w-10 mx-auto mb-4" />
-                            <p className="text-[10px] font-black uppercase tracking-widest">Sky clear, Commander.</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest">Shift clear, Master.</p>
                         </div>
                     ) : (
                         notifications.map((n) => (

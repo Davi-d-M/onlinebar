@@ -19,11 +19,11 @@ export async function POST(request: Request) {
                     body: JSON.stringify({
                         contents: [{
                             parts: [{
-                                text: `Write a professional, persuasive, and high-converting marketing description for a tech product.
+                                text: `Write a professional, persuasive, and high-converting marketing description for a beverage or snack product.
                                 Product Name: ${name}
                                 Category: ${category}
                                 Target Market: Kenya
-                                Style: Premium, concise, benefit-focused.
+                                Style: Premium, appetizing, focus on flavor profiles and occasion.
                                 Max 60 words.`
                             }]
                         }]
@@ -42,9 +42,9 @@ export async function POST(request: Request) {
         }
 
         // 2. Fallback to advanced Template System if API fails or is missing
-        const adjectives = ["Premium", "Elite", "High-performance", "Crystal-clear", "Next-gen", "Seamless", "Durable", "Sleek", "Professional", "Authentic"];
-        const powerWords = ["Immersive", "lightning-fast", "military-grade", "precision-engineered", "studio-quality"];
-        const verbs = ["Elevate", "Upgrade", "Transform", "Master", "Experience", "Secure", "Empower"];
+        const adjectives = ["Premium", "Elite", "Chilled", "Rich", "Smooth", "Hand-crafted", "Authentic", "Aged", "Gourmet", "Refreshing"];
+        const powerWords = ["Immersive flavor", "full-bodied", "crisp finish", "perfectly balanced", "top-shelf quality"];
+        const verbs = ["Experience", "Savor", "Indulge", "Celebrate", "Toast", "Enjoy", "Discover"];
 
         const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
         const power = powerWords[Math.floor(Math.random() * powerWords.length)];
@@ -53,20 +53,20 @@ export async function POST(request: Request) {
         let description = "";
 
         switch (category) {
-            case "airpods":
-                description = `${adj} audio experience with the new ${name}. Featuring ${power} active noise cancellation, deep immersive bass, and a comfortable ergonomic design perfect for daily use. ${verb} your music today with authentic quality.`;
+            case "wine":
+                description = `${adj} vintage experience with the new ${name}. Featuring ${power} notes, a complex aroma, and a smooth finish perfect for any celebration. ${verb} your evening today with Online Bar quality.`;
                 break;
-            case "chargers":
-                description = `${adj} power delivery for your devices. The ${name} ensures ${power} charging speeds while protecting your battery health with smart heat management. ${verb} your charging game.`;
+            case "whiskey":
+                description = `${adj} spirit for the refined palate. The ${name} ensures ${power} taste while delivering a warm, sophisticated finish. ${verb} your drinking experience.`;
                 break;
-            case "cases":
-                description = `${power} protection meets elegant design. The ${name} offers a ${adj.toLowerCase()} fit with shock-absorbent materials and a premium soft-touch finish. ${verb} your device in style.`;
+            case "beer":
+                description = `${adj} and refreshing. The ${name} offers a ${power} experience with every sip. Delivered chilled and ready to enjoy. ${verb} the moment.`;
                 break;
-            case "watches":
-                description = `Stay connected and track your fitness with the ${adj} ${name}. Features a vivid display, ${power} health monitoring, and seamless sync with your phone. ${verb} your lifestyle.`;
+            case "snacks":
+                description = `The perfect pairing for your drinks. Our ${adj} ${name} provides ${power} crunch and flavor. ${verb} your late-night cravings.`;
                 break;
             default:
-                description = `${adj} ${name} designed for those who demand the best. Engineered for ${power} reliability and performance in every situation. ${verb} the difference with Apexstores.`;
+                description = `${adj} ${name} curated for those who demand the best. Selected for ${power} and taste in every bottle. ${verb} the difference with Online Bar.`;
         }
 
         return NextResponse.json({ description });

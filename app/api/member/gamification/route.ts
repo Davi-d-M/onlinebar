@@ -147,7 +147,7 @@ async function handleUpdateMissionProgress(userId: string, type: string, increme
 
     // Mission targets
     const targets: Record<string, number> = {
-        'buy-accessory': 2,
+        'buy-mixers': 2,
         'review-product': 5,
         'watch-video': 1,
         'refer-friend': 1,
@@ -178,7 +178,7 @@ async function handleUpdateMissionProgress(userId: string, type: string, increme
 
     if (completed) {
         const xpMap: Record<string, number> = {
-            'buy-accessory': 100,
+            'buy-mixers': 100,
             'review-product': 50,
             'watch-video': 30,
             'refer-friend': 200,

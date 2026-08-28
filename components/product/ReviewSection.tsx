@@ -201,7 +201,7 @@ export default function ReviewSection({ productId, isLive = true }: { productId:
                     </div>
                     <p className="text-[10px] font-black uppercase tracking-widest text-foreground mb-2">Legacy Mode Active</p>
                     <p className="text-[9px] text-slate-500 font-medium leading-relaxed italic">
-                        &quot;Reviews are temporarily disabled for legacy gadgets. They will be enabled once synced to the Apex Cloud.&quot;
+                        &quot;Reviews are temporarily disabled for legacy products. They will be enabled once synced to the new cellar node.&quot;
                     </p>
                 </div>
             )}

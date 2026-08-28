@@ -63,7 +63,7 @@ export default function SignInTrigger() {
           <div className="space-y-3">
             <h2 className="text-3xl font-black uppercase tracking-tighter text-foreground">Elevate Your Experience</h2>
             <p className="text-slate-500 font-medium italic text-sm">
-                &quot;Join the elite circle of tech enthusiasts and unlock a new dimension of performance.&quot;
+                &quot;Join the elite circle of patrons and unlock a new dimension of rewards.&quot;
             </p>
           </div>
 

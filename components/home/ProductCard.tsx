@@ -12,6 +12,7 @@ import RestockNotifyButton from "@/components/product/RestockNotifyButton";
 import { useWishlist } from "@/context/WishlistContext";
 import { useSettings } from "@/lib/useSettings";
 import { supabase } from "@/lib/supabaseClient";
+import { useInteractionTracking } from "@/lib/utils/useInteractionTracking";
 
 interface Product {
   id: number;
@@ -56,6 +57,7 @@ export default function ProductCard({ product }: { product: Product }) {
   const { addToCart, toggleCompare, compareList } = useCart();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const { settings } = useSettings();
+  const { trackClick } = useInteractionTracking();
 
   useEffect(() => {
       async function checkTier() {
@@ -104,6 +106,7 @@ export default function ProductCard({ product }: { product: Product }) {
       base_price: product.price,
       image: imageUrl,
       quantity: 1,
+      category: product.category,
       size: selectedVariant || undefined,
       wholesale_price: product.wholesale_price,
       wholesale_min_qty: product.wholesale_min_qty
@@ -126,6 +129,7 @@ export default function ProductCard({ product }: { product: Product }) {
         name: product.name,
         price: product.price,
         image: imageUrl,
+        category: product.category
       });
     }
   };
@@ -160,8 +164,9 @@ export default function ProductCard({ product }: { product: Product }) {
             {product.category && (
                 <span className="bg-slate-100 text-slate-400 text-[7px] sm:text-[8px] font-black px-1.5 py-0.5 rounded uppercase tracking-[0.1em] border border-slate-200">
                     {product.category.includes('Wine') ? 'Vintages' :
-                     product.category.includes('Spirits') ? 'Premium Spirits' :
-                     product.category.includes('Snacks') ? 'Late Night' : 'Bar Selection'}
+                     product.category.includes('Whiskey') ? 'Premium Spirit' :
+                     product.category.includes('Beer') ? 'Chilled Beer' :
+                     product.category.includes('Snack') ? 'Late Night' : 'Bar Selection'}
                 </span>
             )}
             {product.order_count !== undefined && product.order_count > 10 && (
@@ -183,7 +188,10 @@ export default function ProductCard({ product }: { product: Product }) {
             isInWishlist(product.id) && "opacity-100 text-rose-500",
             isLocked && "hidden"
           )}
-          onClick={handleToggleLike}
+          onClick={(e) => {
+              handleToggleLike(e);
+              trackClick('wishlist-btn', 'Toggle Wishlist', { productId: product.id, name: product.name });
+          }}
         >
           <Heart className={cn("h-3 w-3 sm:h-4 sm:w-4", isInWishlist(product.id) && "fill-current")} />
         </Button>
@@ -201,6 +209,7 @@ export default function ProductCard({ product }: { product: Product }) {
               e.preventDefault();
               e.stopPropagation();
               toggleCompare(product);
+              trackClick('compare-btn', 'Toggle Compare', { productId: product.id });
           }}
           title="Compare with other gadgets"
         >
@@ -230,6 +239,7 @@ export default function ProductCard({ product }: { product: Product }) {
                 e.preventDefault();
                 e.stopPropagation();
                 setShowQuickView(true);
+                trackClick('quick-look-btn', 'Quick Look', { productId: product.id });
 
                 // Meta Tracking: ViewContent
                 if (typeof window !== 'undefined' && window.fbq) {
@@ -319,7 +329,8 @@ export default function ProductCard({ product }: { product: Product }) {
                     onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        const message = `Hello Apexstores! I want to order:\n\n*Product:* ${product.name}\n*Price:* ${formatPrice(product.price)}\n\nIs this available for dispatch?`;
+                        trackClick('whatsapp-buy-btn', 'WhatsApp Buy', { productId: product.id });
+                        const message = `Hello Online Bar! I want to order:\n\n*Product:* ${product.name}\n*Price:* ${formatPrice(product.price)}\n\nIs this available for dispatch?`;
                         window.open(`https://wa.me/${settings.contact.whatsapp}?text=${encodeURIComponent(message)}`, '_blank');
                     }}
                 >

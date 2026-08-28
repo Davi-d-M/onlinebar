@@ -8,12 +8,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { supabase } from '@/lib/supabaseClient';
 import {
     RefreshCcw,
-    Rocket,
     ChevronDown,
     ChevronUp,
     ChevronRight,
     TrendingUp as ProfitIcon,
-    Smartphone,
+    Wine,
     Info,
     Plus,
     ImageIcon,
@@ -325,7 +324,7 @@ function UploadContent() {
     setForm({
       name: product.name || '',
       brand: product.brand || '',
-      category: product.category || 'electronics',
+      category: product.category || 'spirits',
       sku: product.sku || '',
       model_number: product.model_number || '',
       price: String(product.price ?? ''),
@@ -471,7 +470,7 @@ function UploadContent() {
 
       cancelEditing();
       fetchProducts();
-      setMessage({ type: 'success', text: editingId ? 'Payload updated.' : 'Gadget deployed!' });
+      setMessage({ type: 'success', text: editingId ? 'Payload updated.' : 'Product deployed!' });
       setTimeout(() => setMessage(null), 3000);
     } catch (err: unknown) {
         const error = err as Error;
@@ -504,9 +503,9 @@ function UploadContent() {
   const generateSupplierPO = () => {
     const low = products.filter(p => p.stock <= 5);
     const doc = new jsPDF();
-    doc.text('Apexstores Purchase Order', 14, 20);
+    doc.text('Online Bar Purchase Order', 14, 20);
     autoTable(doc, { startY: 30, head: [['ID', 'Name', 'Stock']], body: low.map(p => [p.id, p.name, p.stock]) });
-    doc.save('Apex_PO.pdf');
+    doc.save('OnlineBar_PO.pdf');
   };
 
   return (
@@ -1084,7 +1083,7 @@ function UploadContent() {
                                   await supabase.from('products').update({ status: 'Live' }).eq('id', editingId);
                                   cancelEditing();
                                   fetchProducts();
-                                  setMessage({ type: 'success', text: 'Gadget Authorized for Grid! ✅' });
+                                  setMessage({ type: 'success', text: 'Inventory Authorized for Grid! ✅' });
                                   setIsSubmitting(false);
                               }}
                               className="h-16 px-8 rounded-2xl bg-emerald-500 text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-emerald-100 hover:bg-emerald-600 transition-all active:scale-95"
@@ -1122,7 +1121,7 @@ function UploadContent() {
                                 </div>
                                 <div className="space-y-2">
                                     <p className="text-[8px] font-black uppercase text-primary tracking-widest">{form.brand || 'Online Bar'}</p>
-                                    <h4 className="text-xl font-black uppercase text-foreground tracking-tighter leading-none truncate">{form.name || 'Bottle Title'}</h4>
+                                    <h4 className="text-xl font-black uppercase text-foreground tracking-tighter leading-none truncate">{form.name || 'Drink Title'}</h4>
                                     <p className="text-2xl font-black text-foreground tracking-tighter">{formatPrice(Number(form.price) || 0)}</p>
                                 </div>
                                 <p className="text-[10px] text-slate-500 font-medium italic line-clamp-3">&quot;{form.short_description || form.description || 'Manuscript pending...'}&quot;</p>

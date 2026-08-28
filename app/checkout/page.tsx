@@ -17,6 +17,8 @@ import { useSearchParams } from "next/navigation";
 import Script from "next/script";
 import { useSettings } from "@/lib/useSettings";
 import dynamic from "next/dynamic";
+import { OB_OS } from "@/lib/onlineBarOS";
+import { v4 as uuidv4 } from 'uuid';
 
 const LocationPicker = dynamic(() => import("@/components/profile/LocationPicker"), {
     ssr: false,
@@ -128,6 +130,22 @@ function CheckoutContent() {
     async function loadProfile() {
         if (!supabase) return;
         const { data: { session } } = await supabase.auth.getSession();
+
+        // Anonymous ID Management
+        let anonymousId = localStorage.getItem('ob_anonymous_id');
+        if (!anonymousId) {
+            anonymousId = `anon-${uuidv4().substring(0, 8)}`;
+            localStorage.setItem('ob_anonymous_id', anonymousId);
+        }
+
+        // 🚀 [MASTER_OS] Track Checkout Initiation
+        await OB_OS.track('CHECKOUT_STARTED', {
+            userId: session?.user?.id,
+            anonymousId,
+            amount: total,
+            details: { cart_size: cart.length }
+        });
+
         if (session) {
             setUser(session.user);
             const { data: profileData } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
@@ -151,6 +169,7 @@ function CheckoutContent() {
         }
     }
     loadProfile();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const regions = [
@@ -265,7 +284,7 @@ function CheckoutContent() {
     }
 
     setIsPlacingOrder(true);
-    setCheckoutStatus({ type: "processing", message: "Verifying tech availability..." });
+    setCheckoutStatus({ type: "processing", message: "Verifying beverage availability..." });
 
     try {
       const client = supabase;
@@ -314,7 +333,7 @@ function CheckoutContent() {
 
         const handler = window.PaystackPop.setup({
             key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || 'pk_live_0cf2e82a868e445c53ee0b61b5045360b96c75a5',
-            email: customerEmail || 'member@apexstores.com',
+            email: customerEmail || 'patron@onlinebar.co.ke',
             amount: Math.round(total * 100), // KES to Cents
             currency: 'KES',
             ref: checkoutRequestId,
@@ -586,9 +605,9 @@ function CheckoutContent() {
     return (
       <div className="container mx-auto px-4 py-24 text-center">
         <h1 className="text-4xl font-black uppercase tracking-tighter">Your Cart is Empty</h1>
-        <p className="mt-4 text-slate-500 font-medium text-left mx-auto max-w-sm italic">Add some tech to your bag before checking out.</p>
+        <p className="mt-4 text-slate-500 font-medium text-left mx-auto max-w-sm italic">Add some beverages to your bag before checking out.</p>
         <Button className="mt-8 rounded-2xl px-12 h-16 font-black uppercase tracking-widest text-[10px] shadow-2xl shadow-primary/20" asChild>
-          <Link href="/">Browse Gadgets</Link>
+          <Link href="/">Browse Menu</Link>
         </Button>
       </div>
     );
@@ -759,7 +778,7 @@ function CheckoutContent() {
                             className="flex-1 rounded-2xl h-16 border-2 font-black uppercase text-xs tracking-widest text-primary border-primary/10 hover:bg-primary/5 transition-all hover:scale-105 active:scale-95"
                             onClick={() => {
                                 const link = `${window.location.origin}/track?id=${placedOrderId}`;
-                                const message = `Hello! I just placed an order on Apexstores. Track my order here: ${link}`;
+                                const message = `Hello! I just placed an order on Online Bar. Track my order here: ${link}`;
                                 window.open(`https://wa.me/${settings.contact.whatsapp}?text=${encodeURIComponent(message)}`, '_blank');
                             }}
                           >
@@ -963,7 +982,7 @@ function CheckoutContent() {
                 </div>
                 <div className="flex items-center gap-3">
                   <Truck className="h-4 w-4 text-primary" />
-                  <span>Nairobi Elite Dispatch</span>
+                  <span>Nairobi Bar Dispatch</span>
                 </div>
               </div>
             </CardContent>

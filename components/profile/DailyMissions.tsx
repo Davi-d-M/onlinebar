@@ -19,7 +19,7 @@ const MISSION_CONFIG = [
     { type: 'watch-video', label: 'Watch Product Video', xp: '+30 XP', target: 1, icon: Video, cta: 'Find Videos', href: '/shop' },
     { type: 'refer-friend', label: 'Refer Friend', xp: '+200 XP', target: 1, icon: Users, cta: 'Invite Now', action: 'refer' },
     { type: 'wishlist-items', label: 'Wishlist 5 Items', xp: '+40 XP', target: 5, icon: Heart, cta: 'Add Items', href: '/shop' },
-    { type: 'share-product', label: 'Share Product', xp: '+25 XP', target: 1, icon: Share2, cta: 'Share Tech', href: '/shop' },
+    { type: 'share-product', label: 'Share Product', xp: '+25 XP', target: 1, icon: Share2, cta: 'Share Product', href: '/shop' },
 ];
 
 export default function DailyMissions({ userId, referralCode }: { userId: string, referralCode?: string }) {
@@ -41,7 +41,7 @@ export default function DailyMissions({ userId, referralCode }: { userId: string
 
     const handleExecute = (config: typeof MISSION_CONFIG[0]) => {
         if (config.action === 'refer') {
-            const text = `Check out Apexstores for premium tech! Use my link to get a member discount: ${getReferralLink(referralCode || 'APEX-MEMBER')}`;
+            const text = `Check out Online Bar for premium drinks! Use my link to get a member discount: ${getReferralLink(referralCode || 'OB-MEMBER')}`;
             window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
             return;
         }

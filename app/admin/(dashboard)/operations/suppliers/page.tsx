@@ -2,18 +2,25 @@
 
 import * as React from 'react';
 import { supabase } from '@/lib/supabaseClient';
+import Link from 'next/link';
 import {
-    Zap,
     RefreshCcw,
     Plus,
     Activity,
     Target,
     FileDown,
-    Loader2
+    ShieldCheck,
+    Building2,
+    CheckCircle2,
+    XCircle,
+    Search
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
+import { logAuditAction } from '@/lib/auditService';
+import { useAdmin } from '@/context/AdminContext';
 
 interface Supplier {
     id: number;
@@ -23,56 +30,26 @@ interface Supplier {
     fill_rate: number;
     on_time_dispatch_rate: number;
     defect_rate: number;
-    status: 'Active' | 'UnderReview' | 'Suspended';
+    verification_status: 'Pending' | 'Verified' | 'Rejected';
+    is_active: boolean;
+    business_permit_url?: string;
+    kra_pin_url?: string;
+    premises_license_url?: string;
+    created_at: string;
 }
 
 export default function SupplierScorecards() {
+    const { email: adminEmail } = useAdmin();
     const [suppliers, setSuppliers] = React.useState<Supplier[]>([]);
     const [loading, setLoading] = React.useState(true);
-    const [generatingPO, setGeneratingPO] = React.useState<number | null>(null);
     const [message, setMessage] = React.useState<{ type: 'success' | 'error'; text: string } | null>(null);
-
-    const generatePO = async (supplier: Supplier) => {
-        setGeneratingPO(supplier.id);
-        try {
-            const { default: jsPDF } = await import('jspdf');
-            const doc = new jsPDF();
-
-            // Fetch low stock items for this supplier if possible, or just generate a generic request
-            doc.setFontSize(22);
-            doc.text("PURCHASE ORDER", 105, 20, { align: 'center' });
-
-            doc.setFontSize(10);
-            doc.text(`PO Number: APEX-PO-${Date.now()}`, 20, 40);
-            doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 45);
-
-            doc.setFontSize(12);
-            doc.text("SUPPLIER DETAILS:", 20, 60);
-            doc.setFontSize(10);
-            doc.text(`Name: ${supplier.name}`, 20, 65);
-            doc.text(`Email: ${supplier.email}`, 20, 70);
-
-            doc.setFontSize(12);
-            doc.text("ORDER SUMMARY:", 20, 90);
-            doc.setFontSize(10);
-            doc.text("Stock replenishment requested based on current warehouse velocity.", 20, 95);
-            doc.text("Please provide pro-forma invoice for the latest gadgets.", 20, 100);
-
-            doc.save(`PO_${supplier.name.replace(/\s+/g, '_')}_${Date.now()}.pdf`);
-            setMessage({ type: 'success', text: "Purchase Order generated and logged. 📝" });
-            setTimeout(() => setMessage(null), 3000);
-        } catch (err) {
-            console.error(err);
-        } finally {
-            setGeneratingPO(null);
-        }
-    };
+    const [search, setSearch] = React.useState('');
 
     const fetchSuppliers = React.useCallback(async () => {
         if (!supabase) return;
         setLoading(true);
         try {
-            const { data, error } = await supabase.from('suppliers').select('*');
+            const { data, error } = await supabase.from('suppliers').select('*').order('created_at', { ascending: false });
             if (error) throw error;
             setSuppliers(data || []);
         } catch (err) {
@@ -86,111 +63,157 @@ export default function SupplierScorecards() {
         fetchSuppliers();
     }, [fetchSuppliers]);
 
+    const handleApprove = async (s: Supplier) => {
+        if (!supabase || !confirm(`Activate ${s.name} for the partner grid?`)) return;
+        try {
+            const { error } = await supabase
+                .from('suppliers')
+                .update({ verification_status: 'Verified', is_active: true })
+                .eq('id', s.id);
+
+            if (error) throw error;
+            await logAuditAction(adminEmail || 'system', 'APPROVE_SUPPLIER', { id: s.id, name: s.name });
+            setMessage({ type: 'success', text: `${s.name} verified and active! ✅` });
+            fetchSuppliers();
+        } catch (err: unknown) {
+            setMessage({ type: 'error', text: (err as Error).message });
+        }
+    };
+
+    const pending = suppliers.filter(s => s.verification_status === 'Pending');
+    const active = suppliers.filter(s => s.verification_status === 'Verified' && s.name.toLowerCase().includes(search.toLowerCase()));
+
     return (
-        <div className="p-8 space-y-10 bg-background min-h-screen text-left pb-40">
-            <header className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 border-b border-border pb-8">
+        <div className="p-8 space-y-10 bg-slate-50 min-h-screen text-left pb-40">
+            <header className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 border-b border-slate-200 pb-8">
                 <div>
                     <div className="flex items-center gap-3 mb-2">
-                        <Zap className="h-4 w-4 text-primary" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Procurement Hub</span>
+                        <Building2 className="h-4 w-4 text-primary" />
+                        <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Nexus Partner Grid</span>
                     </div>
-                    <h1 className="text-4xl font-black text-foreground uppercase tracking-tighter">Supplier Scorecards</h1>
-                    <p className="text-muted-foreground text-sm font-medium mt-1">Algorithmically ranked supplier performance monitoring.</p>
+                    <h1 className="text-4xl font-black text-foreground uppercase tracking-tighter">Partner Logistics</h1>
+                    <p className="text-muted-foreground text-sm font-medium mt-1">Algorithmically monitored bar partner & supply network.</p>
                 </div>
                 <div className="flex gap-2">
-                    <Button onClick={fetchSuppliers} variant="outline" className="rounded-xl h-12 px-6 border-border bg-card text-foreground font-black uppercase text-[10px] tracking-widest transition-all">
-                        <RefreshCcw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} /> Sync Performance
+                    <Button onClick={fetchSuppliers} variant="outline" className="rounded-xl h-12 px-6 border-slate-200 bg-white font-black uppercase text-[10px] tracking-widest hover:bg-slate-50 transition-all active:scale-95">
+                        <RefreshCcw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} /> Sync Matrix
                     </Button>
-                    <Button className="rounded-xl h-12 px-8 bg-primary text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all">
-                        <Plus className="h-4 w-4 mr-2" /> New Supplier
-                    </Button>
+                    <Link href="/merchant/onboarding" target="_blank">
+                        <Button className="rounded-xl h-12 px-8 bg-primary text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-primary/20 hover:scale-105 transition-all active:scale-95">
+                            <Plus size={16} className="mr-2" /> Application Link
+                        </Button>
+                    </Link>
                 </div>
             </header>
 
             {message && (
                 <div className={cn(
-                    "p-4 rounded-[1.5rem] border flex items-center gap-3 animate-in fade-in slide-in-from-top-2",
-                    message.type === 'success' ? "bg-primary/10 border-primary/20 text-primary" : "bg-rose-50 border-rose-100 text-rose-600"
+                    "p-6 rounded-[2rem] border-2 flex items-center gap-4 animate-in slide-in-from-top-4",
+                    message.type === 'success' ? "bg-emerald-50 border-emerald-100 text-emerald-600" : "bg-rose-50 border-rose-100 text-rose-600"
                 )}>
-                    <Zap className="h-5 w-5" />
-                    <p className="text-xs font-black uppercase tracking-widest">{message.text}</p>
+                    {message.type === 'success' ? <CheckCircle2 size={24} /> : <XCircle size={24} />}
+                    <p className="text-sm font-black uppercase tracking-widest">{message.text}</p>
                 </div>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {suppliers.map(s => (
-                    <Card key={s.id} className="p-8 rounded-[3rem] border border-border bg-card shadow-sm hover:shadow-2xl transition-all relative overflow-hidden group text-left">
-                        <div className="relative z-10 space-y-8">
-                            <div className="flex justify-between items-start">
-                                <div className="flex items-center gap-4">
-                                    <div className="h-14 w-14 rounded-2xl bg-secondary border border-border flex items-center justify-center text-foreground font-black text-xl">
+            {/* APPROVALS QUEUE */}
+            {pending.length > 0 && (
+                <section className="space-y-6">
+                    <div className="flex items-center gap-3 px-2">
+                        <ShieldCheck className="text-primary h-6 w-6" />
+                        <h2 className="text-2xl font-black uppercase tracking-tighter text-foreground">Verification Queue</h2>
+                    </div>
+                    <div className="grid gap-4">
+                        {pending.map(s => (
+                            <Card key={s.id} className="p-8 rounded-[3rem] bg-white border border-slate-100 shadow-sm flex flex-col lg:flex-row justify-between items-center gap-8 group hover:border-primary/20 transition-all">
+                                <div className="flex items-center gap-6 flex-1 text-left">
+                                    <div className="h-16 w-16 rounded-[1.8rem] bg-primary/10 flex items-center justify-center text-primary shadow-sm font-black text-xl">
                                         {s.name.substring(0, 2).toUpperCase()}
                                     </div>
                                     <div>
-                                        <h3 className="text-xl font-black text-foreground uppercase tracking-tight leading-none">{s.name}</h3>
-                                        <p className="text-[10px] font-bold text-slate-400 uppercase mt-2 tracking-widest">{s.email}</p>
+                                        <h3 className="font-black text-foreground uppercase text-xl tracking-tight leading-none">{s.name}</h3>
+                                        <div className="flex items-center gap-3 mt-2">
+                                            <span className="text-[10px] font-bold text-slate-400 uppercase">{s.email}</span>
+                                            <div className="h-1 w-1 rounded-full bg-slate-200" />
+                                            <span className="text-[9px] font-black text-primary uppercase animate-pulse">Awaiting Review</span>
+                                        </div>
                                     </div>
                                 </div>
-                                <span className={cn(
-                                    "px-3 py-1.5 rounded-full text-[8px] font-black uppercase tracking-widest border",
-                                    s.rating >= 90 ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
-                                    s.rating >= 70 ? "bg-amber-50 text-amber-600 border-amber-100" :
-                                    "bg-rose-50 text-rose-600 border-rose-100 animate-pulse"
-                                )}>
-                                    {s.rating} Score
-                                </span>
-                            </div>
 
-                            <div className="space-y-6">
-                                <div className="space-y-2">
-                                    <div className="flex justify-between text-[8px] font-black uppercase text-slate-400 tracking-widest">
-                                        <span>Fill Rate</span>
-                                        <span>{s.fill_rate}%</span>
+                                <div className="flex items-center gap-4">
+                                    <div className="flex -space-x-2 mr-4">
+                                        {s.business_permit_url && <button title="View Permit" onClick={() => window.open(s.business_permit_url, '_blank')} className="h-10 w-10 rounded-full bg-slate-100 border-2 border-white flex items-center justify-center text-slate-400 hover:text-primary transition-colors shadow-sm"><FileDown size={14} /></button>}
+                                        {s.kra_pin_url && <button title="View KRA PIN" onClick={() => window.open(s.kra_pin_url, '_blank')} className="h-10 w-10 rounded-full bg-slate-100 border-2 border-white flex items-center justify-center text-slate-400 hover:text-primary transition-colors shadow-sm"><Activity size={14} /></button>}
+                                        {s.premises_license_url && <button title="View License" onClick={() => window.open(s.premises_license_url, '_blank')} className="h-10 w-10 rounded-full bg-slate-100 border-2 border-white flex items-center justify-center text-slate-400 hover:text-primary transition-colors shadow-sm"><Building2 size={14} /></button>}
                                     </div>
-                                    <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden border border-border p-0.5">
-                                        <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${s.fill_rate}%` }}></div>
-                                    </div>
+                                    <Button onClick={() => handleApprove(s)} className="h-12 px-8 rounded-xl bg-emerald-500 text-white font-black uppercase text-[10px] tracking-widest active:scale-95 shadow-lg shadow-emerald-500/10">Authorize Partner</Button>
+                                    <Button variant="ghost" className="h-12 w-12 rounded-xl text-rose-400 hover:bg-rose-50"><XCircle size={20} /></Button>
                                 </div>
-                                <div className="space-y-2">
-                                    <div className="flex justify-between text-[8px] font-black uppercase text-slate-400 tracking-widest">
-                                        <span>On-Time Dispatch</span>
-                                        <span>{s.on_time_dispatch_rate}%</span>
-                                    </div>
-                                    <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden border border-border p-0.5">
-                                        <div className="h-full bg-primary rounded-full" style={{ width: `${s.on_time_dispatch_rate}%` }}></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="flex flex-col gap-3">
-                                <Button
-                                    onClick={() => generatePO(s)}
-                                    disabled={generatingPO === s.id}
-                                    className="w-full h-14 rounded-2xl bg-primary text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95"
-                                >
-                                    {generatingPO === s.id ? <Loader2 size={16} className="animate-spin mr-2" /> : <FileDown size={16} className="mr-2" />}
-                                    Boost Inventory (PO)
-                                </Button>
-                                <div className="pt-4 border-t border-border flex justify-between items-center">
-                                    <div className="flex items-center gap-3">
-                                        <Activity className="h-4 w-4 text-primary" />
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-foreground">{s.rating >= 90 ? 'Platinum Tier' : 'Standard'}</span>
-                                    </div>
-                                    <Button variant="ghost" size="sm" className="text-[9px] font-black uppercase text-primary tracking-widest">Analytics &rarr;</Button>
-                                </div>
-                            </div>
-                        </div>
-                        <Target className="absolute -bottom-10 -right-10 h-48 w-48 text-primary/5 -rotate-12" />
-                    </Card>
-                ))}
-
-                {suppliers.length === 0 && (
-                    <div className="col-span-full py-32 text-center bg-card rounded-[3rem] border-2 border-dashed border-border opacity-30">
-                        <Zap className="h-12 w-12 mx-auto mb-4 text-slate-200" />
-                        <p className="text-sm font-black text-slate-400 uppercase italic">Awaiting Supplier Integration Data.</p>
+                            </Card>
+                        ))}
                     </div>
-                )}
-            </div>
+                </section>
+            )}
+
+            {/* ACTIVE PARTNERS MATRIX */}
+            <section className="space-y-8">
+                <div className="flex flex-col md:flex-row justify-between items-end gap-6 px-2">
+                    <div className="space-y-1">
+                        <h2 className="text-3xl font-black uppercase tracking-tighter text-foreground">Operational Nodes</h2>
+                        <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Active Bar Partners</p>
+                    </div>
+                    <div className="relative">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300" />
+                        <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search Nodes..." className="h-12 rounded-2xl bg-white border-slate-100 pl-12 text-[10px] font-black uppercase tracking-widest w-72 shadow-sm" />
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {active.map(s => (
+                        <Card key={s.id} className="p-10 rounded-[3.5rem] bg-white border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-2xl hover:border-primary/20 transition-all text-left">
+                            <div className="relative z-10 space-y-10">
+                                <div className="flex justify-between items-start">
+                                    <div className="flex items-center gap-5">
+                                        <div className="h-16 w-16 rounded-[1.8rem] bg-secondary border border-slate-100 flex items-center justify-center text-foreground font-black text-xl shadow-inner group-hover:scale-110 transition-transform">
+                                            {s.name.substring(0, 2).toUpperCase()}
+                                        </div>
+                                        <div>
+                                            <h3 className="text-xl font-black text-foreground uppercase tracking-tight leading-none">{s.name}</h3>
+                                            <p className="text-[10px] font-bold text-slate-400 uppercase mt-2">{s.email}</p>
+                                        </div>
+                                    </div>
+                                    <div className="h-10 w-10 rounded-xl bg-emerald-50 text-emerald-500 flex items-center justify-center shadow-inner"><ShieldCheck size={20} /></div>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-8 py-6 border-y border-slate-50">
+                                    <div className="space-y-2">
+                                        <p className="text-[9px] font-black uppercase text-slate-400 tracking-widest">Trust Rating</p>
+                                        <p className="text-2xl font-black text-foreground">{s.rating}%</p>
+                                    </div>
+                                    <div className="space-y-2 text-right">
+                                        <p className="text-[9px] font-black uppercase text-slate-400 tracking-widest">SLA Speed</p>
+                                        <p className="text-2xl font-black text-primary">{s.on_time_dispatch_rate}%</p>
+                                    </div>
+                                </div>
+
+                                <div className="flex gap-2">
+                                    <Button className="flex-1 h-14 rounded-2xl bg-slate-900 text-white font-black uppercase text-[10px] tracking-widest shadow-xl active:scale-95 transition-all">Order Stock</Button>
+                                    <Button variant="outline" className="flex-1 h-14 rounded-2xl border-slate-100 font-black uppercase text-[10px] hover:bg-slate-50">Analytics</Button>
+                                </div>
+                            </div>
+                            <Target className="absolute -bottom-10 -right-10 h-64 w-64 text-slate-50 -z-0 rotate-12" />
+                        </Card>
+                    ))}
+
+                    {active.length === 0 && (
+                        <div className="col-span-full py-32 text-center bg-white rounded-[3.5rem] border-2 border-dashed border-slate-100 opacity-40 flex flex-col items-center gap-4">
+                            <Building2 size={48} className="text-slate-200" />
+                            <p className="text-sm font-black text-slate-300 uppercase italic">No active nodes detected in this sector.</p>
+                        </div>
+                    )}
+                </div>
+            </section>
         </div>
     );
 }
+

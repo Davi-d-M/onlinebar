@@ -1,72 +1,50 @@
-# Implementation Plan: Online Bar — The 5 Pillars Evolution 🍷🥃🚚
+# Implementation Plan: Ultra-Granular Behavioral Intelligence 📊🎯🔥
 
-This plan outlines the deep transformation of "Online Bar" into a world-class commerce ecosystem, following the 5 pillars of excellence: Shopping Experience, Intelligence, Operations, Merchant OS, and Brand.
+This plan upgrades the Online Bar's analytics from simple page views to a full "UI Heatmap" and "Dwell Time" tracking system. We will capture every button press, hover duration, and section visibility to understand exactly what patrons love and what they ignore.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> **Database Migrations**: This plan requires adding new columns to the `products` and `orders` tables. I will provide the SQL for you to run in the Supabase SQL Editor.
-
-> [!WARNING]
-> **Age Verification**: I will implement a "Responsible Sale" check (18+ popup) to comply with local regulations.
+> This system will significantly increase the volume of data in the `analytics_events` table. I have optimized the logic to use "Interaction Batching" where appropriate to minimize database hits.
 
 ## Proposed Changes
 
-### 🛒 Pillar 1: Best Shopping Experience & Intent-Based Search
+### 🖱️ 1. Global UI Interaction Tracker
 
-#### [MODIFY] [Header.tsx](file:///C:/Users/hp/AndroidStudioProjects/onlinebar/components/layout/Header.tsx)
-- Update the discovery hub with intent-based categories: "Date Night", "House Party", "Corporate Gift".
-- Enhance search to suggest "Party Packages".
+#### [NEW] [InteractionHook.ts](file:///C:/Users/hp/AndroidStudioProjects/onlinebar/lib/utils/useInteractionTracking.ts)
+- A custom React hook that captures click events on any element with a `data-track` attribute.
+- Automatically captures the element's label, ID, and page context.
 
-#### [NEW] [IntentShopping.tsx](file:///C:/Users/hp/AndroidStudioProjects/onlinebar/components/home/IntentShopping.tsx)
-- A new component on the home page: "What are you hosting?" with quick selections for 5, 10, or 20 people.
+#### [MODIFY] [OnlineBarOS.ts](file:///C:/Users/hp/AndroidStudioProjects/onlinebar/lib/onlineBarOS.ts)
+- Add support for `UI_INTERACTION` and `SECTION_VISIBLE` event types.
+- Implement a 5-second buffer for "Dwell Time" events to avoid database spam.
 
-### 🧠 Pillar 2: Intelligence & Recommendation Engine
+### ⏱️ 2. Dwell Time & Heatmap Intelligence
+
+#### [MODIFY] [AnalyticsTracker.tsx](file:///C:/Users/hp/AndroidStudioProjects/onlinebar/components/layout/AnalyticsTracker.tsx)
+- Implement a "Page Dwell" timer that calculates time spent on a page upon exit.
+- Use `IntersectionObserver` to track which homepage sections (Hero, Catalog, Blog, Snacks) were actually seen and for how long.
+
+### 🎯 3. High-Priority Component Tracking
+
+#### [MODIFY] [ProductCard.tsx](file:///C:/Users/hp/AndroidStudioProjects/onlinebar/components/home/ProductCard.tsx)
+- Track "Quick Look", "WhatsApp Buy", and "Compare" clicks.
+- These are key indicators of intent vs. purchase.
 
 #### [MODIFY] [ProductDetailClient.tsx](file:///C:/Users/hp/AndroidStudioProjects/onlinebar/components/product/ProductDetailClient.tsx)
-- Display **ABV**, **Origin**, and **Taste Profile** (e.g., "Smoky • Rich").
-- Add "Complete Your Order" section (Upsell Mixers, Ice, and Glasses).
+- Track "Share", "Warranty Check", and "Spec Expansion" clicks.
 
-#### [MODIFY] [RelatedProducts.tsx](file:///C:/Users/hp/AndroidStudioProjects/onlinebar/components/product/RelatedProducts.tsx)
-- Update logic to recommend products based on "Taste Profile" and "Occasion" instead of just category.
+#### [MODIFY] [AIConcierge.tsx](file:///C:/Users/hp/AndroidStudioProjects/onlinebar/components/home/AIConcierge.tsx)
+- Track chat engagement depth (how many messages a user sends before a conversion).
 
-### 🚚 Pillar 3: Serious Delivery Operation
+### 🛠️ 4. Build Alignment & Cleanup
 
-#### [MODIFY] [order_status_logic](file:///C:/Users/hp/AndroidStudioProjects/onlinebar/lib/apex-os/state-machine.ts)
-- Expand status to: `Created`, `Confirmed`, `Preparing`, `Ready`, `Assigned`, `Out for delivery`, `Delivered`, `Cancelled`, `Refunded`.
-
-#### [NEW] [RiderAppFeatures](file:///C:/Users/hp/AndroidStudioProjects/onlinebar/app/rider/dashboard/page.tsx)
-- Implement OTP/PIN verification for delivery handover.
-- Display "Pickup Location" and "Navigation" hooks.
-
-### 🏪 Pillar 4: Merchant/Admin Operating System
-
-#### [MODIFY] [Admin Dashboard](file:///C:/Users/hp/AndroidStudioProjects/onlinebar/app/admin/(dashboard)/page.tsx)
-- Update HUD to show "Total Sales", "Pending Orders", "Active Runners", and "Low Cellar Stock".
-- Add "Top Selling Category" and "Peak Hour Trends" charts.
-
-#### [MODIFY] [Orders Page](file:///C:/Users/hp/AndroidStudioProjects/onlinebar/app/admin/(dashboard)/orders/page.tsx)
-- Implement the expanded pipeline status workflow.
-
-### 🏆 Pillar 5: Ruthless Branding & VIP Club
-
-#### [MODIFY] [Global Rebranding](file:///C:/Users/hp/AndroidStudioProjects/onlinebar/lib/useSettings.ts)
-- Completely remove all "Gadget", "Device", "Tech" terminology from defaults.
-- Update icons from `Smartphone` to `Wine`, `Beer`, `GlassWater`.
-
-#### [NEW] [Loyalty System](file:///C:/Users/hp/AndroidStudioProjects/onlinebar/app/rewards/page.tsx)
-- Implement "Online Bar Club" with Silver, Gold, and Black tiers.
-- Show "Points Earned" per product and total points redemption logic.
-
----
+#### [MODIFY] [page.tsx](file:///C:/Users/hp/AndroidStudioProjects/onlinebar/app/page.tsx)
+- Final fix for the `SnackCrossSell` unused warning to ensure a 100% clean production build.
 
 ## Verification Plan
 
-### Automated Tests
-- `npm run build` to ensure all new components are correctly integrated.
-
 ### Manual Verification
-1. **Intent Shopping**: Select "House Party" and verify it filters for party-sized bottles and packages.
-2. **Recommendation**: Open a Whiskey and check if "Cola + Ice" is suggested.
-3. **Delivery Flow**: Move an order through the full 9-step pipeline and verify status updates.
-4. **Loyalty**: Check if a user with 5000+ points correctly shows as "Online Bar Black" VIP.
+1. **Button Heatmap**: Click several buttons (WhatsApp, Add to Bag, Filters) and verify the `UI_INTERACTION` event appears in Supabase with the correct `element_id`.
+2. **Section Visibility**: Scroll slowly down the homepage. Verify `SECTION_VISIBLE` events are logged for "Featured", "Snack Hub", and "Mixology Blog".
+3. **Dwell Audit**: Stay on a product page for 30 seconds, then navigate away. Verify the `dwell_time_ms` is recorded in the `analytics_events` payload.

@@ -68,19 +68,19 @@ export default function AllProductsPage() {
       <div className="max-w-7xl mx-auto">
         <header className="mb-16 border-b border-slate-100 pb-10 flex flex-col md:flex-row justify-between items-end gap-6">
           <div>
-            <h1 className="text-5xl font-black tracking-tighter text-foreground uppercase">Our Collection</h1>
-            <p className="text-slate-500 mt-2 font-medium text-lg">Premium technology and authentic gadgets for every lifestyle.</p>
+            <h1 className="text-5xl font-black tracking-tighter text-foreground uppercase">The Bar Menu</h1>
+            <p className="text-slate-500 mt-2 font-medium text-lg">Premium beverages and authentic snacks for every celebration.</p>
           </div>
           <div className="text-right">
               <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 bg-slate-50 px-3 py-1.5 rounded-full border border-slate-100">
-                  {products.length} Products Found
+                  {products.length} Items Available
               </span>
           </div>
         </header>
 
         {products.length === 0 ? (
           <div className="text-center py-32 bg-slate-50 rounded-[3rem] border border-slate-100 shadow-inner">
-            <p className="text-slate-400 font-black uppercase tracking-[0.2em]">The warehouse is currently empty.</p>
+            <p className="text-slate-400 font-black uppercase tracking-[0.2em]">The cellar is currently empty.</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 sm:gap-x-8 gap-y-8 sm:gap-y-12">

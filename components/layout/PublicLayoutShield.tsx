@@ -18,6 +18,9 @@ const SignInTrigger = dynamic(() => import('./SignInTrigger'), { ssr: false });
 const CompareBar = dynamic(() => import('../product/CompareBar'), { ssr: false });
 const AIConcierge = dynamic(() => import('../home/AIConcierge'), { ssr: false });
 const ThemeSynchronizer = dynamic(() => import('./ThemeSynchronizer'), { ssr: false });
+const AgeVerification = dynamic(() => import('./AgeVerification'), { ssr: false });
+const LevelUpCelebration = dynamic(() => import('../engagement/LevelUpCelebration'), { ssr: false });
+const CookieConsentBanner = dynamic(() => import('./CookieConsentBanner'), { ssr: false });
 
 export default function PublicLayoutShield({ children, initialSettings }: { children: React.ReactNode, initialSettings?: StoreSettings }) {
     return (
@@ -157,6 +160,9 @@ function ShieldContent({ children, initialSettings }: { children: React.ReactNod
 
     return (
         <>
+            <CookieConsentBanner />
+            <LevelUpCelebration />
+            <AgeVerification />
             <ThemeSynchronizer />
             <LiveTicker />
             <AbandonedCartBar />

@@ -2,8 +2,13 @@ import ProductList from "@/components/home/ProductList";
 import DynamicHero from "@/components/home/DynamicHero";
 import PromotionalBanner from "@/components/home/PromotionalBanner";
 import PersonalizedFeed from "@/components/home/PersonalizedFeed";
+import EngagementDashboard from "@/components/engagement/EngagementDashboard";
+import LiveCityPulse from "@/components/engagement/LiveCityPulse";
+import SnackCrossSell from "@/components/engagement/SnackCrossSell";
 import { Badge } from "@/components/ui/badge";
-import { BookOpen } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { BookOpen, Utensils, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { getCachedHomeData } from "@/lib/cachedData";
@@ -51,13 +56,48 @@ export default async function Home() {
     <div className="bg-white min-h-screen text-left">
 
       {/* 1. Premium Hero Section */}
-      <DynamicHero initialSettings={settings} />
+      <section id="hero-section">
+          <DynamicHero initialSettings={settings} />
+      </section>
+
+      {/* 1.5 Engagement Hub (Personalized) */}
+      <section id="engagement-hub">
+          <EngagementDashboard />
+      </section>
 
       {/* 2. Flash Sale Banner */}
-      <PromotionalBanner />
+      <section id="promo-banner">
+          <PromotionalBanner />
+      </section>
+
+      {/* 2.5 Live City Intelligence */}
+      <section id="city-pulse">
+          <LiveCityPulse />
+      </section>
+
+      {/* 2.6 Dedicated Snack Shop Entry */}
+      <section id="snack-hub-entry" className="max-w-7xl mx-auto px-4 mb-24 sm:px-6 lg:px-8">
+          <Link href="/shop/snacks">
+              <Card className="p-10 rounded-[3.5rem] bg-indigo-600 text-white border-none shadow-2xl relative overflow-hidden group hover:scale-[1.01] transition-all">
+                  <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-8 text-left">
+                      <div className="space-y-4">
+                          <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full text-[10px] font-black uppercase tracking-widest border border-white/10">
+                              <Utensils className="h-3 w-3" /> New Sector Open
+                          </div>
+                          <h2 className="text-5xl font-black uppercase tracking-tighter leading-none">The Snack <span className="text-primary italic">Hub.</span> 🍿</h2>
+                          <p className="text-lg font-medium opacity-70 italic max-w-md">Discover elite pairings, crunchy bites, and movie night bundles delivered chilled.</p>
+                      </div>
+                      <Button className="h-16 px-10 rounded-2xl bg-white text-indigo-600 font-black uppercase text-xs tracking-widest hover:bg-primary hover:text-white transition-all shadow-xl active:scale-95">
+                          Explore Snacks <ArrowRight className="ml-2 h-4 w-4" />
+                      </Button>
+                  </div>
+                  <Utensils className="absolute -bottom-20 -left-20 h-96 w-96 text-white/5 rotate-12 -z-0" />
+              </Card>
+          </Link>
+      </section>
 
       {/* 3. Collections Feed */}
-      <div className="max-w-7xl mx-auto px-4 py-24 sm:px-6 lg:px-8">
+      <section id="catalog-section" className="max-w-7xl mx-auto px-4 py-24 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-16 border-b border-slate-100 pb-10">
           <div className="space-y-4">
             <Badge className="bg-primary/10 text-primary hover:bg-primary/10 border-none font-black uppercase tracking-widest text-[10px] px-3 py-1.5 rounded-full">
@@ -76,13 +116,18 @@ export default async function Home() {
         {/* 4. Product Grid & Filter Tabs */}
         <ProductList initialProducts={initialProducts} />
 
-      </div>
+        <div className="mt-24">
+            <SnackCrossSell />
+        </div>
+      </section>
 
       {/* 5. Personalized Feed (Memory) */}
-      <PersonalizedFeed />
+      <section id="personalized-feed">
+          <PersonalizedFeed />
+      </section>
 
       {/* 6. Blog Teaser Section */}
-      <section className="bg-slate-50 py-24 border-y border-slate-100">
+      <section id="blog-section" className="bg-slate-50 py-24 border-y border-slate-100">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex justify-between items-end mb-12">
                   <div className="space-y-3">
@@ -119,7 +164,7 @@ export default async function Home() {
       </section>
 
       {/* 6. Fast Power CTA */}
-      <section className="bg-slate-50 py-32 overflow-hidden relative border-t border-slate-100">
+      <section id="cta-section" className="bg-slate-50 py-32 overflow-hidden relative border-t border-slate-100">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
               <h2 className="text-5xl lg:text-8xl font-black text-foreground uppercase tracking-tighter mb-8 leading-[0.85]">
                   Need a Cold <br /><span className="text-primary italic">One?</span>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import {
     ShieldCheck,
@@ -39,6 +39,57 @@ export default function RiderOnboarding() {
     const [agreedToTerms, setAgreedToTerms] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
+    // 0. Resume Logic
+    useEffect(() => {
+        const savedPhone = localStorage.getItem('ob_onboarding_phone');
+        if (savedPhone) {
+            setPhone(savedPhone);
+            fetchProgress(savedPhone);
+        }
+    }, []);
+
+    const fetchProgress = async (p: string) => {
+        if (!supabase) return;
+        const normalized = normalizePhone(p);
+        const { data } = await supabase
+            .from('rider_onboarding_sessions')
+            .select('*')
+            .eq('rider_phone', normalized)
+            .maybeSingle();
+
+        if (data) {
+            setStep(data.current_step as Step);
+            if (data.form_data) {
+                const fd = data.form_data as any;
+                setRiderName(fd.riderName || '');
+                setIdNumber(fd.idNumber || '');
+                setLicenseNumber(fd.licenseNumber || '');
+                setPlateNumber(fd.plateNumber || '');
+                setVehicleType(fd.vehicleType || 'Motorbike');
+            }
+        }
+    };
+
+    const saveProgress = async (nextStep: Step) => {
+        if (!supabase || !phone) return;
+        const normalized = normalizePhone(phone);
+        localStorage.setItem('ob_onboarding_phone', phone);
+
+        await supabase.from('rider_onboarding_sessions').upsert({
+            rider_phone: normalized,
+            current_step: nextStep,
+            form_data: {
+                riderName,
+                idNumber,
+                licenseNumber,
+                plateNumber,
+                vehicleType
+            },
+            updated_at: new Date().toISOString()
+        });
+        setStep(nextStep);
+    };
+
     const handleDownloadAgreement = async () => {
         const { default: jsPDF } = await import('jspdf');
         const doc = new jsPDF();
@@ -56,19 +107,19 @@ export default function RiderOnboarding() {
         };
 
         doc.setFontSize(14);
-        addText("DRIVER PARTNER & TRANSPORT NETWORK SERVICES AGREEMENT", true);
+        addText("RUNNER PARTNER & DELIVERY NETWORK SERVICES AGREEMENT", true);
         doc.setFontSize(10);
-        addText("1. PURPOSE: The Company operates a digital transport network platform connecting passengers with drivers.");
-        addText("2. INDEPENDENT CONTRACTOR: The Driver is an independent contractor, not an employee.");
-        addText("3. ELIGIBILITY: Driver must provide valid ID, License, and PSV badge.");
-        addText("4. VEHICLE: Vehicle must be mechanically safe, insured, and presentable.");
-        addText("5. CONDUCT: Driver shall drive safely, treat passengers respectfully, and avoid fraud.");
-        addText("6. FARES: Calculated by the platform. Independent management of availability.");
-        addText("7. PRIVACY: Comply with data protection laws. Use data only for service.");
+        addText("1. PURPOSE: The Company operates a digital delivery platform connecting merchants with runners.");
+        addText("2. INDEPENDENT CONTRACTOR: The Runner is an independent contractor, not an employee.");
+        addText("3. ELIGIBILITY: Runner must provide valid ID, License, and proof of vehicle ownership.");
+        addText("4. VEHICLE: Vehicle must be mechanically safe, insured, and capable of chilled transport.");
+        addText("5. CONDUCT: Runner shall deliver safely, treat patrons respectfully, and maintain beverage integrity.");
+        addText("6. EARNINGS: Calculated per delivery. Independent management of availability.");
+        addText("7. PRIVACY: Comply with Kenyan data protection laws. Use data only for service.");
         addText("8. TERMINATION: Either party may terminate with notice.");
         addText("9. DISPUTES: Governed by the laws of Kenya.");
 
-        doc.save("TechPax_Driver_Agreement.pdf");
+        doc.save("Online_Bar_Runner_Agreement.pdf");
     };
 
     const handleIdentify = async () => {
@@ -80,11 +131,9 @@ export default function RiderOnboarding() {
         setLoading(true);
         setError(null);
 
-        // [USER REQUEST] REMOVED OTP STEP - Direct Proceed to Identity
-        setTimeout(() => {
-            setStep('identity');
-            setLoading(false);
-        }, 800);
+        // Transition to Identity (In prod, this would trigger OTP)
+        await saveProgress('identity');
+        setLoading(false);
     };
 
     const handleBiometricEnroll = async () => {
@@ -94,25 +143,23 @@ export default function RiderOnboarding() {
             const normalized = normalizePhone(phone);
             const cred = await registerBiometrics(normalized);
             if (cred) {
-                // Save credential to Supabase rider_status
                 if (supabase) {
                     await supabase.from('rider_status').update({ biometric_key: cred }).eq('rider_phone', normalized);
                 }
             }
 
-            // Check current status - usually pending for new users
             if (supabase) {
                 const { data } = await supabase.from('rider_status').select('verification_status').eq('rider_phone', normalized).maybeSingle();
                 if (data?.verification_status === 'Verified') {
                     setStep('success');
                 } else {
-                    setStep('pending');
+                    await saveProgress('pending');
                 }
             } else {
                 setStep('pending');
             }
         } catch {
-            setStep('pending');
+            await saveProgress('pending');
         } finally {
             setLoading(false);
         }
@@ -123,6 +170,14 @@ export default function RiderOnboarding() {
             setError("Both photos are required for verification");
             return;
         }
+
+        // Basic Format Validation
+        const allowedTypes = ['image/jpeg', 'image/png'];
+        if (!allowedTypes.includes(riderPhoto.type) || !allowedTypes.includes(vehiclePhoto.type)) {
+            setError("Unsupported photo format. Please upload JPG or PNG images.");
+            return;
+        }
+
         if (!riderName.trim()) {
             setError("Full Name is required");
             return;
@@ -151,18 +206,18 @@ export default function RiderOnboarding() {
                 .upsert({
                     rider_phone: normalized,
                     rider_name: riderName.trim(),
-                    pin: '1234', // Fixed internal pin since Secret PIN removed from UI
                     id_number: idNumber,
                     license_number: licenseNumber,
                     plate_number: plateNumber,
                     vehicle_type: vehicleType,
                     rider_photo_url: rData.publicUrl,
                     vehicle_photo_url: vData.publicUrl,
-                    verification_status: 'Pending'
+                    verification_status: 'Pending',
+                    onboarding_step: 'AGREEMENT'
                 }, { onConflict: 'rider_phone' });
 
             if (updateError) throw updateError;
-            setStep('agreement');
+            await saveProgress('agreement');
         } catch (err: unknown) {
             setError((err as Error).message || "Verification upload failed.");
         } finally {
@@ -174,14 +229,14 @@ export default function RiderOnboarding() {
         <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6 selection:bg-primary/20">
             <div className="max-w-md w-full space-y-12 animate-in fade-in duration-700">
 
-                {/* 🛡️ TECHPAX BRANDING */}
+                {/* 🛡️ ONLINE BAR BRANDING */}
                 <div className="text-center space-y-4">
                     <div className="h-20 w-20 rounded-[2.5rem] bg-primary/10 flex items-center justify-center text-primary mx-auto shadow-sm">
                         <Truck className="h-10 w-10" />
                     </div>
                     <div>
-                        <h1 className="text-3xl font-black uppercase tracking-tighter text-foreground leading-none">TechPax <span className="text-primary italic">Driver</span></h1>
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mt-2">Move • Deliver • Earn</p>
+                        <h1 className="text-3xl font-black uppercase tracking-tighter text-foreground leading-none">Online Bar <span className="text-primary italic">Runner</span></h1>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mt-2">Pick Up • Dispatch • Earn</p>
                     </div>
                 </div>
 
@@ -192,11 +247,11 @@ export default function RiderOnboarding() {
                         {step === 'welcome' && (
                             <div className="space-y-8 text-center animate-in slide-in-from-bottom-4 duration-500">
                                 <div className="space-y-2">
-                                    <h2 className="text-2xl font-black text-foreground uppercase leading-tight">Welcome to <br/> the Fleet</h2>
-                                    <p className="text-sm text-slate-500 font-medium italic">&quot;Trusted by thousands of riders. Start your tactical mission today.&quot;</p>
+                                    <h2 className="text-2xl font-black text-foreground uppercase leading-tight">Join the <br/> Runner Fleet</h2>
+                                    <p className="text-sm text-slate-500 font-medium italic">&quot;Deliver chilled beverages and elite snacks. Start your shift today.&quot;</p>
                                 </div>
                                 <Button onClick={() => setStep('phone')} className="w-full h-18 rounded-[1.8rem] bg-primary text-white font-black uppercase text-xs tracking-widest shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95">
-                                    Continue to Login Protocol
+                                    Initialize Onboarding
                                 </Button>
                             </div>
                         )}
@@ -305,13 +360,13 @@ export default function RiderOnboarding() {
                                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Legal Protocol</p>
                                 </div>
                                 <div className="h-64 overflow-y-auto p-6 bg-slate-50 rounded-3xl border border-slate-100 text-[10px] font-medium leading-relaxed text-slate-600 space-y-4">
-                                    <p className="font-black text-foreground uppercase">DRIVER PARTNER & TRANSPORT NETWORK SERVICES AGREEMENT</p>
-                                    <p>1. PURPOSE: The Company operates a digital transport network platform. The Driver wishes to provide transportation services as an independent contractor.</p>
-                                    <p>2. ELIGIBILITY: Driver must provide valid ID, License, and PSV badge.</p>
-                                    <p>3. VEHICLE: Vehicle must be mechanically safe, insured, and presentable.</p>
-                                    <p>4. CONDUCT: Driver shall drive safely, treat passengers respectfully, and avoid fraud.</p>
-                                    <p>5. INDEPENDENCE: The Driver is an independent contractor. No employment relationship is created.</p>
-                                    <p>6. PRIVACY: Driver shall comply with Kenyan data protection requirements.</p>
+                                    <p className="font-black text-foreground uppercase">RUNNER PARTNER & DELIVERY NETWORK SERVICES AGREEMENT</p>
+                                    <p>1. PURPOSE: The Company operates a digital delivery platform. The Runner wishes to provide delivery services as an independent contractor.</p>
+                                    <p>2. ELIGIBILITY: Runner must provide valid ID, License, and proof of vehicle ownership.</p>
+                                    <p>3. VEHICLE: Vehicle must be mechanically safe, insured, and capable of chilled transport.</p>
+                                    <p>4. CONDUCT: Runner shall deliver safely, treat patrons respectfully, and avoid fraud.</p>
+                                    <p>5. INDEPENDENCE: The Runner is an independent contractor. No employment relationship is created.</p>
+                                    <p>6. PRIVACY: Runner shall comply with Kenyan data protection requirements.</p>
                                 </div>
                                 <div className="space-y-4">
                                     <label className="flex items-start gap-3 cursor-pointer group">
@@ -365,15 +420,15 @@ export default function RiderOnboarding() {
                                 </div>
                                 <div className="space-y-2 text-left">
                                     <h2 className="text-2xl font-black text-foreground uppercase text-center">Under Review</h2>
-                                    <p className="text-sm text-slate-500 font-medium italic text-center">Your unit credentials have been logged and established on the grid.</p>
+                                    <p className="text-sm text-slate-500 font-medium italic text-center">Your unit credentials have been logged and established on the bar grid.</p>
 
                                     <div className="mt-8 p-6 bg-slate-50 rounded-3xl border border-slate-100 space-y-4">
                                         <div className="flex items-center gap-3">
                                             <div className="h-8 w-8 rounded-xl bg-primary/10 flex items-center justify-center text-primary"><Zap size={16} /></div>
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-foreground">Mission Briefing</p>
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-foreground">Shift Briefing</p>
                                         </div>
                                         <p className="text-[11px] text-slate-600 font-medium leading-relaxed">
-                                            &quot;Protocol established. Please check back in <strong>two hours</strong>. Once your data is verified by the command center, you will be authorized to accept missions.&quot;
+                                            &quot;Protocol established. Please check back in <strong>two hours</strong>. Once your data is verified by the cellar command, you will be authorized to accept deliveries.&quot;
                                         </p>
                                     </div>
                                 </div>
@@ -382,9 +437,10 @@ export default function RiderOnboarding() {
                                         onClick={async () => {
                                             if (!supabase) return;
                                             setLoading(true);
-                                            const { data } = await supabase.from('rider_status').select('verification_status, rider_name').eq('rider_phone', normalizePhone(phone)).maybeSingle();
+                                            const normalized = normalizePhone(phone);
+                                            const { data } = await supabase.from('rider_status').select('verification_status, rider_name').eq('rider_phone', normalized).maybeSingle();
                                             if (data?.verification_status === 'Verified') {
-                                                localStorage.setItem('apex_rider_phone', normalizePhone(phone));
+                                                localStorage.setItem('ob_rider_phone', normalized);
                                                 localStorage.setItem('rider_name', data.rider_name);
                                                 setStep('success');
                                             } else {
@@ -414,12 +470,12 @@ export default function RiderOnboarding() {
                                     <CheckCircle2 className="h-12 w-12" />
                                 </div>
                                 <div className="space-y-2">
-                                    <h2 className="text-2xl font-black text-foreground uppercase">Grid Online</h2>
-                                    <p className="text-sm text-slate-500 font-medium italic">&quot;Tactical link established. Welcome to TechPax Logistics, bro.&quot;</p>
+                                    <h2 className="text-2xl font-black text-foreground uppercase">Bar Grid Online</h2>
+                                    <p className="text-sm text-slate-500 font-medium italic">&quot;Uplink established. Welcome to the Online Bar team, bro.&quot;</p>
                                 </div>
                                 <Link href="/rider/dashboard" className="block">
                                     <Button className="w-full h-18 rounded-[1.8rem] bg-primary text-white font-black uppercase text-xs tracking-[0.2em] shadow-2xl shadow-primary/20">
-                                        Enter Dashboard
+                                        Enter Runner Hub
                                     </Button>
                                 </Link>
                             </div>
@@ -432,7 +488,7 @@ export default function RiderOnboarding() {
 
                 <div className="text-center flex items-center justify-center gap-2 opacity-30">
                     <ShieldCheck className="h-4 w-4" />
-                    <p className="text-[8px] font-black uppercase tracking-widest text-slate-400">Secured by TechPax Protocol v4.0</p>
+                    <p className="text-[8px] font-black uppercase tracking-widest text-slate-400">Secured by Online Bar Protocol v1.0</p>
                 </div>
 
             </div>

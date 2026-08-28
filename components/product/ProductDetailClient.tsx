@@ -15,6 +15,9 @@ import { supabase } from '@/lib/supabaseClient';
 import { useSettings } from '@/lib/useSettings';
 import UrgencyPopup from './UrgencyPopup';
 import Image from 'next/image';
+import { OB_OS } from '@/lib/onlineBarOS';
+import { v4 as uuidv4 } from 'uuid';
+import { useInteractionTracking } from '@/lib/utils/useInteractionTracking';
 
 interface Product {
   id: number;
@@ -51,6 +54,7 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const router = useRouter();
   const { settings } = useSettings();
+  const { trackClick } = useInteractionTracking();
 
   // 1. Browsing History & Referral Fetch Logic
   React.useEffect(() => {
@@ -58,6 +62,21 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
         if (!supabase) return;
         try {
             const { data: { session } } = await supabase.auth.getSession();
+
+            // Generate/Get Anonymous ID
+            let anonymousId = localStorage.getItem('ob_anonymous_id');
+            if (!anonymousId) {
+                anonymousId = `anon-${uuidv4().substring(0, 8)}`;
+                localStorage.setItem('ob_anonymous_id', anonymousId);
+            }
+
+            // 🚀 [MASTER_OS] Track Behavioral Event
+            await OB_OS.track('PRODUCT_VIEWED', {
+                userId: session?.user?.id,
+                anonymousId,
+                productId: product.id,
+                details: { name: product.name, price: product.price, category: product.category }
+            });
 
             if (session) {
                 // Fetch Referral Code for sharing
@@ -88,6 +107,7 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
         }
     }
     initData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product.id]);
 
   const allImages = Array.isArray(product.images) && product.images.length > 0
@@ -107,6 +127,7 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
       base_price: product.price,
       image: product.image_url || '/placeholder.jpg',
       quantity: quantity,
+      category: product.category,
       size: selectedVariant,
       wholesale_price: product.wholesale_price,
       wholesale_min_qty: product.wholesale_min_qty
@@ -120,16 +141,19 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
   };
 
   const handleWhatsAppOrder = () => {
-    const message = `Hello Apexstores! I want to order:\n\n*Product:* ${product.name}\n*Variant:* ${selectedVariant}\n*Quantity:* ${quantity}\n*Price:* ${formatPrice(product.price * quantity)}\n\nIs this available?`;
+    trackClick('whatsapp-order-btn', 'WhatsApp Order', { productId: product.id });
+    const message = `Hello Online Bar! I want to order:\n\n*Product:* ${product.name}\n*Variant:* ${selectedVariant}\n*Quantity:* ${quantity}\n*Price:* ${formatPrice(product.price * quantity)}\n\nIs this available?`;
     window.open(`https://wa.me/${settings.contact.whatsapp}?text=${encodeURIComponent(message)}`, '_blank');
   };
 
   const handleBuyNow = () => {
+    trackClick('buy-now-btn', 'Buy Now', { productId: product.id });
     handleAddToCart();
     router.push('/cart');
   };
 
   const handleShare = async (platform: string) => {
+    trackClick('share-btn', 'Share Product', { productId: product.id, platform });
     const url = referralCode ? getReferralLink(referralCode, `/shop/${product.id}`) : (typeof window !== 'undefined' ? window.location.href : '');
     const shareText = `Check out ${product.name} from Apexstores - ${formatPrice(product.price)} ${url}`;
 
@@ -262,12 +286,12 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
 
           <div className="flex flex-col justify-between h-full pt-4 text-left">
             <div>
-              <div className="flex items-center gap-2 mb-6 text-left">
-                <span className="px-3 py-1 bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest rounded-full">Elite Batch</span>
+            <div className="flex items-center gap-2 mb-6 text-left">
+                <span className="px-3 py-1 bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest rounded-full">Reserve Batch</span>
                 {product.stock !== undefined && product.stock > 0 ? (
-                    <span className="px-3 py-1 bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest rounded-full">In Stock</span>
+                    <span className="px-3 py-1 bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest rounded-full">Available</span>
                 ) : (
-                    <span className="px-3 py-1 bg-rose-50 text-rose-600 text-[10px] font-black uppercase tracking-widest rounded-full">Sold Out</span>
+                    <span className="px-3 py-1 bg-rose-50 text-rose-600 text-[10px] font-black uppercase tracking-widest rounded-full">Restocking</span>
                 )}
               </div>
 
@@ -295,15 +319,15 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
 
               <div className="bg-slate-50 border-l-4 border-primary p-6 rounded-r-2xl mb-12 text-left">
                   <p className="text-slate-600 leading-relaxed font-medium">
-                    {product.description || "Premium gadget built for performance and durability. Tested for zero defects upon dispatch."}
+                    {product.description || "Premium beverage curated for quality and taste. Selected for authenticity and satisfaction."}
                   </p>
               </div>
 
-              {/* Technical Specifications */}
+              {/* Product Specifications */}
               {product.tech_specs && typeof product.tech_specs === 'object' && !Array.isArray(product.tech_specs) && Object.keys(product.tech_specs).length > 0 && (
                 <div className="mb-12 text-left">
                     <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-6 ml-1 flex items-center gap-2">
-                        <Layers className="h-4 w-4" /> Technical Specifications
+                        <Layers className="h-4 w-4" /> Beverage Specifications
                     </h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {Object.entries(product.tech_specs).map(([key, value]) => (
@@ -411,7 +435,7 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
                     {isInWishlist(product.id) ? '❤️ Saved' : '🤍 Wishlist'}
                 </button>
                 <button onClick={() => handleShare('copy')} className="text-[11px] font-black uppercase tracking-widest text-slate-400 hover:text-foreground flex items-center gap-3 transition-colors">
-                    <Share2 className="h-4 w-4" /> Share Tech
+                    <Share2 className="h-4 w-4" /> Share Product
                 </button>
             </div>
           </div>
@@ -423,12 +447,12 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
         <section className="border-t border-slate-100 pt-24 mb-24 text-left">
             <div className="flex items-center gap-3 mb-16">
                 <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary"><MessageSquare className="h-5 w-5" /></div>
-                <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase">Tech Questions</h2>
+                <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase">Common Inquiries</h2>
             </div>
             <div className="grid md:grid-cols-2 gap-8">
                 {[
-                    { q: "Is this unit 100% authentic?", a: "Affirmative. Every gadget in the Apex sector is verified for authenticity before dispatch. Serial numbers are valid and recognizable by manufacturer servers." },
-                    { q: "What is the dispatch timeline for Nairobi?", a: "Most extractions within Nairobi CBD and outskirts are completed within 4-6 hours. Same-day delivery is our tactical standard." }
+                    { q: "Are your beverages 100% genuine?", a: "Affirmative. Every bottle in our cellar is verified for authenticity before dispatch. We only stock products from authorized distributors." },
+                    { q: "What is the dispatch timeline for Nairobi?", a: "Most deliveries within Nairobi are completed within 1-2 hours. Chilled delivery is our standard." }
                 ].map((faq, i) => (
                     <div key={i} className="p-8 rounded-[2.5rem] bg-slate-50 border border-slate-100 group hover:bg-white hover:shadow-2xl hover:border-primary/20 transition-all">
                         <h3 className="font-black text-primary text-xs uppercase tracking-widest mb-4 flex items-center gap-2">
@@ -439,7 +463,7 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
                 ))}
             </div>
             <div className="mt-12 text-center">
-                <Link href="/blog/category/knowledge-base" className="text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-primary transition-colors underline underline-offset-4">Explore Full Knowledge Base &rarr;</Link>
+                <Link href="/blog" className="text-[10px] font-black text-slate-400 uppercase tracking-widest hover:text-primary transition-colors underline underline-offset-4">Explore Mixology Hub &rarr;</Link>
             </div>
         </section>
 

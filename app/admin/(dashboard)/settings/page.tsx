@@ -19,11 +19,8 @@ import {
     Eye,
     Code,
     Clock,
-    Lock,
-    Unlock,
     Activity,
     Info,
-    Smartphone,
     Share2,
     Camera,
     Rocket,
@@ -32,7 +29,9 @@ import {
     DollarSign,
     Home as HomeIcon,
     MapPin,
-    Bot
+    Bot,
+    Wine,
+    GlassWater
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -40,18 +39,18 @@ import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
 const DEFAULTS = {
-    contact: { whatsapp: "254769345599", email: "support@apexstores.com", address: "Nairobi, Kenya" },
-    branding: { owner_name: "Apex Master", portfolio_url: "https://apexstores.co.ke", hero_title: "Future Sound. Total Power.", hero_subtitle: "Experience authentic tech engineered for excellence.", logo_url: "", favicon_url: "" },
-    homepage: { hero_image_url: "", hero_starting_price: 4500, hero_badge_text: "The New Era of Tech is Here", hero_visual_label: "Apex Premium Series" },
+    contact: { whatsapp: "254769345599", email: "support@onlinebar.co.ke", address: "Nairobi, Kenya" },
+    branding: { owner_name: "David Maganga", portfolio_url: "https://davi-d-m.github.io/my_portfolio/", hero_title: "Elite Vintages. Chilled Spirits.", hero_subtitle: "Experience authentic vintages and elite spirits curated for excellence.", logo_url: "", favicon_url: "" },
+    homepage: { hero_image_url: "", hero_starting_price: 2500, hero_badge_text: "The Premium Bar is Open", hero_visual_label: "Online Bar Selection" },
     shipping: { nairobi_cbd_label: "Nairobi CBD / Local", nairobi_cbd: 0, nairobi_outskirts_label: "Nairobi Outskirts", nairobi_outskirts: 300, upcountry_label: "Upcountry / Major Towns", upcountry: 500 },
     logistics: { dispatch_zones: ["CBD", "Westlands", "Kilimani", "Lavington", "Kileleshwa", "Karen", "Langata", "South C", "South B", "Embakasi", "Roysambu", "Kasarani", "Kahawa", "Githurai", "Zimmerman", "Utawala", "Syokimau", "Kitengela", "Rongai", "Ngong", "Kikuyu", "Thika Road", "Mombasa Road"] },
-    catalog: { categories: [{ id: 'airpods', label: 'Elite Audio' }, { id: 'chargers', label: 'Super Chargers' }, { id: 'cases', label: 'Cases' }, { id: 'watches', label: 'Watches' }, { id: 'accessories', label: 'Others' }] },
-    promotions: { flash_sale_text: 'Flash Sale: 20% OFF All Tech!', discount_percent: 20, is_active: true, flash_sale_end: '' },
+    catalog: { categories: [{ id: 'wine', label: 'Vintages' }, { id: 'spirits', label: 'Premium Spirits' }, { id: 'snacks', label: 'Late Night Snacks' }, { id: 'beer', label: 'Chilled Beers' }, { id: 'mixers', label: 'Mixers' }] },
+    promotions: { flash_sale_text: 'Happy Hour: 20% OFF Select Spirits!', discount_percent: 20, is_active: true, flash_sale_end: '' },
     theme_config: { primary: "#F5A000", secondary: "#0F172A", accent: "#F5A000", custom_css: "" },
-    seo_config: { title: "Apexstores | Elite Tech", description: "Premium tech store in Nairobi.", keywords: "AirPods, Chargers, iPhone", og_image: "" },
+    seo_config: { title: "Online Bar | Premium Drinks", description: "Premium wine, spirits and snacks delivery in Nairobi.", keywords: "Wine delivery, Whiskey Nairobi, Late night snacks, Kenya Bar", og_image: "" },
     social_links: { instagram: "", tiktok: "", facebook: "", x: "", youtube: "" },
-    store_info: { name: "APEXSTORES", hours: "9am - 6pm", google_maps: "", footer_copy: "© 2026 Apexstores™" },
-    ai_config: { build_setup_limit: 5000, assistant_name: "Apex AI", response_style: "Tactical" }
+    store_info: { name: "ONLINE BAR", hours: "24/7 Dispatch", google_maps: "", footer_copy: "© 2026 Online Bar™" },
+    ai_config: { build_setup_limit: 5000, assistant_name: "Bar AI", response_style: "Elite" }
 };
 
 type TabId = 'identity' | 'homepage' | 'promotions' | 'theme' | 'seo' | 'ops' | 'catalog' | 'ai' | 'features' | 'advanced';
@@ -82,8 +81,6 @@ export default function AdminSettingsPage() {
     });
 
     const [activeTab, setActiveTab] = useState<TabId>('identity');
-    const [isAdvancedEnabled, setIsAdvancedEnabled] = useState(false);
-    const [isSandboxMode, setIsSandboxMode] = useState(false);
 
     const [logoFile, setLogoFile] = useState<File | null>(null);
     const [faviconFile, setFaviconFile] = useState<File | null>(null);
@@ -136,11 +133,12 @@ export default function AdminSettingsPage() {
 
     useEffect(() => {
         fetchSettings();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const uploadAsset = async (file: File, folder: string) => {
         if (!supabase) throw new Error("Database not connected");
-        const BUCKET = 'apexstores-assets';
+        const BUCKET = 'onlinebar-assets';
         const path = `${folder}/${folder.split('/')[0]}-${Date.now()}`;
         const { error: uploadError } = await supabase.storage.from(BUCKET).upload(path, file);
         if (uploadError) throw uploadError;
@@ -190,7 +188,7 @@ export default function AdminSettingsPage() {
             await logAuditAction(email, 'UPDATE_SETTINGS', { key, published: publish });
             setMessage({
                 type: 'success',
-                text: publish ? `${key.toUpperCase()} published to live site.` : `${key.toUpperCase()} saved as draft.`
+                text: publish ? `${key.toUpperCase()} published to live bar.` : `${key.toUpperCase()} saved as draft.`
             });
 
             setTimeout(() => setMessage(null), 5000);
@@ -242,7 +240,7 @@ export default function AdminSettingsPage() {
             setFaviconFile(null);
             setHeroFile(null);
 
-            setMessage({ type: 'success', text: "All changes synchronized to the live storefront." });
+            setMessage({ type: 'success', text: "All changes synchronized to the live bar menu." });
         } catch (err: unknown) {
             const error = err as Error;
             setMessage({ type: 'error', text: error.message });
@@ -253,7 +251,7 @@ export default function AdminSettingsPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center bg-background gap-4">
+            <div className="min-h-screen flex flex-col items-center justify-center bg-background gap-4 text-left">
                 <Loader2 className="h-10 w-10 text-primary animate-spin" />
                 <p className="font-black text-muted-foreground uppercase tracking-widest text-[10px]">Establishing Secure Uplink...</p>
             </div>
@@ -264,8 +262,8 @@ export default function AdminSettingsPage() {
         <div className="p-8 space-y-10 bg-slate-50 min-h-screen text-left selection:bg-primary/20 pb-40">
             <header className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 border-b border-slate-200 pb-8">
                 <div>
-                    <h1 className="text-4xl font-black text-foreground uppercase tracking-tighter">Brand OS</h1>
-                    <p className="text-muted-foreground text-sm font-medium mt-1">Professional Content Management & Storefront Identity Hub.</p>
+                    <h1 className="text-4xl font-black text-foreground uppercase tracking-tighter leading-none">Bar OS</h1>
+                    <p className="text-muted-foreground text-sm font-medium mt-1">Professional Content Management & Cellar Identity Hub.</p>
                 </div>
                 <div className="flex gap-2">
                     <Button onClick={fetchSettings} variant="outline" className="rounded-xl h-12 px-6 border-slate-200 bg-white text-foreground font-black uppercase text-[10px] tracking-widest hover:bg-slate-50 transition-all">
@@ -316,7 +314,7 @@ export default function AdminSettingsPage() {
                     { id: 'theme', label: 'Theme', icon: Palette },
                     { id: 'seo', label: 'SEO & Social', icon: Globe },
                     { id: 'ops', label: 'Operations', icon: Truck },
-                    { id: 'catalog', label: 'Catalog', icon: Smartphone },
+                    { id: 'catalog', label: 'Menu', icon: Wine },
                     { id: 'ai', label: 'AI Node', icon: Bot },
                     { id: 'features', label: 'Features', icon: Zap },
                     { id: 'advanced', label: 'Advanced', icon: Code },
@@ -356,12 +354,12 @@ export default function AdminSettingsPage() {
                                     </div>
                                     <div className="grid sm:grid-cols-2 gap-6">
                                         <div className="space-y-2 text-left">
-                                            <label className="text-[10px] font-black uppercase text-muted-foreground">Store Public Name</label>
+                                            <label className="text-[10px] font-black uppercase text-muted-foreground">Bar Public Name</label>
                                             <Input value={store.name} onChange={e => setStore({...store, name: e.target.value})} className="h-14 rounded-2xl bg-secondary border-border font-bold text-foreground" />
                                         </div>
                                         <div className="space-y-2 text-left pt-6">
                                             <p className="text-[8px] font-bold text-muted-foreground uppercase italic leading-relaxed">
-                                                * Global Brand Metadata. Updates the logo and general store nomenclature.
+                                                * Global Brand Metadata. Updates the logo and general bar nomenclature.
                                             </p>
                                         </div>
                                     </div>
@@ -400,11 +398,11 @@ export default function AdminSettingsPage() {
                                     >
                                         {logoPreview ? (
                                             /* eslint-disable-next-line @next/next/no-img-element */
-                                            <img src={logoPreview} className="h-10 w-auto object-contain" alt="Store Logo Preview" />
+                                            <img src={logoPreview} className="h-10 w-auto object-contain" alt="Bar Logo Preview" />
                                         ) : (
                                             <ImageIcon className="h-10 w-10 text-muted group-hover:text-primary transition-colors" />
                                         )}
-                                        <p className="text-[10px] font-black uppercase text-muted-foreground">Upload Store Logo</p>
+                                        <p className="text-[10px] font-black uppercase text-muted-foreground">Upload Bar Logo</p>
                                     </div>
 
                                     <div
@@ -415,7 +413,7 @@ export default function AdminSettingsPage() {
                                             /* eslint-disable-next-line @next/next/no-img-element */
                                             <img src={faviconPreview} className="h-10 w-10 object-contain rounded-lg" alt="Favicon Preview" />
                                         ) : (
-                                            <div className="h-10 w-10 bg-muted rounded-lg flex items-center justify-center text-background font-black group-hover:bg-primary transition-all text-xs">A</div>
+                                            <div className="h-10 w-10 bg-muted rounded-lg flex items-center justify-center text-background font-black group-hover:bg-primary transition-all text-xs">B</div>
                                         )}
                                         <p className="text-[10px] font-black uppercase text-muted-foreground">Upload Favicon</p>
                                     </div>
@@ -427,7 +425,7 @@ export default function AdminSettingsPage() {
                     {/* HOMEPAGE TAB */}
                     {activeTab === 'homepage' && (
                         <div className="space-y-8 animate-in fade-in slide-in-from-left-4 duration-500 text-left">
-                            <Card className="rounded-[3rem] border border-border p-10 bg-card shadow-sm space-y-8">
+                            <Card className="rounded-[3rem] border border-border p-10 bg-card shadow-sm space-y-8 text-left">
                                 <h2 className="text-xl font-black text-foreground uppercase flex items-center gap-3"><HomeIcon className="h-5 w-5 text-primary" /> Hero Configuration</h2>
 
                                 <div className="space-y-6">
@@ -439,7 +437,7 @@ export default function AdminSettingsPage() {
                                                 onChange={e => setBranding({...branding, hero_title: e.target.value})}
                                                 className="h-14 rounded-2xl bg-secondary border-border font-black text-lg text-foreground"
                                             />
-                                            <p className="text-[7px] font-bold text-primary uppercase italic px-1">* PRO TIP: Use a &quot;.&quot; to split colors. (e.g., &quot;Future Sound. Total Power.&quot;)</p>
+                                            <p className="text-[7px] font-bold text-primary uppercase italic px-1">* PRO TIP: Use a &quot;.&quot; to split colors. (e.g., &quot;Elite Vintages. Chilled Spirits.&quot;)</p>
                                         </div>
                                         <div className="space-y-2">
                                             <label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Subtitle Mission</label>
@@ -476,7 +474,7 @@ export default function AdminSettingsPage() {
                                             ) : (
                                                 <>
                                                     <ImageIcon className="h-10 w-10 text-muted-foreground group-hover:text-primary transition-colors" />
-                                                    <p className="text-[10px] font-black uppercase text-muted-foreground">Select Tactical Backdrop</p>
+                                                    <p className="text-[10px] font-black uppercase text-muted-foreground">Select Bar Backdrop</p>
                                                 </>
                                             )}
                                         </div>
@@ -509,7 +507,7 @@ export default function AdminSettingsPage() {
                                                 value={homepage.hero_visual_label || ''}
                                                 onChange={e => setHomepage({...homepage, hero_visual_label: e.target.value})}
                                                 className="h-14 rounded-2xl bg-secondary border-border font-bold text-foreground"
-                                                placeholder="e.g. Apex Premium Series"
+                                                placeholder="e.g. Online Bar Selection"
                                             />
                                         </div>
                                     </div>
@@ -523,7 +521,7 @@ export default function AdminSettingsPage() {
                         <div className="space-y-8 animate-in fade-in slide-in-from-left-4 duration-500 text-left">
                             <Card className="rounded-[3rem] border border-border p-10 bg-card shadow-sm space-y-10 text-left">
                                 <div className="flex items-center justify-between">
-                                    <h2 className="text-xl font-black text-foreground uppercase flex items-center gap-3"><Zap className="h-5 w-5 text-primary" /> Flash Sale Configuration</h2>
+                                    <h2 className="text-xl font-black text-foreground uppercase flex items-center gap-3"><Zap className="h-5 w-5 text-primary" /> Happy Hour Configuration</h2>
                                     <button
                                         onClick={() => setPromotions({...promotions, is_active: !promotions.is_active})}
                                         className={cn(
@@ -542,12 +540,12 @@ export default function AdminSettingsPage() {
 
                                 <div className="space-y-6">
                                     <div className="space-y-2 text-left">
-                                        <label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Flash Sale Headline & Subtext</label>
+                                        <label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Happy Hour Headline & Subtext</label>
                                         <Input
                                             value={promotions.flash_sale_text}
                                             onChange={e => setPromotions({...promotions, flash_sale_text: e.target.value})}
                                             className="h-14 rounded-2xl bg-secondary border-border font-black text-lg text-foreground"
-                                            placeholder="e.g. FLASH SALE: 20% OFF EVERYTHING!"
+                                            placeholder="e.g. HAPPY HOUR: 20% OFF PREMIUM SPIRITS!"
                                         />
                                         <p className="text-[7px] font-bold text-primary uppercase italic px-1">* FORMAT: [Headline]: [Subtext] (to match the banner styling)</p>
                                     </div>
@@ -566,7 +564,7 @@ export default function AdminSettingsPage() {
                                             </div>
                                         </div>
                                         <div className="space-y-2 text-left">
-                                            <label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Sale Expiry Date</label>
+                                            <label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Deal Expiry Date</label>
                                             <div className="relative">
                                                 <Input
                                                     type="datetime-local"
@@ -581,12 +579,12 @@ export default function AdminSettingsPage() {
                                 </div>
                             </Card>
 
-                            <div className="p-8 rounded-[3rem] bg-indigo-50 border border-indigo-100 flex items-start gap-4">
+                            <div className="p-8 rounded-[3rem] bg-indigo-50 border border-indigo-100 flex items-start gap-4 text-left">
                                 <Info className="h-6 w-6 text-indigo-500 shrink-0 mt-0.5" />
                                 <div className="space-y-1">
                                     <p className="text-xs font-black uppercase text-indigo-700">Dynamic Deal Logic</p>
                                     <p className="text-[10px] text-indigo-600 font-medium leading-relaxed italic">
-                                        &quot;When active, this deal will appear on the global homepage and apply automatically to the store theme. The countdown timer will automatically sync to the Expiry Date provided.&quot;
+                                        &quot;When active, this deal will appear on the global homepage and apply automatically to the bar theme. The countdown timer will automatically sync to the Expiry Date provided.&quot;
                                     </p>
                                 </div>
                             </div>
@@ -646,11 +644,11 @@ export default function AdminSettingsPage() {
                             </Card>
 
                             <Card className="rounded-[3rem] border border-slate-100 p-10 bg-white shadow-sm space-y-8 text-left">
-                                <h2 className="text-xl font-black text-foreground uppercase flex items-center gap-3"><Activity className="h-5 w-5 text-primary" /> Social Extraction</h2>
+                                <h2 className="text-xl font-black text-foreground uppercase flex items-center gap-3"><Activity className="h-5 w-5 text-primary" /> Social Presence</h2>
                                 <div className="grid sm:grid-cols-2 gap-6 text-left">
                                     {[
                                         { id: 'instagram', icon: Camera, label: 'Instagram URL' },
-                                        { id: 'tiktok', icon: Smartphone, label: 'TikTok URL' },
+                                        { id: 'tiktok', icon: GlassWater, label: 'TikTok URL' },
                                         { id: 'facebook', icon: Share2, label: 'Facebook Page' },
                                         { id: 'x', icon: Globe, label: 'X (Twitter)' },
                                     ].map(item => (
@@ -671,19 +669,19 @@ export default function AdminSettingsPage() {
                         <div className="space-y-8 animate-in fade-in slide-in-from-left-4 duration-500 text-left">
                             <Card className="rounded-[3rem] border border-slate-100 p-10 bg-white shadow-sm space-y-8 text-left">
                                 <div className="flex justify-between items-center text-left">
-                                    <h2 className="text-xl font-black text-foreground uppercase flex items-center gap-3"><Smartphone className="h-5 w-5 text-primary" /> Category Manager</h2>
+                                    <h2 className="text-xl font-black text-foreground uppercase flex items-center gap-3"><Wine className="h-5 w-5 text-primary" /> Menu Manager</h2>
                                     <Button onClick={() => setCatalog({ ...catalog, categories: [...catalog.categories, { id: '', label: '' }] })} variant="outline" className="h-10 rounded-xl text-[8px] font-black uppercase"><Plus className="h-3 w-3 mr-2" /> New Category</Button>
                                 </div>
                                 <div className="space-y-4 text-left">
                                     {catalog.categories.map((cat, idx) => (
-                                        <div key={idx} className="flex gap-4 items-end p-6 bg-secondary rounded-3xl border border-border relative group/cat">
+                                        <div key={idx} className="flex gap-4 items-end p-6 bg-secondary rounded-3xl border border-border relative group/cat text-left">
                                             <div className="flex-1 space-y-2 text-left">
-                                                <label className="text-[8px] font-black uppercase text-muted-foreground ml-1">Label (Visible to customers)</label>
+                                                <label className="text-[8px] font-black uppercase text-muted-foreground ml-1">Label (Visible to patrons)</label>
                                                 <Input value={cat.label} onChange={e => {
                                                     const newCats = [...catalog.categories];
                                                     newCats[idx].label = e.target.value;
                                                     setCatalog({ ...catalog, categories: newCats });
-                                                }} className="h-12 rounded-xl bg-card border-none font-bold text-foreground" placeholder="e.g. Elite Audio" />
+                                                }} className="h-12 rounded-xl bg-card border-none font-bold text-foreground" placeholder="e.g. Premium Whiskey" />
                                             </div>
                                             <div className="flex-1 space-y-2 text-left">
                                                 <label className="text-[8px] font-black uppercase text-muted-foreground ml-1">Slug/ID (Database tag)</label>
@@ -691,7 +689,7 @@ export default function AdminSettingsPage() {
                                                     const newCats = [...catalog.categories];
                                                     newCats[idx].id = e.target.value.toLowerCase().replace(/\s+/g, '-');
                                                     setCatalog({ ...catalog, categories: newCats });
-                                                }} className="h-12 rounded-xl bg-card border-none font-mono text-xs text-foreground" placeholder="e.g. airpods" />
+                                                }} className="h-12 rounded-xl bg-card border-none font-mono text-xs text-foreground" placeholder="e.g. whiskey" />
                                             </div>
                                             <button
                                                 onClick={() => setCatalog({ ...catalog, categories: catalog.categories.filter((_, i) => i !== idx) })}
@@ -728,51 +726,41 @@ export default function AdminSettingsPage() {
 
                                 <div className="bg-card rounded-[2.5rem] border border-border p-10 shadow-sm space-y-8 flex flex-col text-left">
                                     <h2 className="text-xl font-black text-foreground uppercase flex items-center gap-3">
-                                        <Truck className="h-5 w-5 text-primary" /> Logistics
+                                        <Truck className="h-5 w-5 text-primary" /> Bar Dispatch
                                     </h2>
                                     <div className="space-y-4 flex-1 text-left">
                                         <div className="grid grid-cols-2 gap-4">
                                             <div className="space-y-1">
-                                                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">CBD Label</label>
+                                                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Local Zone Label</label>
                                                 <Input value={shipping.nairobi_cbd_label} onChange={e => setShipping({...shipping, nairobi_cbd_label: e.target.value})} className="rounded-xl h-12 bg-secondary border-border font-bold text-foreground" />
                                             </div>
                                             <div className="space-y-1">
-                                                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">CBD Fee</label>
+                                                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Fee (Ksh)</label>
                                                 <Input type="number" value={shipping.nairobi_cbd} onChange={e => setShipping({...shipping, nairobi_cbd: Number(e.target.value)})} className="rounded-xl h-12 bg-secondary border-border font-black text-foreground" />
                                             </div>
                                         </div>
                                         <div className="grid grid-cols-2 gap-4">
                                             <div className="space-y-1">
-                                                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Outskirts Label</label>
+                                                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Secondary Label</label>
                                                 <Input value={shipping.nairobi_outskirts_label} onChange={e => setShipping({...shipping, nairobi_outskirts_label: e.target.value})} className="rounded-xl h-12 bg-secondary border-border font-bold text-foreground" />
                                             </div>
                                             <div className="space-y-1">
-                                                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Outskirts Fee</label>
+                                                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Fee (Ksh)</label>
                                                 <Input type="number" value={shipping.nairobi_outskirts} onChange={e => setShipping({...shipping, nairobi_outskirts: Number(e.target.value)})} className="rounded-xl h-12 bg-secondary border-border font-black text-foreground" />
-                                            </div>
-                                        </div>
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <div className="space-y-1">
-                                                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Upcountry Label</label>
-                                                <Input value={shipping.upcountry_label} onChange={e => setShipping({...shipping, upcountry_label: e.target.value})} className="rounded-xl h-12 bg-secondary border-border font-bold text-foreground" />
-                                            </div>
-                                            <div className="space-y-1">
-                                                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Upcountry Fee</label>
-                                                <Input type="number" value={shipping.upcountry} onChange={e => setShipping({...shipping, upcountry: Number(e.target.value)})} className="rounded-xl h-12 bg-secondary border-border font-black text-foreground" />
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <Card className="rounded-[3rem] border border-border p-10 bg-card shadow-sm space-y-8 mt-8">
-                                <div className="flex justify-between items-center">
-                                    <h2 className="text-xl font-black text-foreground uppercase flex items-center gap-3"><MapPin className="h-5 w-5 text-primary" /> Operational Zones</h2>
+                            <Card className="rounded-[3rem] border border-border p-10 bg-card shadow-sm space-y-8 mt-8 text-left">
+                                <div className="flex justify-between items-center text-left">
+                                    <h2 className="text-xl font-black text-foreground uppercase flex items-center gap-3"><MapPin className="h-5 w-5 text-primary" /> Delivery Zones</h2>
                                     <Button onClick={() => setLogistics({ ...logistics, dispatch_zones: [...logistics.dispatch_zones, ''] })} variant="outline" className="h-10 rounded-xl text-[8px] font-black uppercase"><Plus className="h-3 w-3 mr-2" /> Add Zone</Button>
                                 </div>
-                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-left">
                                     {logistics.dispatch_zones.map((zone, idx) => (
-                                        <div key={idx} className="relative group">
+                                        <div key={idx} className="relative group text-left">
                                             <Input
                                                 value={zone}
                                                 onChange={e => {
@@ -799,21 +787,21 @@ export default function AdminSettingsPage() {
                     {activeTab === 'ai' && (
                         <div className="space-y-8 animate-in fade-in slide-in-from-left-4 duration-500 text-left">
                             <Card className="rounded-[3rem] border border-slate-100 p-10 bg-white shadow-sm space-y-10 text-left">
-                                <h2 className="text-xl font-black text-foreground uppercase flex items-center gap-3"><Bot className="h-5 w-5 text-primary" /> LMM Configuration</h2>
+                                <h2 className="text-xl font-black text-foreground uppercase flex items-center gap-3"><Bot className="h-5 w-5 text-primary" /> Mixology Intelligence</h2>
                                 <div className="space-y-6">
                                     <div className="grid sm:grid-cols-2 gap-6">
                                         <div className="space-y-2">
-                                            <label className="text-[10px] font-black uppercase text-muted-foreground">Setup Bundle Limit (KES)</label>
+                                            <label className="text-[10px] font-black uppercase text-muted-foreground">Party Package Limit (KES)</label>
                                             <Input
                                                 type="number"
                                                 value={aiConfig.build_setup_limit}
                                                 onChange={e => setAiConfig({...aiConfig, build_setup_limit: Number(e.target.value)})}
                                                 className="h-14 rounded-2xl bg-secondary border-border font-black text-lg text-foreground"
                                             />
-                                            <p className="text-[8px] font-bold text-primary uppercase italic">&quot;Build me a setup for X&quot; cap.</p>
+                                            <p className="text-[8px] font-bold text-primary uppercase italic">&quot;Build me a bar for X people&quot; cap.</p>
                                         </div>
                                         <div className="space-y-2">
-                                            <label className="text-[10px] font-black uppercase text-muted-foreground">Assistant Identity</label>
+                                            <label className="text-[10px] font-black uppercase text-muted-foreground">AI Identity</label>
                                             <Input
                                                 value={aiConfig.assistant_name}
                                                 onChange={e => setAiConfig({...aiConfig, assistant_name: e.target.value})}
@@ -821,24 +809,12 @@ export default function AdminSettingsPage() {
                                             />
                                         </div>
                                     </div>
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase text-muted-foreground">Response Style Profile</label>
-                                        <select
-                                            value={aiConfig.response_style}
-                                            onChange={e => setAiConfig({...aiConfig, response_style: e.target.value})}
-                                            className="w-full h-14 rounded-2xl bg-secondary border-border px-4 text-xs font-black uppercase outline-none"
-                                        >
-                                            <option value="Tactical">Tactical (Business-Ready)</option>
-                                            <option value="Elite">Elite (Premium/Formal)</option>
-                                            <option value="Friendly">Friendly (Casual)</option>
-                                        </select>
-                                    </div>
                                 </div>
                                 <Button
                                     onClick={() => handleSave('ai_config', aiConfig, true)}
                                     className="w-full h-14 rounded-2xl bg-primary text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-primary/20"
                                 >
-                                    Authorize AI Node
+                                    Authorize Bar AI
                                 </Button>
                             </Card>
                         </div>
@@ -848,109 +824,37 @@ export default function AdminSettingsPage() {
                     {activeTab === 'features' && (
                         <div className="space-y-8 animate-in fade-in slide-in-from-left-4 duration-500 text-left">
                             <Card className="rounded-[3rem] border border-slate-100 p-10 bg-white shadow-sm space-y-10 text-left">
-                                <h2 className="text-xl font-black text-foreground uppercase flex items-center gap-3"><Zap className="h-5 w-5 text-primary" /> Autonomous Features</h2>
+                                <h2 className="text-xl font-black text-foreground uppercase flex items-center gap-3"><Zap className="h-5 w-5 text-primary" /> Autonomous Operations</h2>
                                 <div className="grid sm:grid-cols-2 gap-8">
                                     {[
-                                        { id: 'ai_concierge_enabled', label: 'AI Shopping Concierge', desc: 'Full-screen conversational agent for customers.' },
-                                        { id: 'dynamic_pricing_enabled', label: 'Dynamic Pricing Engine', desc: 'Auto-adjust prices based on stock velocity.' },
-                                        { id: 'gamification_enabled', label: 'Loyalty & Gamification', desc: 'Streaks, missions, and reward crates.' },
-                                        { id: 'fraud_shield_enabled', label: 'Apex Fraud Shield', desc: 'Anomaly detection and rapid IP blocking.' },
+                                        { id: 'ai_concierge_enabled', label: 'Mixology AI Concierge', desc: 'Conversational agent for drink recommendations.' },
+                                        { id: 'dynamic_pricing_enabled', label: 'Pour Margin Engine', desc: 'Auto-adjust prices based on cellar velocity.' },
+                                        { id: 'gamification_enabled', label: 'VIP Club & Rewards', desc: 'Streaks, missions, and patron rewards.' },
+                                        { id: 'fraud_shield_enabled', label: 'Bar Fraud Shield', desc: 'Anomaly detection and rapid IP blocking.' },
                                     ].map(feat => (
-                                        <div key={feat.id} className="p-6 rounded-3xl bg-slate-50 border border-slate-100 flex items-center justify-between group transition-all hover:border-primary/20">
-                                            <div className="space-y-1">
+                                        <div key={feat.id} className="p-6 rounded-3xl bg-slate-50 border border-slate-100 flex items-center justify-between group transition-all hover:border-primary/20 text-left">
+                                            <div className="space-y-1 text-left">
                                                 <p className="text-xs font-black uppercase text-foreground">{feat.label}</p>
                                                 <p className="text-[10px] text-slate-400 font-medium italic">{feat.desc}</p>
                                             </div>
                                             <button
-                                                onClick={() => setFeatures({...features, [feat.id]: !(features as any)[feat.id]})}
+                                                onClick={() => {
+                                                    const key = feat.id as keyof typeof features;
+                                                    setFeatures({...features, [key]: !features[key]});
+                                                }}
                                                 className={cn(
                                                     "w-12 h-6 rounded-full transition-all relative p-1 flex items-center shadow-inner",
-                                                    (features as any)[feat.id] ? "bg-emerald-500" : "bg-slate-200"
+                                                    features[feat.id as keyof typeof features] ? "bg-emerald-500" : "bg-slate-200"
                                                 )}
                                             >
                                                 <div className={cn(
                                                     "h-4 w-4 rounded-full bg-white shadow-sm transition-all",
-                                                    (features as any)[feat.id] ? "translate-x-6" : "translate-x-0"
+                                                    features[feat.id as keyof typeof features] ? "translate-x-6" : "translate-x-0"
                                                 )} />
                                             </button>
                                         </div>
                                     ))}
                                 </div>
-                            </Card>
-                        </div>
-                    )}
-
-                    {/* ADVANCED TAB */}
-                    {activeTab === 'advanced' && (
-                        <div className="space-y-8 animate-in fade-in slide-in-from-left-4 duration-500 text-left">
-                            <Card className="rounded-[3rem] border border-slate-100 p-10 bg-white shadow-sm space-y-10 relative overflow-hidden text-left">
-                                <div className="relative z-10 flex items-center justify-between">
-                                    <div className="flex items-center gap-4">
-                                        <div className="h-12 w-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 shadow-sm"><ShieldAlert className="h-6 w-6" /></div>
-                                        <div>
-                                            <h2 className="text-xl font-black text-foreground uppercase">Tactical Sandbox</h2>
-                                            <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mt-1">Simulate orders & payments</p>
-                                        </div>
-                                    </div>
-                                    <button
-                                        onClick={() => setIsSandboxMode(!isSandboxMode)}
-                                        className={cn(
-                                            "w-20 h-10 rounded-full transition-all relative p-1 flex items-center shadow-inner",
-                                            isSandboxMode ? "bg-emerald-500" : "bg-secondary"
-                                        )}
-                                    >
-                                        <div className={cn(
-                                            "h-8 w-8 rounded-full bg-white shadow-xl transition-all flex items-center justify-center",
-                                            isSandboxMode ? "translate-x-10" : "translate-x-0"
-                                        )}>
-                                            {isSandboxMode ? <CheckCircle2 size={16} className="text-emerald-500" /> : <ShieldAlert size={16} className="text-slate-300" />}
-                                        </div>
-                                    </button>
-                                </div>
-
-                                {isSandboxMode && (
-                                    <div className="p-8 rounded-[2.5rem] bg-emerald-50/50 border-2 border-dashed border-emerald-200 text-emerald-700 animate-in zoom-in-95 duration-500">
-                                        <div className="flex items-start gap-4">
-                                            <Zap size={20} className="mt-1 animate-pulse" />
-                                            <div className="space-y-2">
-                                                <p className="text-sm font-black uppercase tracking-tight">Active Duty: Sandbox Mode</p>
-                                                <p className="text-xs font-medium leading-relaxed italic">
-                                                    The system is now isolated. You can test Order Dispatch, Payment Webhooks, and Loyalty Rewards without affecting production ledgers or live customers.
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
-                            </Card>
-
-                            <Card className="rounded-[3rem] border border-border p-10 bg-card shadow-sm space-y-8 overflow-hidden relative text-left">
-                                <div className="flex items-center justify-between text-left">
-                                    <h2 className="text-xl font-black text-foreground uppercase flex items-center gap-3"><Code className="h-5 w-5 text-muted-foreground" /> Surgical Tweaks</h2>
-                                    <div className="flex items-center gap-3 p-1 bg-secondary rounded-xl border border-border text-left">
-                                        <button onClick={() => setIsAdvancedEnabled(!isAdvancedEnabled)} className={cn("px-4 py-2 rounded-lg text-[8px] font-black uppercase transition-all flex items-center gap-2", isAdvancedEnabled ? "bg-rose-500 text-white shadow-lg" : "text-muted-foreground")}>
-                                            {isAdvancedEnabled ? <Unlock className="h-3 w-3" /> : <Lock className="h-3 w-3" />}
-                                            {isAdvancedEnabled ? 'Armed' : 'Locked'}
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div className="space-y-4 text-left">
-                                        <p className="text-muted-foreground font-medium leading-relaxed italic text-xs text-left">
-                                            <ShieldAlert className="h-10 w-10 text-amber-500 shrink-0" />
-                                            &quot;Warning: Custom CSS bypasses the theme engine. Incorrect syntax will destabilize the storefront rendering loop.&quot;
-                                        </p>
-                                    <textarea
-                                        disabled={!isAdvancedEnabled}
-                                        value={theme.custom_css}
-                                        onChange={e => setTheme({...theme, custom_css: e.target.value})}
-                                        placeholder="/* Custom CSS Protocol... */"
-                                        className={cn(
-                                            "w-full h-80 p-8 rounded-[2.5rem] bg-secondary border border-border text-primary font-mono text-xs leading-relaxed resize-none outline-none transition-all duration-1000",
-                                            !isAdvancedEnabled && "opacity-30 blur-sm pointer-events-none"
-                                        )}
-                                    />
-                                </div>
-                                <Zap className="absolute -bottom-20 -right-20 h-64 w-64 text-primary/5 rotate-45 -z-0" />
                             </Card>
                         </div>
                     )}
@@ -963,7 +867,7 @@ export default function AdminSettingsPage() {
                     <Card className="p-8 rounded-[3rem] bg-white border border-slate-100 shadow-sm space-y-8 relative overflow-hidden group text-left">
                         <div className="relative z-10 space-y-8 text-left">
                             <div className="flex items-center justify-between text-left">
-                                <h3 className="text-[10px] font-black uppercase text-muted-foreground tracking-[0.4em]">Store Pulse</h3>
+                                <h3 className="text-[10px] font-black uppercase text-muted-foreground tracking-[0.4em]">Bar Pulse</h3>
                                 <div className="flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary rounded-full text-[9px] font-black uppercase border border-primary/20">
                                     <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" /> Live
                                 </div>
@@ -972,21 +876,12 @@ export default function AdminSettingsPage() {
                             <div className="space-y-6 text-left">
                                 <div className="flex justify-between items-center border-b border-border pb-4 text-left">
                                     <span className="text-[9px] font-black uppercase text-muted-foreground">Version</span>
-                                    <span className="text-xs font-black text-foreground">v2.5.0-Titan</span>
+                                    <span className="text-xs font-black text-foreground">v1.0.0-Bar</span>
                                 </div>
                                 <div className="flex justify-between items-center border-b border-border pb-4 text-left">
-                                    <span className="text-[9px] font-black uppercase text-muted-foreground">Cloud Storage</span>
+                                    <span className="text-[9px] font-black uppercase text-muted-foreground">Cellar Storage</span>
                                     <span className="text-xs font-black text-foreground">68% Capacity</span>
                                 </div>
-                                <div className="flex justify-between items-center pb-2 text-left">
-                                    <span className="text-[9px] font-black uppercase text-muted-foreground">Active Themes</span>
-                                    <span className="text-xs font-black text-primary">Platinum Light</span>
-                                </div>
-                            </div>
-
-                            <div className="p-4 bg-primary/10 rounded-2xl border border-primary/20 flex items-center gap-3 text-left">
-                                <Clock className="h-4 w-4 text-primary" />
-                                <p className="text-[8px] font-black uppercase text-muted-foreground">Last Published: Just now</p>
                             </div>
                         </div>
                     </Card>
@@ -994,7 +889,7 @@ export default function AdminSettingsPage() {
                     {/* LIVE PREVIEW COMPONENT */}
                     <div className="space-y-4 text-left">
                         <h3 className="text-[10px] font-black uppercase text-muted-foreground tracking-[0.4em] ml-4 flex items-center gap-2 text-left">
-                            <Eye className="h-3 w-3" /> Real-time Simulation
+                            <Eye className="h-3 w-3" /> Real-time Menu Simulation
                         </h3>
                         <div className="bg-white rounded-[3rem] border border-slate-100 shadow-2xl overflow-hidden group text-left">
                             {/* Mini Header */}
@@ -1005,14 +900,10 @@ export default function AdminSettingsPage() {
                                             /* eslint-disable-next-line @next/next/no-img-element */
                                             <img src={logoPreview} alt="Logo Preview" className="h-full w-full object-contain" />
                                         ) : (
-                                            <Smartphone className="h-3.5 w-3.5" />
+                                            <Wine className="h-3.5 w-3.5" />
                                         )}
                                     </div>
                                     <span className="text-[9px] font-black uppercase text-foreground tracking-tight">{store.name}</span>
-                                </div>
-                                <div className="flex gap-2 text-left">
-                                    <div className="h-1.5 w-8 rounded-full bg-border" />
-                                    <div className="h-1.5 w-1.5 rounded-full bg-border" />
                                 </div>
                             </div>
                             {/* Mini Hero */}
@@ -1028,17 +919,16 @@ export default function AdminSettingsPage() {
                                     </h4>
                                     <p className="text-[10px] text-muted-foreground font-medium leading-relaxed italic line-clamp-2 px-4 text-left">{branding.hero_subtitle}</p>
                                     <div className="pt-4 text-left">
-                                        <button style={{ backgroundColor: theme.primary }} className="px-6 py-2.5 rounded-full text-white font-black uppercase text-[8px] tracking-widest shadow-xl shadow-primary/20">Shop Now</button>
+                                        <button style={{ backgroundColor: theme.primary }} className="px-6 py-2.5 rounded-full text-white font-black uppercase text-[8px] tracking-widest shadow-xl shadow-primary/20">Order Now</button>
                                     </div>
                                 </div>
-                                <div style={{ backgroundColor: theme.primary }} className="absolute -bottom-20 -right-20 w-48 h-48 rounded-full opacity-10 blur-3xl text-left" />
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* STICKY CMS ACTION BAR (Frosted Platinum) */}
+            {/* STICKY CMS ACTION BAR */}
             <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[100] animate-in slide-in-from-bottom-8 duration-1000 w-full max-w-4xl px-4 text-left">
                 <div className="bg-background/80 backdrop-blur-xl p-4 rounded-[2.5rem] shadow-2xl flex items-center gap-3 border border-border text-left">
                     <Button
@@ -1047,31 +937,8 @@ export default function AdminSettingsPage() {
                         className="flex-1 h-16 rounded-2xl bg-primary text-background font-black uppercase tracking-[0.2em] text-xs hover:bg-primary/90 transition-all active:scale-95 shadow-xl shadow-primary/20 group"
                     >
                         {savingKey === 'all' ? <Loader2 className="h-5 w-5 animate-spin mr-3" /> : <Rocket className="h-5 w-5 mr-3 group-hover:translate-y-[-2px] group-hover:translate-x-[2px] transition-transform" />}
-                        Publish Protocol
+                        Sync All Bar Data
                     </Button>
-                    <div className="flex gap-2 p-1 bg-secondary rounded-xl border border-border pr-4 text-left">
-                        <Button
-                            variant="ghost"
-                            onClick={() => {
-                                if (activeTab === 'identity') handleSave('branding', branding, true);
-                                else if (activeTab === 'homepage') handleSave('homepage', homepage, true);
-                                else if (activeTab === 'promotions') handleSave('promotions', promotions, true);
-                                else if (activeTab === 'theme') handleSave('theme_config', theme, true);
-                                else if (activeTab === 'seo') handleSave('seo_config', seo, true);
-                                else if (activeTab === 'ops') {
-                                    handleSave('contact', contact, true);
-                                    handleSave('shipping', shipping, true);
-                                }
-                                else if (activeTab === 'catalog') handleSave('catalog', catalog, true);
-                                else if (activeTab === 'advanced') handleSave('theme_config', theme, true);
-                            }}
-                            className="h-12 px-6 rounded-lg text-muted-foreground hover:text-foreground hover:bg-card font-black uppercase text-[9px]"
-                        >
-                            Sync Now
-                        </Button>
-                        <div className="w-px h-6 bg-border self-center mx-2" />
-                        <Button variant="ghost" onClick={fetchSettings} className="h-12 px-6 rounded-lg text-muted-foreground hover:text-foreground hover:bg-card font-black uppercase text-[9px]">Reset</Button>
-                    </div>
                 </div>
             </div>
         </div>

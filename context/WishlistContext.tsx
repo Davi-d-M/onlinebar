@@ -2,12 +2,14 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { OB_OS } from "@/lib/onlineBarOS";
 
 interface WishlistItem {
   id: number;
   name: string;
   price: number;
   image: string;
+  category?: string;
   rating?: number;
 }
 
@@ -42,13 +44,14 @@ export const WishlistProvider = ({ children }: { children: React.ReactNode }) =>
                 // Fetch product details for these IDs if needed, but for now we just sync IDs
                 // In a real app we'd fetch full items. Let's assume we fetch them:
                 const ids = data.map(item => item.product_id);
-                const { data: products } = await supabase.from('products').select('id, name, price, image_url').in('id', ids);
+                const { data: products } = await supabase.from('products').select('id, name, price, image_url, category').in('id', ids);
                 if (products) {
                     setWishlist(products.map(p => ({
                         id: p.id,
                         name: p.name,
                         price: p.price,
-                        image: p.image_url
+                        image: p.image_url,
+                        category: p.category
                     })));
                 }
             }
@@ -62,6 +65,17 @@ export const WishlistProvider = ({ children }: { children: React.ReactNode }) =>
   }, [wishlist]);
 
   const addToWishlist = async (item: WishlistItem) => {
+    // 🚀 [MASTER_OS] Track Interaction
+    if (supabase) {
+        const anonId = localStorage.getItem('ob_anonymous_id');
+        await OB_OS.track('ADD_TO_WISHLIST' as any, {
+            userId: userId || undefined,
+            anonymousId: anonId || undefined,
+            productId: item.id,
+            details: { name: item.name, category: item.category }
+        });
+    }
+
     setWishlist((prevWishlist) => {
       const exists = prevWishlist.find((w) => w.id === item.id);
       if (exists) return prevWishlist;

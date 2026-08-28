@@ -3,7 +3,6 @@
 import * as React from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import {
-    Sparkles,
     ArrowUpRight,
     ArrowDownRight,
     TrendingUp,

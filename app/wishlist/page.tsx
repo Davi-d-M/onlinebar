@@ -12,14 +12,15 @@ export default function WishlistPage() {
   const { wishlist, removeFromWishlist } = useWishlist();
   const { addToCart } = useCart();
 
-  const handleMoveToCart = (item: { id: number; name: string; price: number; image?: string }) => {
+  const handleMoveToCart = (item: { id: number; name: string; price: number; image?: string; category?: string }) => {
     addToCart({
       id: item.id,
       name: item.name,
       price: item.price,
       base_price: item.price,
       image: item.image || '/placeholder.jpg',
-      quantity: 1
+      quantity: 1,
+      category: item.category
     });
     removeFromWishlist(item.id);
   };

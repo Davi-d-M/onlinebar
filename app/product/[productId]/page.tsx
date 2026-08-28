@@ -162,6 +162,7 @@ export default function Product() {
       base_price: product.price,
       image: product.image || product.image_url || '',
       quantity: quantity,
+      category: product.category,
     });
 
     setIsAdding(false);
@@ -175,7 +176,7 @@ export default function Product() {
   };
 
   const handleWhatsAppOrder = () => {
-    const message = `Hello Apexstores! I want to order:\n\n*Product:* ${product.name}\n*Quantity:* ${quantity}\n*Price:* ${formatPrice(product.price * quantity)}\n\nIs this available?`;
+    const message = `Hello Online Bar! I want to order:\n\n*Product:* ${product.name}\n*Quantity:* ${quantity}\n*Price:* ${formatPrice(product.price * quantity)}\n\nIs this available for dispatch?`;
     window.open(`https://wa.me/${settings.contact.whatsapp}?text=${encodeURIComponent(message)}`, '_blank');
   };
 
@@ -293,9 +294,9 @@ export default function Product() {
               <div>
                   <p className="text-[10px] font-black uppercase tracking-widest text-amber-600 mb-1">Apex Pro Tip</p>
                   <p className="text-sm font-bold text-amber-900/80 leading-snug">
-                      {product.category === 'airpods' ? "Reset your AirPods by holding the back button for 15 seconds until the light flashes amber." :
-                       product.category === 'chargers' ? "Use a 20W brick to hit 50% charge in just 30 minutes on most modern iPhones." :
-                       "Keep your gadget clean with a microfiber cloth to maintain that premium mirror finish."}
+                      {product.category === 'wine' ? "Store your wine horizontally in a cool, dark place to keep the cork moist and preserve the flavor." :
+                       product.category === 'spirits' ? "Once opened, spirits like whiskey can last for years if kept away from direct sunlight." :
+                       "Always enjoy responsibly and stay hydrated between drinks, bro."}
                   </p>
               </div>
           </div>
@@ -400,7 +401,7 @@ export default function Product() {
               <button
                 onClick={() => {
                     const url = typeof window !== 'undefined' ? window.location.href : '';
-                    const shareText = `Check out ${product.name} from Apexstores! ${url}`;
+                    const shareText = `Check out ${product.name} from Online Bar! ${url}`;
 
                     if (navigator.share) {
                         navigator.share({
@@ -431,9 +432,9 @@ export default function Product() {
               <div className="relative z-10">
                   <div className="flex items-center gap-3 mb-6">
                       <div className="h-10 w-10 rounded-2xl bg-primary/20 flex items-center justify-center text-primary"><BookOpen className="h-6 w-6" /></div>
-                      <h2 className="text-3xl font-black uppercase tracking-tighter">Master Your Tech</h2>
+                      <h2 className="text-3xl font-black uppercase tracking-tighter">Mixology Hub</h2>
                   </div>
-                  <p className="text-slate-500 text-lg font-medium max-w-xl mb-12 italic">&quot;Don&apos;t just own it, bro. Lead the pack with these elite setup guides from the Apex Library.&quot;</p>
+                  <p className="text-slate-500 text-lg font-medium max-w-xl mb-12 italic">&quot;Don&apos;t just drink it, bro. Lead the pack with these elite mixology guides from the Bar Library.&quot;</p>
 
                   <div className="grid sm:grid-cols-2 gap-6">
                       {tutorials.map((t) => (

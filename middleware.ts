@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { verifySessionCookie } from '@/lib/adminAuth';
+import { canAccessRoute } from '@/lib/engines/identityEngine';
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -18,10 +19,17 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/admin/login', request.url));
       }
 
-      // 2. Role-Based Routing
-      // Prevent Suppliers from entering Admin
-      if (isAdminPath && sessionData.role === 'supplier') {
-        return NextResponse.redirect(new URL('/supplier', request.url));
+      // 2. Role-Based Routing & Route Access Logic
+      if (isAdminPath) {
+          if (sessionData.role === 'supplier') {
+            return NextResponse.redirect(new URL('/supplier', request.url));
+          }
+
+          // Enhanced RBAC Check
+          if (!canAccessRoute(sessionData.role, pathname)) {
+              console.warn(`🛑 RBAC REJECTION: Role ${sessionData.role} attempted to access ${pathname}`);
+              return NextResponse.redirect(new URL('/admin', request.url));
+          }
       }
 
       // Prevent Staff from entering Supplier (unless Owner/Admin)

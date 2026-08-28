@@ -107,7 +107,7 @@ export default function PersonalizedFeed() {
                         Suggested <span className="text-primary italic">for You.</span>
                     </h2>
                     <p className="text-slate-500 font-medium text-lg max-w-xl italic">
-                        &quot;Autonomous intelligence has mapped your tech profile. We recommend these elite upgrades for your setup.&quot;
+                        &quot;Autonomous intelligence has mapped your taste profile. We recommend these selections for your next celebration.&quot;
                     </p>
                 </div>
                 <Link href="/shop" className="text-[10px] font-black text-primary underline underline-offset-4 uppercase tracking-widest hover:text-foreground transition-colors flex items-center gap-2">

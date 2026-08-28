@@ -31,6 +31,7 @@ interface Shipment {
 
 export default function GlobalSourcingBridge() {
     const { role } = useAdmin();
+    console.log("Global Sourcing Bridge context role:", role);
     const [shipments, setShipments] = React.useState<Shipment[]>([]);
     const [loading, setLoading] = React.useState(true);
     const [isCalcOpen, setIsCalcOpen] = React.useState(false);
@@ -118,8 +119,8 @@ export default function GlobalSourcingBridge() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
                 {[
                     { label: 'Active Imports', val: shipments.length, icon: Ship, color: 'primary' },
-                    { label: 'Clearing Pipeline', val: formatPrice(18500), icon: FileText, color: 'indigo' },
-                    { label: 'Inbound Value', val: '$6,820', icon: DollarSign, color: 'emerald' },
+                    { label: 'Clearing Pipeline', val: formatPrice(shipments.filter(s => s.status === 'Clearing').reduce((sum, s) => sum + (s.value_usd * rate), 0)), icon: FileText, color: 'indigo' },
+                    { label: 'Inbound Value', val: `$${shipments.reduce((sum, s) => sum + s.value_usd, 0).toLocaleString()}`, icon: DollarSign, color: 'emerald' },
                 ].map(item => (
                     <Card key={item.label} className="p-10 rounded-[3rem] bg-white border border-slate-100 shadow-sm group hover:shadow-xl transition-all h-full">
                         <div className={cn(

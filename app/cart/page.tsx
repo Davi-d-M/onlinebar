@@ -4,6 +4,7 @@ import CartItemList from "@/components/cart/CartItemList";
 import EmptyCart from "@/components/cart/EmptyCart";
 import OrderSummary from "@/components/cart/OrderSummary";
 import Recommendations from "@/components/cart/Recommendations";
+import SnackCrossSell from "@/components/engagement/SnackCrossSell";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/context/CartContext";
 import { ArrowLeft } from "lucide-react";
@@ -40,8 +41,9 @@ export default function Cart() {
       </div>
 
       <div className="grid lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-10">
           <CartItemList />
+          <SnackCrossSell />
         </div>
 
         <div className="lg:col-span-1">

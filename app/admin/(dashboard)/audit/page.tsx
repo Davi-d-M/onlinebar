@@ -63,8 +63,8 @@ function DetailRenderer({ log }: { log: AuditLog }) {
         case 'CREATE_PRODUCT':
             return (
                 <div className="flex flex-col gap-1">
-                    <p className="text-xs font-black text-primary uppercase">New Gadget: {d.name}</p>
-                    <span className="text-[10px] font-bold text-slate-400 uppercase">Initial: {d.initial_stock} Units @ {formatPrice(d.price)}</span>
+                    <p className="text-xs font-black text-primary uppercase">New Inventory: {d.name}</p>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase">Initial: {d.initial_stock} Bottles @ {formatPrice(d.price)}</span>
                 </div>
             );
         case 'UPDATE_ORDER_STATUS':
@@ -183,8 +183,8 @@ export default function AdminAuditPage() {
     <div className="p-8 space-y-8 bg-slate-50 min-h-screen text-left">
       <header className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 border-b border-slate-200 pb-8">
         <div>
-          <h1 className="text-4xl font-black text-foreground uppercase tracking-tighter">System Audit</h1>
-          <p className="text-slate-500 text-sm font-medium mt-1">Review administrative actions and maintain operational security.</p>
+          <h1 className="text-4xl font-black text-foreground uppercase tracking-tighter">Security Audit</h1>
+          <p className="text-slate-500 text-sm font-medium mt-1">Review staff actions and maintain bar security.</p>
         </div>
         <div className="flex gap-2">
             {role === 'owner' && (

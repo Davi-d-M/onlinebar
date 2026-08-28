@@ -24,12 +24,12 @@ export async function generateReceiptPDF(order: Order) {
     // Header
     doc.setFontSize(22);
     doc.setTextColor(255, 107, 0); // Primary color
-    doc.text('APEXSTORES TECH', 14, 20);
+    doc.text('ONLINE BAR NAIROBI', 14, 20);
 
     doc.setFontSize(10);
     doc.setTextColor(100);
-    doc.text('Premium Electronics & Mobile Accessories', 14, 26);
-    doc.text('Nairobi, Kenya | support@apexstores.com', 14, 31);
+    doc.text('Premium Wine, Spirits & Late Night Snacks', 14, 26);
+    doc.text('Nairobi, Kenya | support@onlinebar.co.ke', 14, 31);
 
     // Receipt Info
     doc.setFontSize(12);
@@ -53,7 +53,7 @@ export async function generateReceiptPDF(order: Order) {
         ['Item ID', 'Description', 'Qty', 'Unit Price', 'Total'],
         [
             `#${order.product_id || 'N/A'}`,
-            order.product_name || 'Gadget Purchase',
+            order.product_name || 'Beverage Purchase',
             order.quantity,
             formatPrice(order.total_price / order.quantity),
             formatPrice(order.total_price)
@@ -79,7 +79,7 @@ export async function generateReceiptPDF(order: Order) {
     // Footer
     doc.setFontSize(8);
     doc.setTextColor(150);
-    doc.text('Thank you for choosing Apexstores Tech. Warranty valid for 7 days upon delivery.', 14, finalY + 30);
+    doc.text('Thank you for choosing Online Bar. Genuine products and chilled dispatch guaranteed.', 14, finalY + 30);
     doc.text('This is an automatically generated receipt.', 14, finalY + 35);
 
     return doc;
@@ -89,7 +89,7 @@ export async function generateReceiptPDF(order: Order) {
  * Creates a WhatsApp share link for a receipt
  */
 export function getWhatsAppReceiptLink(order: Order) {
-    const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://tech-paxv.onrender.com';
-    const message = `Hello ${order.customer_name}! Thank you for shopping at *Apexstores Tech*.\n\n*Order ID:* #${order.id}\n*Total:* ${formatPrice(order.total_price)}\n*Status:* ${order.status}\n\nYour gadget is ready. View tracking here: ${baseUrl}/track?id=${order.id}`;
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://onlinebar.co.ke';
+    const message = `Hello ${order.customer_name}! Thank you for shopping at *Online Bar*.\n\n*Order ID:* #${order.id}\n*Total:* ${formatPrice(order.total_price)}\n*Status:* ${order.status}\n\nYour order is ready. View tracking here: ${baseUrl}/track?id=${order.id}`;
     return `https://wa.me/${order.customer_phone.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`;
 }

@@ -106,7 +106,8 @@ export default function Recommendations() {
                   price: product.price,
                   base_price: product.price,
                   image: product.image_url,
-                  quantity: 1
+                  quantity: 1,
+                  category: product.category
                 } as CartItem)}
                 className="w-full h-12 rounded-2xl bg-slate-50 text-foreground font-black uppercase text-[9px] tracking-widest hover:bg-primary hover:text-white border border-slate-100 group-hover:border-transparent transition-all shadow-sm active:scale-95 flex items-center justify-center gap-2"
               >

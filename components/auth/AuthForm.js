@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 import { supabase } from '@/lib/supabaseClient'
+import { OB_OS } from '@/lib/onlineBarOS'
 
 export default function AuthForm({ initialMode = 'signin' }) {
   const router = useRouter()
@@ -61,7 +62,7 @@ export default function AuthForm({ initialMode = 'signin' }) {
       }
 
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
+        const { data: signUpData, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -74,18 +75,32 @@ export default function AuthForm({ initialMode = 'signin' }) {
 
         if (error) throw error
 
+        // 🚀 [MASTER_OS] Identity Stitching & Event Tracking
+        const anonId = localStorage.getItem('ob_anonymous_id');
+        if (anonId && signUpData.user) {
+            await OB_OS.stitchIdentity(anonId, signUpData.user.id);
+            await OB_OS.track('USER_REGISTERED', { userId: signUpData.user.id, anonymousId: anonId });
+        }
+
         setMessage('Check your email for the confirmation link!')
         setCooldownSeconds(COOLDOWN_DURATION)
         router.push('/')
         return
       }
 
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data: signInData, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
 
       if (error) throw error
+
+      // 🚀 [MASTER_OS] Identity Stitching & Event Tracking
+      const anonId = localStorage.getItem('ob_anonymous_id');
+      if (anonId && signInData.user) {
+          await OB_OS.stitchIdentity(anonId, signInData.user.id);
+          await OB_OS.track('USER_LOGIN', { userId: signInData.user.id, anonymousId: anonId });
+      }
 
       setMessage('Logged in successfully!')
       router.push('/')

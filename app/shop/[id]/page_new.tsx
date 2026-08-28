@@ -89,13 +89,14 @@ export default function DynamicProductDetailPage({ params }: { params: { id: str
       base_price: product.price,
       image: product.image_url || '/placeholder.jpg',
       quantity: quantity,
+      category: product.category,
     });
     setTimeout(() => setIsAdding(false), 500);
   };
 
   const handleWhatsAppOrder = () => {
     if (!product) return;
-    const message = `Hello Apexstores! I want to order:\n\n*Product:* ${product.name}\n*Quantity:* ${quantity}\n*Price:* ${formatPrice(product.price * quantity)}\n\nIs this available?`;
+    const message = `Hello Online Bar! I want to order:\n\n*Product:* ${product.name}\n*Quantity:* ${quantity}\n*Price:* ${formatPrice(product.price * quantity)}\n\nIs this available for dispatch?`;
     window.open(`https://wa.me/${settings.contact.whatsapp}?text=${encodeURIComponent(message)}`, '_blank');
   };
 
@@ -153,7 +154,7 @@ export default function DynamicProductDetailPage({ params }: { params: { id: str
               
               <div className="flex items-center space-x-2 mb-4">
                 <span className="text-amber-500 font-bold text-base">★ ★ ★ ★ ☆</span>
-                <span className="text-xs font-black text-slate-400 bg-slate-50 px-2 py-0.5 rounded ml-2 uppercase">Verified Tech</span>
+                <span className="text-xs font-black text-slate-400 bg-slate-50 px-2 py-0.5 rounded ml-2 uppercase">Genuine Spirits</span>
               </div>
 
               <div className="text-2xl font-black text-foreground mb-6">

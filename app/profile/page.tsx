@@ -85,6 +85,9 @@ interface Profile {
   referral_code: string;
   wallet_balance: number;
   current_streak: number;
+  xp: number;
+  level: number;
+  title: string;
   latitude?: number;
   longitude?: number;
   birth_date?: string;
@@ -130,6 +133,7 @@ interface PurchasedItem {
   name: string;
   image: string;
   price: number;
+  category: string;
 }
 
 interface Device {
@@ -269,11 +273,12 @@ export default function ProfilePage() {
             .eq('status', 'Delivered')
             .limit(5);
 
-          if (pItems) setPurchasedItems((pItems as unknown as { product_id: number, products: { name: string, image_url: string, price: number } | null }[]).map((pi) => ({
+          if (pItems) setPurchasedItems((pItems as unknown as { product_id: number, products: { name: string, image_url: string, price: number, category: string } | null }[]).map((pi) => ({
               id: pi.product_id,
               name: pi.products?.name || 'Product',
               image: pi.products?.image_url || '',
-              price: pi.products?.price || 0
+              price: pi.products?.price || 0,
+              category: pi.products?.category || ''
           })));
 
       // Update Streak Logic
@@ -335,37 +340,18 @@ export default function ProfilePage() {
     const complete = Math.round((completedCount / items.length) * 100);
 
     // Gamification Levels
-    const points = profile?.loyalty_points || 0;
-    let level = "Explorer";
-    let nextTier = "Silver";
-    let target = 500;
-    let rankIcon: React.ElementType = Star;
+    const points = profile?.xp || 0;
+    const level = profile?.level || 1;
+    const title = profile?.title || 'Newcomer';
 
-    if (gamification?.tiers) {
-        const sortedTiers = [...(gamification.tiers as { threshold: number; label: string; icon: string; id: string }[])].sort((a, b) => b.threshold - a.threshold);
-        const current = sortedTiers.find(t => points >= t.threshold);
-        if (current) {
-            level = current.label;
-            rankIcon = IconMap[current.icon] || Star;
+    // Calculate Next Rank Info
+    const nextLevelXP = 100 * Math.pow(level, 2);
+    const xpInCurrentLevel = points - (100 * Math.pow(level - 1, 2));
+    const totalRequiredInLevel = nextLevelXP - (100 * Math.pow(level - 1, 2));
+    const percentage = Math.min(100, Math.max(0, (xpInCurrentLevel / totalRequiredInLevel) * 100));
 
-            const nextIdx = (gamification.tiers as { id: string }[]).findIndex((t) => t.id === current.id) + 1;
-            const next = (gamification.tiers as { label: string; threshold: number }[])[nextIdx];
-            if (next) {
-                nextTier = next.label;
-                target = next.threshold;
-            } else {
-                nextTier = "Max";
-                target = current.threshold;
-            }
-        }
-    } else {
-        if (points >= 2000) { level = "Diamond"; nextTier = "Elite"; target = 5000; rankIcon = Gem; }
-        else if (points >= 1000) { level = "Gold"; nextTier = "Diamond"; target = 2000; rankIcon = Crown; }
-        else if (points >= 500) { level = "Silver"; nextTier = "Gold"; target = 1000; rankIcon = ShieldCheck; }
-    }
-
-    return { totalSpend, wishlistCount, activeWarranties, completion: complete, level, nextTier, target, points, rankIcon };
-  }, [orders, profile, wishlist, gamification, devices.length, user?.email]);
+    return { totalSpend, wishlistCount, activeWarranties, completion: complete, level, title, points, percentage, target: nextLevelXP };
+  }, [orders, profile, wishlist, devices.length, user?.email]);
 
   const greeting = useMemo(() => {
       const hour = new Date().getHours();
@@ -386,7 +372,7 @@ export default function ProfilePage() {
   */
 
   const handleShareReferral = () => {
-    const text = `Check out Apexstores for premium tech! Use my link to get a member discount: ${referralUrl}`;
+    const text = `Check out Online Bar for premium drinks! Use my link to get a member discount: ${referralUrl}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
   };
 
@@ -671,10 +657,10 @@ export default function ProfilePage() {
 
                 <div className="grid grid-cols-2 gap-4 animate-in fade-in zoom-in-95 duration-700 delay-200">
                     {[
-                        { label: 'Apex XP', val: stats.points, icon: Zap, color: 'primary', href: '#points-ledger-section' },
-                        { label: 'Active Warranty', val: stats.activeWarranties, icon: ShieldCheck, color: 'primary', href: '#warranty-section' },
+                        { label: 'Bar XP', val: stats.points, icon: Zap, color: 'primary', href: '#points-ledger-section' },
+                        { label: 'Active Orders', val: stats.activeWarranties, icon: ShieldCheck, color: 'primary', href: '#warranty-section' },
                         { label: 'Wishlist', val: stats.wishlistCount, icon: Heart, color: 'primary', href: '/wishlist' },
-                        { label: 'Rank', val: stats.level, icon: stats.rankIcon, color: 'primary', href: '#loyalty-pathway-section' },
+                        { label: 'Rank', val: stats.title, icon: Rocket, color: 'primary', href: '#loyalty-pathway-section' },
                     ].map(item => (
                         <button
                             key={item.label}
@@ -802,7 +788,7 @@ export default function ProfilePage() {
                                 <div className="space-y-2">
                                     <p className="text-[10px] font-black uppercase text-primary tracking-[0.4em]">En Route</p>
                                     <h3 className="text-3xl font-black text-foreground uppercase tracking-tighter">Order #{orders[0].id}</h3>
-                                    <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">Estimated Arrival: <span className="text-foreground">Today</span></p>
+                                    <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">Estimated Arrival: <span className="text-foreground">Chilled & Ready</span></p>
                                 </div>
                                 <div className="flex-1 w-full max-w-sm">
                                     <div className="flex justify-between mb-4 text-[8px] font-black uppercase text-slate-400">
@@ -854,9 +840,10 @@ export default function ProfilePage() {
                     <div className="bg-white rounded-[3rem] border border-slate-100 p-10 shadow-sm relative overflow-hidden">
                         <div className="relative z-10 flex justify-between items-center px-4 overflow-x-auto no-scrollbar gap-8">
                             {((gamification?.tiers as { label?: string; level?: string; icon: string }[]) || [
-                                { level: 'Explorer', icon: 'Star' },
-                                { level: 'Silver', icon: 'ShieldCheck' },
-                                { level: 'Gold', icon: 'Crown' },
+                                { level: 'Newcomer', icon: 'Star' },
+                                { level: 'Regular', icon: 'ShieldCheck' },
+                                { level: 'Insider', icon: 'Rocket' },
+                                { level: 'VIP', icon: 'Crown' },
                                 { level: 'Elite', icon: 'Gem' },
                                 { level: 'Legend', icon: 'Trophy' },
                             ]).map((step) => {
@@ -866,11 +853,11 @@ export default function ProfilePage() {
                                     <div key={label} className="flex flex-col items-center gap-3 relative z-10 shrink-0">
                                         <div className={cn(
                                             "h-12 w-12 rounded-full border-4 border-white flex items-center justify-center shadow-lg transition-all",
-                                            stats.level === label ? "bg-primary scale-125 ring-4 ring-primary/20" : "bg-slate-50 text-slate-200"
+                                            stats.title === label ? "bg-primary scale-125 ring-4 ring-primary/20" : "bg-slate-50 text-slate-200"
                                         )}>
-                                            <Icon className={cn("h-5 w-5", stats.level === label ? "text-white" : "text-slate-300")} />
+                                            <Icon className={cn("h-5 w-5", stats.title === label ? "text-white" : "text-slate-300")} />
                                         </div>
-                                        <p className={cn("text-[8px] font-black uppercase tracking-widest", stats.level === label ? "text-primary" : "text-slate-300")}>{label}</p>
+                                        <p className={cn("text-[8px] font-black uppercase tracking-widest", stats.title === label ? "text-primary" : "text-slate-300")}>{label}</p>
                                     </div>
                                 );
                             })}
@@ -898,7 +885,7 @@ export default function ProfilePage() {
                                     </div>
                                     <p className="text-[10px] font-black text-foreground uppercase truncate mb-1">{item.name}</p>
                                     <p className="text-sm font-black text-primary mb-3">{formatPrice(item.price)}</p>
-                                    <Button onClick={(e) => { e.preventDefault(); addToCart({ ...item, quantity: 1, base_price: item.price } as CartItem); router.push('/cart'); }} className="w-full h-10 rounded-xl bg-primary text-white font-black uppercase text-[8px] active:scale-95 shadow-lg shadow-primary/20">One-Tap Order</Button>
+                                    <Button onClick={(e) => { e.preventDefault(); addToCart({ ...item, quantity: 1, base_price: item.price, category: item.category } as CartItem); router.push('/cart'); }} className="w-full h-10 rounded-xl bg-primary text-white font-black uppercase text-[8px] active:scale-95 shadow-lg shadow-primary/20">One-Tap Order</Button>
                                 </Link>
                             ))}
                         </div>
@@ -912,13 +899,13 @@ export default function ProfilePage() {
                             <div className="space-y-6 text-left">
                                 <div className="flex items-center gap-3">
                                     <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shadow-sm group-hover:scale-105 transition-transform"><Cpu className="h-5 w-5" /></div>
-                                    <h2 className="text-2xl font-black uppercase tracking-tighter">AI Tech Assistant</h2>
+                                    <h2 className="text-2xl font-black uppercase tracking-tighter">Mixology Assistant</h2>
                                 </div>
-                                <p className="text-slate-500 font-medium italic text-sm leading-relaxed">&quot;Describe your device or technical challenge, and I&apos;ll recommend the perfect elite upgrade.&quot;</p>
+                                <p className="text-slate-500 font-medium italic text-sm leading-relaxed">&quot;Describe your celebration or preferred taste, and I&apos;ll recommend the perfect elite pairing.&quot;</p>
                                 <div className="relative">
                                     <Input
                                         ref={assistantInputRef}
-                                        placeholder="Which charger fits my iPhone 13?"
+                                        placeholder="What wine goes well with spicy snacks?"
                                         className="h-14 rounded-2xl bg-white border-slate-100 text-foreground placeholder:text-slate-300 font-bold pl-12 pr-12 focus:ring-4 focus:ring-primary/5 transition-all shadow-sm"
                                         onKeyDown={(e) => {
                                             if (e.key === 'Enter') {
@@ -981,7 +968,7 @@ export default function ProfilePage() {
                             <div className="relative z-10 space-y-4">
                                 <Headphones className="h-10 w-10 text-primary" />
                                 <h3 className="text-2xl font-black uppercase tracking-tighter leading-none text-foreground">Global <br /> <span className="text-primary italic">Support Hub</span></h3>
-                                <p className="text-[10px] text-slate-400 font-medium italic">&quot;Real-time technical extraction. No bots, just elite engineers.&quot;</p>
+                                <p className="text-[10px] text-slate-400 font-medium italic">&quot;Real-time support. No bots, just elite assistance.&quot;</p>
                                 <Button
                                     onClick={() => setIsSupportFormOpen(true)}
                                     className="w-full h-12 rounded-xl bg-primary text-white font-black uppercase text-[9px] tracking-widest active:scale-95 shadow-lg shadow-primary/20"
@@ -1097,24 +1084,24 @@ export default function ProfilePage() {
                             </div>
                             <div className="text-right">
                                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Current Rank</p>
-                                <p className="text-xl font-black text-primary uppercase italic tracking-tighter">{stats.level}</p>
+                                <p className="text-xl font-black text-primary uppercase italic tracking-tighter">{stats.title}</p>
                             </div>
                         </div>
 
                         <div className="space-y-3">
                             <div className="flex justify-between items-end mb-2">
                                 <p className="text-3xl font-black tracking-tighter leading-none text-foreground">{stats.points.toLocaleString()} <span className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">XP</span></p>
-                                <p className="text-[10px] font-black text-primary uppercase tracking-widest">Target: {stats.nextTier}</p>
+                                <p className="text-[10px] font-black text-primary uppercase tracking-widest">Level {stats.level}</p>
                             </div>
                             <div className="h-3 w-full bg-slate-100 rounded-full overflow-hidden border border-slate-200 p-0.5">
                                 <div
                                     className="h-full bg-primary rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(255,107,0,0.3)]"
-                                    style={{ width: `${Math.min(100, (stats.points / stats.target) * 100)}%` }}
+                                    style={{ width: `${stats.percentage}%` }}
                                 />
                             </div>
                             <div className="flex justify-between text-[8px] font-black text-slate-400 uppercase tracking-[0.2em]">
                                 <span>{stats.points} / {stats.target} XP</span>
-                                <span>{stats.target - stats.points} XP to next Rank</span>
+                                <span>{stats.target - stats.points} XP to Lvl {stats.level + 1}</span>
                             </div>
                         </div>
 
@@ -1122,7 +1109,7 @@ export default function ProfilePage() {
                             <div className="h-10 w-10 rounded-xl bg-white flex items-center justify-center text-primary shadow-sm"><Gift className="h-5 w-5" /></div>
                             <div>
                                 <p className="text-[9px] font-black uppercase text-slate-400">Current Perk</p>
-                                <p className="text-xs font-bold text-foreground uppercase">{stats.level === 'Explorer' ? 'No perks unlocked' : 'Free Dispatch Unlocked'}</p>
+                                <p className="text-xs font-bold text-foreground uppercase">{stats.title === 'Newcomer' ? 'No perks unlocked' : 'Free Dispatch Unlocked'}</p>
                             </div>
                         </div>
 
@@ -1131,8 +1118,8 @@ export default function ProfilePage() {
                             <p className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 px-1">Loyalty Pathway</p>
                             <div className="space-y-2">
                                 {[
-                                    { level: 'Silver', perks: ['2% Cashback', 'Early Access'], locked: stats.level === 'Explorer' },
-                                    { level: 'Gold', perks: ['5% Cashback', 'Birthday Gift'], locked: stats.level !== 'Gold' && stats.level !== 'Diamond' },
+                                    { level: 'Regular', perks: ['2% Cashback', 'Early Access'], locked: stats.title === 'Newcomer' },
+                                    { level: 'VIP', perks: ['5% Cashback', 'Birthday Gift'], locked: !['VIP', 'Elite', 'Legend'].includes(stats.title) },
                                 ].map(p => (
                                     <div key={p.level} className={cn("p-4 rounded-2xl border transition-all", p.locked ? "bg-slate-50 border-slate-100 opacity-60" : "bg-white border-primary/20 shadow-sm")}>
                                         <div className="flex justify-between items-center mb-2">
@@ -1218,7 +1205,7 @@ export default function ProfilePage() {
                             <div className="text-left">
                                 <h3 className="text-2xl font-black uppercase tracking-tighter leading-none mb-2 text-foreground">Tactical <br /> <span className="text-primary italic">Drop Point</span></h3>
                                 <p className="text-slate-500 text-[10px] font-medium leading-relaxed italic opacity-80">
-                                    {profile?.latitude ? "Precision coordinates updated. Your rider will extract your tech at this exact pin." : "Pin your exact delivery location on the map for zero-delay dispatch."}
+                                    {profile?.latitude ? "Precision coordinates updated. Your rider will arrive at this exact pin." : "Pin your exact delivery location on the map for zero-delay dispatch."}
                                 </p>
                             </div>
                             <Button className="w-full h-14 rounded-2xl bg-primary text-white font-black uppercase text-[10px] tracking-widest shadow-xl active:scale-95 transition-all shadow-primary/20">
@@ -1286,18 +1273,18 @@ export default function ProfilePage() {
                                     {order.status === 'Delivered' && (
                                         <button
                                             onClick={() => {
-                                                const complaint = prompt("Please describe the technical issue with your gadget:");
+                                                const complaint = prompt("Please describe the quality issue with your order:");
                                                 if (complaint && supabase) {
                                                     supabase.from('warranty_cases').insert([{
                                                         order_id: order.id,
                                                         customer_complaint: complaint,
                                                         status: 'Pending_Pickup'
-                                                    }]).then(() => alert("Warranty Mission Initialized. 🛡️"));
+                                                    }]).then(() => alert("Quality Mission Initialized. 🛡️"));
                                                 }
                                             }}
                                             className="text-[7px] font-black uppercase text-primary underline"
                                         >
-                                            Request Warranty
+                                            Report Issue
                                         </button>
                                     )}
                                 </div>

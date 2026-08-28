@@ -5,7 +5,6 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import {
   LayoutDashboard,
-  Package,
   ShoppingCart,
   Users,
   MessageSquare,
@@ -32,7 +31,6 @@ import {
   Search,
   Bell,
   Activity,
-  Plus,
   Layout as LayoutIcon,
   Lock,
   PanelLeftClose,
@@ -127,17 +125,17 @@ export default function AdminLayoutClient({
       { name: 'Distributors', href: '/admin/operations/suppliers', icon: Beer, permission: 'can_manage_inventory' },
     ]},
     { group: 'PATRONS', items: [
-      { name: 'Directory', href: '/admin/customers', icon: Users, permission: 'can_manage_customer_care' },
-      { name: 'Support Inbox', href: '/admin/messages', icon: MessageSquare, permission: 'can_manage_customer_care' },
-      { name: 'Taste Reviews', href: '/admin/reviews', icon: Star, permission: 'can_manage_customer_care' },
+      { name: 'Directory', href: '/admin/customers', icon: Users, permission: 'can_manage_communications' },
+      { name: 'Support Inbox', href: '/admin/messages', icon: MessageSquare, permission: 'can_manage_communications' },
+      { name: 'Taste Reviews', href: '/admin/reviews', icon: Star, permission: 'can_manage_communications' },
       { name: 'VIP Rewards', href: '/admin/gamification', icon: Trophy, permission: 'can_manage_settings' },
     ]},
     { group: 'GROWTH', items: [
-      { name: 'Marketing Hub', href: '/admin/marketing', icon: TrendingUp, permission: 'can_manage_broadcast' },
-      { name: 'AI Ad Agency', href: '/admin/marketing/ai-agency', icon: Target, permission: 'can_manage_broadcast' },
-      { name: 'Bar Autopilot', href: '/admin/marketing/automation', icon: Rocket, permission: 'can_manage_broadcast' },
+      { name: 'Marketing Hub', href: '/admin/marketing', icon: TrendingUp, permission: 'can_manage_marketing' },
+      { name: 'AI Ad Agency', href: '/admin/marketing/ai-agency', icon: Target, permission: 'can_manage_marketing' },
+      { name: 'Bar Autopilot', href: '/admin/marketing/automation', icon: Rocket, permission: 'can_manage_marketing' },
       { name: 'Affiliates', href: '/admin/affiliates', icon: Target, permission: 'can_manage_affiliates' },
-      { name: 'Drink Deals', href: '/admin/coupons', icon: Tag, permission: 'can_manage_broadcast' },
+      { name: 'Drink Deals', href: '/admin/coupons', icon: Tag, permission: 'can_manage_marketing' },
     ]},
     { group: 'FINANCE', items: [
       { name: 'Finance Vault', href: '/admin/finance', icon: DollarSign, permission: 'can_view_revenue' },
@@ -212,7 +210,7 @@ export default function AdminLayoutClient({
                       <GlassWater className="h-6 w-6 text-white" />
                     </div>
                     {!isSidebarCollapsed && (
-                        <div className="animate-in fade-in duration-500">
+                        <div className="animate-in fade-in duration-500 text-left">
                           <select className="font-black text-foreground leading-none uppercase tracking-tighter text-sm bg-transparent border-none outline-none appearance-none cursor-pointer">
                               <option>Online Bar Master</option>
                               <option>Nairobi Branch</option>
