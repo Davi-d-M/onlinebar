@@ -18,7 +18,7 @@ export async function recordTransaction(
     referenceId: string,
     description: string,
     entries: LedgerEntry[],
-    metadata: any = {}
+    metadata: Record<string, unknown> = {}
 ) {
     if (!supabase) return;
 

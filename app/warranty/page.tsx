@@ -69,11 +69,11 @@ export default function WarrantyVault() {
 
                 <header className="text-center mb-16 space-y-4">
                     <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/5 text-primary text-[10px] font-black uppercase tracking-widest rounded-full border border-primary/10 mb-2">
-                        <ShieldCheck className="h-3 w-3" /> Blockchain Verified Tech
+                        <ShieldCheck className="h-3 w-3" /> Blockchain Verified Products
                     </div>
                     <h1 className="text-5xl lg:text-7xl font-black text-foreground tracking-tighter uppercase leading-none">Digital <br/> <span className="text-primary italic">Warranty Vault</span></h1>
                     <p className="text-slate-500 font-medium max-w-lg mx-auto italic text-lg leading-relaxed">
-                        &quot;Your gadgets are premium. Your protection should be too. Enter your order ID to access your digital tech certificate.&quot;
+                        &quot;Your drinks are premium. Your protection should be too. Enter your order ID to access your digital beverage certificate.&quot;
                     </p>
                 </header>
 
@@ -97,7 +97,7 @@ export default function WarrantyVault() {
                             disabled={isLoading}
                             className="w-full h-16 rounded-[1.5rem] bg-primary text-white font-black uppercase text-xs tracking-widest shadow-2xl shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95"
                         >
-                            {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <><Search className="h-4 w-4 mr-2" /> Verify Gadget Authenticity</>}
+                            {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <><Search className="h-4 w-4 mr-2" /> Verify Product Authenticity</>}
                         </Button>
                         {error && <p className="text-[10px] font-black uppercase text-rose-500 text-center animate-pulse">{error}</p>}
                     </form>
@@ -111,7 +111,7 @@ export default function WarrantyVault() {
                             <div className="flex flex-col sm:flex-row justify-between items-start gap-8 mb-16 border-b-2 border-slate-100 pb-12">
                                 <div className="space-y-1">
                                     <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Certificate of Authenticity</p>
-                                    <h2 className="text-3xl font-black text-foreground uppercase">Apexstores Tech Kenya</h2>
+                                    <h2 className="text-3xl font-black text-foreground uppercase">Online Bar Nairobi</h2>
                                 </div>
                                 <div className="text-right">
                                     <p className="text-[10px] font-black uppercase text-slate-400 mb-1">Vault Key</p>
@@ -158,9 +158,9 @@ export default function WarrantyVault() {
                             <footer className="pt-12 border-t-2 border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-6 opacity-40 grayscale">
                                 <div className="flex items-center gap-2">
                                     <Smartphone className="h-5 w-5" />
-                                    <span className="text-[9px] font-black uppercase tracking-widest">Official Apexstores Seal</span>
+                                    <span className="text-[9px] font-black uppercase tracking-widest">Official Online Bar Seal</span>
                                 </div>
-                                <p className="text-[8px] font-bold uppercase tracking-tighter">This certificate is tied to the hardware IMEI/Serial logged upon dispatch.</p>
+                                <p className="text-[8px] font-bold uppercase tracking-tighter">This certificate is tied to the product batch logged upon dispatch.</p>
                             </footer>
 
                             {/* Watermark */}
@@ -179,7 +179,7 @@ export default function WarrantyVault() {
                     <div className="space-y-3">
                         <div className="h-10 w-10 rounded-xl bg-primary/5 flex items-center justify-center text-primary mx-auto"><ShieldCheck className="h-5 w-5" /></div>
                         <h3 className="font-black uppercase text-xs">Authenticity Guard</h3>
-                        <p className="text-[10px] text-slate-500 leading-relaxed font-medium">All Apex gadgets are source-verified and tested before activation.</p>
+                        <p className="text-[10px] text-slate-500 leading-relaxed font-medium">All Online Bar products are source-verified and tested before activation.</p>
                     </div>
                     <div className="space-y-3">
                         <div className="h-10 w-10 rounded-xl bg-primary/5 flex items-center justify-center text-primary mx-auto"><CheckCircle2 className="h-5 w-5" /></div>

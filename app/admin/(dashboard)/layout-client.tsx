@@ -18,6 +18,7 @@ import {
   ShieldCheck,
   ShieldAlert as SecurityIcon,
   Wine,
+  Cookie,
   Bot,
   History as HistoryIcon,
   Settings,
@@ -115,6 +116,7 @@ export default function AdminLayoutClient({
     ]},
     { group: 'INVENTORY', items: [
       { name: 'Cellar Hub', href: '/admin/upload', icon: Wine, permission: 'can_manage_inventory' },
+      { name: 'Munchie Hub', href: '/admin/munchies', icon: Cookie, permission: 'can_manage_inventory' },
       { name: 'Dispatch Queue', href: '/admin/orders', icon: ShoppingCart, permission: 'can_manage_orders' },
     ]},
     { group: 'OPERATIONS', items: [

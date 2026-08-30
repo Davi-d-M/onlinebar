@@ -3,12 +3,29 @@
 import * as React from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { Card } from '@/components/ui/card';
-import { Beaker, FlaskConical, TrendingUp, ArrowRight, Loader2, Play, Pause } from 'lucide-react';
+import { Beaker, FlaskConical, TrendingUp, ArrowRight, Play, Pause } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
+interface ExperimentVariant {
+    id: string;
+    experiment_id: string;
+    key: string;
+    label: string;
+    reach_count: number;
+    conversion_count: number;
+}
+
+interface Experiment {
+    id: string;
+    name: string;
+    hypothesis: string;
+    status: 'DRAFT' | 'RUNNING' | 'COMPLETED' | 'ARCHIVED';
+    experiment_variants: ExperimentVariant[];
+}
+
 export default function ExperimentLab() {
-    const [experiments, setExperiments] = React.useState<any[]>([]);
+    const [experiments, setExperiments] = React.useState<Experiment[]>([]);
     const [loading, setLoading] = React.useState(true);
 
     const fetchExperiments = React.useCallback(async () => {
@@ -62,7 +79,7 @@ export default function ExperimentLab() {
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
-                                {exp.experiment_variants?.map((variant: any) => {
+                                {exp.experiment_variants?.map((variant) => {
                                     const ctr = variant.reach_count > 0 ? (variant.conversion_count / variant.reach_count * 100).toFixed(1) : '0';
                                     return (
                                         <div key={variant.id} className="p-6 bg-white border border-slate-100 rounded-3xl space-y-4">

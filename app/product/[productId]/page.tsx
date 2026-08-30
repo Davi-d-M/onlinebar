@@ -126,11 +126,11 @@ export default function Product() {
   // Track Recent View (Effect separate for stability)
   useEffect(() => {
     if (liveProduct) {
-        const saved = localStorage.getItem('apex_recent_views');
+        const saved = localStorage.getItem('ob_recent_views');
         let views = saved ? JSON.parse(saved) : [];
         views = views.filter((v: Record<string, unknown>) => v.id !== liveProduct.id);
         views.unshift({ id: liveProduct.id, name: liveProduct.name, image: liveProduct.image_url || liveProduct.image });
-        localStorage.setItem('apex_recent_views', JSON.stringify(views.slice(0, 10)));
+        localStorage.setItem('ob_recent_views', JSON.stringify(views.slice(0, 10)));
     }
   }, [liveProduct]);
 
@@ -138,7 +138,7 @@ export default function Product() {
     return (
         <div className="container mx-auto px-4 py-32 flex flex-col items-center gap-6">
             <div className="h-16 w-16 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
-            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 animate-pulse">Retrieving Tech Data...</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 animate-pulse">Retrieving Beverage Data...</p>
         </div>
     );
   }
@@ -176,7 +176,7 @@ export default function Product() {
   };
 
   const handleWhatsAppOrder = () => {
-    const message = `Hello Online Bar! I want to order:\n\n*Product:* ${product.name}\n*Quantity:* ${quantity}\n*Price:* ${formatPrice(product.price * quantity)}\n\nIs this available for dispatch?`;
+    const message = `Hello Online Bar Nairobi! I want to order:\n\n*Product:* ${product.name}\n*Quantity:* ${quantity}\n*Price:* ${formatPrice(product.price * quantity)}\n\nIs this available for dispatch?`;
     window.open(`https://wa.me/${settings.contact.whatsapp}?text=${encodeURIComponent(message)}`, '_blank');
   };
 
@@ -292,7 +292,7 @@ export default function Product() {
                   <Lightbulb className="h-6 w-6 fill-current" />
               </div>
               <div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-amber-600 mb-1">Apex Pro Tip</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-amber-600 mb-1">Bar Pro Tip</p>
                   <p className="text-sm font-bold text-amber-900/80 leading-snug">
                       {product.category === 'wine' ? "Store your wine horizontally in a cool, dark place to keep the cork moist and preserve the flavor." :
                        product.category === 'spirits' ? "Once opened, spirits like whiskey can last for years if kept away from direct sunlight." :
@@ -401,7 +401,7 @@ export default function Product() {
               <button
                 onClick={() => {
                     const url = typeof window !== 'undefined' ? window.location.href : '';
-                    const shareText = `Check out ${product.name} from Online Bar! ${url}`;
+                    const shareText = `Check out ${product.name} from Online Bar Nairobi! ${url}`;
 
                     if (navigator.share) {
                         navigator.share({

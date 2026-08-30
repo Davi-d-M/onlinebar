@@ -23,7 +23,7 @@ interface IntelligenceData {
     atRiskCustomers: number;
 }
 
-export default function ApexIntelligence2() {
+export default function BarIntelligence() {
     const [loading, setLoading] = React.useState(true);
     const [data, setData] = React.useState<IntelligenceData>({
         growth: 0,

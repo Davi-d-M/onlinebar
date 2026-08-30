@@ -139,6 +139,14 @@ export default function AdminAbandonedPage() {
       }
   };
 
+  const handleDraftNudge = (cart: AbandonedCart) => {
+      const items = cart.cart_items.map(i => `• ${i.name}`).join('\n');
+      const discountLink = `${window.location.origin}/cart?coupon=RECOVER5&session=${cart.session_id}`;
+      const message = `Hello ${cart.customer_name}! 🍷\n\nI noticed you left some premium items in your bag at Online Bar:\n\n${items}\n\nTo make it easier to complete your order, I've initialized a *5% OFF* tactical discount for you. Valid for the next 2 hours!\n\n*Secure your bottles here:* ${discountLink}\n\nCheers, David.`;
+
+      window.open(`https://wa.me/${cart.customer_phone.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`, '_blank');
+  };
+
   const updateStatus = async (id: number, status: AbandonedCart['recovery_status']) => {
       if (!supabase) return;
       const { error } = await supabase.from('abandoned_carts').update({ recovery_status: status }).eq('id', id);
@@ -310,10 +318,10 @@ export default function AdminAbandonedPage() {
                                           <div className="flex gap-2">
                                               <Button onClick={() => setSelectedCart(cart)} variant="ghost" size="sm" className="h-10 px-4 rounded-xl text-[9px] font-black uppercase text-slate-400 hover:text-primary border border-transparent hover:border-primary/20">Journey</Button>
                                               <Button
-                                                onClick={() => window.open(`https://wa.me/${cart.customer_phone.replace(/\D/g, '')}`, '_blank')}
-                                                className="h-12 px-8 rounded-[1rem] bg-primary hover:bg-primary/90 text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-primary/20 active:scale-95 transition-all"
+                                                onClick={() => handleDraftNudge(cart)}
+                                                className="h-12 px-8 rounded-[1rem] bg-emerald-500 hover:bg-emerald-600 text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-emerald-500/20 active:scale-95 transition-all"
                                               >
-                                                  <MessageSquare className="h-4 w-4 mr-2" /> WhatsApp
+                                                  <MessageSquare className="h-4 w-4 mr-2" /> Draft Nudge
                                               </Button>
                                           </div>
                                       </div>

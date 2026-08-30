@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import Link from 'next/link';
 
-export default function ApexIntelligence() {
+export default function BarIntelligenceLegacy() {
     const [loading, setLoading] = React.useState(true);
     const [intel, setIntel] = React.useState({
         revenueGrowth: 0,
@@ -81,7 +81,7 @@ export default function ApexIntelligence() {
     if (loading) return (
         <Card className="p-10 rounded-[3rem] bg-white border border-slate-100 shadow-sm flex flex-col items-center justify-center gap-4 min-h-[200px]">
             <Loader2 className="h-8 w-8 text-primary animate-spin" />
-            <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Consulting Apex Intelligence...</p>
+            <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Consulting Bar Intelligence...</p>
         </Card>
     );
 
@@ -95,7 +95,7 @@ export default function ApexIntelligence() {
                             <Sparkles className="h-5 w-5" />
                         </div>
                         <div>
-                            <h2 className="text-2xl font-black uppercase tracking-tighter text-foreground">Apex Intelligence</h2>
+                            <h2 className="text-2xl font-black uppercase tracking-tighter text-foreground">Bar Intelligence</h2>
                             <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mt-1">Operational Co-Pilot</p>
                         </div>
                     </div>

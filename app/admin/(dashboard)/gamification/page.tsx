@@ -325,7 +325,7 @@ export default function AdminGamificationPage() {
                                                 </div>
                                                 <div className="flex items-center justify-center">
                                                     <div className="h-12 w-12 rounded-xl bg-white flex items-center justify-center text-primary shadow-sm">
-                                                        <Icon className="h-6 w-6" />
+                                                        {React.createElement(Icon, { className: "h-6 w-6" })}
                                                     </div>
                                                 </div>
                                                 <button onClick={() => setConfig({...config, tiers: config.tiers.filter((_, idx) => idx !== i)})} className="absolute top-2 right-2 h-8 w-8 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-slate-300 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all shadow-sm">
@@ -350,7 +350,7 @@ export default function AdminGamificationPage() {
                                             <div key={i} className="p-8 rounded-[2.5rem] bg-slate-50 border border-slate-100 space-y-6 group relative overflow-hidden text-left">
                                                 <div className="flex gap-4 items-start text-left">
                                                     <div className="h-16 w-16 rounded-2xl bg-white flex items-center justify-center text-primary shadow-sm shrink-0">
-                                                        <Icon className="h-8 w-8" />
+                                                        {React.createElement(Icon, { className: "h-8 w-8" })}
                                                     </div>
                                                     <div className="flex-1 space-y-4 text-left">
                                                         <div className="space-y-1">

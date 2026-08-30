@@ -69,26 +69,26 @@ export default function CookieConsentBanner() {
                 {showSettings && (
                     <div className="relative z-10 pt-10 border-t border-slate-100 grid sm:grid-cols-3 gap-4 animate-in fade-in slide-in-from-top-4 duration-500 text-left">
                         {[
-                            { id: 'analytics', label: 'Analytics', desc: 'Node performance' },
-                            { id: 'personalization', label: 'Personalization', desc: 'Custom menu' },
-                            { id: 'marketing', label: 'Marketing', desc: 'Promo alerts' }
+                            { id: 'analytics' as keyof ConsentPreferences, label: 'Analytics', desc: 'Node performance' },
+                            { id: 'personalization' as keyof ConsentPreferences, label: 'Personalization', desc: 'Custom menu' },
+                            { id: 'marketing' as keyof ConsentPreferences, label: 'Marketing', desc: 'Promo alerts' }
                         ].map(node => (
                             <button
                                 key={node.id}
-                                onClick={() => setPrefs({...prefs, [node.id]: !(prefs as any)[node.id]})}
+                                onClick={() => setPrefs({...prefs, [node.id]: !prefs[node.id]})}
                                 className={cn(
                                     "p-6 rounded-[2rem] border-2 transition-all text-left space-y-1 group",
-                                    (prefs as any)[node.id] ? "bg-primary/5 border-primary/20" : "bg-slate-50 border-slate-100 hover:bg-white hover:border-slate-200"
+                                    prefs[node.id] ? "bg-primary/5 border-primary/20" : "bg-slate-50 border-slate-100 hover:bg-white hover:border-slate-200"
                                 )}
                             >
                                 <div className="flex justify-between items-center mb-4">
                                     <span className={cn(
                                         "text-[9px] font-black uppercase tracking-widest",
-                                        (prefs as any)[node.id] ? "text-primary" : "text-slate-400"
+                                        prefs[node.id] ? "text-primary" : "text-slate-400"
                                     )}>{node.label}</span>
                                     <div className={cn(
                                         "h-2 w-2 rounded-full",
-                                        (prefs as any)[node.id] ? "bg-primary animate-pulse" : "bg-slate-200"
+                                        prefs[node.id] ? "bg-primary animate-pulse" : "bg-slate-200"
                                     )} />
                                 </div>
                                 <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">{node.desc}</p>

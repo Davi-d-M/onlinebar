@@ -153,7 +153,7 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
 
   useEffect(() => {
     try {
-        const saved = localStorage.getItem('apex_recent_views');
+        const saved = localStorage.getItem('ob_recent_views');
         if (saved) {
             const parsed = JSON.parse(saved) as RecentView[];
             if (Array.isArray(parsed)) setRecentlyViewed(parsed.slice(0, 3));
@@ -222,7 +222,7 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
       if (!finalTerm.trim()) return;
 
       // Dispatch custom event to filter the ProductList component
-      const event = new CustomEvent('apex-search', { detail: { query: finalTerm } });
+      const event = new CustomEvent('ob-search', { detail: { query: finalTerm } });
       window.dispatchEvent(event);
 
       // Scroll to products
@@ -260,7 +260,7 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
             <Link
               className="text-xl sm:text-2xl tracking-tighter font-black text-foreground hover:text-primary transition-colors flex items-center gap-2 uppercase"
               href="/"
-              aria-label="Apexstores Home"
+              aria-label="Online Bar Home"
             >
               {settings?.branding?.logo_url ? (
                   /* eslint-disable-next-line @next/next/no-img-element */
@@ -362,7 +362,7 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
                     </div>
 
                     <div className="mt-10 pt-6 border-t border-slate-50 text-center">
-                        <p className="text-[8px] font-black uppercase text-slate-300 tracking-[0.5em]">Titan Hub Real-time Sync Active</p>
+                        <p className="text-[8px] font-black uppercase text-slate-300 tracking-[0.5em]">Bar Hub Real-time Sync Active</p>
                     </div>
                 </div>
             )}

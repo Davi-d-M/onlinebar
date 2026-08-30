@@ -9,7 +9,7 @@ export async function logAuditAction(
     action: string,
     details: Record<string, unknown>,
     resource?: { type: string, id: string },
-    diff?: { old: any, new: any }
+    diff?: { old: unknown, new: unknown }
 ) {
   if (!supabase || !email) return;
 
@@ -18,8 +18,10 @@ export async function logAuditAction(
     const { data: staff } = await supabase.from('staff').select('id').eq('email', email).maybeSingle();
 
     // 2. Correlation Metadata
-    const correlationId = (global as any).currentCorrelationId || 'CORR-INTERNAL';
-    const requestId = (global as any).currentRequestId || 'REQ-INTERNAL';
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const correlationId = ((global as any).currentCorrelationId || 'CORR-INTERNAL') as string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const requestId = ((global as any).currentRequestId || 'REQ-INTERNAL') as string;
 
     // 3. Attempt to get IP from multiple sources
     let ip = 'server-internal';
@@ -27,7 +29,7 @@ export async function logAuditAction(
     if (typeof window !== 'undefined') {
         try {
             // Try ipify first
-            const res = await fetch('https://api.ipify.org?format=json', { timeout: 2000 } as any);
+            const res = await fetch('https://api.ipify.org?format=json', { timeout: 2000 } as unknown as RequestInit);
             if (res.ok) {
                 const data = await res.json();
                 ip = data.ip;

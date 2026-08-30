@@ -25,11 +25,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   // No Fallback
-  if (!product) return { title: 'Product Not Found | Apexstores' };
+  if (!product) return { title: 'Product Not Found | Online Bar' };
 
   return {
-    title: `${product.name} | Apexstores Tech Kenya`,
-    description: product.description || `Buy authentic ${product.name} with Nairobi fast dispatch. Genuine tech and elite performance.`,
+    title: `${product.name} | Online Bar Nairobi`,
+    description: product.description || `Buy authentic ${product.name} with Nairobi fast dispatch. Genuine products and elite service.`,
     openGraph: {
       title: product.name,
       description: product.description || undefined,
@@ -124,7 +124,7 @@ export default async function Page({ params }: Props) {
               "description": product.description || '',
               "brand": {
                 "@type": "Brand",
-                "name": "Apexstores Tech"
+                "name": "Online Bar Nairobi"
               },
               "offers": {
                 "@type": "Offer",

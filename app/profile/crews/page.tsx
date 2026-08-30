@@ -35,7 +35,7 @@ export default function CrewsPage() {
             ]);
 
             if (allCrews.data) setCrews(allCrews.data);
-            if (memberRes?.data) setMyCrew(memberRes.data.crews as any);
+            if (memberRes?.data) setMyCrew(memberRes.data.crews as unknown as Crew);
 
             setLoading(false);
         }

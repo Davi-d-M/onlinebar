@@ -30,7 +30,7 @@ import { generateReceiptPDF, getWhatsAppReceiptLink } from '@/lib/receiptService
 import { useAdmin } from '@/context/AdminContext';
 import { logAuditAction } from '@/lib/auditService';
 
-import { OrderStatus as MachineStatus, getAvailableActions, isValidTransition } from '@/lib/apex-os/state-machine';
+import { OrderStatus as MachineStatus, getAvailableActions, isValidTransition } from '@/lib/ob-os/state-machine';
 
 interface OrderItem {
     id: number;

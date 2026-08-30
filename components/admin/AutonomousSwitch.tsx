@@ -6,8 +6,14 @@ import { Card } from '@/components/ui/card';
 import { Bot, Zap, Lock, Unlock, ShieldAlert, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+interface AutonomousState {
+    engine_name: string;
+    is_autonomous: boolean;
+    updated_at: string;
+}
+
 export default function AutonomousSwitch() {
-    const [states, setStates] = useState<any[]>([]);
+    const [states, setStates] = useState<AutonomousState[]>([]);
     const [loading, setLoading] = useState(true);
 
     const fetchStates = async () => {

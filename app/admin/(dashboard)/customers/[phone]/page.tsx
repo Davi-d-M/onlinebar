@@ -20,7 +20,12 @@ import {
   Loader2,
   MapPin,
   ExternalLink,
-  MessageSquare
+  MessageSquare,
+  Globe,
+  Search,
+  MousePointer2,
+  Activity,
+  ShoppingBag
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -69,6 +74,8 @@ export default function CustomerIntelligence() {
   const [reviews, setReviews] = useState<{ id: string; rating: number; comment: string; created_at: string; is_verified_owner: boolean }[]>([]);
   const [supportTickets, setSupportTickets] = useState<{ id: number; subject: string; status: string; created_at: string }[]>([]);
   const [loyaltyLedger, setLoyaltyLedger] = useState<{ id: number; amount: number; description: string; created_at: string }[]>([]);
+  const [analyticsEvents, setAnalyticsEvents] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState<'timeline' | 'behavior'>('timeline');
   const [loading, setLoading] = useState(true);
 
   const loadData = useCallback(async () => {
@@ -78,13 +85,14 @@ export default function CustomerIntelligence() {
       const initialRes = await supabase.from('profiles').select('*').eq('phone_number', phone).maybeSingle();
       const profileData = initialRes.data as CustomerProfile;
 
-      const [ordersRes, productsRes, referralsRes, reviewsRes, ticketsRes, ledgerRes] = await Promise.all([
+      const [ordersRes, productsRes, referralsRes, reviewsRes, ticketsRes, ledgerRes, analyticsRes] = await Promise.all([
         supabase.from('orders').select('*').eq('customer_phone', phone).order('created_at', { ascending: false }),
         supabase.from('products').select('id, name, category'),
         profileData?.referral_code ? supabase.from('orders').select('id, total_price, created_at').eq('referred_by_code', profileData.referral_code) : Promise.resolve({ data: [] }),
         supabase.from('reviews').select('*').or(`customer_phone.eq.${phone},customer_name.eq.${profileData?.full_name || 'NONE'}`).order('created_at', { ascending: false }),
         profileData?.id ? supabase.from('support_tickets').select('*').eq('user_id', profileData.id).order('created_at', { ascending: false }) : Promise.resolve({ data: [] }),
-        profileData?.id ? supabase.from('loyalty_ledger').select('*').eq('profile_id', profileData.id).order('created_at', { ascending: false }) : Promise.resolve({ data: [] })
+        profileData?.id ? supabase.from('loyalty_ledger').select('*').eq('profile_id', profileData.id).order('created_at', { ascending: false }) : Promise.resolve({ data: [] }),
+        profileData?.id ? supabase.from('analytics_events').select('*').eq('user_id', profileData.id).order('timestamp', { ascending: false }).limit(50) : Promise.resolve({ data: [] })
       ]);
 
       if (ordersRes.data) setOrders(ordersRes.data as Order[]);
@@ -94,6 +102,7 @@ export default function CustomerIntelligence() {
       if (reviewsRes.data) setReviews(reviewsRes.data as { id: string; rating: number; comment: string; created_at: string; is_verified_owner: boolean }[]);
       if (ticketsRes.data) setSupportTickets(ticketsRes.data);
       if (ledgerRes.data) setLoyaltyLedger(ledgerRes.data);
+      if (analyticsRes.data) setAnalyticsEvents(analyticsRes.data);
     } catch (err: unknown) {
       console.error(err);
     } finally {
@@ -378,76 +387,143 @@ export default function CustomerIntelligence() {
                   </Card>
               )}
 
-              <Card className="rounded-[3rem] border-slate-100 shadow-sm overflow-hidden bg-white">
-                  <div className="p-10 border-b border-slate-50 flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                          <HistoryIcon className="h-6 w-6 text-primary" />
-                          <h2 className="text-2xl font-black text-foreground uppercase tracking-tighter">Customer Timeline</h2>
-                      </div>
-                      <span className="text-[10px] font-black uppercase text-slate-400 bg-slate-50 px-4 py-2 rounded-full">{timelineEvents.length} Events</span>
-                  </div>
-                  <div className="divide-y divide-slate-50 max-h-[800px] overflow-y-auto no-scrollbar">
-                      {timelineEvents.length === 0 ? (
-                          <div className="p-20 text-center opacity-30">
-                              <HistoryIcon className="h-10 w-10 mx-auto mb-4" />
-                              <p className="text-[10px] font-black uppercase tracking-widest">No activity logged.</p>
-                          </div>
-                      ) : timelineEvents.map((event) => {
-                          const Icon = event.type === 'Order' ? Package :
-                                       event.type === 'Support' ? MessageSquare :
-                                       event.type === 'Loyalty' ? Zap : Star;
+              <div className="bg-white rounded-[3rem] p-1 border border-slate-100 shadow-sm flex mb-8">
+                  <button
+                    onClick={() => setActiveTab('timeline')}
+                    className={cn(
+                        "flex-1 py-4 rounded-[2rem] text-[10px] font-black uppercase tracking-widest transition-all",
+                        activeTab === 'timeline' ? "bg-primary text-white shadow-xl shadow-primary/20" : "text-slate-400 hover:text-slate-600"
+                    )}
+                  >
+                      Action Timeline
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('behavior')}
+                    className={cn(
+                        "flex-1 py-4 rounded-[2rem] text-[10px] font-black uppercase tracking-widest transition-all",
+                        activeTab === 'behavior' ? "bg-primary text-white shadow-xl shadow-primary/20" : "text-slate-400 hover:text-slate-600"
+                    )}
+                  >
+                      Behavioral Trail
+                  </button>
+              </div>
 
-                          return (
-                              <div key={event.id} className="p-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 hover:bg-slate-50/50 transition-all group">
-                                  <div className="flex items-center gap-6">
-                                      <div className={cn(
-                                          "h-14 w-14 rounded-2xl flex items-center justify-center shadow-lg transition-transform group-hover:scale-110",
-                                          event.color === 'primary' ? "bg-primary text-white shadow-primary/20" :
-                                          event.color === 'rose' ? "bg-rose-500 text-white shadow-rose-500/20" :
-                                          event.color === 'emerald' ? "bg-emerald-500 text-white shadow-emerald-500/20" :
-                                          "bg-amber-500 text-white shadow-amber-500/20"
-                                      )}>
-                                          <Icon className="h-6 w-6" />
-                                      </div>
-                                      <div className="text-left">
-                                          <div className="flex items-center gap-2 mb-1">
-                                              <span className="text-[8px] font-black uppercase text-slate-400 tracking-widest">{event.type}</span>
-                                              <span className="text-[10px] font-bold text-slate-300">•</span>
-                                              <span className="text-[9px] font-bold text-slate-400 uppercase">{new Date(event.date).toLocaleDateString()}</span>
-                                          </div>
-                                          <h4 className="font-black text-foreground uppercase text-sm tracking-tight">{event.title}</h4>
-                                          <p className="text-[10px] font-bold text-slate-400 uppercase mt-1 italic">{event.subtitle}</p>
-                                      </div>
-                                  </div>
-                                  <div className="flex items-center gap-8 w-full sm:w-auto justify-between">
-                                      <div className="text-right">
-                                          {event.value && <p className="text-lg font-black text-foreground">{event.value}</p>}
-                                          {event.status && (
-                                              <span className={cn(
-                                                  "px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest border",
-                                                  event.status === 'Delivered' || event.status === 'Resolved' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
-                                                  event.status === 'Open' || event.status === 'Pending' ? "bg-primary/10 text-primary border-primary/10" :
-                                                  "bg-slate-50 text-slate-400 border-slate-100"
-                                              )}>
-                                                  {event.status}
-                                              </span>
-                                          )}
-                                      </div>
-                                      {event.type === 'Order' ? (
-                                          <Link href="/admin/orders">
-                                              <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl bg-slate-50 group-hover:bg-primary group-hover:text-white transition-all"><ChevronRight className="h-4 w-4" /></Button>
-                                          </Link>
-                                      ) : event.type === 'Support' ? (
-                                          <Link href="/admin/messages">
-                                              <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl bg-slate-50 group-hover:bg-rose-500 group-hover:text-white transition-all"><ChevronRight className="h-4 w-4" /></Button>
-                                          </Link>
-                                      ) : null}
-                                  </div>
-                              </div>
-                          );
-                      })}
-                  </div>
-              </Card>
+              {activeTab === 'timeline' ? (
+                <Card className="rounded-[3rem] border-slate-100 shadow-sm overflow-hidden bg-white animate-in fade-in duration-500">
+                    <div className="p-10 border-b border-slate-50 flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <HistoryIcon className="h-6 w-6 text-primary" />
+                            <h2 className="text-2xl font-black text-foreground uppercase tracking-tighter">Customer Timeline</h2>
+                        </div>
+                        <span className="text-[10px] font-black uppercase text-slate-400 bg-slate-50 px-4 py-2 rounded-full">{timelineEvents.length} Events</span>
+                    </div>
+                    <div className="divide-y divide-slate-50 max-h-[800px] overflow-y-auto no-scrollbar">
+                        {timelineEvents.length === 0 ? (
+                            <div className="p-20 text-center opacity-30">
+                                <HistoryIcon className="h-10 w-10 mx-auto mb-4" />
+                                <p className="text-[10px] font-black uppercase tracking-widest">No activity logged.</p>
+                            </div>
+                        ) : timelineEvents.map((event) => {
+                            const Icon = event.type === 'Order' ? Package :
+                                        event.type === 'Support' ? MessageSquare :
+                                        event.type === 'Loyalty' ? Zap : Star;
+
+                            return (
+                                <div key={event.id} className="p-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 hover:bg-slate-50/50 transition-all group">
+                                    <div className="flex items-center gap-6">
+                                        <div className={cn(
+                                            "h-14 w-14 rounded-2xl flex items-center justify-center shadow-lg transition-transform group-hover:scale-110",
+                                            event.color === 'primary' ? "bg-primary text-white shadow-primary/20" :
+                                            event.color === 'rose' ? "bg-rose-500 text-white shadow-rose-500/20" :
+                                            event.color === 'emerald' ? "bg-emerald-500 text-white shadow-emerald-500/20" :
+                                            "bg-amber-500 text-white shadow-amber-500/20"
+                                        )}>
+                                            <Icon className="h-6 w-6" />
+                                        </div>
+                                        <div className="text-left">
+                                            <div className="flex items-center gap-2 mb-1">
+                                                <span className="text-[8px] font-black uppercase text-slate-400 tracking-widest">{event.type}</span>
+                                                <span className="text-[10px] font-bold text-slate-300">•</span>
+                                                <span className="text-[9px] font-bold text-slate-400 uppercase">{new Date(event.date).toLocaleDateString()}</span>
+                                            </div>
+                                            <h4 className="font-black text-foreground uppercase text-sm tracking-tight">{event.title}</h4>
+                                            <p className="text-[10px] font-bold text-slate-400 uppercase mt-1 italic">{event.subtitle}</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-8 w-full sm:w-auto justify-between">
+                                        <div className="text-right">
+                                            {event.value && <p className="text-lg font-black text-foreground">{event.value}</p>}
+                                            {event.status && (
+                                                <span className={cn(
+                                                    "px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest border",
+                                                    event.status === 'Delivered' || event.status === 'Resolved' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
+                                                    event.status === 'Open' || event.status === 'Pending' ? "bg-primary/10 text-primary border-primary/10" :
+                                                    "bg-slate-50 text-slate-400 border-slate-100"
+                                                )}>
+                                                    {event.status}
+                                                </span>
+                                            )}
+                                        </div>
+                                        {event.type === 'Order' ? (
+                                            <Link href="/admin/orders">
+                                                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl bg-slate-50 group-hover:bg-primary group-hover:text-white transition-all"><ChevronRight className="h-4 w-4" /></Button>
+                                            </Link>
+                                        ) : event.type === 'Support' ? (
+                                            <Link href="/admin/messages">
+                                                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl bg-slate-50 group-hover:bg-rose-500 group-hover:text-white transition-all"><ChevronRight className="h-4 w-4" /></Button>
+                                            </Link>
+                                        ) : null}
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </Card>
+              ) : (
+                <Card className="rounded-[3rem] border-slate-100 shadow-sm overflow-hidden bg-white animate-in fade-in duration-500">
+                    <div className="p-10 border-b border-slate-50 flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                            <MousePointer2 className="h-6 w-6 text-primary" />
+                            <h2 className="text-2xl font-black text-foreground uppercase tracking-tighter">Behavioral Trail</h2>
+                        </div>
+                        <span className="text-[10px] font-black uppercase text-slate-400">Past 50 Events</span>
+                    </div>
+                    <div className="divide-y divide-slate-50 max-h-[800px] overflow-y-auto no-scrollbar">
+                        {analyticsEvents.length === 0 ? (
+                            <div className="p-24 text-center opacity-30">
+                                <Search className="h-10 w-10 mx-auto mb-4" />
+                                <p className="text-[10px] font-black uppercase tracking-widest italic">No tracking signal detected.</p>
+                            </div>
+                        ) : analyticsEvents.map((event, i) => (
+                            <div key={i} className="p-8 flex items-center justify-between hover:bg-slate-50/50 transition-all group">
+                                <div className="flex items-center gap-6">
+                                    <div className="h-12 w-12 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400 group-hover:text-primary transition-colors">
+                                        {event.event_name === 'PAGE_VIEW' ? <Globe className="h-5 w-5" /> :
+                                         event.event_name === 'ADD_TO_CART' ? <ShoppingBag className="h-5 w-5" /> :
+                                         event.event_name === 'SEARCH_SUBMITTED' ? <Search className="h-5 w-5" /> :
+                                         <Activity className="h-5 w-5" />}
+                                    </div>
+                                    <div className="text-left">
+                                        <p className="text-[10px] font-black uppercase text-primary tracking-widest">{event.event_name.replace(/_/g, ' ')}</p>
+                                        <h4 className="font-bold text-foreground text-sm mt-1">
+                                            {event.payload?.url || event.payload?.query || event.payload?.name || 'Interaction'}
+                                        </h4>
+                                        <div className="flex items-center gap-3 mt-1.5">
+                                            <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">{new Date(event.timestamp).toLocaleTimeString()}</span>
+                                            <div className="h-1 w-1 rounded-full bg-slate-200" />
+                                            <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">{event.payload?.title || 'System Page'}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="text-right">
+                                    {event.payload?.depth && <span className="text-[10px] font-black text-emerald-500 uppercase">{event.payload.depth}% Scroll</span>}
+                                    {event.payload?.results_count !== undefined && <span className="text-[10px] font-black text-indigo-500 uppercase">{event.payload.results_count} Results</span>}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </Card>
+              )}
 
           </div>
       </div>

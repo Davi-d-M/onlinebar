@@ -77,7 +77,7 @@ export default function AdminSubscribersPage() {
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.setAttribute("href", url);
-      link.setAttribute("download", `Apex_Subscribers_${new Date().toLocaleDateString()}.csv`);
+      link.setAttribute("download", `OB_Subscribers_${new Date().toLocaleDateString()}.csv`);
       link.click();
   };
 

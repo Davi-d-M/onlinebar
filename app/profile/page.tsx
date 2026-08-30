@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { type User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabaseClient';
 import { useCart, type CartItem } from '@/context/CartContext';
@@ -66,6 +66,7 @@ import DailyStreak from '@/components/profile/DailyStreak';
 import DailyMissions from '@/components/profile/DailyMissions';
 import RewardInteractive from '@/components/profile/RewardInteractive';
 import AchievementBadges from '@/components/profile/AchievementBadges';
+import SecurityDashboard from '@/components/profile/SecurityDashboard';
 
 const LocationPicker = dynamic(() => import('@/components/profile/LocationPicker'), {
     ssr: false,
@@ -208,7 +209,7 @@ export default function ProfilePage() {
         .single();
 
       if (profileData && !profileData.referral_code) {
-          const newCode = `APEX-${session.user.id.substring(0, 7).toUpperCase()}`;
+          const newCode = `OB-${session.user.id.substring(0, 7).toUpperCase()}`;
           await supabase.from('profiles').update({ referral_code: newCode }).eq('id', session.user.id);
           profileData.referral_code = newCode;
       }
@@ -364,7 +365,7 @@ export default function ProfilePage() {
   const handleRestoreBag = async () => {
     if (!abandonedBag) return;
     addBundleToCart(abandonedBag.cart_items);
-    localStorage.setItem('apex_restored_bonus', 'true');
+    localStorage.setItem('ob_restored_bonus', 'true');
     if (supabase) await supabase.from('abandoned_carts').delete().eq('id', abandonedBag.id);
     setAbandonedBag(null);
     router.push('/cart');
@@ -503,9 +504,9 @@ export default function ProfilePage() {
           total_price: order.total_price,
           created_at: order.created_at,
           payment_method: order.payment_method,
-          product_name: 'Apexstores Elite Tech'
+          product_name: 'Online Bar Selection'
       } as Parameters<typeof generateReceiptPDF>[0]);
-      doc.save(`Receipt_Apexstores_${order.id}.pdf`);
+      doc.save(`Receipt_OnlineBar_${order.id}.pdf`);
   };
   */
 
@@ -631,11 +632,11 @@ export default function ProfilePage() {
                             </div>
                             <h1 className="text-4xl sm:text-5xl font-black tracking-tighter text-foreground uppercase">{profile?.full_name?.split(' ')[0] || 'Member'} 👋</h1>
 
-                            {/* Achievement Badges Row 2.0 */}
                             <div className="flex gap-2 mt-4 overflow-x-auto no-scrollbar pb-2">
                                 {([] as { id: string; icon: React.ElementType; color: string; label: string }[]).map((badge) => (
                                     <div key={badge.id} className="flex items-center gap-2 px-3 py-2 bg-white rounded-2xl border border-slate-100 shadow-sm shrink-0 hover:border-primary/20 transition-all cursor-default group/badge">
-                                        <badge.icon className={cn("h-3 w-3", badge.color === 'primary' ? 'text-primary' : 'text-slate-400')} />
+                                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                                        {React.createElement(badge.icon as any, { className: cn("h-3 w-3", badge.color === 'primary' ? 'text-primary' : 'text-slate-400') })}
                                         <span className="text-[8px] font-black uppercase tracking-widest text-slate-500 group-hover/badge:text-primary transition-colors">{badge.label}</span>
                                     </div>
                                 ))}
@@ -718,7 +719,7 @@ export default function ProfilePage() {
                     <p className="text-[9px] font-bold text-slate-400 uppercase mt-2 tracking-widest">Global Account Credit</p>
                 </div>
                 <div className="grid grid-cols-2 gap-2 pt-2">
-                    <Button onClick={() => window.open(`https://wa.me/${settings.contact.whatsapp}?text=Hello! I want to top up my Apex Wallet.`, '_blank')} className="h-12 rounded-xl bg-slate-50 text-foreground hover:bg-slate-100 font-black uppercase text-[8px] border border-slate-100 transition-all active:scale-95">Add Funds</Button>
+                    <Button onClick={() => window.open(`https://wa.me/${settings.contact.whatsapp}?text=Hello! I want to top up my Online Bar Wallet.`, '_blank')} className="h-12 rounded-xl bg-slate-50 text-foreground hover:bg-slate-100 font-black uppercase text-[8px] border border-slate-100 transition-all active:scale-95">Add Funds</Button>
                     <Button onClick={() => { const code = prompt("Enter your redemption code:"); if(code) alert("Code validated. Points will be added shortly!"); }} className="h-12 rounded-xl bg-primary text-white font-black uppercase text-[8px] shadow-lg shadow-primary/20 active:scale-95">Redeem Code</Button>
                 </div>
             </Card>
@@ -819,7 +820,8 @@ export default function ProfilePage() {
                         {devices.length > 0 ? devices.map((device: Device) => (
                             <div key={device.name} className="p-6 bg-slate-50 rounded-[2rem] border border-slate-100 text-center space-y-4 group hover:bg-white hover:shadow-xl transition-all">
                                 <div className="h-12 w-12 rounded-2xl bg-white mx-auto flex items-center justify-center text-slate-300 group-hover:text-primary group-hover:scale-110 transition-all shadow-sm">
-                                    <device.icon className="h-6 w-6" />
+                                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                                    {React.createElement(device.icon as any, { className: "h-6 w-6" })}
                                 </div>
                                 <div>
                                     <p className="text-[10px] font-black text-foreground uppercase tracking-tight">{device.name}</p>
@@ -855,7 +857,8 @@ export default function ProfilePage() {
                                             "h-12 w-12 rounded-full border-4 border-white flex items-center justify-center shadow-lg transition-all",
                                             stats.title === label ? "bg-primary scale-125 ring-4 ring-primary/20" : "bg-slate-50 text-slate-200"
                                         )}>
-                                            <Icon className={cn("h-5 w-5", stats.title === label ? "text-white" : "text-slate-300")} />
+                                            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                                            {React.createElement(Icon as any, { className: cn("h-5 w-5", stats.title === label ? "text-white" : "text-slate-300") })}
                                         </div>
                                         <p className={cn("text-[8px] font-black uppercase tracking-widest", stats.title === label ? "text-primary" : "text-slate-300")}>{label}</p>
                                     </div>
@@ -1184,6 +1187,9 @@ export default function ProfilePage() {
                 <div id="points-ledger-section">
                     <PointsLedger profileId={profile?.id || ''} />
                 </div>
+
+                {/* 🔐 SECURITY DASHBOARD */}
+                <SecurityDashboard userId={user?.id || ''} />
 
                 {/* 🛡️ TACTICAL LOCATION PICKER */}
                 <div id="tactical-location-picker" className="scroll-mt-24">

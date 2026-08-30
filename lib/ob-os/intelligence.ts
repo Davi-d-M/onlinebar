@@ -2,7 +2,7 @@ import { supabase } from "@/lib/supabaseClient";
 
 export type ExceptionType = 'FINANCE' | 'LOGISTICS' | 'INVENTORY' | 'RISK' | 'SUPPLIER';
 
-export interface ApexException {
+export interface OBException {
     id: string;
     code: string;
     type: ExceptionType;
@@ -14,14 +14,14 @@ export interface ApexException {
 }
 
 /**
- * Tactical Scanner for Apex OS Anomaly Detection
+ * Tactical Scanner for Online Bar Anomaly Detection
  * Scans the entire operation for bottlenecks and discrepancies.
  */
-export async function scanForExceptions(): Promise<ApexException[]> {
+export async function scanForExceptions(): Promise<OBException[]> {
     if (!supabase) return [];
 
     const now = new Date();
-    const exceptions: ApexException[] = [];
+    const exceptions: OBException[] = [];
 
     // --- 1. LOGISTICS LATENCY ---
 

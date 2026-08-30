@@ -9,7 +9,12 @@ export interface AnalysisResult {
     recommendation: string;
 }
 
-export function analyzeMissionTimeline(events: any[]): AnalysisResult {
+interface MissionEvent {
+    created_at: string;
+    event_type: string;
+}
+
+export function analyzeMissionTimeline(events: MissionEvent[]): AnalysisResult {
     // 1. Sort events chronologically
     const sorted = [...events].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
 

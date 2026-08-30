@@ -5,11 +5,21 @@ import { supabase } from '@/lib/supabaseClient';
 import { Card } from '@/components/ui/card';
 import { ShieldCheck, ShieldAlert, Database, Trash2, CheckCircle2, Info } from 'lucide-react';
 
+interface DataQualityAlert {
+    id: number;
+    issue_type: string;
+    severity: string;
+    description: string;
+    affected_count: number;
+    status: string;
+    created_at: string;
+}
+
 export default function DataGovernance() {
     const [stats, setStats] = React.useState({
         consentHealth: 98,
         retentionCompliance: 'Active',
-        alerts: [] as any[]
+        alerts: [] as DataQualityAlert[]
     });
 
     const fetchGovernance = React.useCallback(async () => {

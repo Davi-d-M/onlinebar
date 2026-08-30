@@ -75,12 +75,12 @@ export async function POST(request: Request) {
                 break;
 
             default:
-                subject = "System Notification - Apexstores";
+                subject = "System Notification - Online Bar Nairobi";
                 html = `<p>${JSON.stringify(details)}</p>`;
         }
 
         await resend.emails.send({
-            from: 'Apexstores Alerts <system@apexstores.co.ke>',
+            from: 'Online Bar Alerts <system@onlinebar.co.ke>',
             to: adminEmail,
             subject: subject,
             html: html,

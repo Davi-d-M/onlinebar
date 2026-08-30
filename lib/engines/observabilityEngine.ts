@@ -14,6 +14,7 @@ export async function captureTrace(
 ) {
     if (!supabase) return;
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const correlationId = (global as any).currentCorrelationId || 'CORR-INTERNAL';
 
     try {
@@ -57,8 +58,8 @@ export async function monitor<T>(node: 'API' | 'DATABASE' | 'WHATSAPP' | 'META',
         const result = await fn();
         await captureTrace(node, op, Math.round(performance.now() - start), 'OK');
         return result;
-    } catch (err: any) {
-        await captureTrace(node, op, Math.round(performance.now() - start), 'ERROR', err.message);
+    } catch (err: unknown) {
+        await captureTrace(node, op, Math.round(performance.now() - start), 'ERROR', (err as Error).message);
         throw err;
     }
 }

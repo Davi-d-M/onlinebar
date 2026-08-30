@@ -43,15 +43,15 @@ export async function POST(request: Request) {
             // Send emails in chunks or all at once (Resend supports batching)
             const emailPromises = subscribers.map(sub =>
                 resend.emails.send({
-                    from: 'Apexstores <onboarding@resend.dev>', // Using verified domain or onboarding default
+                    from: 'Online Bar Nairobi <onboarding@resend.dev>', // Using verified domain or onboarding default
                     to: sub.email,
-                    subject: subject || "Update from Apexstores",
+                    subject: subject || "Update from Online Bar Nairobi",
                     html: `
                         <div style="font-family: sans-serif; padding: 20px; color: #333;">
-                            <h2 style="color: #ff6b00;">Apexstores Elite Update</h2>
+                            <h2 style="color: #ff6b00;">Online Bar Nairobi Elite Update</h2>
                             <p>${message.replace(/\n/g, '<br>')}</p>
                             <hr style="border: 1px solid #eee; margin: 20px 0;" />
-                            <p style="font-size: 12px; color: #999;">You received this because you subscribed to Apexstores Tech.</p>
+                            <p style="font-size: 12px; color: #999;">You received this because you subscribed to Online Bar Nairobi.</p>
                         </div>
                     `
                 })

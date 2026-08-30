@@ -96,8 +96,8 @@ export default function MerchantOnboarding() {
 
             if (dbError) throw dbError;
             setStep('pending');
-        } catch (err: any) {
-            setError(err.message || "Failed to submit application.");
+        } catch (err: unknown) {
+            setError((err as Error).message || "Failed to submit application.");
         } finally {
             setLoading(false);
         }

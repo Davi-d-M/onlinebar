@@ -122,7 +122,8 @@ export default function AdminReportsPage() {
         }
 
         // Footer
-        const finalY = (doc as unknown as Record<string, any>).lastAutoTable?.finalY || 150;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const finalY = (doc as any).lastAutoTable?.finalY || 150;
         doc.setFontSize(8);
         doc.setTextColor(150);
         doc.text('Confidential Internal Report - Online Bar Property', 105, finalY + 20, { align: 'center' });

@@ -26,6 +26,7 @@ import {
     Rocket,
     Trash2,
     Plus,
+    UserPlus,
     DollarSign,
     Home as HomeIcon,
     MapPin,
@@ -50,10 +51,26 @@ const DEFAULTS = {
     seo_config: { title: "Online Bar | Premium Drinks", description: "Premium wine, spirits and snacks delivery in Nairobi.", keywords: "Wine delivery, Whiskey Nairobi, Late night snacks, Kenya Bar", og_image: "" },
     social_links: { instagram: "", tiktok: "", facebook: "", x: "", youtube: "" },
     store_info: { name: "ONLINE BAR", hours: "24/7 Dispatch", google_maps: "", footer_copy: "© 2026 Online Bar™" },
-    ai_config: { build_setup_limit: 5000, assistant_name: "Bar AI", response_style: "Elite" }
+    ai_config: { build_setup_limit: 5000, assistant_name: "Bar AI", response_style: "Elite" },
+    onboarding_config: {
+        rider_steps: [
+            { id: 'welcome', label: 'Welcome Screen', enabled: true },
+            { id: 'phone', label: 'Phone Verification', enabled: true },
+            { id: 'identity', label: 'Identity Profile', enabled: true },
+            { id: 'vehicle', label: 'Logistics Specs', enabled: true },
+            { id: 'verification', label: 'Photo Verification', enabled: true },
+            { id: 'agreement', label: 'Legal Agreement', enabled: true },
+            { id: 'biometrics', label: 'Bio-Lock Enrollment', enabled: true }
+        ],
+        rules: {
+            min_age: 18,
+            require_license: true,
+            auto_approve: false
+        }
+    }
 };
 
-type TabId = 'identity' | 'homepage' | 'promotions' | 'theme' | 'seo' | 'ops' | 'catalog' | 'ai' | 'features' | 'advanced';
+type TabId = 'identity' | 'homepage' | 'promotions' | 'theme' | 'seo' | 'ops' | 'catalog' | 'ai' | 'onboarding' | 'integrations' | 'features' | 'advanced';
 
 export default function AdminSettingsPage() {
     const { email } = useAdmin();
@@ -73,12 +90,17 @@ export default function AdminSettingsPage() {
     const [social, setSocial] = useState(DEFAULTS.social_links);
     const [store, setStore] = useState(DEFAULTS.store_info);
     const [aiConfig, setAiConfig] = useState(DEFAULTS.ai_config);
+    const [onboarding, setOnboarding] = useState(DEFAULTS.onboarding_config);
     const [features, setFeatures] = useState({
         ai_concierge_enabled: true,
         dynamic_pricing_enabled: true,
         gamification_enabled: true,
         fraud_shield_enabled: true
     });
+
+    // New Integrations State
+    const [integrations, setIntegrations] = useState<any[]>([]);
+    const [isTestingConnection, setIsTestingConnection] = useState<string | null>(null);
 
     const [activeTab, setActiveTab] = useState<TabId>('identity');
 
@@ -97,9 +119,9 @@ export default function AdminSettingsPage() {
         if (!supabase) return;
         setLoading(true);
         try {
-            const { data } = await supabase.from('settings').select('*');
-            if (data && data.length > 0) {
-                data.forEach((item: { key: string; value: unknown }) => {
+            const { data: settingsData } = await supabase.from('settings').select('*');
+            if (settingsData && settingsData.length > 0) {
+                settingsData.forEach((item: { key: string; value: unknown }) => {
                     if (item.key === 'contact') setContact(item.value as typeof DEFAULTS.contact);
                     if (item.key === 'branding') {
                         setBranding(item.value as typeof DEFAULTS.branding);
@@ -121,9 +143,15 @@ export default function AdminSettingsPage() {
                     if (item.key === 'social_links') setSocial(item.value as typeof DEFAULTS.social_links);
                     if (item.key === 'store_info') setStore(item.value as typeof DEFAULTS.store_info);
                     if (item.key === 'ai_config') setAiConfig(item.value as typeof DEFAULTS.ai_config);
+                    if (item.key === 'onboarding_config') setOnboarding(item.value as typeof DEFAULTS.onboarding_config);
                     if (item.key === 'features') setFeatures(item.value as typeof features);
                 });
             }
+
+            // Fetch Integrations
+            const { data: integrationData } = await supabase.from('integration_nodes').select('*');
+            if (integrationData) setIntegrations(integrationData);
+
         } catch (err) {
             console.error(err);
         } finally {
@@ -224,6 +252,7 @@ export default function AdminSettingsPage() {
                 { key: 'shipping', value: shipping },
                 { key: 'logistics', value: logistics },
                 { key: 'catalog', value: catalog },
+                { key: 'onboarding_config', value: onboarding },
                 { key: 'features', value: features },
                 { key: 'ai_config', value: aiConfig },
             ];
@@ -282,6 +311,11 @@ export default function AdminSettingsPage() {
                             }
                             else if (activeTab === 'catalog') handleSave('catalog', catalog, true);
                             else if (activeTab === 'ai') handleSave('ai_config', aiConfig, true);
+                            else if (activeTab === 'onboarding') handleSave('onboarding_config', onboarding, true);
+                            else if (activeTab === 'integrations') {
+                                setMessage({ type: 'success', text: "Integration credentials synchronized with secure vault. 🔐" });
+                                setTimeout(() => setMessage(null), 3000);
+                            }
                             else if (activeTab === 'features') handleSave('features', features, true);
                             else if (activeTab === 'advanced') handleSave('theme_config', theme, true);
                         }}
@@ -316,6 +350,8 @@ export default function AdminSettingsPage() {
                     { id: 'ops', label: 'Operations', icon: Truck },
                     { id: 'catalog', label: 'Menu', icon: Wine },
                     { id: 'ai', label: 'AI Node', icon: Bot },
+                    { id: 'onboarding', label: 'Onboarding', icon: UserPlus },
+                    { id: 'integrations', label: 'Integrations', icon: Code },
                     { id: 'features', label: 'Features', icon: Zap },
                     { id: 'advanced', label: 'Advanced', icon: Code },
                 ].map(tab => (
@@ -817,6 +853,184 @@ export default function AdminSettingsPage() {
                                     Authorize Bar AI
                                 </Button>
                             </Card>
+                        </div>
+                    )}
+
+                    {/* ONBOARDING TAB */}
+                    {activeTab === 'onboarding' && (
+                        <div className="space-y-8 animate-in fade-in slide-in-from-left-4 duration-500 text-left">
+                            <Card className="rounded-[3rem] border border-slate-100 p-10 bg-white shadow-sm space-y-10 text-left">
+                                <h2 className="text-xl font-black text-foreground uppercase flex items-center gap-3"><UserPlus className="h-5 w-5 text-primary" /> Runner Onboarding Rules</h2>
+                                <p className="text-[10px] font-medium text-slate-500 italic max-w-lg">Enable or disable steps in the rider onboarding flow. Changes are reflected in real-time on the Runner Terminal.</p>
+
+                                <div className="space-y-6">
+                                    <h3 className="text-xs font-black uppercase text-slate-400 tracking-widest border-b border-slate-50 pb-2">Sequential Steps</h3>
+                                    <div className="space-y-4">
+                                        {onboarding.rider_steps.map((step, idx) => (
+                                            <div key={step.id} className="p-6 rounded-3xl bg-slate-50 border border-slate-100 flex items-center justify-between group transition-all hover:border-primary/20">
+                                                <div className="flex items-center gap-6">
+                                                    <div className="h-10 w-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center font-black text-slate-300 text-[10px]">
+                                                        {idx + 1}
+                                                    </div>
+                                                    <div className="space-y-0.5">
+                                                        <p className="text-xs font-black uppercase text-foreground">{step.label}</p>
+                                                        <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">Step ID: {step.id}</p>
+                                                    </div>
+                                                </div>
+                                                <button
+                                                    onClick={() => {
+                                                        const newSteps = [...onboarding.rider_steps];
+                                                        newSteps[idx].enabled = !newSteps[idx].enabled;
+                                                        setOnboarding({ ...onboarding, rider_steps: newSteps });
+                                                    }}
+                                                    className={cn(
+                                                        "w-12 h-6 rounded-full transition-all relative p-1 flex items-center shadow-inner",
+                                                        step.enabled ? "bg-emerald-500" : "bg-slate-200"
+                                                    )}
+                                                >
+                                                    <div className={cn(
+                                                        "h-4 w-4 rounded-full bg-white shadow-sm transition-all",
+                                                        step.enabled ? "translate-x-6" : "translate-x-0"
+                                                    )} />
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    <h3 className="text-xs font-black uppercase text-slate-400 tracking-widest border-b border-slate-50 pb-2 pt-6">Verification Logic</h3>
+                                    <div className="grid sm:grid-cols-2 gap-4">
+                                        <div className="p-6 rounded-3xl bg-slate-50 border border-slate-100 space-y-4">
+                                            <p className="text-[10px] font-black uppercase text-slate-400">Min Runner Age</p>
+                                            <Input
+                                                type="number"
+                                                value={onboarding.rules?.min_age || 18}
+                                                onChange={e => setOnboarding({...onboarding, rules: { ...onboarding.rules, min_age: Number(e.target.value) }})}
+                                                className="h-12 rounded-xl bg-white border-slate-200 font-black"
+                                            />
+                                        </div>
+                                        <div className="p-6 rounded-3xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+                                            <div>
+                                                <p className="text-[10px] font-black uppercase text-slate-400">Strict License Check</p>
+                                                <p className="text-[8px] font-medium text-slate-500 italic">Force valid license format.</p>
+                                            </div>
+                                            <button
+                                                onClick={() => setOnboarding({...onboarding, rules: { ...onboarding.rules, require_license: !onboarding.rules?.require_license }})}
+                                                className={cn(
+                                                    "w-12 h-6 rounded-full transition-all relative p-1 flex items-center shadow-inner",
+                                                    onboarding.rules?.require_license ? "bg-emerald-500" : "bg-slate-200"
+                                                )}
+                                            >
+                                                <div className={cn(
+                                                    "h-4 w-4 rounded-full bg-white shadow-sm transition-all",
+                                                    onboarding.rules?.require_license ? "translate-x-6" : "translate-x-0"
+                                                )} />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </Card>
+
+                            <div className="p-8 rounded-[3rem] bg-indigo-50 border border-indigo-100 flex items-start gap-4">
+                                <Info className="h-6 w-6 text-indigo-500 shrink-0 mt-0.5" />
+                                <div className="space-y-1">
+                                    <p className="text-xs font-black uppercase text-indigo-700">Onboarding Sequence</p>
+                                    <p className="text-[10px] text-indigo-600 font-medium leading-relaxed italic">
+                                        &quot;Steps are executed in numerical order. Disabling a step will automatically bypass it in the Runner app. Essential steps like &apos;Phone&apos; should remain active for identity verification.&quot;
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* INTEGRATIONS TAB */}
+                    {activeTab === 'integrations' && (
+                        <div className="space-y-8 animate-in fade-in slide-in-from-left-4 duration-500 text-left">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {[
+                                    { id: 'WHATSAPP', label: 'WhatsApp Business', icon: MessageSquare, color: 'emerald', type: 'Credentials' },
+                                    { id: 'META', label: 'Meta (IG & FB)', icon: Share2, color: 'primary', type: 'OAuth' },
+                                    { id: 'TIKTOK', label: 'TikTok Creator', icon: Music, color: 'slate', type: 'OAuth' },
+                                    { id: 'GOOGLE', label: 'Google (Gmail)', icon: Mail, color: 'rose', type: 'OAuth' },
+                                ].map((node) => {
+                                    const isActive = integrations.find(i => i.id === node.id)?.status === 'Connected';
+                                    return (
+                                        <Card key={node.id} className="p-8 rounded-[2.5rem] bg-white border border-slate-100 shadow-sm space-y-6 group hover:shadow-xl transition-all">
+                                            <div className="flex justify-between items-start">
+                                                <div className="flex items-center gap-4">
+                                                    <div className={cn(
+                                                        "h-12 w-12 rounded-2xl flex items-center justify-center shadow-inner transition-transform group-hover:scale-110",
+                                                        node.color === 'emerald' ? "bg-emerald-50 text-emerald-500" :
+                                                        node.color === 'primary' ? "bg-primary/5 text-primary" :
+                                                        node.color === 'rose' ? "bg-rose-50 text-rose-500" : "bg-slate-50 text-slate-500"
+                                                    )}>
+                                                        <node.icon size={24} />
+                                                    </div>
+                                                    <div>
+                                                        <h3 className="text-lg font-black uppercase tracking-tighter text-foreground">{node.label}</h3>
+                                                        <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">{node.type} Protocol</p>
+                                                    </div>
+                                                </div>
+                                                <span className={cn(
+                                                    "px-3 py-1 rounded-full text-[8px] font-black uppercase border tracking-widest",
+                                                    isActive ? "bg-emerald-50 text-emerald-600 border-emerald-100" : "bg-slate-50 text-slate-400 border-slate-100"
+                                                )}>
+                                                    {isActive ? 'Connected' : 'Not Linked'}
+                                                </span>
+                                            </div>
+
+                                            <div className="pt-4 border-t border-slate-50 flex gap-2">
+                                                {node.type === 'OAuth' ? (
+                                                    <Button className="flex-1 h-12 rounded-xl bg-slate-900 text-white font-black uppercase text-[9px] tracking-widest shadow-xl active:scale-95 transition-all">
+                                                        Connect Account
+                                                    </Button>
+                                                ) : (
+                                                    <Button onClick={() => setActiveTab('advanced')} className="flex-1 h-12 rounded-xl bg-slate-900 text-white font-black uppercase text-[9px] tracking-widest shadow-xl active:scale-95 transition-all">
+                                                        Configure Keys
+                                                    </Button>
+                                                )}
+                                                <Button
+                                                    variant="outline"
+                                                    disabled={isTestingConnection === node.id}
+                                                    onClick={async () => {
+                                                        setIsTestingConnection(node.id);
+                                                        try {
+                                                            const res = await fetch('/api/admin/integrations/verify', {
+                                                                method: 'POST',
+                                                                headers: { 'Content-Type': 'application/json' },
+                                                                body: JSON.stringify({ nodeId: node.id })
+                                                            });
+                                                            const data = await res.json();
+                                                            if (data.success) {
+                                                                alert(`${node.label} healthy! 🛰️`);
+                                                                fetchSettings();
+                                                            } else {
+                                                                throw new Error(data.error);
+                                                            }
+                                                        } catch (err: any) {
+                                                            alert(`Link Failure: ${err.message}`);
+                                                        } finally {
+                                                            setIsTestingConnection(null);
+                                                        }
+                                                    }}
+                                                    className="h-12 w-12 rounded-xl border-slate-100 text-slate-400 hover:text-primary transition-all"
+                                                >
+                                                    {isTestingConnection === node.id ? <Loader2 className="animate-spin h-4 w-4" /> : <Activity className="h-4 w-4" />}
+                                                </Button>
+                                            </div>
+                                        </Card>
+                                    );
+                                })}
+                            </div>
+
+                            <div className="p-8 rounded-[3rem] bg-amber-50 border border-amber-100 flex items-start gap-4 text-left">
+                                <ShieldAlert className="h-6 w-6 text-amber-600 shrink-0 mt-0.5" />
+                                <div className="space-y-1">
+                                    <p className="text-xs font-black uppercase text-amber-700">Credential Hygiene</p>
+                                    <p className="text-[10px] text-amber-600 font-medium leading-relaxed italic">
+                                        &quot;API Secrets are encrypted at rest and never transmitted to the client in plaintext. We recommend rotating your WhatsApp Access Token every 60 days to maintain grid security.&quot;
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     )}
 

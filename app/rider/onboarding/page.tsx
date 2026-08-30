@@ -12,7 +12,8 @@ import {
     Truck,
     CheckCircle2,
     Loader2,
-    Zap
+    Zap,
+    Calendar
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -30,6 +31,7 @@ export default function RiderOnboarding() {
     const [loading, setLoading] = useState(false);
     const [phone, setPhone] = useState('');
     const [riderName, setRiderName] = useState('');
+    const [birthDate, setBirthDate] = useState('');
     const [idNumber, setIdNumber] = useState('');
     const [licenseNumber, setLicenseNumber] = useState('');
     const [plateNumber, setPlateNumber] = useState('');
@@ -38,9 +40,25 @@ export default function RiderOnboarding() {
     const [vehiclePhoto, setVehiclePhoto] = useState<File | null>(null);
     const [agreedToTerms, setAgreedToTerms] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [enabledSteps, setEnabledSteps] = useState<string[]>([]);
+    const [rules, setRules] = useState<{ min_age: number, require_license: boolean }>({ min_age: 18, require_license: true });
 
-    // 0. Resume Logic
+    // 0. Load Configuration & Resume Logic
     useEffect(() => {
+        async function loadConfig() {
+            if (!supabase) return;
+            const { data } = await supabase.from('settings').select('value').eq('key', 'onboarding_config').maybeSingle();
+            if (data?.value) {
+                const config = data.value as { rider_steps: { id: string; enabled: boolean }[], rules?: { min_age: number, require_license: boolean } };
+                setEnabledSteps(config.rider_steps.filter(s => s.enabled).map(s => s.id));
+                if (config.rules) setRules(config.rules);
+            } else {
+                // Fallback to all steps
+                setEnabledSteps(['welcome', 'phone', 'identity', 'vehicle', 'verification', 'agreement', 'biometrics', 'pending', 'success']);
+            }
+        }
+        loadConfig();
+
         const savedPhone = localStorage.getItem('ob_onboarding_phone');
         if (savedPhone) {
             setPhone(savedPhone);
@@ -60,14 +78,26 @@ export default function RiderOnboarding() {
         if (data) {
             setStep(data.current_step as Step);
             if (data.form_data) {
-                const fd = data.form_data as any;
+                const fd = data.form_data as Record<string, string>;
                 setRiderName(fd.riderName || '');
+                setBirthDate(fd.birthDate || '');
                 setIdNumber(fd.idNumber || '');
                 setLicenseNumber(fd.licenseNumber || '');
                 setPlateNumber(fd.plateNumber || '');
                 setVehicleType(fd.vehicleType || 'Motorbike');
             }
         }
+    };
+
+    const getNextEnabledStep = (current: Step): Step => {
+        const allPossible: Step[] = ['welcome', 'phone', 'identity', 'vehicle', 'verification', 'agreement', 'biometrics', 'pending', 'success'];
+        const currentIndex = allPossible.indexOf(current);
+        for (let i = currentIndex + 1; i < allPossible.length; i++) {
+            if (enabledSteps.length === 0 || enabledSteps.includes(allPossible[i])) {
+                return allPossible[i];
+            }
+        }
+        return 'pending';
     };
 
     const saveProgress = async (nextStep: Step) => {
@@ -80,6 +110,7 @@ export default function RiderOnboarding() {
             current_step: nextStep,
             form_data: {
                 riderName,
+                birthDate,
                 idNumber,
                 licenseNumber,
                 plateNumber,
@@ -132,7 +163,7 @@ export default function RiderOnboarding() {
         setError(null);
 
         // Transition to Identity (In prod, this would trigger OTP)
-        await saveProgress('identity');
+        await saveProgress(getNextEnabledStep('phone'));
         setLoading(false);
     };
 
@@ -166,6 +197,11 @@ export default function RiderOnboarding() {
     };
 
     const handleVerificationSubmit = async () => {
+        if (rules.require_license && !licenseNumber.trim()) {
+            setError("A valid Driver's License number is required.");
+            return;
+        }
+
         if (!riderPhoto || !vehiclePhoto) {
             setError("Both photos are required for verification");
             return;
@@ -217,7 +253,7 @@ export default function RiderOnboarding() {
                 }, { onConflict: 'rider_phone' });
 
             if (updateError) throw updateError;
-            await saveProgress('agreement');
+            await saveProgress(getNextEnabledStep('verification'));
         } catch (err: unknown) {
             setError((err as Error).message || "Verification upload failed.");
         } finally {
@@ -250,7 +286,7 @@ export default function RiderOnboarding() {
                                     <h2 className="text-2xl font-black text-foreground uppercase leading-tight">Join the <br/> Runner Fleet</h2>
                                     <p className="text-sm text-slate-500 font-medium italic">&quot;Deliver chilled beverages and elite snacks. Start your shift today.&quot;</p>
                                 </div>
-                                <Button onClick={() => setStep('phone')} className="w-full h-18 rounded-[1.8rem] bg-primary text-white font-black uppercase text-xs tracking-widest shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95">
+                                <Button onClick={() => setStep(getNextEnabledStep('welcome'))} className="w-full h-18 rounded-[1.8rem] bg-primary text-white font-black uppercase text-xs tracking-widest shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95">
                                     Initialize Onboarding
                                 </Button>
                             </div>
@@ -290,6 +326,10 @@ export default function RiderOnboarding() {
                                         <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
                                     </div>
                                     <div className="relative">
+                                        <Input type="date" value={birthDate} onChange={e => setBirthDate(e.target.value)} className="h-14 rounded-2xl bg-slate-50 border-slate-100 pl-12 font-bold" />
+                                        <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
+                                    </div>
+                                    <div className="relative">
                                         <Input value={idNumber} onChange={e => setIdNumber(e.target.value)} placeholder="National ID Number" className="h-14 rounded-2xl bg-slate-50 border-slate-100 pl-12 font-bold" />
                                         <ShieldCheck className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
                                     </div>
@@ -298,7 +338,19 @@ export default function RiderOnboarding() {
                                         <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
                                     </div>
                                 </div>
-                                <Button onClick={() => setStep('vehicle')} className="w-full h-16 rounded-2xl bg-primary text-white font-black uppercase text-xs tracking-widest active:scale-95 transition-all">
+                                <Button
+                                    onClick={() => {
+                                        if (rules.min_age && birthDate) {
+                                            const age = Math.floor((new Date().getTime() - new Date(birthDate).getTime()) / 3.15576e+10);
+                                            if (age < rules.min_age) {
+                                                setError(`Minimum age for registration is ${rules.min_age}, bro.`);
+                                                return;
+                                            }
+                                        }
+                                        saveProgress(getNextEnabledStep('identity'));
+                                    }}
+                                    className="w-full h-16 rounded-2xl bg-primary text-white font-black uppercase text-xs tracking-widest active:scale-95 transition-all"
+                                >
                                     Continue to Vehicle
                                 </Button>
                             </div>
@@ -322,7 +374,7 @@ export default function RiderOnboarding() {
                                         <Truck className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
                                     </div>
                                 </div>
-                                <Button onClick={() => setStep('verification')} className="w-full h-16 rounded-2xl bg-primary text-white font-black uppercase text-xs tracking-widest active:scale-95 transition-all">
+                                <Button onClick={() => saveProgress(getNextEnabledStep('vehicle'))} className="w-full h-16 rounded-2xl bg-primary text-white font-black uppercase text-xs tracking-widest active:scale-95 transition-all">
                                     Continue to Verification
                                 </Button>
                             </div>
@@ -378,7 +430,7 @@ export default function RiderOnboarding() {
                                     <Button onClick={handleDownloadAgreement} variant="outline" className="w-full h-12 rounded-xl border-slate-200 text-slate-400 font-black uppercase text-[10px] tracking-widest hover:bg-slate-50">
                                         Download PDF Copy
                                     </Button>
-                                    <Button onClick={() => setStep('biometrics')} disabled={!agreedToTerms} className="w-full h-16 rounded-2xl bg-primary text-white font-black uppercase text-xs tracking-widest active:scale-95 transition-all shadow-xl shadow-primary/20">
+                                    <Button onClick={() => saveProgress(getNextEnabledStep('agreement'))} disabled={!agreedToTerms} className="w-full h-16 rounded-2xl bg-primary text-white font-black uppercase text-xs tracking-widest active:scale-95 transition-all shadow-xl shadow-primary/20">
                                         Confirm & Proceed
                                     </Button>
                                 </div>
@@ -403,7 +455,7 @@ export default function RiderOnboarding() {
                                         onClick={async () => {
                                             if (!supabase) { setStep('pending'); return; }
                                             const { data } = await supabase.from('rider_status').select('verification_status').eq('rider_phone', normalizePhone(phone)).maybeSingle();
-                                            setStep(data?.verification_status === 'Verified' ? 'success' : 'pending');
+                                            setStep(data?.verification_status === 'Verified' ? 'success' : getNextEnabledStep('biometrics'));
                                         }}
                                         className="w-full text-slate-400 font-black uppercase text-[10px]"
                                     >

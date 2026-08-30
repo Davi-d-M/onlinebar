@@ -24,7 +24,7 @@ export default function EmailPreview({ productName, productPrice, imageUrl, subj
                     <div className="h-2 w-2 rounded-full bg-emerald-400"></div>
                 </div>
                 <div className="flex-1 bg-slate-50 rounded-lg h-6 flex items-center px-3">
-                    <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest">Inbox &bull; Apexstores Tech Alert</p>
+                    <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest">Inbox &bull; Online Bar Nairobi Alert</p>
                 </div>
             </div>
 
@@ -33,7 +33,7 @@ export default function EmailPreview({ productName, productPrice, imageUrl, subj
                 {/* Email Header Branding */}
                 <div className="p-8 border-b border-slate-50 text-center">
                     <h1 className="text-xl font-black uppercase tracking-tighter text-foreground">
-                        Apex<span className="text-primary">stores</span>
+                        Online<span className="text-primary">Bar</span>
                     </h1>
                 </div>
 
@@ -71,8 +71,8 @@ export default function EmailPreview({ productName, productPrice, imageUrl, subj
                         <ShieldCheck size={16} />
                         <Zap size={16} />
                     </div>
-                    <p className="text-[8px] font-bold text-slate-400 uppercase tracking-[0.2em]">© 2026 APEXSTORES KENYA &bull; UNLOCK PERFORMANCE</p>
-                    <p className="text-[7px] text-slate-300 uppercase underline cursor-pointer">Unsubscribe from tech alerts</p>
+                    <p className="text-[8px] font-bold text-slate-400 uppercase tracking-[0.2em]">© 2026 ONLINE BAR NAIROBI &bull; PREMIUM SERVICE</p>
+                    <p className="text-[7px] text-slate-300 uppercase underline cursor-pointer">Unsubscribe from bar alerts</p>
                 </div>
             </div>
         </div>

@@ -7,7 +7,12 @@ import { Brain, Sparkles, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { analyzeMissionTimeline, AnalysisResult } from '@/lib/engines/reasoningEngine';
 
-export default function WhyEngine({ events, missionId }: { events: any[], missionId: string }) {
+interface MissionEvent {
+    created_at: string;
+    event_type: string;
+}
+
+export default function WhyEngine({ events, missionId }: { events: MissionEvent[], missionId: string }) {
     const [result, setResult] = React.useState<AnalysisResult | null>(null);
     const [loading, setLoading] = React.useState(false);
 

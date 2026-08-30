@@ -20,7 +20,7 @@ export default function SignInTrigger() {
 
       // Only show if user is NOT logged in
       if (!session) {
-        const hasBeenShown = localStorage.getItem("apex_signin_trigger_shown");
+        const hasBeenShown = localStorage.getItem("ob_signin_trigger_shown");
         if (!hasBeenShown) {
           // Delay appearance for better UX
           const timer = setTimeout(() => {
@@ -36,7 +36,7 @@ export default function SignInTrigger() {
 
   const handleClose = () => {
     setIsVisible(false);
-    localStorage.setItem("apex_signin_trigger_shown", "true");
+    localStorage.setItem("ob_signin_trigger_shown", "true");
   };
 
   if (!isMounted || !isVisible) return null;

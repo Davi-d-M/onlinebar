@@ -87,7 +87,7 @@ export default function ReviewSection({ productId, isLive = true }: { productId:
 
     try {
       const photoUrls: string[] = [];
-      const BUCKET_NAME = 'apexstores-assets';
+      const BUCKET_NAME = 'onlinebar-assets';
 
       // 1. Upload Photos
       if (selectedPhotos.length > 0) {
@@ -288,7 +288,7 @@ export default function ReviewSection({ productId, isLive = true }: { productId:
             {rewardClaimed && (
                 <div className="mt-4 p-4 rounded-2xl bg-emerald-500 text-white flex items-center gap-3 animate-bounce shadow-xl shadow-emerald-500/20">
                     <PartyPopper className="h-5 w-5" />
-                    <p className="text-[10px] font-black uppercase tracking-widest">Boom! +50 Apex Points Earned</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest">Boom! +50 Bar Points Earned</p>
                 </div>
             )}
           </form>
@@ -354,7 +354,7 @@ export default function ReviewSection({ productId, isLive = true }: { productId:
                     <div className="mt-6 p-6 bg-primary/5 rounded-2xl border-l-4 border-primary relative overflow-hidden group">
                         <div className="relative z-10">
                             <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-2 flex items-center gap-2">
-                                <Zap className="h-3 w-3 fill-current" /> Apexstores Team Response
+                                <Zap className="h-3 w-3 fill-current" /> Online Bar Team Response
                             </p>
                             <p className="text-slate-700 text-sm font-medium italic leading-relaxed">
                                 &quot;{review.admin_response}&quot;

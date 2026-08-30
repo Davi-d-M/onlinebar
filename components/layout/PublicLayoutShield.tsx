@@ -53,12 +53,12 @@ function ShieldContent({ children, initialSettings }: { children: React.ReactNod
         const ref = searchParams.get('ref');
         if (ref && supabase) {
             // 1. Save to session storage & cookie (30 days)
-            sessionStorage.setItem('apex_referral_code', ref);
+            sessionStorage.setItem('ob_referral_code', ref);
 
             // Standard cookie set
             const expiry = new Date();
             expiry.setDate(expiry.getDate() + 30);
-            document.cookie = `apex_referral_code=${ref}; path=/; expires=${expiry.toUTCString()}; SameSite=Lax`;
+            document.cookie = `ob_referral_code=${ref}; path=/; expires=${expiry.toUTCString()}; SameSite=Lax`;
 
             // 2. Increment clicks (Idempotent per session)
             const tracked = sessionStorage.getItem(`tracked_${ref}`);
@@ -73,10 +73,10 @@ function ShieldContent({ children, initialSettings }: { children: React.ReactNod
     useEffect(() => {
         if (!supabase || isAdmin) return;
 
-        let sessionId = localStorage.getItem('apex_session_id');
+        let sessionId = localStorage.getItem('ob_session_id');
         if (!sessionId) {
             sessionId = `session_${Math.random().toString(36).substring(2, 15)}`;
-            localStorage.setItem('apex_session_id', sessionId);
+            localStorage.setItem('ob_session_id', sessionId);
         }
 
         const isOperational = true;

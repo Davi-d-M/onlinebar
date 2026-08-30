@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { MessageSquare, ShoppingCart, Share2, ArrowLeft, Zap, ChevronLeft, ChevronRight, Layers, Check } from 'lucide-react';
+import { MessageSquare, ShoppingCart, Share2, ArrowLeft, Zap, ChevronLeft, ChevronRight, Layers, Check, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { formatPrice, cn, getReferralLink } from '@/lib/utils';
 import ReviewSection from '@/components/product/ReviewSection';
@@ -18,6 +18,13 @@ import Image from 'next/image';
 import { OB_OS } from '@/lib/onlineBarOS';
 import { v4 as uuidv4 } from 'uuid';
 import { useInteractionTracking } from '@/lib/utils/useInteractionTracking';
+
+import dynamic from 'next/dynamic';
+
+const BottleViewer3D = dynamic(() => import('./BottleViewer3D'), {
+    ssr: false,
+    loading: () => <div className="w-full h-[400px] bg-slate-50 rounded-[3rem] border border-slate-100 flex items-center justify-center animate-pulse"><Loader2 className="h-8 w-8 text-primary animate-spin" /></div>
+});
 
 interface Product {
   id: number;
@@ -93,13 +100,13 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
                 if (typeof window !== 'undefined') {
                     let history = [];
                     try {
-                        history = JSON.parse(localStorage.getItem('apex_history') || '[]');
+                        history = JSON.parse(localStorage.getItem('ob_history') || '[]');
                     } catch {
                         history = [];
                     }
                     if (!Array.isArray(history)) history = [];
                     const newHistory = [product.id, ...history.filter((id: number) => id !== product.id)].slice(0, 5);
-                    localStorage.setItem('apex_history', JSON.stringify(newHistory));
+                    localStorage.setItem('ob_history', JSON.stringify(newHistory));
                 }
             }
         } catch (err) {
@@ -142,7 +149,7 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
 
   const handleWhatsAppOrder = () => {
     trackClick('whatsapp-order-btn', 'WhatsApp Order', { productId: product.id });
-    const message = `Hello Online Bar! I want to order:\n\n*Product:* ${product.name}\n*Variant:* ${selectedVariant}\n*Quantity:* ${quantity}\n*Price:* ${formatPrice(product.price * quantity)}\n\nIs this available?`;
+    const message = `Hello Online Bar Nairobi! I want to order:\n\n*Product:* ${product.name}\n*Variant:* ${selectedVariant}\n*Quantity:* ${quantity}\n*Price:* ${formatPrice(product.price * quantity)}\n\nIs this available?`;
     window.open(`https://wa.me/${settings.contact.whatsapp}?text=${encodeURIComponent(message)}`, '_blank');
   };
 
@@ -155,7 +162,7 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
   const handleShare = async (platform: string) => {
     trackClick('share-btn', 'Share Product', { productId: product.id, platform });
     const url = referralCode ? getReferralLink(referralCode, `/shop/${product.id}`) : (typeof window !== 'undefined' ? window.location.href : '');
-    const shareText = `Check out ${product.name} from Apexstores - ${formatPrice(product.price)} ${url}`;
+    const shareText = `Check out ${product.name} from Online Bar Nairobi - ${formatPrice(product.price)} ${url}`;
 
     // Log Share Mission
     if (!supabase) return;
@@ -197,6 +204,11 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
 
           {/* Gallery */}
           <div className="space-y-6 sticky top-8">
+            {/* 3D Bottle Viewer (Conditional) */}
+            {(product.category === 'wine' || product.category === 'spirits' || product.category === 'whiskey') && (
+                <BottleViewer3D />
+            )}
+
             <div className="bg-slate-50 rounded-[3rem] p-10 flex items-center justify-center aspect-square border border-slate-100 overflow-hidden relative group">
                 {hasVideo && activeImageIndex === 0 ? (
                     <video

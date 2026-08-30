@@ -6,7 +6,7 @@ import { sendNotification } from './notificationService';
  * Executes pre-defined business rules triggered by system events.
  */
 
-export async function processAutomationRules(eventId: string, eventType: string, payload: any) {
+export async function processAutomationRules(eventId: string, eventType: string, payload: Record<string, unknown>) {
     if (!supabase) return;
 
     console.log(`🤖 [AUTOMATION_ENGINE] Evaluating rules for ${eventType}`);
@@ -38,42 +38,50 @@ export async function processAutomationRules(eventId: string, eventType: string,
                     .eq('engine_name', getEngineForEventType(eventType))
                     .maybeSingle();
 
-                if (state && !state.is_autonomous) {
+                const isAutonomous = state ? (state as { is_autonomous: boolean }).is_autonomous : true;
+
+                if (!isAutonomous) {
                     await logAutomationRun(rule.id, eventId, 'BLOCKED_BY_KILL_SWITCH');
                     continue;
                 }
 
                 // 5. Execute Actions
-                await executeActions(rule.actions, payload, rule.id, eventId);
+                await executeActions(rule.actions as unknown[], payload, rule.id, eventId);
             }
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error(`❌ [AUTOMATION_ENGINE] Rule execution failed (${rule.name}):`, err);
-            await logAutomationRun(rule.id, eventId, 'FAILED', err.message);
+            await logAutomationRun(rule.id, eventId, 'FAILED', (err as Error).message);
         }
     }
 }
 
-function evaluateConditions(conditions: any, payload: any): boolean {
+function evaluateConditions(conditions: Record<string, unknown>, payload: Record<string, unknown>): boolean {
     // Simple logic evaluation (can be expanded with a real expression parser)
     if (Object.keys(conditions).length === 0) return true;
 
     // Example: {"amount_gt": 1000}
-    if (conditions.amount_gt && payload.amount <= conditions.amount_gt) return false;
+    if (conditions.amount_gt && Number(payload.amount) <= Number(conditions.amount_gt)) return false;
 
     return true;
 }
 
-async function executeActions(actions: any[], payload: any, ruleId: string, eventId: string) {
+interface AutomationAction {
+    type: string;
+    title?: string;
+    body?: string;
+}
+
+async function executeActions(actions: unknown[], payload: Record<string, unknown>, ruleId: string, eventId: string) {
     const executed = [];
 
-    for (const action of actions) {
+    for (const action of (actions as AutomationAction[])) {
         console.log(`⚡ [AUTOMATION_ENGINE] Executing action: ${action.type}`);
 
         switch (action.type) {
             case 'NOTIFY_CUSTOMER':
                 if (payload.userId) {
                     await sendNotification(['IN_APP', 'WHATSAPP'], {
-                        userId: payload.userId,
+                        userId: payload.userId as string,
                         title: action.title || 'Mission Update',
                         body: action.body || 'Your order status has changed.'
                     });
@@ -101,7 +109,7 @@ async function executeActions(actions: any[], payload: any, ruleId: string, even
     await logAutomationRun(ruleId, eventId, 'EXECUTED', undefined, executed);
 }
 
-async function logAutomationRun(ruleId: string, eventId: string, status: string, errors?: string, executed?: any[]) {
+async function logAutomationRun(ruleId: string, eventId: string, status: string, errors?: string, executed?: unknown[]) {
     await supabase?.from('automation_runs').insert([{
         rule_id: ruleId,
         event_id: eventId,

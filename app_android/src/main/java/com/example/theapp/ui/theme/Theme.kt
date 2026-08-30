@@ -9,14 +9,14 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val LightColorScheme = lightColorScheme(
-    primary = ApexPrimary,
-    secondary = ApexForeground,
-    background = ApexBackground,
-    surface = ApexCard,
-    onPrimary = ApexCard,
-    onSecondary = ApexBackground,
-    onBackground = ApexForeground,
-    onSurface = ApexForeground
+    primary = BarPrimary,
+    secondary = BarForeground,
+    background = BarBackground,
+    surface = BarCard,
+    onPrimary = BarCard,
+    onSecondary = BarBackground,
+    onBackground = BarForeground,
+    onSurface = BarForeground
 )
 
 @Composable

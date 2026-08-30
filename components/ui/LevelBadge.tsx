@@ -28,7 +28,8 @@ export function LevelBadge({ level, title, className }: LevelBadgeProps) {
             className
         )}>
             <div className={cn("h-4 w-4 flex items-center justify-center", config.color)}>
-                <Icon size={12} strokeWidth={3} />
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                {React.createElement(Icon as any, { size: 12, strokeWidth: 3 })}
             </div>
             <span className={cn("text-[9px] font-black uppercase tracking-widest", config.color)}>
                 Lvl {level} • {title}

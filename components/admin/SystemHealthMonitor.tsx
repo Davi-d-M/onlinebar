@@ -5,8 +5,16 @@ import { Card } from '@/components/ui/card';
 import { ShieldCheck, ShieldAlert, Globe, Activity, Database, HardDrive } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+interface HealthReport {
+    status: 'HEALTHY' | 'DEGRADED' | 'DOWN';
+    total_latency: string;
+    database?: { status: string; latency: string; error?: string };
+    storage?: { status: string; latency: string };
+    error?: string;
+}
+
 export default function SystemHealthMonitor() {
-    const [health, setHealth] = React.useState<any>(null);
+    const [health, setHealth] = React.useState<HealthReport | null>(null);
     const [loading, setLoading] = React.useState(true);
 
     const fetchHealth = React.useCallback(async () => {
@@ -14,8 +22,8 @@ export default function SystemHealthMonitor() {
             const res = await fetch('/api/health');
             const data = await res.json();
             setHealth(data);
-        } catch (err) {
-            setHealth({ status: 'DOWN', error: 'Network Failure' });
+        } catch {
+            setHealth({ status: 'DOWN', error: 'Network Failure', total_latency: '---' });
         } finally {
             setLoading(false);
         }
@@ -65,7 +73,8 @@ export default function SystemHealthMonitor() {
                     <div key={node.id} className="p-6 rounded-[2rem] bg-slate-50 border border-slate-100 space-y-4 group/node hover:bg-white hover:shadow-xl transition-all">
                         <div className="flex justify-between items-start">
                             <div className="h-10 w-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-300 group-hover/node:text-primary transition-colors shadow-sm">
-                                <node.icon size={20} />
+                                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                                {React.createElement(node.icon as any, { size: 20 })}
                             </div>
                             <span className={cn(
                                 "text-[7px] font-black uppercase tracking-widest px-2 py-0.5 rounded",

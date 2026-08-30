@@ -11,9 +11,21 @@ import Link from 'next/link';
 
 import MissionBoard from './MissionBoard';
 
+import { User } from '@supabase/supabase-js';
+
+interface Profile {
+    id: string;
+    full_name: string;
+    level: number;
+    title: string;
+    xp: number;
+    current_streak: number;
+    loyalty_points: number;
+}
+
 export default function EngagementDashboard() {
-    const [user, setUser] = useState<any>(null);
-    const [profile, setProfile] = useState<any>(null);
+    const [user, setUser] = useState<User | null>(null);
+    const [profile, setProfile] = useState<Profile | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {

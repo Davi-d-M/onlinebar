@@ -12,7 +12,7 @@ interface NotificationPayload {
     title: string;
     body: string;
     actionUrl?: string;
-    metadata?: any;
+    metadata?: Record<string, unknown>;
 }
 
 /**

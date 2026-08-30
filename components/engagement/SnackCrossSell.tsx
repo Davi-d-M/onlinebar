@@ -9,9 +9,17 @@ import { formatPrice } from '@/lib/utils';
 import { useCart } from '@/context/CartContext';
 import Image from 'next/image';
 
+interface SnackSuggestion {
+    id: number;
+    name: string;
+    price: number;
+    image_url: string;
+    category: string;
+}
+
 export default function SnackCrossSell() {
     const { cart, addToCart } = useCart();
-    const [suggestions, setSuggestions] = useState<any[]>([]);
+    const [suggestions, setSuggestions] = useState<SnackSuggestion[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -63,7 +71,15 @@ export default function SnackCrossSell() {
                         </div>
                         <Button
                             size="icon"
-                            onClick={() => addToCart({...s, quantity: 1, base_price: s.price})}
+                            onClick={() => addToCart({
+                                id: s.id,
+                                name: s.name,
+                                price: s.price,
+                                base_price: s.price,
+                                quantity: 1,
+                                category: s.category,
+                                image: s.image_url
+                            })}
                             className="h-8 w-8 rounded-lg bg-primary text-white shadow-lg shadow-primary/10 active:scale-90 transition-all"
                         >
                             <Plus size={14} />

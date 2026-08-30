@@ -55,6 +55,8 @@ export const metadata: Metadata = {
 import PublicLayoutShield from "@/components/layout/PublicLayoutShield";
 import JsonLd from "@/components/seo/JsonLd";
 import AnalyticsTracker from "@/components/layout/AnalyticsTracker";
+import MobileBottomNav from "@/components/layout/MobileBottomNav";
+import LevelUpCelebration from "@/components/engagement/LevelUpCelebration";
 import { type StoreSettings, DEFAULT_SETTINGS } from "@/lib/useSettings";
 import { getCachedSettings } from "@/lib/cachedData";
 import { Suspense } from "react";
@@ -75,7 +77,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.variable} font-sans antialiased flex flex-col min-h-screen`}
+        className={`${inter.variable} font-sans antialiased flex flex-col min-h-screen pb-20 lg:pb-0`}
       >
         <Suspense fallback={null}>
             <AnalyticsTracker />
@@ -118,8 +120,10 @@ export default async function RootLayout({
         <CartProvider>
           <WishlistProvider>
             <PublicLayoutShield initialSettings={settings}>
+                <LevelUpCelebration />
                 {children}
             </PublicLayoutShield>
+            <MobileBottomNav />
           </WishlistProvider>
         </CartProvider>
       </body>

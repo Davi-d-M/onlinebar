@@ -19,7 +19,15 @@ export type OSEventType =
     | 'EXPERIMENT_CONVERSION'
     | 'UI_INTERACTION'
     | 'SECTION_VISIBLE'
-    | 'PAGE_DWELL';
+    | 'PAGE_DWELL'
+    | 'POINTS_EARNED'
+    | 'LEVEL_UP'
+    | 'SCROLL_DEPTH'
+    | 'SEARCH_SUBMITTED'
+    | 'ZERO_RESULTS'
+    | 'PRODUCT_INTENT'
+    | 'TIME_ON_PAGE'
+    | 'HEARTBEAT';
 
 interface OSEventPayload {
     userId?: string;
@@ -30,7 +38,7 @@ interface OSEventPayload {
     campaignId?: string;
     experimentId?: string;
     variantId?: string;
-    details?: any;
+    details?: Record<string, unknown>;
 }
 
 class OnlineBarOS {
@@ -62,6 +70,43 @@ class OnlineBarOS {
 
         // 2. Log to Behavioral Analytics (Respecting Consent)
         await this.logAnalytics(eventType, payload, { corrId, reqId });
+
+        // 3. Heartbeat/Session Management
+        if (eventType === 'HEARTBEAT' && payload.userId) {
+            await this.refreshSession(payload.userId);
+        }
+    }
+
+    /**
+     * Records or refreshes an active security session for a user.
+     */
+    public async refreshSession(userId: string) {
+        if (!supabase || typeof window === 'undefined') return;
+
+        const userAgent = navigator.userAgent;
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(userAgent);
+
+        try {
+            await supabase.from('security_sessions').upsert({
+                user_id: userId,
+                device_name: isMobile ? 'Mobile Terminal' : 'Desktop Node',
+                device_type: isMobile ? 'Mobile' : 'Desktop',
+                browser: this.getBrowserName(userAgent),
+                ip_address: 'Logged via Node', // In prod, get from server headers
+                is_current_session: true,
+                last_active_at: new Date().toISOString()
+            }, { onConflict: 'user_id, device_name, browser' });
+        } catch (err) {
+            console.warn("Session refresh failed:", err);
+        }
+    }
+
+    private getBrowserName(ua: string): string {
+        if (ua.includes('Firefox')) return 'Firefox';
+        if (ua.includes('Chrome')) return 'Chrome';
+        if (ua.includes('Safari')) return 'Safari';
+        if (ua.includes('Edge')) return 'Edge';
+        return 'Browser';
     }
 
     /**
@@ -90,13 +135,25 @@ class OnlineBarOS {
         return ['ORDER_CREATED', 'ORDER_PAID', 'ORDER_DELIVERED', 'SECURITY_ALERT'].includes(type);
     }
 
-    private async logAnalytics(name: string, payload: any, meta: any) {
+    private async logAnalytics(name: string, payload: OSEventPayload, meta: { corrId: string, reqId: string }) {
+        if (!supabase) return;
+
+        // Auto-inject context if browser
+        const context = typeof window !== 'undefined' ? {
+            url: window.location.pathname,
+            title: document.title,
+            referrer: document.referrer
+        } : {};
+
         // 1. Log Event
-        await supabase?.from('analytics_events').insert([{
+        await supabase.from('analytics_events').insert([{
             event_name: name,
             user_id: payload.userId,
             anonymous_id: payload.anonymousId,
-            payload: payload.details || {},
+            payload: {
+                ...context,
+                ...(payload.details || {})
+            },
             campaign_id: payload.campaignId,
             correlation_id: meta.corrId
         }]);

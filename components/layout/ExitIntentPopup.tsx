@@ -64,7 +64,7 @@ export default function ExitIntentPopup() {
                     <Button
                         onClick={() => {
                             navigator.clipboard.writeText('STAY5');
-                            localStorage.setItem('apex_exit_intent', 'true');
+                            localStorage.setItem('ob_exit_intent', 'true');
                             setIsVisible(false);
                             window.location.href = '/checkout';
                         }}
@@ -84,7 +84,7 @@ export default function ExitIntentPopup() {
             {/* Urgent footer */}
             <div className="bg-primary p-4 flex items-center justify-center gap-4 text-white">
                 <Zap className="h-4 w-4 fill-current" />
-                <span className="text-[10px] font-black uppercase tracking-widest">Limited Time Offer • Only at Apexstores</span>
+                <span className="text-[10px] font-black uppercase tracking-widest">Limited Time Offer • Only at Online Bar Nairobi</span>
                 <Zap className="h-4 w-4 fill-current" />
             </div>
         </div>

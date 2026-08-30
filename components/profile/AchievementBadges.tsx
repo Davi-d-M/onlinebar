@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { ShoppingBag, Smartphone, MessageSquare, Users, Rocket, Gem, Lock, Star, ShieldCheck, Crown, Trophy } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -78,7 +78,8 @@ export default function AchievementBadges({ userId }: { userId: string }) {
                             "h-16 w-16 rounded-[1.8rem] flex items-center justify-center transition-all duration-700",
                             isUnlocked ? "bg-primary/10 text-primary shadow-lg shadow-primary/10 scale-110 rotate-3" : "bg-white text-slate-200"
                         )}>
-                            <Icon className="h-8 w-8" />
+                            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                            {React.createElement(Icon as any, { className: "h-8 w-8" })}
                         </div>
 
                         <div className="space-y-1">

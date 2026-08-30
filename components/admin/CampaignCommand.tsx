@@ -27,7 +27,7 @@ export default function CampaignCommand() {
             await launchCampaign({
                 title,
                 message,
-                channels: channels as any
+                channels: channels as ('WHATSAPP' | 'INSTAGRAM' | 'FACEBOOK')[]
             });
             setSuccess(true);
             setTimeout(() => setSuccess(false), 5000);

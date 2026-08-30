@@ -11,7 +11,7 @@ export interface ThreatReport {
 }
 
 /**
- * Apex Autonomous Security Shield
+ * Bar Autonomous Security Shield
  * Monitors for fraudulent patterns and automated attacks.
  */
 export async function runSecurityScan() {
@@ -20,7 +20,7 @@ export async function runSecurityScan() {
     try {
         // Phase 13: Feature Toggle Verification
         const { data: featData } = await supabase.from('settings').select('value').eq('key', 'features').maybeSingle();
-        if (featData && (featData.value as any).fraud_shield_enabled === false) {
+        if (featData && (featData.value as Record<string, unknown>).fraud_shield_enabled === false) {
             console.log("[SHIELD] Sentinel in Standby Mode. Toggle Disabled.");
             return;
         }

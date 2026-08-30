@@ -191,7 +191,7 @@ export default function AdminFinancePage() {
 
             <div className="grid lg:grid-cols-12 gap-10">
                 <div className="lg:col-span-8 space-y-6">
-                    <h2 className="text-2xl font-black uppercase tracking-tighter text-foreground px-4 italic underline decoration-primary decoration-4">The Apex Ledger</h2>
+                    <h2 className="text-2xl font-black uppercase tracking-tighter text-foreground px-4 italic underline decoration-primary decoration-4">The Bar Ledger</h2>
                     <div className="bg-white rounded-[3rem] border border-slate-100 shadow-sm overflow-hidden">
                         <table className="w-full text-left">
                             <thead>

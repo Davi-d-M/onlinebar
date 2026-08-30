@@ -7,7 +7,7 @@ import { NextResponse } from "next/server";
  */
 export async function GET() {
     const start = performance.now();
-    const reports: Record<string, any> = {};
+    const reports: Record<string, unknown> = {};
     let isHealthy = true;
 
     try {
@@ -40,9 +40,9 @@ export async function GET() {
             { status: isHealthy ? 200 : 503 }
         );
 
-    } catch (err: any) {
+    } catch (err: unknown) {
         return NextResponse.json(
-            { status: 'DOWN', error: err.message },
+            { status: 'DOWN', error: (err as Error).message },
             { status: 500 }
         );
     }

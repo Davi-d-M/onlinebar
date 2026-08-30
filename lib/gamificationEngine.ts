@@ -119,8 +119,3 @@ async function checkGlobalMilestones(userId: string) {
     // This calls achievementService logic
     console.log(`Checking milestones for ${userId}`);
 }
-
-async function handleLevelUp(userId: string, newLevel: number) {
-    // This could trigger a notification or a special reward reveal
-    console.log(`🎉 User ${userId} leveled up to ${newLevel}!`);
-}

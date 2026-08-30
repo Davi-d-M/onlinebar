@@ -130,7 +130,7 @@ export default function SecurityHub() {
                 <div className="lg:col-span-8 space-y-12">
                     <section className="space-y-8">
                         <div className="flex items-center justify-between px-4 shrink-0">
-                            <h2 className="text-2xl font-black uppercase tracking-tighter text-foreground">Apex Shield: Intelligence</h2>
+                            <h2 className="text-2xl font-black uppercase tracking-tighter text-foreground">Bar Shield: Intelligence</h2>
                             <span className="text-[10px] font-black uppercase text-rose-500 bg-rose-50 px-3 py-1.5 rounded-full border border-rose-100">{threats.length} Flagged Events</span>
                         </div>
 

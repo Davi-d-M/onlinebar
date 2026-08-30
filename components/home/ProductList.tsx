@@ -120,44 +120,9 @@ export default function ProductList({ initialProducts }: { initialProducts?: Pro
         setInStockOnly(false);
     };
 
-    window.addEventListener('apex-search', handleApexSearch);
-    return () => window.removeEventListener('apex-search', handleApexSearch);
+    window.addEventListener('ob-search', handleApexSearch);
+    return () => window.removeEventListener('ob-search', handleApexSearch);
   }, []);
-
-  // 3. 🚀 [MASTER_OS] Track Search & Discovery
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(async () => {
-        if (!supabase) return;
-        const { data: { session } } = await supabase.auth.getSession();
-        const anonId = localStorage.getItem('ob_anonymous_id');
-
-        if (searchQuery.trim().length >= 2 || activeCategory !== 'all') {
-            await OB_OS.track('PRODUCT_SEARCHED', {
-                userId: session?.user?.id,
-                anonymousId: anonId || undefined,
-                details: {
-                    query: searchQuery,
-                    category: activeCategory,
-                    brand: selectedBrand,
-                    results_count: filteredProducts.length
-                }
-            });
-        }
-    }, 1000); // 1s debounce to avoid spamming the log
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [searchQuery, activeCategory, selectedBrand, filteredProducts.length]);
-
-  // Extract unique brands (first word of product name)
-  const brands = useMemo(() => {
-      // Logic: Only show brands that exist in the active category
-      const currentCategoryProds = activeCategory === 'all'
-        ? products
-        : products.filter(p => (p.category || '').toLowerCase() === activeCategory.toLowerCase());
-
-      const allBrands = currentCategoryProds.map(p => (p.name || '').trim().split(' ')[0]);
-      return ['all', ...Array.from(new Set(allBrands))];
-  }, [products, activeCategory]);
 
   const filteredProducts = useMemo(() => {
       let filtered = [...products];
@@ -203,6 +168,51 @@ export default function ProductList({ initialProducts }: { initialProducts?: Pro
 
       return filtered;
   }, [products, activeCategory, searchQuery, sortBy, minPrice, maxPrice, inStockOnly, selectedBrand]);
+
+  // Extract unique brands (first word of product name)
+  const brands = useMemo(() => {
+      // Logic: Only show brands that exist in the active category
+      const currentCategoryProds = activeCategory === 'all'
+        ? products
+        : products.filter(p => (p.category || '').toLowerCase() === activeCategory.toLowerCase());
+
+      const allBrands = currentCategoryProds.map(p => (p.name || '').trim().split(' ')[0]);
+      return ['all', ...Array.from(new Set(allBrands))];
+  }, [products, activeCategory]);
+
+  // 3. 🚀 [MASTER_OS] Track Search & Discovery
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(async () => {
+        if (!supabase) return;
+        const { data: { session } } = await supabase.auth.getSession();
+        const anonId = localStorage.getItem('ob_anonymous_id');
+
+        if (searchQuery.trim().length >= 2 || activeCategory !== 'all') {
+            const resultsCount = filteredProducts.length;
+
+            // 🚀 [MASTER_OS] Track Search Intent
+            await OB_OS.track('SEARCH_SUBMITTED', {
+                userId: session?.user?.id,
+                anonymousId: anonId || undefined,
+                details: {
+                    query: searchQuery,
+                    category: activeCategory,
+                    brand: selectedBrand,
+                    results_count: resultsCount
+                }
+            });
+
+            // Log Zero Results Gap
+            if (resultsCount === 0 && searchQuery.trim().length >= 3) {
+                await OB_OS.track('ZERO_RESULTS', {
+                    details: { query: searchQuery, path: window.location.pathname }
+                });
+            }
+        }
+    }, 1000); // 1s debounce to avoid spamming the log
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchQuery, activeCategory, selectedBrand, filteredProducts.length]);
 
   if (loading) {
     return (

@@ -177,7 +177,7 @@ export default function DispatchPortal() {
                 </div>
 
                 <div className="text-center pt-8 space-y-2 opacity-30">
-                    <p className="text-[9px] font-black uppercase tracking-[0.4em] text-slate-400">Apexstores Logistics Command</p>
+                    <p className="text-[9px] font-black uppercase tracking-[0.4em] text-slate-400">Online Bar Logistics Command</p>
                     <p className="text-[8px] font-bold text-slate-400 uppercase">Operational Security Active</p>
                 </div>
             </div>

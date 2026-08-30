@@ -46,7 +46,7 @@ export async function POST(request: Request) {
         }
 
         await resend.emails.send({
-            from: 'Apexstores <onboarding@resend.dev>',
+            from: 'Online Bar Nairobi <onboarding@resend.dev>',
             to: email,
             subject: subject,
             html: `
@@ -55,7 +55,7 @@ export async function POST(request: Request) {
                     <p>${body}</p>
                     <p>Track your order anytime here: <a href="${process.env.NEXT_PUBLIC_BASE_URL || 'https://tech-paxv.onrender.com'}/track">Track Order</a></p>
                     <hr style="border: 1px solid #eee; margin: 20px 0;" />
-                    <p style="font-size: 12px; color: #999;">Apexstores Tech Kenya - Elite Mobile Accessories</p>
+                    <p style="font-size: 12px; color: #999;">Online Bar Nairobi</p>
                 </div>
             `,
         });

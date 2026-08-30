@@ -101,7 +101,7 @@ export default function RewardsShop() {
             await supabase.from('loyalty_ledger').insert([{
                 profile_id: user.id,
                 amount: -voucher.points,
-                description: `Exchanged for ${discountPercent}% Apex Voucher. CODE: ${voucherCode}`
+                description: `Exchanged for ${discountPercent}% Bar Voucher. CODE: ${voucherCode}`
             }]);
 
             setPoints(prev => prev - voucher.points);
@@ -139,15 +139,15 @@ export default function RewardsShop() {
                         <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest rounded-full">
                             <Gift className="h-3 w-3" /> Elite Rewards Shop
                         </div>
-                        <h1 className="text-5xl font-black text-foreground tracking-tighter uppercase leading-none">The Apex <br/> <span className="text-primary italic">Exchange</span></h1>
-                        <p className="text-slate-500 font-medium max-w-md italic">&quot;Trade your battlefield points for elite gear and store credits. No games, just gains.&quot;</p>
+                        <h1 className="text-5xl font-black text-foreground tracking-tighter uppercase leading-none">The Bar <br/> <span className="text-primary italic">Exchange</span></h1>
+                        <p className="text-slate-500 font-medium max-w-md italic">&quot;Trade your battlefield points for elite beverages and store credits. No games, just gains.&quot;</p>
                     </div>
 
                     <div className="bg-white rounded-[2.5rem] p-8 border-2 border-primary/10 text-foreground relative overflow-hidden shadow-2xl min-w-[280px] group hover:border-primary/30 transition-all">
                         <div className="relative z-10">
                             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2">Your Power Level</p>
                             <h3 className="text-5xl font-black tracking-tighter text-foreground">{points.toLocaleString()}</h3>
-                            <p className="text-[9px] font-black text-primary uppercase mt-2 tracking-widest">Available Apex Points</p>
+                            <p className="text-[9px] font-black text-primary uppercase mt-2 tracking-widest">Available Bar Points</p>
                         </div>
                         <Zap className="absolute -bottom-6 -right-6 h-24 w-24 text-primary/5 rotate-12" />
                     </div>
@@ -243,13 +243,13 @@ export default function RewardsShop() {
                 <div className="mt-16 bg-white rounded-[3rem] p-12 text-center border-2 border-primary/10 text-foreground relative overflow-hidden group hover:border-primary/30 transition-all shadow-2xl">
                     <div className="relative z-10">
                         <Flame className="h-10 w-10 text-primary mx-auto mb-6 animate-pulse fill-current" />
-                        <h2 className="text-3xl font-black uppercase tracking-tighter mb-4">The Apex Elite League</h2>
+                        <h2 className="text-3xl font-black uppercase tracking-tighter mb-4">The Bar Elite League</h2>
                         <p className="text-slate-500 max-w-xl mx-auto font-medium italic leading-relaxed">&quot;Earn more points by referring friends, writing verified reviews with photos, and completing orders. Higher level members get early access to restocks.&quot;</p>
 
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-12 pt-12 border-t border-slate-100">
                             {[
                                 { label: 'Order', pts: '5%', desc: 'of total KES' },
-                                { label: 'Photo Review', pts: '50', desc: 'verified tech' },
+                                { label: 'Photo Review', pts: '50', desc: 'verified products' },
                                 { label: 'Friend Join', pts: '100', desc: 'referral' },
                                 { label: 'Bag Restore', pts: '50', desc: 'limited time' },
                             ].map(benefit => (

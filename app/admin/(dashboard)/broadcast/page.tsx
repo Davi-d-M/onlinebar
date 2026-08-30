@@ -50,7 +50,7 @@ export default function AdminBroadcastPage() {
 
     const applyTemplate = (content: string) => {
         setMessage(content);
-        if (channel === 'email') setSubject("Apexstores Tech Protocol 🚀");
+        if (channel === 'email') setSubject("Online Bar Nairobi Protocol 🚀");
     };
 
     React.useEffect(() => {

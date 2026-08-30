@@ -50,7 +50,7 @@ export default function AdminMediaHub() {
         }
     }, [tabParam]);
 
-    const BUCKET_NAME = 'apexstores-assets';
+    const BUCKET_NAME = 'onlinebar-assets';
 
     const fetchAssets = async () => {
         if (!supabase) return;
@@ -127,7 +127,7 @@ export default function AdminMediaHub() {
         try {
             const month = new Date().toLocaleString('default', { month: 'long' });
             const doc = await generateProductCatalog(month);
-            doc.save(`Apexstores_Catalog_${month}_2026.pdf`);
+            doc.save(`OnlineBar_Catalog_${month}_2026.pdf`);
         } catch (err: unknown) {
             const error = err as Error;
             alert(error.message);
@@ -248,7 +248,7 @@ export default function AdminMediaHub() {
                                             </Button>
                                             <Button
                                                 onClick={() => {
-                                                    const text = `Check out our elite tech at Apexstores! 🚀\n\n${asset.url}`;
+                                                    const text = `Check out our premium drinks at Online Bar Nairobi! 🚀\n\n${asset.url}`;
                                                     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
                                                 }}
                                                 className="w-full bg-emerald-50 text-emerald-600 hover:bg-emerald-100 font-black uppercase text-[8px] h-10 rounded-xl border border-emerald-100"

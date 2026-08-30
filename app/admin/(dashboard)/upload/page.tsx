@@ -56,6 +56,7 @@ const initialForm = {
   sale_end_date: '',
   featured_rank: '99',
   is_featured: false,
+  is_snack: false,
   is_best_seller: false,
   allow_backorders: false,
   hide_product: false,
@@ -98,6 +99,7 @@ interface Product {
   sale_end_date?: string;
   featured_rank?: number;
   is_featured?: boolean;
+  is_snack?: boolean;
   is_best_seller?: boolean;
   allow_backorders?: boolean;
   hide_product?: boolean;
@@ -340,6 +342,7 @@ function UploadContent() {
       sale_end_date: product.sale_end_date ? new Date(product.sale_end_date).toISOString().slice(0, 16) : '',
       featured_rank: String(product.featured_rank ?? '99'),
       is_featured: product.is_featured || false,
+      is_snack: product.is_snack || false,
       is_best_seller: product.is_best_seller || false,
       allow_backorders: product.allow_backorders || false,
       hide_product: product.hide_product || false,
@@ -445,6 +448,7 @@ function UploadContent() {
           sku: form.sku,
           model_number: form.model_number,
           is_featured: form.is_featured,
+          is_snack: form.is_snack,
           is_best_seller: form.is_best_seller,
           allow_backorders: form.allow_backorders,
           hide_product: form.hide_product,

@@ -114,11 +114,11 @@ function CheckoutContent() {
 
   useEffect(() => {
     const urlRef = searchParams.get('ref');
-    const sessionRef = sessionStorage.getItem('apex_referral_code');
+    const sessionRef = sessionStorage.getItem('ob_referral_code');
 
     let cookieRef = null;
     if (typeof document !== 'undefined') {
-        const match = document.cookie.match(new RegExp('(^| )apex_referral_code=([^;]+)'));
+        const match = document.cookie.match(new RegExp('(^| )ob_referral_code=([^;]+)'));
         if (match) cookieRef = match[2];
     }
 
@@ -165,7 +165,7 @@ function CheckoutContent() {
 
         // Check for restored bonus from profile
         if (typeof window !== 'undefined') {
-            setIsRestoredBonus(localStorage.getItem('apex_restored_bonus') === 'true');
+            setIsRestoredBonus(localStorage.getItem('ob_restored_bonus') === 'true');
         }
     }
     loadProfile();
@@ -193,7 +193,7 @@ function CheckoutContent() {
         if (!supabase || cart.length === 0) return;
         if (!customerName.trim() || !customerPhone.trim()) return;
 
-        const sessionId = localStorage.getItem('apex_session_id');
+        const sessionId = localStorage.getItem('ob_session_id');
 
         try {
             await supabase.from('abandoned_carts').upsert({
@@ -315,7 +315,7 @@ function CheckoutContent() {
           }
       }
 
-      const checkoutRequestId = `APEX-ref-${Date.now()}`;
+      const checkoutRequestId = `OB-ref-${Date.now()}`;
 
       if (paymentMethod === "M-Pesa") {
         // 1. Save order as Pending first (Persistence)
@@ -390,7 +390,7 @@ function CheckoutContent() {
     try {
       setCheckoutStatus({ type: "processing", message: "Synchronizing payload with database..." });
 
-      const sessionId = localStorage.getItem('apex_session_id');
+      const sessionId = localStorage.getItem('ob_session_id');
 
       // 1. Create Master Order (Header)
       const headerPayload = {
@@ -525,7 +525,7 @@ function CheckoutContent() {
             if (isRestoredBonus) {
                 finalPoints += 50;
                 pointDetails.push({ profile_id: user.id, amount: 50, description: `Welcome Back Bonus (Restored Bag)` });
-                localStorage.removeItem('apex_restored_bonus');
+                localStorage.removeItem('ob_restored_bonus');
             }
 
             await client.from('profiles').update({ loyalty_points: finalPoints }).eq('id', user.id);
@@ -835,7 +835,7 @@ function CheckoutContent() {
                 )}
                 {usePoints && (
                     <div className="flex justify-between text-xs font-black uppercase tracking-widest text-emerald-600 bg-emerald-50 p-2 rounded-lg">
-                        <span>Apex Points Redempton</span>
+                        <span>Bar Points Redemption</span>
                         <span>-{formatPrice(pointsDiscount)}</span>
                     </div>
                 )}
@@ -901,11 +901,11 @@ function CheckoutContent() {
                   <div className="pt-4 border-t border-slate-100">
                       <div className="flex items-center justify-between mb-3 px-1">
                           <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">Coupon Code</p>
-                          {typeof window !== 'undefined' && localStorage.getItem('apex_exit_intent') === 'true' && (
+                          {typeof window !== 'undefined' && localStorage.getItem('ob_exit_intent') === 'true' && (
                               <button
                                 onClick={() => {
                                     setCouponCode('STAY5');
-                                    localStorage.removeItem('apex_exit_intent');
+                                    localStorage.removeItem('ob_exit_intent');
                                 }}
                                 className="text-[8px] font-black text-primary uppercase underline tracking-widest animate-pulse"
                               >

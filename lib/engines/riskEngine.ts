@@ -9,7 +9,7 @@ interface RiskSignal {
     userId?: string;
     ipAddress?: string;
     deviceFingerprint?: string;
-    details?: any;
+    details?: Record<string, unknown>;
 }
 
 /**

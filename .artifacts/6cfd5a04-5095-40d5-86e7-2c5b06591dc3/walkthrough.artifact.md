@@ -1,41 +1,40 @@
-# Walkthrough: Ultra-Granular Behavioral Intelligence 📊🎯🔥
+# Walkthrough: Online Bar Role Hub & Partner Sovereignty 🏗️🤝🚴📦
 
-I have successfully established a robust behavioral tracking system for the Online Bar. This data layer allows you to understand exactly how your patrons interact with the cellar, what they are looking for, and where they need a little nudge to complete their order.
+I have successfully established a unified, role-based platform for all Online Bar partners. Every Rider, Supplier, and Affiliate now has their own specialized "Mini App" experience, accessible via secure, personalized links.
 
 ## Changes Made
 
-### 🔍 1. Discovery & Search Insights
-- **[TRACKED] Search Protocol**: Added tracking for `PRODUCT_SEARCHED` in the [ProductList](file:///C:/Users/hp/AndroidStudioProjects/onlinebar/components/home/ProductList.tsx).
-- **Insight Captured**: You can now see what terms users type (e.g., "Glenfiddich", "Chilled Nuts") and which categories they browse most frequently. This is critical for identifying stock gaps.
+### 🤝 1. The Affiliate Engine (Creators Hub)
+- **[NEW] Dashboard**: Built a high-fidelity dashboard for affiliates at [`/affiliate/dashboard`](file:///C:/Users/hp/AndroidStudioProjects/onlinebar/app/affiliate/dashboard/page.tsx).
+- **Funnel Tracking**: Real-time traffic analysis (Clicks → Visitors → Orders).
+- **Link Generator**: Affiliates can now generate tactical links for any product in the cellar with one tap.
+- **Commission Ledger**: Transparent tracking of earnings (Pending, Payable, Paid).
 
-### 🌐 2. Passive Page & Section Tracking
-- **[NEW] Analytics Tracker**: Created a global [AnalyticsTracker](file:///C:/Users/hp/AndroidStudioProjects/onlinebar/components/layout/AnalyticsTracker.tsx) component.
-- **Auto-Logging**: Every time a user navigates between pages, a `PAGE_VIEW` event is recorded.
-- **[NEW] Dwell Time**: Upon leaving a page, a `PAGE_DWELL` event is logged, telling you exactly how many milliseconds they spent looking at your vintages.
-- **[NEW] Heatmap Protocol**: Using `IntersectionObserver`, the system now logs a `SECTION_VISIBLE` event whenever a patron scrolls past a key area like the "Snack Hub" or "Mixology Blog".
+### 🚴 2. Rider Terminal v2 (Runner Hub)
+- **[REFACTORED] Interface**: Upgraded the [Rider Hub](file:///C:/Users/hp/AndroidStudioProjects/onlinebar/app/rider/dashboard/page.tsx) with a tactical dark theme and improved mission controls.
+- **Shift Management**: Simplified "Online/Offline" toggle with real-time grid synchronization.
+- **Proof of Delivery**: One-tap "Confirm Drop" logic that automatically credits the rider's wallet.
+- **God-View Integration**: Syncs with the Admin Dashboard's live map for total operational visibility.
 
-### 🖱️ 3. Global Interaction Heatmap
-- **[NEW] useInteractionTracking**: A unified hook to capture every critical button press.
-- **[TRACKED] High-Intent Clicks**:
-    - **Product Card**: "Quick Look", "WhatsApp Buy", "Compare", and "Wishlist" toggles.
-    - **Product Detail**: "Buy Now", "WhatsApp Order", and "Share".
-    - **AI Concierge**: Every message sent and every "Add Bundle" click.
-- **Real-time Funnel**: These events directly feed the **Journey Funnel** in your Admin Dashboard, giving you a live view of conversion rates.
+### 📦 3. Supplier Hub (Distributor Node)
+- **[NEW] Dashboard**: Dedicated space for suppliers at [`/supplier/dashboard`](file:///C:/Users/hp/AndroidStudioProjects/onlinebar/app/supplier/dashboard/page.tsx).
+- **Inventory Sync**: Suppliers can directly update stock counts for their products, reflecting instantly on the bar grid.
+- **Document Vault**: Secured access to digital documents like Purchase Orders and Invoices.
 
-### 🔗 4. Identity Stitching
-- **Guest-to-Patron Link**: Updated the [AuthForm](file:///C:/Users/hp/AndroidStudioProjects/onlinebar/components/auth/AuthForm.js) to call the "Identity Stitching" protocol.
-- **Behavioral Continuity**: When a guest browses wines and then decides to sign up, all their previous "guest" views are automatically linked to their new profile.
+### 🔗 4. Smart Link & Security Infrastructure
+- **[NEW] Link Generator**: Built a secure utility in [`linkGenerator.ts`](file:///C:/Users/hp/AndroidStudioProjects/onlinebar/lib/utils/linkGenerator.ts) to create tokenized magic links.
+- **RBAC Hardening**: Updated the database schema and RLS policies in [`grid_establishment.sql`](file:///C:/Users/hp/AndroidStudioProjects/onlinebar/.artifacts/6cfd5a04-5095-40d5-86e7-2c5b06591dc3/grid_establishment.sql) to strictly isolate partner data.
 
 ## Verification Results
 
-### 🛡️ Production Readiness
-- [x] **Next.js Build**: Successfully verified with `npm run build`.
-- [x] **Type Safety**: All event payloads are strictly typed for consistent data quality.
-- [x] **Privacy Compliant**: Tracking respects the session-based anonymous IDs until a user explicitly authenticates.
+### 🛡️ Production Stability
+- [x] **Next.js Build**: Successfully verified with `npm run build`. Build is **100% Green**.
+- [x] **Data Isolation**: Verified that Affiliates cannot access Rider data and vice versa.
+- [x] **Real-time Sync**: Confirmed that stock updates in the Supplier Hub reflect immediately in the customer cellar.
 
-## How to View the Data
-1.  Open your **Supabase Dashboard**.
-2.  Go to the `analytics_events` table.
-3.  You will see a live stream of every click, scroll, and dwell happening in the Bar.
+## How to Test
+1.  **Affiliate**: Log in as an affiliate and visit `/affiliate/dashboard`. Copy a product link and verify the referral code.
+2.  **Rider**: Go online in the Rider Hub and verify your unit status updates in the Admin "Live Runners" section.
+3.  **Supplier**: Update a product's stock count and check the main Shop page to see the new availability.
 
-Enjoy the ultimate business intelligence, bro! 🍻🚀
+Online Bar is now a **Fully Integrated Commercial Ecosystem**, bro! 🏗️🍹🚀📦🤝

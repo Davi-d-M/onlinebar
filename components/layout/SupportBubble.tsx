@@ -56,7 +56,7 @@ export default function SupportBubble() {
     };
 
     const handleChat = () => {
-        const message = "Hello Apexstores! I have a question about your gadgets.";
+        const message = "Hello Online Bar Nairobi! I have a question about your products.";
         window.open(`https://wa.me/${settings.contact.whatsapp}?text=${encodeURIComponent(message)}`, '_blank');
     };
 
@@ -130,7 +130,7 @@ export default function SupportBubble() {
                     <div className="text-left">
                         <p className="font-black text-foreground uppercase text-[10px] tracking-tight">{userProfile?.full_name || settings?.branding?.owner_name || 'Admin'}</p>
                         <p className="text-slate-400 text-[9px] font-bold uppercase tracking-widest mt-0.5">
-                            {userProfile?.full_name ? `Need help with your tech, ${userProfile.full_name.split(' ')[0]}?` : "Need help with tech, bro?"}
+                            {userProfile?.full_name ? `Need help with your order, ${userProfile.full_name.split(' ')[0]}?` : "Need help with an order, bro?"}
                         </p>
                     </div>
                     <button onClick={handleDismissLabel} className="text-slate-300 hover:text-rose-500 ml-4 transition-colors"><X className="h-3 w-3" /></button>
@@ -143,7 +143,7 @@ export default function SupportBubble() {
                     <div className="bg-primary p-6 text-white flex justify-between items-center shadow-lg">
                         <div className="flex items-center gap-3">
                             <div className="h-8 w-8 rounded-xl bg-primary/20 flex items-center justify-center text-primary"><Zap className="h-4 w-4 fill-current" /></div>
-                            <span className="text-[10px] font-black uppercase tracking-widest">Apex Support</span>
+                            <span className="text-[10px] font-black uppercase tracking-widest">Bar Support</span>
                         </div>
                         <button onClick={() => setIsOpen(false)} className="text-slate-400 hover:text-white transition-colors"><X className="h-5 w-5" /></button>
                     </div>
@@ -154,7 +154,7 @@ export default function SupportBubble() {
                                 <button onClick={() => setMode('ai')} className="w-full p-4 rounded-2xl bg-primary/5 hover:bg-primary/10 border border-primary/10 transition-all text-left flex items-center justify-between group">
                                     <div className="flex items-center gap-3">
                                         <div className="h-8 w-8 rounded-xl bg-white flex items-center justify-center text-primary shadow-sm"><Zap className="h-4 w-4" /></div>
-                                        <span className="text-[10px] font-black uppercase text-foreground">Apex AI Finder</span>
+                                        <span className="text-[10px] font-black uppercase text-foreground">Bar AI Finder</span>
                                     </div>
                                     <ChevronRight className="h-4 w-4 text-primary/30" />
                                 </button>
@@ -181,8 +181,8 @@ export default function SupportBubble() {
 
                                 <div className="flex-1 overflow-y-auto space-y-3 pr-2 scrollbar-hide no-scrollbar">
                                     <div className="bg-slate-50 p-3 rounded-2xl border border-slate-100">
-                                        <p className="text-[9px] font-black uppercase text-primary mb-1">Apex AI</p>
-                                        <p className="text-[10px] font-bold text-slate-600 leading-relaxed italic">&quot;Yo bro! I&apos;m your elite tech assistant. What gadget can I help you find today?&quot;</p>
+                                        <p className="text-[9px] font-black uppercase text-primary mb-1">Bar AI</p>
+                                        <p className="text-[10px] font-bold text-slate-600 leading-relaxed italic">&quot;Yo bro! I&apos;m your elite beverage assistant. What drink can I help you find today?&quot;</p>
                                     </div>
 
                                     {aiChat.map((chat, i) => (
@@ -190,7 +190,7 @@ export default function SupportBubble() {
                                             "p-3 rounded-2xl border transition-all animate-in zoom-in-95",
                                             chat.role === 'user' ? "bg-white border-slate-100 ml-6" : "bg-primary/5 border-primary/10 mr-6"
                                         )}>
-                                            <p className="text-[8px] font-black uppercase text-slate-400 mb-1">{chat.role === 'user' ? 'You' : 'Apex AI'}</p>
+                                            <p className="text-[8px] font-black uppercase text-slate-400 mb-1">{chat.role === 'user' ? 'You' : 'Bar AI'}</p>
                                             <p className="text-[10px] font-medium text-foreground leading-relaxed whitespace-pre-wrap">{chat.text}</p>
                                         </div>
                                     ))}
@@ -208,7 +208,7 @@ export default function SupportBubble() {
                                     <input
                                         value={aiInput}
                                         onChange={e => setAiInput(e.target.value)}
-                                        placeholder="Ask about a gadget..."
+                                        placeholder="Ask about a beverage..."
                                         className="w-full h-12 px-4 pr-12 rounded-xl border border-slate-100 bg-slate-50 text-[11px] font-bold uppercase tracking-widest focus:ring-2 focus:ring-primary outline-none"
                                     />
                                     <button

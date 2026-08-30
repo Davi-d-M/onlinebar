@@ -21,10 +21,10 @@ function AdminLoginContent() {
       if (modeParam === 'email') {
           setMode('email');
       } else if (typeof window !== 'undefined') {
-          const savedMode = localStorage.getItem('apex_admin_mode');
+          const savedMode = localStorage.getItem('ob_admin_mode');
           if (savedMode === 'email' || savedMode === 'pin') setMode(savedMode as 'pin' | 'email');
 
-          const savedEmail = localStorage.getItem('apex_admin_email');
+          const savedEmail = localStorage.getItem('ob_admin_email');
           if (savedEmail) setEmail(savedEmail);
       }
   }, [searchParams]);
@@ -61,10 +61,10 @@ function AdminLoginContent() {
       }
 
       // Persist login metadata
-      localStorage.setItem('apex_admin_mode', mode);
-      if (mode === 'email') localStorage.setItem('apex_admin_email', email);
+      localStorage.setItem('ob_admin_mode', mode);
+      if (mode === 'email') localStorage.setItem('ob_admin_email', email);
 
-      const adminEmail = mode === 'email' ? email : 'owner@apexstores.com';
+      const adminEmail = mode === 'email' ? email : 'owner@onlinebar.co.ke';
       await logAuditAction(adminEmail, 'OS_SESSION_START', { mode, ip: payload.ip || 'logged' });
 
       // Wait a moment for the cookie to be set before redirecting

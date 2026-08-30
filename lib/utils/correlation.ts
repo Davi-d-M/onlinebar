@@ -17,11 +17,15 @@ export function generateRequestId(): string {
  * Inits the current request context (Works in Edge/Node environments)
  */
 export function initRequestContext(correlationId?: string) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (global as any).currentCorrelationId = correlationId || generateCorrelationId();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (global as any).currentRequestId = generateRequestId();
 
     return {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         correlationId: (global as any).currentCorrelationId,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         requestId: (global as any).currentRequestId
     };
 }

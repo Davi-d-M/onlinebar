@@ -18,8 +18,8 @@ import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
-import { scanForExceptions, ApexException } from '@/lib/apex-os/intelligence';
-import { ThreatReport } from '@/lib/apex-os/security-shield';
+import { scanForExceptions, OBException } from '@/lib/ob-os/intelligence';
+import { ThreatReport } from '@/lib/ob-os/security-shield';
 
 interface AutomationRun {
     id: string;
@@ -27,13 +27,13 @@ interface AutomationRun {
     event_id: string;
     status: string;
     errors: string;
-    executed_actions: any[];
+    executed_actions: string[];
     created_at: string;
     automation_rules: { name: string };
 }
 
 export default function ExceptionCenter() {
-    const [exceptions, setExceptions] = React.useState<ApexException[]>([]);
+    const [exceptions, setExceptions] = React.useState<OBException[]>([]);
     const [threats, setThreats] = React.useState<ThreatReport[]>([]);
     const [automationReviews, setAutomationReviews] = React.useState<AutomationRun[]>([]);
     const [loading, setLoading] = React.useState(true);
@@ -48,7 +48,7 @@ export default function ExceptionCenter() {
         ]);
         setExceptions(results);
         setThreats(threatRes.data || []);
-        setAutomationReviews((automationRes.data as any) || []);
+        setAutomationReviews((automationRes.data as unknown as AutomationRun[]) || []);
         setLoading(false);
     }, []);
 

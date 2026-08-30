@@ -10,7 +10,7 @@ export default function JsonLd() {
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "name": settings.store_info.name || "Apexstores Tech",
+    "name": settings.store_info.name || "Online Bar Nairobi",
     "url": baseUrl,
     "logo": `${baseUrl}/favicon.svg`,
     "contactPoint": {
@@ -30,7 +30,7 @@ export default function JsonLd() {
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    "name": settings.store_info.name || "Apexstores Tech",
+    "name": settings.store_info.name || "Online Bar Nairobi",
     "image": `${baseUrl}/favicon.svg`,
     "address": {
       "@type": "PostalAddress",

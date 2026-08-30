@@ -2,7 +2,7 @@ import { createHmac } from 'crypto';
 import { supabase } from '../supabaseClient';
 
 /**
- * Apex OS: Immutability Protocol
+ * Online Bar: Immutability Protocol
  * Generates and verifies tamper-proof digital warranty certificates.
  */
 export interface WarrantyCertificate {
@@ -16,10 +16,10 @@ export interface WarrantyCertificate {
     is_valid: boolean;
 }
 
-const APEX_IMMUTABILITY_SECRET = process.env.APEX_IMMUTABILITY_SECRET || 'titan-ledger-v1';
+const OB_IMMUTABILITY_SECRET = process.env.OB_IMMUTABILITY_SECRET || 'titan-ledger-v1';
 
 export function generateWarrantyHash(payload: string): string {
-    return createHmac('sha256', APEX_IMMUTABILITY_SECRET).update(payload).digest('hex');
+    return createHmac('sha256', OB_IMMUTABILITY_SECRET).update(payload).digest('hex');
 }
 
 export async function issueDigitalWarranty(orderId: number, sku: string, serial: string) {
@@ -48,8 +48,9 @@ export async function issueDigitalWarranty(orderId: number, sku: string, serial:
     return data;
 }
 
-export function verifyWarrantyIntegrity(certificate: any): boolean {
+export function verifyWarrantyIntegrity(certificate: WarrantyCertificate): boolean {
     const rawPayload = `${certificate.order_id}|${certificate.sku}|${certificate.imei_serial}|${certificate.issued_at}`;
     const calculatedHash = generateWarrantyHash(rawPayload);
-    return calculatedHash === certificate.certificate_hash;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return calculatedHash === (certificate as any).certificate_hash;
 }

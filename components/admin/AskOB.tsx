@@ -20,7 +20,7 @@ import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { cn, formatPrice } from '@/lib/utils';
 
-export default function AskApex() {
+export default function AskOB() {
     const [isOpen, setIsOpen] = React.useState(false);
     const [query, setQuery] = React.useState('');
     const [isLoading, setIsLoading] = React.useState(false);
@@ -30,8 +30,8 @@ export default function AskApex() {
     const scrollRef = React.useRef<HTMLDivElement>(null);
 
     const startVoiceCommand = () => {
-        const win = window as any;
-        const SpeechRecognition = win.webkitSpeechRecognition || win.SpeechRecognition;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
         if (!SpeechRecognition) {
             alert("Voice Protocol not supported in this browser.");
             return;
@@ -41,6 +41,7 @@ export default function AskApex() {
         recognition.lang = 'en-US';
         recognition.onstart = () => setIsListening(true);
         recognition.onend = () => setIsListening(false);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         recognition.onresult = (event: any) => {
             const transcript = event.results[0][0].transcript;
             setQuery(transcript);
@@ -70,7 +71,7 @@ export default function AskApex() {
         setIsLoading(true);
 
         try {
-            // Apex Intelligence: Local Data-Driven Response Engine
+            // Bar Intelligence: Local Data-Driven Response Engine
             const response = await processQueryLocally(userQuery);
             setMessages(prev => [...prev, { role: 'assistant', text: response }]);
         } catch {
@@ -110,13 +111,13 @@ export default function AskApex() {
         if (lowQuery.includes('profit') || lowQuery.includes('revenue')) {
             const { data } = await supabase.from('orders').select('total_price, status').eq('status', 'Delivered');
             const total = data?.reduce((s, o) => s + (o.total_price || 0), 0) || 0;
-            return `Apex currently holds ${formatPrice(total)} in verified revenue. Our contribution margin is averaging 14.8% this week, bro. 💸`;
+            return `Online Bar currently holds ${formatPrice(total)} in verified revenue. Our contribution margin is averaging 14.8% this week, bro. 💸`;
         }
 
         // 3. LOW STOCK
         if (lowQuery.includes('stock') || lowQuery.includes('inventory')) {
             const { count } = await supabase.from('products').select('id', { count: 'exact' }).lte('stock', 5);
-            return `Alert: ${count || 0} critical gadgets are approaching stock-out velocity. Recommended action: Initialize Procurement sequence now. 📦`;
+            return `Alert: ${count || 0} critical beverages are approaching stock-out velocity. Recommended action: Initialize Procurement sequence now. 📦`;
         }
 
         // 4. ORDERS
@@ -147,7 +148,7 @@ export default function AskApex() {
                                 <Bot className="h-6 w-6" />
                             </div>
                             <div className="text-left">
-                                <h3 className="text-xl font-black uppercase tracking-tighter">Ask Apex</h3>
+                                <h3 className="text-xl font-black uppercase tracking-tighter">Ask OB</h3>
                                 <p className="text-[10px] font-black uppercase tracking-widest opacity-60">Operations Intelligence</p>
                             </div>
                         </div>

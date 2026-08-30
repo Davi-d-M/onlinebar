@@ -115,8 +115,8 @@ export default function BlogDetailPage() {
         {/* Footer Trust Badges */}
         <section className="bg-slate-50 rounded-[2.5rem] p-12 flex flex-col sm:flex-row gap-12 items-center justify-between border border-slate-100 shadow-inner">
             <div className="flex-1 text-center sm:text-left space-y-4">
-                <h3 className="text-2xl font-black text-foreground uppercase tracking-tighter">Powering Your Tech Journey</h3>
-                <p className="text-slate-500 font-medium text-sm leading-relaxed">At Apexstores Tech, we don&apos;t just sell gadgets—we test them. All information provided in our guides is verified by elite hardware analysts.</p>
+                <h3 className="text-2xl font-black text-foreground uppercase tracking-tighter">Powering Your Drink Journey</h3>
+                <p className="text-slate-500 font-medium text-sm leading-relaxed">At Online Bar Nairobi, we don&apos;t just sell premium drinks—we know them. All information provided in our guides is verified by elite mixology analysts.</p>
             </div>
             <div className="flex gap-4">
                 <div className="h-16 w-16 rounded-2xl bg-white flex items-center justify-center text-primary shadow-xl border border-slate-100"><Zap className="h-8 w-8" /></div>

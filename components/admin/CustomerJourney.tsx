@@ -5,8 +5,15 @@ import { Card } from '@/components/ui/card';
 import { Users, MousePointer2, ShoppingBag, CheckCircle2, ArrowRight, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+interface FunnelStep {
+    step: string;
+    count: number;
+    icon: React.ElementType;
+    color: string;
+}
+
 export default function CustomerJourney() {
-    const [funnel, setFunnel] = React.useState<any[]>([]);
+    const [funnel, setFunnel] = React.useState<FunnelStep[]>([]);
     const [loading, setLoading] = React.useState(true);
 
     const fetchFunnel = React.useCallback(async () => {
@@ -65,7 +72,8 @@ export default function CustomerJourney() {
                                     "bg-rose-50 border-rose-100 text-rose-600"
                                 )}>
                                     <div className="flex justify-between items-start">
-                                        <item.icon size={24} className="opacity-40" />
+                                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                                        {React.createElement(item.icon as any, { size: 24, className: "opacity-40" })}
                                         {i > 0 && item.count > 0 && <span className="text-[8px] font-black uppercase bg-white/50 px-2 py-0.5 rounded-lg border border-white/20">-{dropOff}% Loss</span>}
                                     </div>
                                     <div className="space-y-1">

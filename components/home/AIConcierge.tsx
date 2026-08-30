@@ -60,7 +60,8 @@ export default function AIConcierge() {
         try {
             // Real Database Vector/Keyword Search Node
             const low = userMsg.toLowerCase();
-            const config = (settings as any)?.ai_config || { build_setup_limit: 5000, assistant_name: 'Apex AI' };
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const config = (settings as unknown as Record<string, any>)?.ai_config || { build_setup_limit: 5000, assistant_name: 'Apex AI' };
 
             let reply = `I'm analyzing the catalog for your tactical setup, bro. As ${config.assistant_name}, I recommend these:`;
             let suggestions: Suggestion[] = [];

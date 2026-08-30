@@ -28,13 +28,13 @@ const Tooltip = dynamic(() => import('recharts').then(mod => mod.Tooltip), { ssr
 const ResponsiveContainer = dynamic(() => import('recharts').then(mod => mod.ResponsiveContainer), { ssr: false });
 
 import TodayCommandCenter from '@/components/admin/TodayCommandCenter';
+import LivePulseHUD from '@/components/admin/LivePulseHUD';
 import ExceptionCenter from '@/components/admin/ExceptionCenter';
-import ApexIntelligence from '@/components/admin/ApexIntelligence2';
-import AskApex from '@/components/admin/AskApex';
+import BarIntelligence from '@/components/admin/BarIntelligence';
+import AskOB from '@/components/admin/AskOB';
 import SentimentSentinel from '@/components/admin/SentimentSentinel';
 import ActiveAdmins from '@/components/admin/ActiveAdmins';
 import AutonomousSwitch from '@/components/admin/AutonomousSwitch';
-import CampaignCommand from '@/components/admin/CampaignCommand';
 import AICommanderBrief from '@/components/admin/AICommanderBrief';
 import WorkforceHub from '@/components/admin/WorkforceHub';
 import SystemHealthMonitor from '@/components/admin/SystemHealthMonitor';
@@ -44,7 +44,17 @@ import DataGovernance from '@/components/admin/DataGovernance';
 import ExperimentLab from '@/components/admin/ExperimentLab';
 import CustomerJourney from '@/components/admin/CustomerJourney';
 import SnackCommandCenter from '@/components/admin/SnackCommandCenter';
-import { runSecurityScan } from '@/lib/apex-os/security-shield';
+import DeliveryMetrics from '@/components/admin/DeliveryMetrics';
+import MarketIntel from '@/components/admin/MarketIntel';
+import TrustCommandCenter from '@/components/admin/TrustCommandCenter';
+import MarketingCommandCenter from '@/components/admin/MarketingCommandCenter';
+
+const LiveDispatchMap = dynamic(() => import('@/components/admin/dispatch/LiveDispatchMap'), {
+    ssr: false,
+    loading: () => <div className="h-full w-full bg-slate-100 animate-pulse rounded-[3rem]" />
+});
+
+import { runSecurityScan } from '@/lib/ob-os/security-shield';
 
 interface OrderRecord {
   id: number;
@@ -210,6 +220,9 @@ export default function AdminDashboard() {
           </div>
       </header>
 
+      {/* LIVE PULSE: REAL-TIME TRAFFIC */}
+      <LivePulseHUD />
+
       {/* COMMAND HUD: REAL-TIME NODES */}
       <TodayCommandCenter />
 
@@ -218,6 +231,39 @@ export default function AdminDashboard() {
 
       {/* JOURNEY & CONVERSION: BEHAVIORAL INTELLIGENCE */}
       <CustomerJourney />
+
+      {/* DELIVERY PERFORMANCE: SPEED LOGISTICS */}
+      <DeliveryMetrics />
+
+      {/* MARKET INTELLIGENCE: COMPETITOR RADAR */}
+      <MarketIntel />
+
+      {/* TRUST COMMAND CENTER: ANTI-COUNTERFEIT SENTINEL */}
+      <section className="space-y-6">
+          <div className="flex items-center justify-between px-4">
+              <div className="flex items-center gap-3">
+                  <ShieldCheck className="h-6 w-6 text-primary" />
+                  <h2 className="text-3xl font-black uppercase tracking-tighter text-foreground leading-none">Trust Sentinel</h2>
+              </div>
+          </div>
+          <TrustCommandCenter />
+      </section>
+
+      {/* GOD-VIEW: LIVE DISPATCH OPS */}
+      <section className="space-y-6">
+          <div className="flex items-center justify-between px-4">
+              <div className="flex items-center gap-3">
+                  <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+                  <h2 className="text-2xl font-black uppercase tracking-tighter text-foreground">Live Dispatch Map</h2>
+              </div>
+              <Link href="/admin/dispatch">
+                  <Button variant="outline" className="h-10 rounded-xl text-[8px] font-black uppercase tracking-widest border-slate-200">Full Console &rarr;</Button>
+              </Link>
+          </div>
+          <div className="h-[600px] w-full rounded-[3.5rem] border border-slate-100 overflow-hidden shadow-2xl">
+              <LiveDispatchMap riders={[]} /> {/* Riders state could be shared later */}
+          </div>
+      </section>
 
       {/* WORKFORCE & FINANCIALS: ACCOUNTABILITY NODES */}
       <div className="grid lg:grid-cols-2 gap-10">
@@ -236,16 +282,19 @@ export default function AdminDashboard() {
       {/* AUTOMATION & CAMPAIGNS: ENGINE CONTROLS */}
       <div className="grid lg:grid-cols-2 gap-10">
           <AutonomousSwitch />
-          <CampaignCommand />
+          <div className="space-y-6">
+              <h2 className="text-2xl font-black uppercase text-foreground px-4">Growth Command</h2>
+              <MarketingCommandCenter />
+          </div>
       </div>
 
       <SentimentSentinel />
 
-      <ApexIntelligence />
+      <BarIntelligence />
 
       <ExceptionCenter />
 
-      <AskApex />
+      <AskOB />
 
       <div className="grid lg:grid-cols-12 gap-10">
 

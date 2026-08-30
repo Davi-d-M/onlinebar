@@ -41,7 +41,7 @@ export default function PersonalizedFeed() {
                         .limit(5);
                     if (data) viewedIds = data.map(item => item.product_id);
                 } else if (typeof window !== 'undefined') {
-                    viewedIds = JSON.parse(localStorage.getItem('apex_history') || '[]');
+                    viewedIds = JSON.parse(localStorage.getItem('ob_history') || '[]');
                 }
 
                 if (viewedIds.length > 0) {

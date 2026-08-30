@@ -32,7 +32,7 @@ function SuccessContent() {
         if (client) {
             const fetchData = async () => {
                 const { data: { session } } = await client.auth.getSession();
-                const browserSessionId = localStorage.getItem('apex_session_id');
+                const browserSessionId = localStorage.getItem('ob_session_id');
 
                 // 1. Fetch Order
                 if (orderId) {
@@ -67,7 +67,7 @@ function SuccessContent() {
 
     const shareToWhatsApp = () => {
         if (!order) return;
-        const message = `Hello Apexstores! I just placed an order.\n\n*Order ID:* #${order.id}\n*Customer:* ${order.customer_name}\n*Total:* ${formatPrice(order.total_price)}\n\nPlease confirm my dispatch status. Thanks!`;
+        const message = `Hello Online Bar Nairobi! I just placed an order.\n\n*Order ID:* #${order.id}\n*Customer:* ${order.customer_name}\n*Total:* ${formatPrice(order.total_price)}\n\nPlease confirm my dispatch status. Thanks!`;
         window.open(`https://wa.me/${settings.contact.whatsapp}?text=${encodeURIComponent(message)}`, '_blank');
     };
 
@@ -167,7 +167,7 @@ function SuccessContent() {
                         </div>
                         <Button
                             onClick={() => {
-                                const text = `Yo! I just secured elite gear from Apexstores. Use my link to get a member discount: ${getReferralLink(referralCode)}`;
+                                const text = `Yo! I just secured premium drinks from Online Bar Nairobi. Use my link to get a member discount: ${getReferralLink(referralCode)}`;
                                 window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
                             }}
                             className="w-full h-16 rounded-2xl bg-primary text-white font-black uppercase text-xs tracking-widest shadow-xl shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95"
@@ -187,7 +187,7 @@ function SuccessContent() {
                     <Package className="h-4 w-4 text-primary" /> Original Tech
                 </div>
                 <div className="flex items-center gap-2 text-foreground">
-                    <Heart className="h-4 w-4 text-rose-500 fill-rose-500" /> Thanks for choosing Apex
+                    <Heart className="h-4 w-4 text-rose-500 fill-rose-500" /> Thanks for choosing Online Bar Nairobi
                 </div>
             </div>
 

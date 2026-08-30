@@ -17,7 +17,7 @@ export interface BusinessRule {
 }
 
 /**
- * Apex OS Business Rules Engine
+ * Online Bar Business Rules Engine
  * Protects the company from human error and fraud.
  */
 export const GLOBAL_RULES: BusinessRule[] = [

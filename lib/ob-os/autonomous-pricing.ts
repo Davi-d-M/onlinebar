@@ -1,7 +1,7 @@
 import { supabase } from '../supabaseClient';
 
 /**
- * Apex Autonomous Pricing Protocol
+ * Bar Autonomous Pricing Protocol
  * Fluctuates price based on stock velocity and inventory aging.
  */
 export async function runAutonomousPricingSync() {
@@ -10,7 +10,7 @@ export async function runAutonomousPricingSync() {
     try {
         // Phase 13: Feature Toggle Verification
         const { data: featData } = await supabase.from('settings').select('value').eq('key', 'features').maybeSingle();
-        if (featData && (featData.value as any).dynamic_pricing_enabled === false) {
+        if (featData && (featData.value as Record<string, unknown>).dynamic_pricing_enabled === false) {
             console.log("[SINGULARITY] Pricing Engine Idle. Toggle Disabled.");
             return;
         }

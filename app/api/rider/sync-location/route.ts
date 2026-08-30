@@ -53,8 +53,8 @@ export async function POST(req: Request) {
 
         return NextResponse.json({ success: true, timestamp: new Date().toISOString() });
 
-    } catch (err: any) {
-        console.error("[GPS_SYNC_ERROR]", err.message);
-        return NextResponse.json({ error: err.message }, { status: 500 });
+    } catch (err: unknown) {
+        console.error("[GPS_SYNC_ERROR]", (err as Error).message);
+        return NextResponse.json({ error: (err as Error).message }, { status: 500 });
     }
 }

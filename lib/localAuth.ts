@@ -9,8 +9,8 @@ type StoredUser = {
   createdAt: string;
 };
 
-const USERS_KEY = 'apexstores-local-auth-users-v1';
-const SESSION_KEY = 'apexstores-local-auth-session-v1';
+const USERS_KEY = 'onlinebar-local-auth-users-v1';
+const SESSION_KEY = 'onlinebar-local-auth-session-v1';
 
 function isBrowser() {
   return typeof window !== 'undefined' && typeof localStorage !== 'undefined';

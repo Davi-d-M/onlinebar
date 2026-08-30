@@ -101,7 +101,7 @@ export default function MultiVendorHub() {
                         <div className="space-y-6">
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black uppercase text-slate-400">Business Name</label>
-                                <Input value={newVendor.name} onChange={e => setNewVendor({...newVendor, name: e.target.value})} placeholder="e.g. Apex Wholesalers" className="h-14 rounded-2xl bg-slate-50 border-slate-100 font-bold" />
+                                <Input value={newVendor.name} onChange={e => setNewVendor({...newVendor, name: e.target.value})} placeholder="e.g. Online Bar Wholesalers" className="h-14 rounded-2xl bg-slate-50 border-slate-100 font-bold" />
                             </div>
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black uppercase text-slate-400">Contact Email</label>
@@ -236,7 +236,7 @@ export default function MultiVendorHub() {
                                 </td>
                                 <td className="px-10 py-8">
                                     <p className="text-xs font-black text-foreground">{formatPrice(v.sales_total)}</p>
-                                    <p className="text-[9px] font-bold text-primary uppercase mt-1">{v.commission_rate}% Apex Fee</p>
+                                    <p className="text-[9px] font-bold text-primary uppercase mt-1">{v.commission_rate}% OB Fee</p>
                                 </td>
                                 <td className="px-10 py-8 text-left">
                                     <div className="flex items-center gap-2">
@@ -285,7 +285,7 @@ export default function MultiVendorHub() {
                     </div>
                     <div className="flex gap-4">
                         <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex-1 space-y-2">
-                            <p className="text-[10px] font-black uppercase text-foreground">Fulfilled by Apex</p>
+                            <p className="text-[10px] font-black uppercase text-foreground">Fulfilled by Online Bar</p>
                             <p className="text-[8px] font-medium text-slate-500 italic">Partners store stock in your warehouse nodes.</p>
                         </div>
                         <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex-1 space-y-2 opacity-50">

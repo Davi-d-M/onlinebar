@@ -17,7 +17,7 @@ export type OrderStatus =
     | 'Returned';
 
 /**
- * Apex OS State Machine Protocol
+ * Online Bar State Machine Protocol
  * Defines valid transitions for orders.
  */
 const VALID_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {

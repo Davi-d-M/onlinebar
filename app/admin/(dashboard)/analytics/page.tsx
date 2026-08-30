@@ -162,7 +162,7 @@ export default function AdminAnalyticsPage() {
         const csvContent = "data:text/csv;charset=utf-8," + [headers, ...rows].map(e => e.join(",")).join("\n");
         const link = document.createElement("a");
         link.setAttribute("href", encodeURI(csvContent));
-        link.setAttribute("download", `Apex_Analytics_Report_${new Date().toISOString().split('T')[0]}.csv`);
+        link.setAttribute("download", `OB_Analytics_Report_${new Date().toISOString().split('T')[0]}.csv`);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -385,7 +385,7 @@ export default function AdminAnalyticsPage() {
                                         <Zap className="h-10 w-10 text-white fill-current" />
                                     </div>
                                     <div className="text-left">
-                                        <h3 className="text-2xl font-black uppercase tracking-tighter leading-none">Apex Forecast Engine</h3>
+                                        <h3 className="text-2xl font-black uppercase tracking-tighter leading-none">Bar Forecast Engine</h3>
                                         <p className="text-xs font-medium opacity-70 italic mt-2">&quot;Autonomous prediction based on previous 90-day velocity.&quot;</p>
                                     </div>
                                 </div>
@@ -485,7 +485,7 @@ export default function AdminAnalyticsPage() {
                                         <Zap className="h-10 w-10 text-white fill-current" />
                                     </div>
                                     <div className="text-left">
-                                        <h3 className="text-2xl font-black uppercase tracking-tighter leading-none">Apex Forecast Engine</h3>
+                                        <h3 className="text-2xl font-black uppercase tracking-tighter leading-none">Bar Forecast Engine</h3>
                                         <p className="text-xs font-medium opacity-70 italic mt-2">&quot;Autonomous prediction based on previous 90-day velocity.&quot;</p>
                                     </div>
                                 </div>
