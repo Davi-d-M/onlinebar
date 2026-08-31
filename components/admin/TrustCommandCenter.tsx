@@ -11,13 +11,12 @@ import {
     Eye,
     XCircle,
     CheckCircle2,
-    Loader2,
     MapPin,
     Search
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { cn, formatPrice } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 
 export default function TrustCommandCenter() {
     const [stats, setStats] = React.useState({
@@ -26,7 +25,7 @@ export default function TrustCommandCenter() {
         invalid: 0,
         reports: 0
     });
-    const [alerts, setAlerts] = React.useState<any[]>([]);
+    const [alerts, setAlerts] = React.useState<{ id: number, bottle_id: string, severity: string, description: string, created_at: string }[]>([]);
     const [loading, setLoading] = React.useState(true);
     const [searchQuery, setSearchQuery] = React.useState('');
 

@@ -34,11 +34,8 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
       const { data, error } = await query.order('created_at', { ascending: false });
 
       if (error) {
-        console.warn(`Initial fetch failed for category "${categorySlug}":`, error.message);
-
         // 2. Defensive Fallback: If column doesn't exist, fetch all and filter in memory if possible
         if (error.message.includes('does not exist')) {
-           console.log('Retrying with simple query due to missing columns...');
            const { data: allData, error: allErr } = await supabase.from('products').select('*');
 
            if (!allErr && allData) {

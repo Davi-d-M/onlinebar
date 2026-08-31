@@ -46,8 +46,7 @@ export default function LiveTicker() {
                                 : "opacity-0 translate-y-4 pointer-events-none"
                         )}
                     >
-                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                        {React.createElement(item.icon as any, { className: "h-3.5 w-3.5 text-primary" })}
+                        {React.createElement(item.icon, { className: "h-3.5 w-3.5 text-primary" })}
                         <span className="text-[10px] font-black uppercase tracking-widest">
                             {item.text}
                         </span>

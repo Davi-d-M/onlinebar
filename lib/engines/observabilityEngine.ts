@@ -14,8 +14,8 @@ export async function captureTrace(
 ) {
     if (!supabase) return;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const correlationId = (global as any).currentCorrelationId || 'CORR-INTERNAL';
+    const globalContext = global as unknown as Record<string, string>;
+    const correlationId = globalContext.currentCorrelationId || 'CORR-INTERNAL';
 
     try {
         await supabase

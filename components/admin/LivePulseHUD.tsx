@@ -2,8 +2,8 @@
 
 import * as React from 'react';
 import { Card } from '@/components/ui/card';
-import { Users, ShoppingBag, CreditCard, Activity, Loader2 } from 'lucide-react';
-import { cn, formatPrice } from '@/lib/utils';
+import { Users, ShoppingBag, CreditCard } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface PulseData {
     live_now: number;

@@ -9,11 +9,37 @@ import { generateCorrelationId, generateRequestId } from './utils/correlation';
 
 export type OSEventType =
     | SystemEventType
+    | 'USER_REGISTERED'
+    | 'USER_LOGIN'
     | 'PAGE_VIEW'
-    | 'PRODUCT_VIEWED'
-    | 'PRODUCT_SEARCHED'
+    | 'CATEGORY_VIEW'
+    | 'PRODUCT_VIEW'
+    | 'SEARCH'
+    | 'FILTER_USED'
+    | 'SORT_USED'
+    | 'RECOMMENDATION_VIEWED'
+    | 'RECOMMENDATION_CLICKED'
+    | 'SCROLL_25'
+    | 'SCROLL_50'
+    | 'SCROLL_75'
+    | 'SCROLL_90'
+    | 'SCROLL_100'
+    | 'ADD_TO_WISHLIST'
+    | 'GALLERY_OPENED'
+    | '3D_VIEW_OPENED'
+    | '3D_INTERACTION'
+    | 'DESCRIPTION_EXPANDED'
+    | 'ADD_TO_CART'
+    | 'REMOVE_FROM_CART'
+    | 'CART_VIEWED'
     | 'CHECKOUT_STARTED'
+    | 'PAYMENT_STARTED'
+    | 'PURCHASE_COMPLETED'
+    | 'REFUND'
     | 'CAMPAIGN_VIEWED'
+    | 'CAMPAIGN_CLICKED'
+    | 'PROMO_CODE_USED'
+    | 'AFFILIATE_CLICK'
     | 'CONSENT_UPDATED'
     | 'EXPERIMENT_REACH'
     | 'EXPERIMENT_CONVERSION'
@@ -114,8 +140,6 @@ class OnlineBarOS {
      */
     public async stitchIdentity(anonymousId: string, userId: string) {
         if (!supabase) return;
-
-        console.log(`🔗 [MASTER_OS] Stitching guest ${anonymousId} to patron ${userId}`);
 
         // Update all orphaned events in the background
         await supabase

@@ -30,8 +30,8 @@ export default function AskOB() {
     const scrollRef = React.useRef<HTMLDivElement>(null);
 
     const startVoiceCommand = () => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
+        // @ts-expect-error - SpeechRecognition is experimental
+        const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
         if (!SpeechRecognition) {
             alert("Voice Protocol not supported in this browser.");
             return;
@@ -41,8 +41,7 @@ export default function AskOB() {
         recognition.lang = 'en-US';
         recognition.onstart = () => setIsListening(true);
         recognition.onend = () => setIsListening(false);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        recognition.onresult = (event: any) => {
+        recognition.onresult = (event: { results: { transcript: string }[][] }) => {
             const transcript = event.results[0][0].transcript;
             setQuery(transcript);
             // Auto-submit after voice

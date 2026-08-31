@@ -1,24 +1,19 @@
-# Tasks - Apex OS Master Sync Phase 2 🛡️⚙️
+# Tasks - Hardened Grid Establishment 🛡️🏰
 
-## Phase 1: The Golden Flow (Multi-Item Refactor)
-- [x] Create Master Migration `20260817_order_refactor_header.sql`.
-- [x] Refactor `app/checkout/page.tsx` for 1:N Order Header-Items structure.
-- [x] Update `app/admin/(dashboard)/orders/page.tsx` to display Master Orders.
-- [x] Add IMEI logging per order item in Admin UI.
-- [x] Implement dynamic cost/profit automation in SQL.
+## Phase 1: SQL Master Crafting
+- [x] Create `supabase/migrations/grid_establishment_hardened.sql`:
+    - [x] Add `active_visitors` table.
+    - [x] Rename `ledger_entries` to `financial_ledger`.
+    - [x] Implement `DROP POLICY IF EXISTS` for all RLS rules.
+    - [x] Add indexes for high-fidelity analytics.
 
-## Phase 2: CRM & Support OS
-- [x] Add CRM Segment badges to Customer Dashboard.
-- [x] Implement dynamic LTV calculation and segmentation in Admin UI.
-- [x] Refactor `profiles` triggers to auto-update LTV on order completion.
-- [x] Create `Support Case Command` hub with priority/SLA tracking.
-- [x] Build `Warranty Hub` for reverse logistics and diagnostics.
+## Phase 2: System Connectivity Check
+- [x] Verify `onlineBarOS.ts` connectivity with the new schema.
+- [x] Verify Admin Dashboard stats (Revenue, Orders) sync with `financial_ledger`.
+- [x] Ensure "No dark colors" in any generated UI artifacts.
 
-## Phase 3: Supplier & Intelligence
-- [x] Create Supplier Scorecard dashboard with algorithmic ranking.
-- [x] Build `Rules Engine` (lib/apex-os/rules-engine.ts) for business gating.
-- [x] Implement `Operational Kill Switch` in System Pulse widget.
-
-## Phase 4: Verification
-- [ ] Run `npm run build`.
-- [ ] Perform a full "Golden Transaction" test mission.
+## Phase 3: Final Verification
+- [x] Run build check.
+- [x] Provide final walkthrough.
+- [x] **✓ All linting warnings gone.**
+- [x] **✓ Project is 100% clean build ready.**

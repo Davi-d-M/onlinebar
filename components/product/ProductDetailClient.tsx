@@ -78,7 +78,7 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
             }
 
             // 🚀 [MASTER_OS] Track Behavioral Event
-            await OB_OS.track('PRODUCT_VIEWED', {
+            await OB_OS.track('PRODUCT_VIEW', {
                 userId: session?.user?.id,
                 anonymousId,
                 productId: product.id,

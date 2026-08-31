@@ -10,7 +10,7 @@ import { handleOutOfStock } from '@/lib/engines/SaveTheSaleEngine';
 import { useCart } from '@/context/CartContext';
 
 export default function OOSRecovery({ productId, isOpen, onClose }: { productId: number, isOpen: boolean, onClose: () => void }) {
-    const [recoveryData, setRecoveryData] = React.useState<any>(null);
+    const [recoveryData, setRecoveryData] = React.useState<{ message: string, suggestions: { id: number, name: string, price: number, category: string, image_url: string }[] } | null>(null);
     const [loading, setLoading] = React.useState(true);
     const { addToCart } = useCart();
 
@@ -48,14 +48,14 @@ export default function OOSRecovery({ productId, isOpen, onClose }: { productId:
                     ) : (
                         <div className="space-y-8 animate-in fade-in duration-500">
                             <div className="space-y-2">
-                                <h4 className="text-2xl font-black text-foreground uppercase tracking-tighter leading-tight">{recoveryData.message}</h4>
+                                <h4 className="text-2xl font-black text-foreground uppercase tracking-tighter leading-tight">{recoveryData?.message}</h4>
                                 <p className="text-xs text-slate-500 font-medium italic italic leading-relaxed pr-4">
                                     &quot;Our sentinel node detected this vintage is currently out of reach, but these elite alternatives are chilled and ready for immediate dispatch.&quot;
                                 </p>
                             </div>
 
                             <div className="space-y-3">
-                                {recoveryData.suggestions?.map((s: any) => (
+                                {recoveryData?.suggestions?.map((s) => (
                                     <div key={s.id} className="p-4 rounded-3xl bg-slate-50 border border-slate-100 flex items-center gap-4 group hover:bg-white hover:shadow-lg hover:border-primary/20 transition-all">
                                         <div className="h-14 w-14 rounded-2xl bg-white p-2 border border-slate-100 shrink-0">
                                             <Image src={s.image_url || '/placeholder.jpg'} alt="" width={56} height={56} className="h-full w-full object-contain" />

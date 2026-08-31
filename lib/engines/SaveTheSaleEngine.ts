@@ -29,7 +29,6 @@ export async function handleOutOfStock(productId: number) {
             .limit(3);
 
         if (alternatives && alternatives.length > 0) {
-            console.log(`🚨 [SAVE_THE_SALE] OOS detected for ${productId}. Offering ${alternatives.length} alternatives.`);
             return {
                 type: 'OOS_RECOVERY',
                 original_id: productId,
@@ -45,8 +44,8 @@ export async function handleOutOfStock(productId: number) {
     }
 }
 
-export async function detectDispatchDelay(orderId: number) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function detectDispatchDelay(_: number) {
     // 1. Check mission timeline
     // 2. If delayed > 15m from prep complete, pre-draft apology
-    console.log(`📡 [SAVE_THE_SALE] Monitoring delay for order #${orderId}`);
 }

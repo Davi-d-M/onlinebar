@@ -24,25 +24,32 @@ export default function MissionBoard({ userId }: { userId: string }) {
         async function loadMissions() {
             if (!supabase || !userId) return;
 
-            // In a real scenario, this would fetch from 'user_missions' table joined with mission definitions
-            // For now, mocking with some real data structure
-            const { data } = await supabase
+            // Fetch definitions from the DB
+            const { data: definitions, error: defError } = await supabase
+                .from('mission_definitions')
+                .select('*')
+                .eq('is_active', true);
+
+            if (defError) {
+                console.error("Mission Definitions Load Failed:", defError);
+                setLoading(false);
+                return;
+            }
+
+            // Fetch user progress
+            const { data: userProgressData } = await supabase
                 .from('user_missions')
                 .select('*')
                 .eq('user_id', userId);
 
-            // Fallback definitions for the board
-            const definitions = [
-                { type: 'buy-mixers', label: 'Explore Mixers', xp: 250, target: 2 },
-                { type: 'review-product', label: 'Patron Voice', xp: 100, target: 1 },
-                { type: 'refer-friend', label: 'Spread the Word', xp: 500, target: 1 }
-            ];
-
-            const merged = definitions.map(def => {
-                const userProgress = data?.find(m => m.mission_type === def.type);
+            const merged = (definitions || []).map(def => {
+                const userProgress = userProgressData?.find(m => m.mission_type === def.id);
                 return {
-                    ...def,
-                    description: `Complete this to earn ${def.xp} XP`,
+                    type: def.id,
+                    label: def.label,
+                    description: def.description || `Complete this to earn ${def.xp_reward} XP`,
+                    xp: def.xp_reward,
+                    target: def.target_count,
                     progress: userProgress?.progress || 0,
                     is_completed: userProgress?.is_completed || false
                 };

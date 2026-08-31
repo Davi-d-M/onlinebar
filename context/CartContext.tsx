@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { OB_OS } from "@/lib/onlineBarOS";
 import { supabase } from "@/lib/supabaseClient";
+import { Product } from "@/types/product";
 
 export interface CartItem {
   id: number;
@@ -19,10 +20,10 @@ export interface CartItem {
 
 interface CartContextProps {
   cart: CartItem[];
-  compareList: any[];
+  compareList: Product[];
   addToCart: (item: CartItem) => void;
   addBundleToCart: (items: CartItem[]) => void;
-  toggleCompare: (item: any) => void;
+  toggleCompare: (item: Product) => void;
   removeFromCart: (id: number) => void;
   clearCart: () => void;
   updateQuantity: (id: number, quantity: number) => void;
@@ -32,7 +33,7 @@ const CartContext = createContext<CartContextProps | undefined>(undefined);
 
 export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [compareList, setCompareList] = useState<any[]>([]);
+  const [compareList, setCompareList] = useState<Product[]>([]);
 
   useEffect(() => {
     const savedCart = localStorage.getItem("cart");
@@ -61,7 +62,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     if (supabase) {
         const { data: { session } } = await supabase.auth.getSession();
         const anonId = localStorage.getItem('ob_anonymous_id');
-        await OB_OS.track('ADD_TO_CART' as any, {
+        await OB_OS.track('ADD_TO_CART', {
             userId: session?.user?.id,
             anonymousId: anonId || undefined,
             productId: item.id,
@@ -141,7 +142,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     );
   };
 
-  const toggleCompare = (item: any) => {
+  const toggleCompare = (item: Product) => {
       setCompareList(prev => {
           const exists = prev.find(p => p.id === item.id);
           if (exists) return prev.filter(p => p.id !== item.id);

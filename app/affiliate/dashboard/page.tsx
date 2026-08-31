@@ -20,10 +20,23 @@ import { Input } from '@/components/ui/input';
 import { cn, formatPrice } from '@/lib/utils';
 import { supabase } from '@/lib/supabaseClient';
 
+interface AffiliateProfile {
+    referral_code: string;
+    current_level: string;
+}
+
+interface AffiliateProduct {
+    id: number;
+    name: string;
+    price: number;
+    image_url: string;
+    category: string;
+}
+
 export default function AffiliateDashboard() {
     const [loading, setLoading] = React.useState(true);
-    const [profile, setProfile] = React.useState<Record<string, unknown> | null>(null);
-    const [products, setProducts] = React.useState<any[]>([]);
+    const [profile, setProfile] = React.useState<AffiliateProfile | null>(null);
+    const [products, setProducts] = React.useState<AffiliateProduct[]>([]);
     const [searchQuery, setSearchQuery] = React.useState('');
     const [stats] = React.useState({
         clicks: 1284,

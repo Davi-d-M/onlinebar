@@ -435,7 +435,7 @@ export default function AdminGamificationPage() {
                             <div className="grid sm:grid-cols-2 gap-10 items-start text-left">
                                 <div className="space-y-6 text-left">
                                     <div className="space-y-2 text-left">
-                                        <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Mock Order Amount</label>
+                                        <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Simulation Order Amount</label>
                                         <div className="relative">
                                             <Input
                                                 value={simPurchase}

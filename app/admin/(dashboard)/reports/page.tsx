@@ -122,8 +122,7 @@ export default function AdminReportsPage() {
         }
 
         // Footer
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const finalY = (doc as any).lastAutoTable?.finalY || 150;
+        const finalY = (doc as jsPDF & { lastAutoTable: { finalY: number } }).lastAutoTable?.finalY || 150;
         doc.setFontSize(8);
         doc.setTextColor(150);
         doc.text('Confidential Internal Report - Online Bar Property', 105, finalY + 20, { align: 'center' });

@@ -34,13 +34,12 @@ export default function MarketingCommandCenter() {
     const [selectedAudience, setSelectedAudience] = React.useState('ALL_CUSTOMERS');
     const [loading, setLoading] = React.useState(false);
     const [success, setSuccess] = React.useState(false);
-    const [campaigns, setCampaigns] = React.useState<any[]>([]);
+    const [campaigns, setCampaigns] = React.useState<{ id: string, title: string, status: string, created_at: string, campaign_jobs?: { id: string, channel: string, status: string }[] }[]>([]);
 
     const fetchCampaigns = React.useCallback(async () => {
         if (!supabase) return;
         const { data } = await supabase.from('marketing_campaigns_v2').select('*, campaign_jobs(*)').order('created_at', { ascending: false }).limit(5);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        if (data) setCampaigns(data as any[]);
+        if (data) setCampaigns(data as { id: string, title: string, status: string, created_at: string, campaign_jobs?: { id: string, channel: string, status: string }[] }[]);
     }, []);
 
     React.useEffect(() => {
@@ -54,7 +53,7 @@ export default function MarketingCommandCenter() {
             await orchestrateCampaign({
                 title,
                 message,
-                channels: selectedChannels as any[],
+                channels: selectedChannels as ('WHATSAPP' | 'INSTAGRAM' | 'FACEBOOK' | 'TIKTOK' | 'GMAIL')[],
                 audienceSegment: selectedAudience
             });
             setSuccess(true);
@@ -202,7 +201,7 @@ export default function MarketingCommandCenter() {
                                         )}>{c.status}</span>
                                     </div>
                                     <div className="flex gap-2">
-                                        {c.campaign_jobs?.map((j: any) => (
+                                        {c.campaign_jobs?.map((j: { id: string, channel: string, status: string }) => (
                                             <div key={j.id} title={j.channel} className={cn(
                                                 "h-6 w-6 rounded-lg flex items-center justify-center border",
                                                 j.status === 'COMPLETED' ? "bg-emerald-50 border-emerald-100 text-emerald-500" : "bg-slate-50 border-slate-100 text-slate-300"

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { OB_OS } from '@/lib/onlineBarOS';
+import { OB_OS, OSEventType } from '@/lib/onlineBarOS';
 import { supabase } from '@/lib/supabaseClient';
 
 export default function AnalyticsTracker() {
@@ -10,51 +10,71 @@ export default function AnalyticsTracker() {
     const searchParams = useSearchParams();
     const startTimeRef = useRef<number>(Date.now());
     const scrollMilestonesRef = useRef<Set<number>>(new Set());
+    const activeTimeRef = useRef<number>(0);
+    const lastInteractionRef = useRef<number>(Date.now());
 
-    // 1. Page View & Dwell Time Logic
+    // 1. Page View & High-Fidelity Discovery Logic
     useEffect(() => {
         const start = Date.now();
         startTimeRef.current = start;
-        scrollMilestonesRef.current = new Set(); // Reset for new page
+        scrollMilestonesRef.current = new Set();
+        activeTimeRef.current = 0;
+        lastInteractionRef.current = Date.now();
 
         async function trackPage() {
             if (!supabase) return;
 
             const { data: { session } } = await supabase.auth.getSession();
             const anonId = localStorage.getItem('ob_anonymous_id');
-
-            // 🚀 [MASTER_OS] Track Page View
-            await OB_OS.track('PAGE_VIEW', {
+            const commonProps = {
                 userId: session?.user?.id,
                 anonymousId: anonId || undefined,
+            };
+
+            // Basic Page View
+            await OB_OS.track('PAGE_VIEW', {
+                ...commonProps,
                 details: {
                     url: pathname,
                     search: searchParams.toString(),
                     title: document.title
                 }
             });
+
+            // Standardized Discovery Events
+            if (pathname.startsWith('/shop/category/')) {
+                const category = pathname.split('/').pop();
+                await OB_OS.track('CATEGORY_VIEW', { ...commonProps, details: { category } });
+            } else if (pathname.startsWith('/shop/') && pathname.split('/').length === 3) {
+                const productId = pathname.split('/').pop();
+                await OB_OS.track('PRODUCT_VIEW', { ...commonProps, productId: Number(productId) });
+            }
+
+            const query = searchParams.get('q');
+            if (query) {
+                await OB_OS.track('SEARCH', { ...commonProps, details: { query } });
+            }
         }
 
         trackPage();
 
-        // 💓 HEARTBEAT: Keep "Live Now" counter accurate
         const heartbeat = setInterval(async () => {
             const { data: { session } } = await supabase!.auth.getSession();
             OB_OS.track('HEARTBEAT', {
                 userId: session?.user?.id,
-                details: { path: pathname }
+                details: { path: pathname, active_time_ms: activeTimeRef.current }
             });
-        }, 30000); // Every 30s
+        }, 30000);
 
-        // On unmount (page leave), track dwell time
         return () => {
             clearInterval(heartbeat);
             const dwellTime = Date.now() - startTimeRef.current;
-            if (dwellTime > 1000) { // Only track if > 1s
-                OB_OS.track('TIME_ON_PAGE' as any, {
+            if (dwellTime > 1000) {
+                OB_OS.track('TIME_ON_PAGE', {
                     details: {
                         url: pathname,
                         dwell_time_ms: dwellTime,
+                        active_time_ms: activeTimeRef.current,
                         max_scroll: Math.max(0, ...Array.from(scrollMilestonesRef.current))
                     }
                 });
@@ -62,7 +82,38 @@ export default function AnalyticsTracker() {
         };
     }, [pathname, searchParams]);
 
-    // 2. Scroll Depth Logic
+    // 2. Active Engagement Timer
+    useEffect(() => {
+        const updateActiveTime = () => {
+            if (document.visibilityState === 'visible') {
+                const now = Date.now();
+                const diff = now - lastInteractionRef.current;
+                // If last interaction was within 30s, count it as active time
+                if (diff < 30000) {
+                    activeTimeRef.current += diff;
+                }
+                lastInteractionRef.current = now;
+            }
+        };
+
+        const interval = setInterval(updateActiveTime, 5000);
+        const handleInteraction = () => { lastInteractionRef.current = Date.now(); };
+
+        window.addEventListener('mousemove', handleInteraction);
+        window.addEventListener('keydown', handleInteraction);
+        window.addEventListener('scroll', handleInteraction);
+        window.addEventListener('click', handleInteraction);
+
+        return () => {
+            clearInterval(interval);
+            window.removeEventListener('mousemove', handleInteraction);
+            window.removeEventListener('keydown', handleInteraction);
+            window.removeEventListener('scroll', handleInteraction);
+            window.removeEventListener('click', handleInteraction);
+        };
+    }, []);
+
+    // 3. Scroll Depth Logic
     useEffect(() => {
         if (typeof window === 'undefined') return;
 
@@ -71,16 +122,14 @@ export default function AnalyticsTracker() {
                   b = document.body,
                   st = 'scrollTop',
                   sh = 'scrollHeight';
-            const percent = (h[st]||b[st]) / ((h[sh]||b[sh]) - h.clientHeight) * 100;
+            const percent = Math.round((h[st]||b[st]) / ((h[sh]||b[sh]) - h.clientHeight) * 100);
 
-            [25, 50, 75, 90, 100].forEach(milestone => {
+            [25, 50, 75, 90].forEach(milestone => {
                 if (percent >= milestone && !scrollMilestonesRef.current.has(milestone)) {
                     scrollMilestonesRef.current.add(milestone);
-                    OB_OS.track('SCROLL_DEPTH' as any, {
-                        details: {
-                            depth: milestone,
-                            path: pathname
-                        }
+                    const eventName = `SCROLL_${milestone}` as OSEventType;
+                    OB_OS.track(eventName, {
+                        details: { path: pathname }
                     });
                 }
             });
@@ -90,7 +139,7 @@ export default function AnalyticsTracker() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, [pathname]);
 
-    // 3. Section Visibility (Heatmap) Logic
+    // 4. Section Visibility (Heatmap) Logic
     useEffect(() => {
         if (typeof window === 'undefined') return;
 
@@ -107,10 +156,9 @@ export default function AnalyticsTracker() {
                     }
                 });
             },
-            { threshold: 0.5 } // Must be 50% visible
+            { threshold: 0.5 }
         );
 
-        // Observe all sections and tracked blocks
         const sections = document.querySelectorAll('section[id], [data-section]');
         sections.forEach(s => observer.observe(s));
 

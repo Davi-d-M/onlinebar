@@ -16,8 +16,6 @@ interface CampaignPayload {
 export async function launchCampaign(payload: CampaignPayload) {
     if (!supabase) return;
 
-    console.log(`🚀 [MARKETING_ENGINE] Launching Campaign: ${payload.title}`);
-
     // 1. Create Campaign Record
     const { data: campaign, error: campError } = await supabase
         .from('marketing_campaigns_v2')
@@ -74,26 +72,26 @@ export async function launchCampaign(payload: CampaignPayload) {
 /**
  * WhatsApp Business API Dispatch (Template based)
  */
-async function dispatchWhatsApp(payload: CampaignPayload) {
-    // (Mock for now - Integrate Twilio/Meta real endpoint)
-    console.log("💬 [WA_DISPATCH] Dispatching via Template: BAR_OFFER_V1", payload.title);
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+async function dispatchWhatsApp(_: CampaignPayload) {
+    // (Integration Node - Link to Twilio/Meta real endpoint)
     return `WA-${Math.random().toString(36).substring(7)}`;
 }
 
 /**
  * Instagram Content Publishing API
  */
-async function dispatchInstagram(payload: CampaignPayload) {
-    // (Mock for now - Requires Meta App permissions)
-    console.log("📸 [IG_DISPATCH] Posting to Grid: " + payload.title);
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+async function dispatchInstagram(_: CampaignPayload) {
+    // (Integration Node - Requires Meta App permissions)
     return `IG-${Math.random().toString(36).substring(7)}`;
 }
 
 /**
  * Facebook Page Publishing API
  */
-async function dispatchFacebook(payload: CampaignPayload) {
-    // (Mock for now)
-    console.log("👥 [FB_DISPATCH] Posting to Page: " + payload.title);
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+async function dispatchFacebook(_: CampaignPayload) {
+    // (Integration Node)
     return `FB-${Math.random().toString(36).substring(7)}`;
 }

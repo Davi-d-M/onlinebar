@@ -13,9 +13,8 @@ function BottlePlaceholder() {
     );
 }
 
-export default function BottleViewer3D({ modelUrl }: { modelUrl?: string }) {
+export default function BottleViewer3D({ }: { _modelUrl?: string }) {
     // modelUrl will be used for GLTFLoader in future phases
-    console.log("3D Engine Ready. Model Payload:", modelUrl);
     return (
         <div className="w-full h-[400px] bg-slate-50/50 rounded-[3rem] border border-slate-100 relative group overflow-hidden">
             <div className="absolute top-6 left-1/2 -translate-x-1/2 z-10">

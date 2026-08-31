@@ -47,7 +47,6 @@ export async function unlockAchievement(userId: string, key: string) {
             }).eq('id', userId);
         }
 
-        console.log(`Achievement Unlocked: ${key} for ${userId} 🏅 (+${achievement.xp_reward} XP)`);
         return true;
     } catch (err) {
         console.error("Achievement Unlock Failure:", err);

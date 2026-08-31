@@ -34,12 +34,29 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         url: `${baseUrl}/shop/${p.id}`,
         lastModified: new Date(p.updated_at || Date.now()),
         changeFrequency: 'weekly' as const,
+        priority: 0.9,
+      }));
+    }
+  }
+
+  // 3. Dynamic Blog Routes
+  let blogRoutes: MetadataRoute.Sitemap = [];
+  if (supabase) {
+    const { data: posts } = await supabase
+      .from('blog_posts')
+      .select('slug, updated_at')
+      .eq('is_published', true);
+    if (posts) {
+      blogRoutes = posts.map((post) => ({
+        url: `${baseUrl}/blog/${post.slug}`,
+        lastModified: new Date(post.updated_at || Date.now()),
+        changeFrequency: 'weekly' as const,
         priority: 0.7,
       }));
     }
   }
 
-  // 3. Dynamic Category Routes (Optional based on your category list)
+  // 4. Dynamic Category Routes (Optional based on your category list)
   const categories = ['wine', 'spirits', 'snacks', 'beer', 'mixers'];
   const categoryRoutes = categories.map(cat => ({
     url: `${baseUrl}/shop?category=${cat}`,
@@ -48,5 +65,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6
   }));
 
-  return [...staticRoutes, ...productRoutes, ...categoryRoutes];
+  return [...staticRoutes, ...productRoutes, ...blogRoutes, ...categoryRoutes];
 }

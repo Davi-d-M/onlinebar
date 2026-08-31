@@ -72,8 +72,7 @@ export default function CustomerJourney() {
                                     "bg-rose-50 border-rose-100 text-rose-600"
                                 )}>
                                     <div className="flex justify-between items-start">
-                                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                                        {React.createElement(item.icon as any, { size: 24, className: "opacity-40" })}
+                                        {React.createElement(item.icon, { size: 24, className: "opacity-40" })}
                                         {i > 0 && item.count > 0 && <span className="text-[8px] font-black uppercase bg-white/50 px-2 py-0.5 rounded-lg border border-white/20">-{dropOff}% Loss</span>}
                                     </div>
                                     <div className="space-y-1">

@@ -55,7 +55,6 @@ export async function recordTransaction(
 
     if (entriesError) throw entriesError;
 
-    console.log(`💰 [LEDGER_ENGINE] Transaction recorded for ${referenceType} #${referenceId}`);
     return tx.id;
 }
 

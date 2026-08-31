@@ -42,8 +42,7 @@ export default function KnowledgeBase() {
                   <div key={cat.title} className="space-y-8">
                       <div className="flex items-center gap-4">
                           <div className="h-12 w-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-primary shadow-inner">
-                              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                              {React.createElement(cat.icon as any, { className: "h-6 w-6" })}
+                              {React.createElement(cat.icon, { className: "h-6 w-6" })}
                           </div>
                           <div>
                               <h2 className="text-xl font-black text-foreground uppercase tracking-tight">{cat.title}</h2>

@@ -46,7 +46,6 @@ export function evaluateRules(context: RulesContext) {
     GLOBAL_RULES.forEach(rule => {
         if (rule.condition(result)) {
             result = rule.action(result);
-            console.log(`[RULE_ENGINE] Applied: ${rule.id}`);
         }
     });
     return result;

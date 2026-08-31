@@ -31,7 +31,7 @@ export async function POST(request: Request) {
 
         return NextResponse.json({ success: isHealthy, message: "Satellite Link Established. ✅" });
 
-    } catch (error: any) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+    } catch (error: unknown) {
+        return NextResponse.json({ error: (error as Error).message }, { status: 500 });
     }
 }

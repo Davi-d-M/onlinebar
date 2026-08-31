@@ -32,7 +32,6 @@ export default function RiderLogin() {
 
             setStep('otp');
             if (data.dev_otp) {
-                console.log("DEV OTP:", data.dev_otp);
                 setOtp(data.dev_otp);
             }
         } catch (err: unknown) {

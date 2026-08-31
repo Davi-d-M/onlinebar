@@ -22,8 +22,6 @@ interface EventPayload {
 export async function trackEngagementEvent(userId: string, eventType: EventType, payload: EventPayload = {}) {
     if (!supabase || !userId) return;
 
-    console.log(`🎮 Gamification Event: ${eventType} for user ${userId}`);
-
     try {
         switch (eventType) {
             case 'ORDER_COMPLETED':
@@ -108,14 +106,14 @@ async function addXP(userId: string, amount: number, reason: string) {
     }
 }
 
-async function updateMissionProgress(userId: string, type: string, increment: number) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+async function updateMissionProgress(_: string, __: string, ___: number) {
     // This calls the mission logic implemented in the API routes
     // But can also be done directly here for speed
-    console.log(`🎯 Updating Mission Progress: ${type} by ${increment} for ${userId}`);
 }
 
-async function checkGlobalMilestones(userId: string) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+async function checkGlobalMilestones(_: string) {
     // Check for "First Pour", "Legend", etc.
     // This calls achievementService logic
-    console.log(`Checking milestones for ${userId}`);
 }

@@ -138,6 +138,17 @@ async function handleClaimDailyReward(userId: string, type: 'spin' | 'box') {
 
 async function handleUpdateMissionProgress(userId: string, type: string, increment: number) {
     if (!supabase) throw new Error("DB not connected");
+
+    // Fetch mission definition from DB
+    const { data: definition } = await supabase
+        .from('mission_definitions')
+        .select('*')
+        .eq('id', type)
+        .eq('is_active', true)
+        .single();
+
+    if (!definition) throw new Error("Mission definition not found or inactive.");
+
     const { data: mission } = await supabase
         .from('user_missions')
         .select('*')
@@ -145,17 +156,7 @@ async function handleUpdateMissionProgress(userId: string, type: string, increme
         .eq('mission_type', type)
         .maybeSingle();
 
-    // Mission targets
-    const targets: Record<string, number> = {
-        'buy-mixers': 2,
-        'review-product': 5,
-        'watch-video': 1,
-        'refer-friend': 1,
-        'wishlist-items': 5,
-        'share-product': 1,
-    };
-
-    const target = targets[type] || 1;
+    const target = definition.target_count || 1;
     let newProgress = (mission?.progress || 0) + increment;
     let completed = false;
 
@@ -177,18 +178,10 @@ async function handleUpdateMissionProgress(userId: string, type: string, increme
     if (error) throw error;
 
     if (completed) {
-        const xpMap: Record<string, number> = {
-            'buy-mixers': 100,
-            'review-product': 50,
-            'watch-video': 30,
-            'refer-friend': 200,
-            'wishlist-items': 40,
-            'share-product': 25,
-        };
-        const xp = xpMap[type] || 0;
+        const xp = definition.xp_reward || 0;
         const { data: profile } = await supabase.from('profiles').select('loyalty_points').eq('id', userId).single();
         await supabase.from('profiles').update({ loyalty_points: (profile?.loyalty_points || 0) + xp }).eq('id', userId);
-        await supabase.from('loyalty_ledger').insert([{ profile_id: userId, amount: xp, description: `Completed mission: ${type}` }]);
+        await supabase.from('loyalty_ledger').insert([{ profile_id: userId, amount: xp, description: `Completed mission: ${definition.label}` }]);
     }
 
     return NextResponse.json({ ok: true, progress: newProgress, completed });

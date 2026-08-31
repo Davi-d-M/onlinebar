@@ -36,8 +36,6 @@ export async function POST(req: Request) {
 
         if (updateError) throw updateError;
 
-        // 4. In production: Send SMS via Africa's Talking or Twilio
-        console.log(`[AUTH] OTP for ${phone}: ${otp}`);
 
         return NextResponse.json({
             success: true,

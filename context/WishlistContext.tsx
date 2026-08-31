@@ -68,7 +68,7 @@ export const WishlistProvider = ({ children }: { children: React.ReactNode }) =>
     // 🚀 [MASTER_OS] Track Interaction
     if (supabase) {
         const anonId = localStorage.getItem('ob_anonymous_id');
-        await OB_OS.track('ADD_TO_WISHLIST' as any, {
+        await OB_OS.track('ADD_TO_WISHLIST', {
             userId: userId || undefined,
             anonymousId: anonId || undefined,
             productId: item.id,

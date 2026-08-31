@@ -196,8 +196,12 @@ export default function RiderProfilePage() {
                 {/* RIGHT: MAP & ACTIVITY */}
                 <div className="lg:col-span-8 space-y-8">
                     <div className="h-[450px] w-full relative overflow-hidden rounded-[3rem] border border-slate-100 shadow-sm">
-                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                        <LiveMap riders={[rider as any]} />
+                        <LiveMap riders={[{
+                            id: rider.id,
+                            rider_name: rider.rider_name,
+                            status: rider.status,
+                            battery_level: rider.battery_level
+                        }]} />
                     </div>
 
                     <div className="grid md:grid-cols-2 gap-8">

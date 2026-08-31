@@ -78,8 +78,7 @@ export default function AchievementBadges({ userId }: { userId: string }) {
                             "h-16 w-16 rounded-[1.8rem] flex items-center justify-center transition-all duration-700",
                             isUnlocked ? "bg-primary/10 text-primary shadow-lg shadow-primary/10 scale-110 rotate-3" : "bg-white text-slate-200"
                         )}>
-                            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                            {React.createElement(Icon as any, { className: "h-8 w-8" })}
+                            {React.createElement(Icon, { className: "h-8 w-8" })}
                         </div>
 
                         <div className="space-y-1">

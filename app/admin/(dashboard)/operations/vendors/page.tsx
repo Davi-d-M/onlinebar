@@ -67,10 +67,23 @@ export default function MultiVendorHub() {
     }, [fetchVendors]);
 
     const handleApproveVendor = async (id: string) => {
-        setVendors(prev => prev.map(v => v.id === id ? { ...v, status: 'Active' } : v));
-        await logAuditAction(adminEmail, 'APPROVE_VENDOR', { id });
-        setMessage({ type: 'success', text: "Partner Node Activated. Commission logic synchronized." });
-        setTimeout(() => setMessage(null), 3000);
+        if (!supabase) return;
+        try {
+            const { error } = await supabase
+                .from('marketplace_vendors')
+                .update({ status: 'Active' })
+                .eq('id', id);
+
+            if (error) throw error;
+
+            setVendors(prev => prev.map(v => v.id === id ? { ...v, status: 'Active' } : v));
+            await logAuditAction(adminEmail, 'APPROVE_VENDOR', { id });
+            setMessage({ type: 'success', text: "Partner Node Activated. Commission logic synchronized." });
+        } catch (err: unknown) {
+            setMessage({ type: 'error', text: (err as Error).message });
+        } finally {
+            setTimeout(() => setMessage(null), 3000);
+        }
     };
 
     return (

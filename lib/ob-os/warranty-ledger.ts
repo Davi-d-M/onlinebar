@@ -51,6 +51,5 @@ export async function issueDigitalWarranty(orderId: number, sku: string, serial:
 export function verifyWarrantyIntegrity(certificate: WarrantyCertificate): boolean {
     const rawPayload = `${certificate.order_id}|${certificate.sku}|${certificate.imei_serial}|${certificate.issued_at}`;
     const calculatedHash = generateWarrantyHash(rawPayload);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return calculatedHash === (certificate as any).certificate_hash;
+    return calculatedHash === (certificate as unknown as { certificate_hash: string }).certificate_hash;
 }

@@ -19,7 +19,6 @@ interface NotificationPayload {
  * Sends a notification via one or more channels.
  */
 export async function sendNotification(channels: Channel[], payload: NotificationPayload) {
-    console.log(`🔔 [NOTIFICATION_SERVICE] Sending to ${payload.userId} via [${channels.join(', ')}]`);
 
     const promises = channels.map(channel => {
         switch (channel) {
@@ -51,12 +50,12 @@ async function handleInApp(payload: NotificationPayload) {
     }]);
 }
 
-async function handleWhatsApp(payload: NotificationPayload) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+async function handleWhatsApp(_: NotificationPayload) {
     // Integration logic for WhatsApp API (e.g., Twilio or Meta Business API)
-    console.log(`💬 [WHATSAPP] To User ${payload.userId}: ${payload.body}`);
 }
 
-async function handleEmail(payload: NotificationPayload) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+async function handleEmail(_: NotificationPayload) {
     // Integration logic for Email (e.g., Resend or SendGrid)
-    console.log(`📧 [EMAIL] To User ${payload.userId}: ${payload.title}`);
 }

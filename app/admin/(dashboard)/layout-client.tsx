@@ -47,6 +47,7 @@ import GlobalCommandPalette from '@/components/admin/GlobalCommandPalette';
 import LiveActivitySidebar from '@/components/admin/LiveActivitySidebar';
 import NotificationCenter from '@/components/admin/NotificationCenter';
 import { logAuditAction } from '@/lib/auditService';
+import { supabase } from '@/lib/supabaseClient';
 
 interface AdminLayoutClientProps {
   children: React.ReactNode;
@@ -86,7 +87,33 @@ export default function AdminLayoutClient({
           }
       };
       window.addEventListener('keydown', handleKeyDown);
-      return () => window.removeEventListener('keydown', handleKeyDown);
+
+      // Phase 9: Titan Mobile OS Bridge (Offline Sync Node)
+      const titanWindow = window as unknown as {
+        onTitanOfflineSync: boolean;
+        onTitanSyncOrder: (orderId: string) => Promise<void>;
+      };
+
+      titanWindow.onTitanOfflineSync = true;
+      titanWindow.onTitanSyncOrder = async (orderId: string) => {
+          if (!supabase) return;
+          try {
+              const { error } = await supabase
+                  .from('orders')
+                  .update({ status: 'Delivered', captured_by: 'titan-offline-sync' })
+                  .eq('id', parseInt(orderId));
+
+              if (error) throw error;
+          } catch (err) {
+              console.error(`📡 [TITAN_BRIDGE] Sync Failed: ${orderId}`, err);
+          }
+      };
+
+      return () => {
+          window.removeEventListener('keydown', handleKeyDown);
+          delete (titanWindow as unknown as Record<string, unknown>).onTitanOfflineSync;
+          delete (titanWindow as unknown as Record<string, unknown>).onTitanSyncOrder;
+      };
   }, []);
 
   const toggleSidebarCollapse = () => {

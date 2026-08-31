@@ -635,8 +635,7 @@ export default function ProfilePage() {
                             <div className="flex gap-2 mt-4 overflow-x-auto no-scrollbar pb-2">
                                 {([] as { id: string; icon: React.ElementType; color: string; label: string }[]).map((badge) => (
                                     <div key={badge.id} className="flex items-center gap-2 px-3 py-2 bg-white rounded-2xl border border-slate-100 shadow-sm shrink-0 hover:border-primary/20 transition-all cursor-default group/badge">
-                                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                                        {React.createElement(badge.icon as any, { className: cn("h-3 w-3", badge.color === 'primary' ? 'text-primary' : 'text-slate-400') })}
+                                        {React.createElement(badge.icon, { className: cn("h-3 w-3", badge.color === 'primary' ? 'text-primary' : 'text-slate-400') })}
                                         <span className="text-[8px] font-black uppercase tracking-widest text-slate-500 group-hover/badge:text-primary transition-colors">{badge.label}</span>
                                     </div>
                                 ))}
@@ -820,8 +819,7 @@ export default function ProfilePage() {
                         {devices.length > 0 ? devices.map((device: Device) => (
                             <div key={device.name} className="p-6 bg-slate-50 rounded-[2rem] border border-slate-100 text-center space-y-4 group hover:bg-white hover:shadow-xl transition-all">
                                 <div className="h-12 w-12 rounded-2xl bg-white mx-auto flex items-center justify-center text-slate-300 group-hover:text-primary group-hover:scale-110 transition-all shadow-sm">
-                                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                                    {React.createElement(device.icon as any, { className: "h-6 w-6" })}
+                                    {React.createElement(device.icon, { className: "h-6 w-6" })}
                                 </div>
                                 <div>
                                     <p className="text-[10px] font-black text-foreground uppercase tracking-tight">{device.name}</p>
@@ -857,8 +855,7 @@ export default function ProfilePage() {
                                             "h-12 w-12 rounded-full border-4 border-white flex items-center justify-center shadow-lg transition-all",
                                             stats.title === label ? "bg-primary scale-125 ring-4 ring-primary/20" : "bg-slate-50 text-slate-200"
                                         )}>
-                                            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                                            {React.createElement(Icon as any, { className: cn("h-5 w-5", stats.title === label ? "text-white" : "text-slate-300") })}
+                                            {React.createElement(Icon, { className: cn("h-5 w-5", stats.title === label ? "text-white" : "text-slate-300") })}
                                         </div>
                                         <p className={cn("text-[8px] font-black uppercase tracking-widest", stats.title === label ? "text-primary" : "text-slate-300")}>{label}</p>
                                     </div>

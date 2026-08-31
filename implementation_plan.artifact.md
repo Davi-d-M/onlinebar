@@ -1,49 +1,37 @@
-# Apex OS: Phase 14 — Mock Data Scrape & Production Hardening Production 🚀🛡️💎
+# Implementation Plan - Hardened Grid Establishment Master 🛡️🏰🏛️
 
-This phase focuses on the complete removal of all hardcoded "fake" data used during the development of Phases 1-13. We are transitioning the "God-Mode" modules to real database logic, ensuring that what you see on your dashboard is 100% real business intel.
+This plan consolidates all "Online Bar" database structures into a single, idempotent Master Script. It resolves existing policy conflicts, aligns table names with the production codebase, and ensures 100% connectivity between the Admin Panel and the backend.
 
 ## User Review Required
 
-> [!WARNING]
-> Since the tables for **Vendors**, **Ad Campaigns**, and **Shipments** do not exist in your current Supabase schema, these pages will appear **Empty** after this cleanup until you onboard real partners or import data.
+> [!CAUTION]
+> - **Schema Alignment**: I am changing `ledger_entries` to `financial_ledger` to match the existing codebase. If you have data in a table named `ledger_entries`, it should be migrated to `financial_ledger`.
+> - **Idempotency**: All `CREATE POLICY` statements will be preceded by `DROP POLICY IF EXISTS` to prevent the "Policy already exists" error seen in your screenshot.
 
 ## Proposed Changes
 
-### 🛡️ 1. Mock Data Removal (Database Transition)
+### 🧱 1. Database Consolidation & Hardening
 
-#### [MODIFY] [Multi-Vendor Hub](file:///C:/Users/hp/AndroidStudioProjects/moneymaker/app/admin/(dashboard)/operations/vendors/page.tsx)
-- Remove hardcoded `setVendors` array.
-- Attempt to fetch from a `marketplace_vendors` table (will return empty if missing).
+#### [NEW] [grid_establishment_hardened.sql](file:///C:/Users/hp/AndroidStudioProjects/onbar/supabase/migrations/grid_establishment_hardened.sql)
+- **Identity & Profiles**: Enhanced with `xp`, `level`, and `loyalty_points`.
+- **Products**: Full cellar specs including `dynamic_pricing` and `wholesale` logic.
+- **Orders & Items**: 1:N relationship structure with `unit_cost` tracking for profit automation.
+- **Financial Ledger**: Corrected table name (`financial_ledger`) used by the Profit Automation engine.
+- **Real-Time Traffic**: Added `active_visitors` table used by the Admin Shift Console.
+- **Observability**: Tables for `request_traces`, `exception_log`, and `system_autonomous_state`.
+- **Security**: Hardened `security_sessions` with RLS.
+- **RLS Fix**: Uses `DROP POLICY IF EXISTS` for all tables (Passports, Products, Marketing).
 
-#### [MODIFY] [AI Ad Agency](file:///C:/Users/hp/AndroidStudioProjects/moneymaker/app/admin/(dashboard)/marketing/ai-agency/page.tsx)
-- Remove hardcoded `setCampaigns` array.
-- Attempt to fetch from an `ad_campaigns` table.
+### 🏰 2. Admin connectivity Sync
 
-#### [MODIFY] [Global Sourcing Bridge](file:///C:/Users/hp/AndroidStudioProjects/moneymaker/app/admin/(dashboard)/operations/sourcing/page.tsx)
-- Remove hardcoded `setShipments` array.
-- Attempt to fetch from a `shipments` table.
-
-#### [MODIFY] [Product Manager](file:///C:/Users/hp/AndroidStudioProjects/moneymaker/app/admin/(dashboard)/upload/page.tsx)
-- Remove `mockResults` from the AI Vision Scan function.
-- Change the logic to "Feature Pending: Connect Vision API Node" or return empty results.
-
-#### [MODIFY] [AI Concierge](file:///C:/Users/hp/AndroidStudioProjects/moneymaker/components/home/AIConcierge.tsx)
-- Remove simulated "Shopping Intelligence" delays and hardcoded text responses where possible.
-- Ensure the "Bundle" suggestions always pull live IDs from the `products` table.
-
-### 👥 2. Real-Time Admin Pulse Refinement
-
-#### [MODIFY] [Active Admins](file:///C:/Users/hp/AndroidStudioProjects/moneymaker/components/admin/ActiveAdmins.tsx)
-- Ensure the "Action" label is derived strictly from the `audit_logs` table without any fallback "mock" actions.
+- Ensure all tables used in the **Personal Customer Journey Audit** (like `analytics_events` and `mission_definitions`) are present and properly indexed.
+- Add `active_visitors` which was missing from the previous master draft but is critical for the Admin Pulse.
 
 ---
 
 ## Verification Plan
 
-### Automated Tests
-- `npm run build` to verify all components still compile without the hardcoded imports/arrays.
-
 ### Manual Verification
-1. **Vendor Page**: Open the page and verify it shows the "Empty Grid" state instead of fake companies.
-2. **Ad Agency**: Verify the "Neural Placements" list is empty but the "Sync Meta Link" button is ready for future integration.
-3. **AI Concierge**: Ask for a bundle and verify it queries the DB instead of returning a simulated response.
+1. **SQL Execution**: Run the script in Supabase SQL Editor. It should execute with **Zero Errors** even if some tables/policies already exist.
+2. **Connectivity Check**: Open the Admin "Control Tower" and verify the "Live Now" counter (powered by `active_visitors`) is active.
+3. **Audit Trail**: Verify that customer interactions are still being logged to `analytics_events`.

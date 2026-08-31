@@ -41,8 +41,7 @@ export default function ActivityTimeline({ events }: { events: TimelineEvent[] }
                             ev.status === 'WARNING' ? "bg-amber-500 text-white" :
                             "bg-rose-500 text-white"
                         )}>
-                            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                            {React.createElement(ev.icon as any, { size: 16 })}
+                            {React.createElement(ev.icon, { size: 16 })}
                         </div>
 
                         <div className="space-y-1">

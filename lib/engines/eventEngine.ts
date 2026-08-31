@@ -31,8 +31,6 @@ interface EventPayload {
 export async function emitEvent(eventType: SystemEventType, payload: EventPayload = {}, metadata: Record<string, unknown> = {}) {
     if (!supabase) return;
 
-    console.log(`🚀 [EVENT_ENGINE] Emitting: ${eventType}`);
-
     // 1. Persist Event to Database Log
     const { data: eventRecord, error: logError } = await supabase
         .from('event_log')
@@ -78,8 +76,7 @@ async function processEvent(event: { id: string, event_type: SystemEventType, pa
     const { id, event_type, payload, user_id } = event as { id: string, event_type: SystemEventType, payload: EventPayload, user_id?: string };
 
     // 0. Trigger Autonomous Workflows (New)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await processAutomationRules(id, event_type, payload as any);
+    await processAutomationRules(id, event_type, payload as Record<string, unknown>);
 
     // 0.1 Update Delivery Statistics (New)
     if (event_type.startsWith('ORDER_') || event_type === 'ORDER_PAID') {

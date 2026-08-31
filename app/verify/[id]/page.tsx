@@ -16,12 +16,29 @@ import {
 import Link from 'next/link';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { cn, formatPrice } from '@/lib/utils';
+import { cn } from '@/lib/utils';
+interface VerificationResult {
+    valid: boolean;
+    error?: string;
+    passport?: {
+        id: string;
+        product_name: string;
+        batch_number: string;
+        origin_manufacturer: string;
+        authorized_distributor: string;
+    };
+    history?: {
+        event_type: string;
+        timestamp: string;
+        actor_label: string;
+    }[];
+    isAnomaly?: boolean;
+}
 
 export default function BottleVerificationPage() {
     const { id } = useParams();
     const [loading, setLoading] = useState(true);
-    const [result, setResult] = useState<any>(null);
+    const [result, setResult] = useState<VerificationResult | null>(null);
 
     useEffect(() => {
         async function runVerification() {
@@ -57,7 +74,7 @@ export default function BottleVerificationPage() {
                     &quot;{result?.error || 'This identifier was not found in the Online Bar registry. Rely with caution.'}&quot;
                 </p>
             </div>
-            <Button onClick={() => window.location.reload()} className="h-14 px-10 rounded-2xl bg-slate-900 text-white font-black uppercase text-xs tracking-widest active:scale-95 transition-all shadow-xl">Retry Scan</Button>
+            <Button onClick={() => window.location.reload()} className="h-14 px-10 rounded-2xl bg-primary text-white font-black uppercase text-xs tracking-widest active:scale-95 transition-all shadow-xl shadow-primary/20">Retry Scan</Button>
         </div>
     );
 
@@ -89,7 +106,7 @@ export default function BottleVerificationPage() {
 
                         <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
                             <p className="text-[10px] font-black uppercase text-slate-400 mb-1">Passport Identifier</p>
-                            <p className="text-sm font-black text-foreground font-mono">{passport.id}</p>
+                            <p className="text-sm font-black text-foreground font-mono">{passport?.id}</p>
                         </div>
 
                         {isAnomaly && (
@@ -114,19 +131,19 @@ export default function BottleVerificationPage() {
                                 <Wine size={32} />
                             </div>
                             <div>
-                                <h4 className="text-xl font-black text-foreground uppercase tracking-tight">{passport.product_name}</h4>
-                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Batch: {passport.batch_number}</p>
+                                <h4 className="text-xl font-black text-foreground uppercase tracking-tight">{passport?.product_name}</h4>
+                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Batch: {passport?.batch_number}</p>
                             </div>
                         </div>
 
                         <div className="grid grid-cols-2 gap-4 pt-6 border-t border-slate-50">
                             <div className="space-y-1">
                                 <p className="text-[8px] font-black uppercase text-slate-300">Manufacturer</p>
-                                <p className="text-xs font-black text-foreground uppercase truncate">{passport.origin_manufacturer}</p>
+                                <p className="text-xs font-black text-foreground uppercase truncate">{passport?.origin_manufacturer}</p>
                             </div>
                             <div className="space-y-1 text-right">
                                 <p className="text-[8px] font-black uppercase text-slate-300">Authorized Distributor</p>
-                                <p className="text-xs font-black text-primary uppercase truncate">{passport.authorized_distributor}</p>
+                                <p className="text-xs font-black text-primary uppercase truncate">{passport?.authorized_distributor}</p>
                             </div>
                         </div>
                     </Card>
@@ -138,7 +155,7 @@ export default function BottleVerificationPage() {
                         <History size={14} /> Chain of Custody
                     </h3>
                     <div className="relative pl-10 space-y-8 before:absolute before:left-[2.2rem] before:top-2 before:bottom-4 before:w-1 before:bg-slate-100 before:rounded-full">
-                        {history.map((ev: any, i: number) => (
+                        {history?.map((ev: { event_type: string, timestamp: string, actor_label: string }, i: number) => (
                             <div key={i} className="relative group transition-all animate-in slide-in-from-left-4 fade-in duration-500" style={{ animationDelay: `${i * 100}ms` }}>
                                 <div className={cn(
                                     "absolute -left-12 h-10 w-10 rounded-xl flex items-center justify-center border-4 border-white shadow-lg z-10",

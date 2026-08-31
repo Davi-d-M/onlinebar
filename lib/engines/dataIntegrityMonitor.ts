@@ -48,7 +48,6 @@ export async function runIntegrityCheck() {
         // Commit Issues to Data Quality Alerts table
         if (issues.length > 0) {
             await supabase.from('data_quality_alerts').upsert(issues);
-            console.log(`[DATA_QUALITY] Integrity check complete. Found ${issues.length} potential issues.`);
         }
 
     } catch (err) {

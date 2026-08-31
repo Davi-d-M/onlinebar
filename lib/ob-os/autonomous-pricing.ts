@@ -11,7 +11,6 @@ export async function runAutonomousPricingSync() {
         // Phase 13: Feature Toggle Verification
         const { data: featData } = await supabase.from('settings').select('value').eq('key', 'features').maybeSingle();
         if (featData && (featData.value as Record<string, unknown>).dynamic_pricing_enabled === false) {
-            console.log("[SINGULARITY] Pricing Engine Idle. Toggle Disabled.");
             return;
         }
 
@@ -54,8 +53,6 @@ export async function runAutonomousPricingSync() {
                         updated_at: new Date().toISOString()
                     })
                     .eq('id', product.id);
-
-                console.log(`[SINGULARITY] Autonomous Price Adjusted: ${product.name} -> ${nextPrice}`);
             }
         }
     } catch (err) {

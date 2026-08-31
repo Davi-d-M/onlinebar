@@ -73,8 +73,7 @@ export default function SystemHealthMonitor() {
                     <div key={node.id} className="p-6 rounded-[2rem] bg-slate-50 border border-slate-100 space-y-4 group/node hover:bg-white hover:shadow-xl transition-all">
                         <div className="flex justify-between items-start">
                             <div className="h-10 w-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-300 group-hover/node:text-primary transition-colors shadow-sm">
-                                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                                {React.createElement(node.icon as any, { size: 20 })}
+                                {React.createElement(node.icon, { size: 20 })}
                             </div>
                             <span className={cn(
                                 "text-[7px] font-black uppercase tracking-widest px-2 py-0.5 rounded",

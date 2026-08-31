@@ -21,10 +21,23 @@ import { Input } from '@/components/ui/input';
 import { cn, formatPrice } from '@/lib/utils';
 import { supabase } from '@/lib/supabaseClient';
 
+interface Supplier {
+    id: string;
+    name: string;
+}
+
+interface InventoryProduct {
+    id: number;
+    name: string;
+    stock: number;
+    image_url: string;
+    status: string;
+}
+
 export default function SupplierDashboard() {
     const [loading, setLoading] = React.useState(true);
-    const [supplier, setSupplier] = React.useState<Record<string, unknown> | null>(null);
-    const [myInventory, setMyInventory] = React.useState<any[]>([]);
+    const [supplier, setSupplier] = React.useState<Supplier | null>(null);
+    const [myInventory, setMyInventory] = React.useState<InventoryProduct[]>([]);
     const [searchQuery, setSearchQuery] = React.useState('');
     const [isUpdating, setIsUpdating] = React.useState<number | null>(null);
 
@@ -68,14 +81,14 @@ export default function SupplierDashboard() {
                 <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-white p-10 rounded-[3.5rem] border border-slate-100 shadow-sm relative overflow-hidden group">
                     <div className="relative z-10 flex items-center gap-6">
                         <div className="h-16 w-16 rounded-[2rem] bg-secondary border border-slate-100 flex items-center justify-center text-foreground font-black text-2xl shadow-inner group-hover:scale-110 transition-transform">
-                            {((supplier as any)?.name as string)?.substring(0, 2).toUpperCase() || 'SD'}
+                            {supplier?.name?.substring(0, 2).toUpperCase() || 'SD'}
                         </div>
                         <div>
                             <div className="flex items-center gap-3 mb-1">
                                 <span className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[8px] font-black uppercase border border-emerald-100">Authorized Hub</span>
                                 <p className="text-[10px] font-black text-primary uppercase tracking-[0.3em]">Supply Network Node</p>
                             </div>
-                            <h1 className="text-4xl font-black text-foreground uppercase tracking-tighter leading-none">{(supplier as any)?.name || 'Supplier Dashboard'}</h1>
+                            <h1 className="text-4xl font-black text-foreground uppercase tracking-tighter leading-none">{supplier?.name || 'Supplier Dashboard'}</h1>
                         </div>
                     </div>
 
@@ -199,16 +212,16 @@ export default function SupplierDashboard() {
                             </div>
                         </Card>
 
-                        <Card className="p-10 rounded-[3.5rem] bg-slate-900 text-white border-none shadow-2xl space-y-6 relative overflow-hidden group">
+                        <Card className="p-10 rounded-[3.5rem] bg-white border border-slate-100 shadow-xl space-y-6 relative overflow-hidden group">
                             <div className="relative z-10 space-y-6">
-                                <div className="h-12 w-12 rounded-2xl bg-white/10 flex items-center justify-center backdrop-blur-md border border-white/10 group-hover:scale-110 transition-transform"><CheckCircle2 size={24} /></div>
+                                <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-inner group-hover:scale-110 transition-transform"><CheckCircle2 size={24} /></div>
                                 <div>
-                                    <h3 className="text-2xl font-black uppercase tracking-tighter leading-none mb-2">Legal <br/> <span className="text-primary italic">Document Vault</span></h3>
-                                    <p className="text-[10px] text-slate-500 font-medium italic opacity-80 leading-relaxed">&quot;All compliance artifacts are encrypted and verified. Maintain your status by keeping your license and permits updated.&quot;</p>
-                                </div>
-                                <Button className="w-full h-14 rounded-2xl bg-white text-slate-900 font-black uppercase text-[10px] tracking-widest hover:bg-primary hover:text-white transition-all">Open Secure Vault</Button>
+                                    <h3 className="text-2xl font-black uppercase tracking-tighter leading-none mb-2 text-foreground">Legal <br/> <span className="text-primary italic">Document Vault</span></h3>
+                                    <p className="text-[10px] text-slate-500 font-medium italic leading-relaxed">&quot;All compliance artifacts are encrypted and verified. Maintain your status by keeping your license and permits updated.&quot;</p>
+                                0.</div>
+                                <Button className="w-full h-14 rounded-2xl bg-primary text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-primary/20 hover:scale-105 transition-all active:scale-95">Open Secure Vault</Button>
                             </div>
-                            <Activity className="absolute -bottom-10 -left-10 h-48 w-48 text-white/5 rotate-45 -z-0" />
+                            <Activity className="absolute -bottom-10 -left-10 h-48 w-48 text-primary/5 rotate-45 -z-0" />
                         </Card>
                     </div>
 

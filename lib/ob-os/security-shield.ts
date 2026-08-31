@@ -21,7 +21,6 @@ export async function runSecurityScan() {
         // Phase 13: Feature Toggle Verification
         const { data: featData } = await supabase.from('settings').select('value').eq('key', 'features').maybeSingle();
         if (featData && (featData.value as Record<string, unknown>).fraud_shield_enabled === false) {
-            console.log("[SHIELD] Sentinel in Standby Mode. Toggle Disabled.");
             return;
         }
 
@@ -81,7 +80,6 @@ export async function runSecurityScan() {
         // Commit Threats to DB for Admin View
         if (threats.length > 0) {
             await supabase.from('security_threats').upsert(threats);
-            console.log(`[SHIELD] Security Scan Complete: ${threats.length} threats identified.`);
         }
 
     } catch (err) {

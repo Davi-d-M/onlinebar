@@ -21,17 +21,23 @@ import {
   MapPin,
   ExternalLink,
   MessageSquare,
-  Globe,
   Search,
   MousePointer2,
   Activity,
-  ShoppingBag
+  ShoppingBag,
+  Home,
+  ShoppingCart,
+  CreditCard,
+  CheckCircle2,
+  ArrowDown,
+  Layout as LayoutIcon
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { formatPrice, cn } from '@/lib/utils';
 import Link from 'next/link';
 import { useAdmin } from '@/context/AdminContext';
+import CustomerFunnel from '@/components/admin/CustomerFunnel';
 
 interface Order {
   id: number;
@@ -65,6 +71,22 @@ interface ProductInfo {
   category: string | null;
 }
 
+interface AnalyticsEvent {
+  event_name: string;
+  timestamp: string;
+  payload: {
+    url?: string;
+    query?: string;
+    category?: string;
+    productId?: number;
+    title?: string;
+    active_time_ms?: number;
+    max_scroll?: number;
+    depth?: number;
+    results_count?: number;
+  };
+}
+
 export default function CustomerIntelligence() {
   const { phone } = useParams();
   const [orders, setOrders] = useState<Order[]>([]);
@@ -74,8 +96,8 @@ export default function CustomerIntelligence() {
   const [reviews, setReviews] = useState<{ id: string; rating: number; comment: string; created_at: string; is_verified_owner: boolean }[]>([]);
   const [supportTickets, setSupportTickets] = useState<{ id: number; subject: string; status: string; created_at: string }[]>([]);
   const [loyaltyLedger, setLoyaltyLedger] = useState<{ id: number; amount: number; description: string; created_at: string }[]>([]);
-  const [analyticsEvents, setAnalyticsEvents] = useState<any[]>([]);
-  const [activeTab, setActiveTab] = useState<'timeline' | 'behavior'>('timeline');
+  const [analyticsEvents, setAnalyticsEvents] = useState<AnalyticsEvent[]>([]);
+  const [activeTab, setActiveTab] = useState<'timeline' | 'funnel' | 'behavior'>('timeline');
   const [loading, setLoading] = useState(true);
 
   const loadData = useCallback(async () => {
@@ -118,6 +140,11 @@ export default function CustomerIntelligence() {
     const delivered = orders.filter(o => o.status === 'Delivered');
     const totalSpend = delivered.reduce((sum, o) => sum + (o.total_price || 0), 0);
     const avgOrder = delivered.length > 0 ? totalSpend / delivered.length : 0;
+
+    // Active Time Calculation
+    const totalActiveTimeMs = analyticsEvents.reduce((sum, e) => sum + (e.payload?.active_time_ms || 0), 0);
+    const avgActiveTime = analyticsEvents.length > 0 ? totalActiveTimeMs / analyticsEvents.filter(e => e.payload?.active_time_ms).length : 0;
+    const activeTimeString = avgActiveTime > 0 ? `${Math.floor(avgActiveTime / 60000)}m ${Math.floor((avgActiveTime % 60000) / 1000)}s` : 'N/A';
 
     // Age Calculation
     let age = "Unknown";
@@ -171,8 +198,8 @@ export default function CustomerIntelligence() {
         tierColor = "text-primary bg-primary/10 border-primary/20";
     }
 
-    return { totalSpend, avgOrder, risk, riskColor, favCat, tier, TierIcon, tierColor, age, referralCount: referrals.length };
-  }, [orders, products, profile, referrals]);
+    return { totalSpend, avgOrder, risk, riskColor, favCat, tier, TierIcon, tierColor, age, referralCount: referrals.length, activeTimeString, totalOrders: orders.length };
+  }, [orders, products, profile, referrals, analyticsEvents]);
 
   const timelineEvents = useMemo(() => {
     const events: { id: string; type: 'Order' | 'Support' | 'Loyalty' | 'Review'; title: string; subtitle: string; date: string; status?: string; value?: string; color?: string }[] = [];
@@ -277,7 +304,7 @@ export default function CustomerIntelligence() {
       <div className="grid lg:grid-cols-4 gap-8">
           {[
               { label: 'Lifetime Spend', val: formatPrice(stats.totalSpend), icon: DollarSign, color: 'primary' },
-              { label: 'Total Orders', val: `${orders.length} Purchases`, icon: Package, color: 'primary' },
+              { label: 'Avg Active Time', val: stats.activeTimeString, icon: Zap, color: 'primary' },
               { label: 'Average Order', val: formatPrice(stats.avgOrder), icon: TrendingUp, color: 'primary' },
               { label: 'Favorite Category', val: stats.favCat, icon: Tag, color: 'primary' },
           ].map((item) => (
@@ -298,6 +325,10 @@ export default function CustomerIntelligence() {
                       <ShieldCheck className="h-5 w-5 text-primary" /> Intelligence Data
                   </h2>
                   <div className="space-y-6">
+                      <div className="flex justify-between items-center py-4 border-b border-slate-50">
+                          <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Journey ID</span>
+                          <span className="text-[10px] font-mono font-bold text-foreground uppercase">OB-CUS-{profile?.id?.substring(0, 8).toUpperCase() || 'ANON'}</span>
+                      </div>
                       <div className="flex justify-between items-center py-4 border-b border-slate-50">
                           <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Risk Score</span>
                           <span className={cn("text-xs font-black uppercase", stats.riskColor)}>{stats.risk}</span>
@@ -350,9 +381,37 @@ export default function CustomerIntelligence() {
                   </div>
               </Card>
 
+              <Card className="p-10 rounded-[3rem] border-slate-100 shadow-sm bg-white">
+                  <h2 className="text-xl font-black text-foreground uppercase mb-8 flex items-center gap-3">
+                      <Zap className="h-5 w-5 text-primary" /> Behavioral Insight
+                  </h2>
+                  <div className="space-y-6">
+                      <div className="p-6 rounded-[2rem] bg-blue-50 border border-blue-100 space-y-3">
+                          <div className="flex items-center gap-2">
+                              <CheckCircle2 className="h-4 w-4 text-blue-600" />
+                              <span className="text-[10px] font-black uppercase text-blue-600">Highly Engaged</span>
+                          </div>
+                          <p className="text-[10px] text-blue-700 font-medium italic">
+                              &quot;Frequently views {stats.favCat} and premium beverages. Typical session: {stats.activeTimeString}.&quot;
+                          </p>
+                      </div>
+
+                      <div className="space-y-4">
+                          <div className="flex justify-between items-center">
+                              <span className="text-[10px] font-black uppercase text-slate-400">Checkout Abandonment</span>
+                              <span className="text-xs font-black text-rose-500">{analyticsEvents.filter(e => e.event_name === 'CHECKOUT_STARTED').length - orders.length} Carts</span>
+                          </div>
+                          <div className="flex justify-between items-center">
+                              <span className="text-[10px] font-black uppercase text-slate-400">Return Frequency</span>
+                              <span className="text-xs font-black text-emerald-600">High</span>
+                          </div>
+                      </div>
+                  </div>
+              </Card>
+
               <div className="bg-white rounded-[3rem] p-10 border-2 border-primary/10 text-foreground relative overflow-hidden shadow-2xl group hover:border-primary/30 transition-all">
                   <Zap className="h-10 w-10 text-primary mb-6 animate-pulse fill-current" />
-                  <h3 className="text-2xl font-black uppercase tracking-tighter leading-none mb-4">Engagement Index</h3>
+                  <h3 className="text-2xl font-black uppercase tracking-tighter leading-none mb-4">Tactical Lead</h3>
                   <p className="text-slate-500 font-medium leading-relaxed italic text-sm group-hover:text-foreground transition-colors">&quot;Recommended Action: Send early-access WhatsApp alert for restocks.&quot;</p>
                   <div className="absolute -bottom-10 -right-10 h-48 w-48 bg-primary/5 rounded-full blur-3xl"></div>
               </div>
@@ -395,7 +454,16 @@ export default function CustomerIntelligence() {
                         activeTab === 'timeline' ? "bg-primary text-white shadow-xl shadow-primary/20" : "text-slate-400 hover:text-slate-600"
                     )}
                   >
-                      Action Timeline
+                      Timeline
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('funnel')}
+                    className={cn(
+                        "flex-1 py-4 rounded-[2rem] text-[10px] font-black uppercase tracking-widest transition-all",
+                        activeTab === 'funnel' ? "bg-primary text-white shadow-xl shadow-primary/20" : "text-slate-400 hover:text-slate-600"
+                    )}
+                  >
+                      Conversion Funnel
                   </button>
                   <button
                     onClick={() => setActiveTab('behavior')}
@@ -408,12 +476,12 @@ export default function CustomerIntelligence() {
                   </button>
               </div>
 
-              {activeTab === 'timeline' ? (
+              {activeTab === 'timeline' && (
                 <Card className="rounded-[3rem] border-slate-100 shadow-sm overflow-hidden bg-white animate-in fade-in duration-500">
                     <div className="p-10 border-b border-slate-50 flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <HistoryIcon className="h-6 w-6 text-primary" />
-                            <h2 className="text-2xl font-black text-foreground uppercase tracking-tighter">Customer Timeline</h2>
+                            <h2 className="text-2xl font-black text-foreground uppercase tracking-tighter">Action Timeline</h2>
                         </div>
                         <span className="text-[10px] font-black uppercase text-slate-400 bg-slate-50 px-4 py-2 rounded-full">{timelineEvents.length} Events</span>
                     </div>
@@ -479,7 +547,26 @@ export default function CustomerIntelligence() {
                         })}
                     </div>
                 </Card>
-              ) : (
+              )}
+
+              {activeTab === 'funnel' && (
+                  <Card className="rounded-[3rem] border-slate-100 shadow-sm overflow-hidden bg-white animate-in zoom-in-95 duration-500">
+                      <div className="p-10 border-b border-slate-50 flex items-center justify-between text-left">
+                          <div>
+                              <h2 className="text-2xl font-black text-foreground uppercase tracking-tighter leading-none">Journey Funnel</h2>
+                              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">Home to Purchase conversion</p>
+                          </div>
+                          <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-sm">
+                              <Activity className="h-6 w-6" />
+                          </div>
+                      </div>
+                      <CardContent className="p-10">
+                          <CustomerFunnel events={analyticsEvents} />
+                      </CardContent>
+                  </Card>
+              )}
+
+              {activeTab === 'behavior' && (
                 <Card className="rounded-[3rem] border-slate-100 shadow-sm overflow-hidden bg-white animate-in fade-in duration-500">
                     <div className="p-10 border-b border-slate-50 flex items-center justify-between">
                         <div className="flex items-center gap-4">
@@ -498,15 +585,20 @@ export default function CustomerIntelligence() {
                             <div key={i} className="p-8 flex items-center justify-between hover:bg-slate-50/50 transition-all group">
                                 <div className="flex items-center gap-6">
                                     <div className="h-12 w-12 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400 group-hover:text-primary transition-colors">
-                                        {event.event_name === 'PAGE_VIEW' ? <Globe className="h-5 w-5" /> :
-                                         event.event_name === 'ADD_TO_CART' ? <ShoppingBag className="h-5 w-5" /> :
-                                         event.event_name === 'SEARCH_SUBMITTED' ? <Search className="h-5 w-5" /> :
+                                        {event.event_name === 'PAGE_VIEW' ? <Home className="h-5 w-5" /> :
+                                         event.event_name === 'CATEGORY_VIEW' ? <LayoutIcon className="h-5 w-5" /> :
+                                         event.event_name === 'PRODUCT_VIEW' ? <ShoppingBag className="h-5 w-5" /> :
+                                         event.event_name === 'ADD_TO_CART' ? <ShoppingCart className="h-5 w-5" /> :
+                                         event.event_name === 'CHECKOUT_STARTED' ? <CreditCard className="h-5 w-5" /> :
+                                         event.event_name === 'PURCHASE_COMPLETED' ? <CheckCircle2 className="h-5 w-5" /> :
+                                         event.event_name === 'SEARCH' ? <Search className="h-5 w-5" /> :
+                                         event.event_name.startsWith('SCROLL_') ? <ArrowDown className="h-5 w-5" /> :
                                          <Activity className="h-5 w-5" />}
                                     </div>
                                     <div className="text-left">
                                         <p className="text-[10px] font-black uppercase text-primary tracking-widest">{event.event_name.replace(/_/g, ' ')}</p>
                                         <h4 className="font-bold text-foreground text-sm mt-1">
-                                            {event.payload?.url || event.payload?.query || event.payload?.name || 'Interaction'}
+                                            {event.payload?.url || event.payload?.query || event.payload?.category || (event.payload?.productId ? `Product #${event.payload.productId}` : 'Interaction')}
                                         </h4>
                                         <div className="flex items-center gap-3 mt-1.5">
                                             <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">{new Date(event.timestamp).toLocaleTimeString()}</span>
@@ -516,8 +608,8 @@ export default function CustomerIntelligence() {
                                     </div>
                                 </div>
                                 <div className="text-right">
-                                    {event.payload?.depth && <span className="text-[10px] font-black text-emerald-500 uppercase">{event.payload.depth}% Scroll</span>}
-                                    {event.payload?.results_count !== undefined && <span className="text-[10px] font-black text-indigo-500 uppercase">{event.payload.results_count} Results</span>}
+                                    {event.payload?.active_time_ms && <span className="text-[10px] font-black text-blue-500 uppercase">{Math.floor(event.payload.active_time_ms / 1000)}s Active</span>}
+                                    {event.payload?.max_scroll && <span className="text-[10px] font-black text-emerald-500 uppercase ml-3">{event.payload.max_scroll}% Scroll</span>}
                                 </div>
                             </div>
                         ))}

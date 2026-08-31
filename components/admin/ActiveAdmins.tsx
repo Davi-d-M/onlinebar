@@ -40,7 +40,7 @@ export default function ActiveAdmins() {
                 const latestLog = logs?.find(l => l.staff_email === v.customer_name);
                 return {
                     ...v,
-                    latest_action: latestLog?.action || 'Browsing Node'
+                    latest_action: latestLog?.action || 'Active Session'
                 };
             });
 

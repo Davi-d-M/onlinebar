@@ -9,7 +9,6 @@ import { sendNotification } from './notificationService';
 export async function processAutomationRules(eventId: string, eventType: string, payload: Record<string, unknown>) {
     if (!supabase) return;
 
-    console.log(`🤖 [AUTOMATION_ENGINE] Evaluating rules for ${eventType}`);
 
     // 1. Fetch Active Rules for this Event
     const { data: rules } = await supabase
@@ -75,7 +74,6 @@ async function executeActions(actions: unknown[], payload: Record<string, unknow
     const executed = [];
 
     for (const action of (actions as AutomationAction[])) {
-        console.log(`⚡ [AUTOMATION_ENGINE] Executing action: ${action.type}`);
 
         switch (action.type) {
             case 'NOTIFY_CUSTOMER':

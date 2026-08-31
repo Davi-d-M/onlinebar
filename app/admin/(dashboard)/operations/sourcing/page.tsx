@@ -17,7 +17,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { cn, formatPrice } from '@/lib/utils';
-import { useAdmin } from '@/context/AdminContext';
 
 interface Shipment {
     id: string;
@@ -30,8 +29,6 @@ interface Shipment {
 }
 
 export default function GlobalSourcingBridge() {
-    const { role } = useAdmin();
-    console.log("Global Sourcing Bridge context role:", role);
     const [shipments, setShipments] = React.useState<Shipment[]>([]);
     const [loading, setLoading] = React.useState(true);
     const [isCalcOpen, setIsCalcOpen] = React.useState(false);

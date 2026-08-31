@@ -18,9 +18,9 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
-import { cn, formatPrice } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import Link from 'next/link';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import EarningsCenter from '@/components/rider/EarningsCenter';
 import PerformanceHub from '@/components/rider/PerformanceHub';
@@ -28,7 +28,7 @@ import { authenticateBiometrics } from '@/lib/biometricService';
 
 const GoogleMap = dynamic(() => import('@/components/admin/dispatch/LiveDispatchMap'), {
     ssr: false,
-    loading: () => <div className="h-full w-full bg-slate-900 flex items-center justify-center animate-pulse rounded-[3rem] border border-slate-700"><Loader2 className="h-10 w-10 text-primary animate-spin" /></div>
+    loading: () => <div className="h-full w-full bg-slate-50 flex items-center justify-center animate-pulse rounded-[3rem] border border-slate-100"><Loader2 className="h-10 w-10 text-primary animate-spin" /></div>
 });
 
 interface Mission {
@@ -104,8 +104,7 @@ function RiderDashboardContent() {
 
             localStorage.setItem('ob_rider_phone', riderPhone);
             localStorage.setItem('ob_rider_pin', riderPin);
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            setRider(riderData as any);
+            setRider(riderData as Record<string, unknown>);
             setMissions(currentMissions);
             setIsIdentified(true);
             setIsOnline(riderData.status !== 'Offline');
@@ -127,8 +126,7 @@ function RiderDashboardContent() {
                 .eq('id', orderId);
 
             const commission = 150;
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const r = (rider as any);
+            const r = (rider as Record<string, unknown> & { wallet?: { balance: number, total_earned: number }[] });
             await supabase.from('rider_wallets').update({
                 balance: (r?.wallet?.[0]?.balance || 0) + commission,
                 total_earned: (r?.wallet?.[0]?.total_earned || 0) + commission,
@@ -146,7 +144,7 @@ function RiderDashboardContent() {
         } finally {
             setLoading(false);
         }
-    }, [phone, wallet.balance, wallet.total_earned]);
+    }, [phone, rider]);
 
     useEffect(() => {
         const savedPhone = localStorage.getItem('ob_rider_phone');
@@ -210,25 +208,25 @@ function RiderDashboardContent() {
 
     if (!isIdentified) {
         return (
-            <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center p-6 selection:bg-primary/20">
-                <Card className="max-w-md w-full p-10 rounded-[3.5rem] bg-slate-800 border border-slate-700 shadow-2xl space-y-10">
+            <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 selection:bg-primary/20">
+                <Card className="max-w-md w-full p-10 rounded-[3.5rem] bg-white border border-slate-100 shadow-2xl space-y-10">
                     <div className="text-center space-y-4 text-left">
                         <div className="h-20 w-20 rounded-[2rem] bg-primary/10 flex items-center justify-center text-primary mx-auto shadow-sm">
                             <Truck className="h-10 w-10" />
                         </div>
-                        <h1 className="text-3xl font-black uppercase tracking-tighter text-white">Rider Command</h1>
-                        <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Identify to Begin Missions</p>
+                        <h1 className="text-3xl font-black uppercase tracking-tighter text-foreground">Rider Command</h1>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Identify to Begin Missions</p>
                     </div>
 
                     <div className="space-y-6">
                         <div className="space-y-4">
                             <div className="relative">
-                                <Input value={phone} onChange={e => setPhone(e.target.value)} placeholder="07XXXXXXXX" className="h-16 rounded-2xl bg-slate-900 border-slate-700 text-white pl-14 text-sm font-black" />
-                                <PhoneCall className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500" />
+                                <Input value={phone} onChange={e => setPhone(e.target.value)} placeholder="07XXXXXXXX" className="h-16 rounded-2xl bg-slate-50 border-slate-100 text-foreground pl-14 text-sm font-black" />
+                                <PhoneCall className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
                             </div>
                             <div className="relative">
-                                <Input type="password" value={pin} onChange={e => setPin(e.target.value)} placeholder="PIN" maxLength={4} className="h-16 rounded-2xl bg-slate-900 border-slate-700 text-white pl-14 text-sm font-black" />
-                                <Zap className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500" />
+                                <Input type="password" value={pin} onChange={e => setPin(e.target.value)} placeholder="PIN" maxLength={4} className="h-16 rounded-2xl bg-slate-50 border-slate-100 text-foreground pl-14 text-sm font-black" />
+                                <Zap className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
                             </div>
                         </div>
 
@@ -238,13 +236,13 @@ function RiderDashboardContent() {
                             <Button onClick={() => verifyAndFetch(phone, pin)} disabled={loading} className="h-16 rounded-2xl bg-primary text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-primary/20 active:scale-95 transition-all">
                                 {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : "Initialize"}
                             </Button>
-                            <Button onClick={handleBioAuth} variant="outline" className="h-16 rounded-2xl border-slate-700 text-slate-500 hover:text-primary active:scale-95 transition-all">
+                            <Button onClick={handleBioAuth} variant="outline" className="h-16 rounded-2xl border-slate-100 text-slate-400 hover:text-primary active:scale-95 transition-all">
                                 <Fingerprint className="h-6 w-6" />
                             </Button>
                         </div>
 
-                        <div className="pt-4 text-center border-t border-slate-700">
-                            <Link href="/rider/onboarding" className="text-[10px] font-black text-slate-500 hover:text-primary transition-colors uppercase tracking-widest">Apply for Duty &rarr;</Link>
+                        <div className="pt-4 text-center border-t border-slate-100">
+                            <Link href="/rider/onboarding" className="text-[10px] font-black text-slate-400 hover:text-primary transition-colors uppercase tracking-widest">Apply for Duty &rarr;</Link>
                         </div>
                     </div>
                 </Card>
@@ -253,26 +251,30 @@ function RiderDashboardContent() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-900 text-left selection:bg-primary/20 flex flex-col">
+        <div className="min-h-screen bg-slate-50 text-left selection:bg-primary/20 flex flex-col">
             <div className="h-[55dvh] relative">
-                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                <GoogleMap riders={rider ? [rider as any] : []} />
+                <GoogleMap riders={rider ? [{
+                    id: (rider as { id: string }).id || 'anon',
+                    rider_name: (rider as { rider_name: string }).rider_name || 'Runner',
+                    status: (rider as { status: string }).status || 'Idle',
+                    battery_level: (rider as { battery_level: number }).battery_level || 100
+                }] : []} />
 
                 <div className="absolute top-6 left-6 right-6 z-[1000] flex justify-between items-start">
-                    <Card className="p-4 rounded-3xl bg-slate-800/90 backdrop-blur shadow-2xl border border-slate-700 flex items-center gap-4">
+                    <Card className="p-4 rounded-3xl bg-white/90 backdrop-blur shadow-2xl border border-slate-100 flex items-center gap-4">
                         <div className="h-12 w-12 rounded-2xl bg-primary flex items-center justify-center text-white font-black text-sm shadow-xl">
                             {phone.slice(-2)}
                         </div>
                         <div>
                             <div className="flex items-center gap-2">
                                 <Star className="h-3 w-3 text-amber-500 fill-current" />
-                                <span className="text-xs font-black text-white">{stats.rating}</span>
+                                <span className="text-xs font-black text-foreground">{stats.rating}</span>
                             </div>
-                            <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">{stats.tier} Operator</p>
+                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">{stats.tier} Operator</p>
                         </div>
                     </Card>
 
-                    <button onClick={handleLogout} className="h-14 w-14 rounded-2xl bg-slate-800/90 backdrop-blur shadow-2xl flex items-center justify-center text-slate-500 hover:text-rose-500 transition-all active:scale-95 border border-slate-700">
+                    <button onClick={handleLogout} className="h-14 w-14 rounded-2xl bg-white/90 backdrop-blur shadow-2xl flex items-center justify-center text-slate-400 hover:text-rose-500 transition-all active:scale-95 border border-slate-100">
                         <LogOut className="h-6 w-6" />
                     </button>
                 </div>
@@ -281,8 +283,8 @@ function RiderDashboardContent() {
                     <Button
                         onClick={handleToggleOnline}
                         className={cn(
-                            "h-20 px-12 rounded-full font-black uppercase tracking-[0.3em] text-xs shadow-[0_0_50px_rgba(245,160,0,0.3)] transition-all active:scale-90",
-                            isOnline ? "bg-white text-rose-500 border-4 border-rose-100" : "bg-primary text-white border-4 border-slate-800 animate-pulse"
+                            "h-20 px-12 rounded-full font-black uppercase tracking-[0.3em] text-xs shadow-[0_0_50px_rgba(245,160,0,0.2)] transition-all active:scale-90",
+                            isOnline ? "bg-white text-rose-500 border-4 border-rose-50" : "bg-primary text-white border-4 border-white animate-pulse"
                         )}
                     >
                         {isOnline ? "Go Offline" : "Go Online"}
@@ -379,7 +381,7 @@ function RiderDashboardContent() {
 
 export default function RiderDashboard() {
     return (
-        <Suspense fallback={<div className="min-h-screen flex flex-col items-center justify-center bg-slate-900 gap-4"><Loader2 className="h-10 w-10 text-primary animate-spin" /><p className="font-black text-slate-400 uppercase tracking-widest text-[10px]">Establishing Secure Uplink...</p></div>}>
+        <Suspense fallback={<div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 gap-4"><Loader2 className="h-10 w-10 text-primary animate-spin" /><p className="font-black text-slate-400 uppercase tracking-widest text-[10px]">Establishing Secure Uplink...</p></div>}>
             <RiderDashboardContent />
         </Suspense>
     );

@@ -32,7 +32,10 @@ import {
     MapPin,
     Bot,
     Wine,
-    GlassWater
+    GlassWater,
+    MessageSquare,
+    Music,
+    Mail
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -72,6 +75,13 @@ const DEFAULTS = {
 
 type TabId = 'identity' | 'homepage' | 'promotions' | 'theme' | 'seo' | 'ops' | 'catalog' | 'ai' | 'onboarding' | 'integrations' | 'features' | 'advanced';
 
+interface IntegrationNode {
+    id: string;
+    label: string;
+    status: 'Connected' | 'Not Connected' | 'Error';
+    last_tested_at?: string;
+}
+
 export default function AdminSettingsPage() {
     const { email } = useAdmin();
     const [loading, setLoading] = useState(true);
@@ -99,7 +109,7 @@ export default function AdminSettingsPage() {
     });
 
     // New Integrations State
-    const [integrations, setIntegrations] = useState<any[]>([]);
+    const [integrations, setIntegrations] = useState<IntegrationNode[]>([]);
     const [isTestingConnection, setIsTestingConnection] = useState<string | null>(null);
 
     const [activeTab, setActiveTab] = useState<TabId>('identity');
@@ -1006,8 +1016,8 @@ export default function AdminSettingsPage() {
                                                             } else {
                                                                 throw new Error(data.error);
                                                             }
-                                                        } catch (err: any) {
-                                                            alert(`Link Failure: ${err.message}`);
+                                                        } catch (err: unknown) {
+                                                            alert(`Link Failure: ${(err as Error).message}`);
                                                         } finally {
                                                             setIsTestingConnection(null);
                                                         }

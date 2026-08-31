@@ -18,10 +18,9 @@ export async function logAuditAction(
     const { data: staff } = await supabase.from('staff').select('id').eq('email', email).maybeSingle();
 
     // 2. Correlation Metadata
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const correlationId = ((global as any).currentCorrelationId || 'CORR-INTERNAL') as string;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const requestId = ((global as any).currentRequestId || 'REQ-INTERNAL') as string;
+    const globalContext = global as unknown as Record<string, string>;
+    const correlationId = (globalContext.currentCorrelationId || 'CORR-INTERNAL') as string;
+    const requestId = (globalContext.currentRequestId || 'REQ-INTERNAL') as string;
 
     // 3. Attempt to get IP from multiple sources
     let ip = 'server-internal';

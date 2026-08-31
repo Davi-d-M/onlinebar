@@ -22,7 +22,8 @@ export async function GET() {
             const id = event.user_id || event.anonymous_id;
             if (id) uniqueVisitors.add(id);
 
-            const path = (event.payload as any)?.url || (event.payload as any)?.path || '';
+            const payload = event.payload as { url?: string; path?: string };
+            const path = payload?.url || payload?.path || '';
             if (path.includes('/shop') || path.includes('/product')) shoppingCount++;
             if (path.includes('/checkout') || path.includes('/cart')) checkoutCount++;
         });

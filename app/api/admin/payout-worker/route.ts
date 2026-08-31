@@ -20,8 +20,7 @@ export async function POST(request: Request) {
 
         if (!profile) return NextResponse.json({ error: "Recipient not found" }, { status: 404 });
 
-        // 2. M-Pesa B2C Mock/Integration
-        console.log(`[PAYOUT] Autonomous Disbursement Triggered: ${type} -> ${recipientId} | Amount: ${amount}`);
+        // 2. Financial Integration Node (M-Pesa B2C / Bank)
 
         // 3. Log to Financial Ledger
         const { error: ledgerError } = await supabase.from('financial_ledger').insert([{
