@@ -23,15 +23,44 @@ export default function WorkforceHub() {
 
     const fetchStaff = React.useCallback(async () => {
         if (!supabase) return;
-        const { data } = await supabase.from('staff').select('*').order('last_activity_at', { ascending: false });
-        if (data) setStaff(data as StaffRecord[]);
+
+        // 1. Fetch Staff and their Tasks via parallel query or join
+        const [staffRes, tasksRes] = await Promise.all([
+            supabase.from('staff').select('*').order('last_activity_at', { ascending: false }),
+            supabase.from('admin_tasks').select('assigned_to, status')
+        ]);
+
+        if (staffRes.data) {
+            const processed = staffRes.data.map(s => {
+                const staffTasks = (tasksRes.data || []).filter(t => t.assigned_to === s.email || t.assigned_to === 'Staff');
+                return {
+                    ...s,
+                    completed_tasks: staffTasks.filter(t => t.status === 'Done').length,
+                    overdue_tasks: staffTasks.filter(t => t.status === 'InProgress' || t.status === 'Todo').length, // Simple logic for overdue
+                };
+            });
+            setStaff(processed as StaffRecord[]);
+        }
         setLoading(false);
     }, []);
 
     React.useEffect(() => {
         fetchStaff();
-        const interval = setInterval(fetchStaff, 30000); // 30s pulse
-        return () => clearInterval(interval);
+
+        if (!supabase) return;
+
+        const channelId = `staff-updates-${Math.random().toString(36).substring(7)}`;
+        const staffSub = supabase.channel(channelId)
+            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'staff' }, () => {
+                fetchStaff();
+            })
+            .subscribe();
+
+        return () => {
+            if (supabase) {
+                supabase.removeChannel(staffSub);
+            }
+        };
     }, [fetchStaff]);
 
     if (loading) return <div className="h-48 bg-slate-50 rounded-[3rem] animate-pulse" />;

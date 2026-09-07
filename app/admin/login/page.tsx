@@ -110,7 +110,7 @@ function AdminLoginContent() {
                     mode === 'email' ? "bg-white text-foreground shadow-sm" : "text-slate-400 hover:text-slate-600"
                 )}
             >
-                Staff Login
+                Staff Portal
             </button>
         </div>
 

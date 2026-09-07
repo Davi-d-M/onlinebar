@@ -61,7 +61,7 @@ export default function DynamicProductDetailPage({ params }: { params: { id: str
         const { data: related, error: relatedError } = await supabase
           .from('products')
           .select('*')
-          .eq('category', productData.category || 'electronics')
+          .eq('category', productData.category || 'spirits')
           .neq('id', productData.id)
           .limit(4);
 

@@ -42,12 +42,15 @@ import SystemPulseWidget from '@/components/admin/SystemPulseWidget';
 import FinancePulse from '@/components/admin/FinancePulse';
 import DataGovernance from '@/components/admin/DataGovernance';
 import ExperimentLab from '@/components/admin/ExperimentLab';
-import CustomerJourney from '@/components/admin/CustomerJourney';
+import CustomerJourneyMap from '@/components/admin/CustomerJourneyMap'; // NEW
+import SessionForensics from '@/components/admin/SessionForensics'; // NEW
+import IntelligenceCommand from '@/components/admin/IntelligenceCommand'; // NEW
 import SnackCommandCenter from '@/components/admin/SnackCommandCenter';
 import DeliveryMetrics from '@/components/admin/DeliveryMetrics';
 import MarketIntel from '@/components/admin/MarketIntel';
 import TrustCommandCenter from '@/components/admin/TrustCommandCenter';
 import MarketingCommandCenter from '@/components/admin/MarketingCommandCenter';
+import CommandRelay, { RelayNotification } from '@/components/admin/CommandRelay';
 
 const LiveDispatchMap = dynamic(() => import('@/components/admin/dispatch/LiveDispatchMap'), {
     ssr: false,
@@ -78,6 +81,7 @@ interface ProductRecord {
   image_url: string;
   cost_price: number;
   category?: string;
+  warehouse_location?: string;
 }
 
 interface AuditLog {
@@ -87,10 +91,19 @@ interface AuditLog {
     created_at: string;
 }
 
+interface LedgerRecord {
+    id: number;
+    amount: number;
+    entry_type: string;
+    created_at: string;
+}
+
 export default function AdminDashboard() {
   const { email } = useAdmin();
   const [orders, setOrders] = React.useState<OrderRecord[]>([]);
   const [products, setProducts] = React.useState<ProductRecord[]>([]);
+  const [ledger, setLedger] = React.useState<LedgerRecord[]>([]);
+  const [riders, setRiders] = React.useState<{ id: string; rider_name: string; status: string; battery_level: number }[]>([]);
   const [auditLogs, setAuditLogs] = React.useState<AuditLog[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const [mounted, setMounted] = React.useState(false);
@@ -113,13 +126,15 @@ export default function AdminDashboard() {
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
         const dateLimit = thirtyDaysAgo.toISOString();
 
-        const [ordersRes, productsRes, auditRes] = await Promise.all([
+        const [ordersRes, productsRes, auditRes, ledgerRes, ridersRes] = await Promise.all([
           supabase.from('orders')
             .select('*, order_items(*)')
             .gte('created_at', dateLimit)
             .order('created_at', { ascending: false }),
-          supabase.from('products').select('id, stock, name, price, image_url, cost_price'),
-          supabase.from('audit_logs').select('id, action, staff_email, created_at').order('created_at', { ascending: false }).limit(2)
+          supabase.from('products').select('id, stock, name, price, image_url, cost_price, warehouse_location'),
+          supabase.from('audit_logs').select('id, action, staff_email, created_at').order('created_at', { ascending: false }).limit(2),
+          supabase.from('financial_ledger').select('*').gte('created_at', dateLimit),
+          supabase.from('rider_status').select('id, rider_name, status, battery_level').neq('status', 'Offline')
         ]);
 
         if (ordersRes.data) {
@@ -144,6 +159,8 @@ export default function AdminDashboard() {
         }
         if (productsRes.data) setProducts(productsRes.data as ProductRecord[]);
         if (auditRes.data) setAuditLogs(auditRes.data);
+        if (ledgerRes.data) setLedger(ledgerRes.data as LedgerRecord[]);
+        if (ridersRes.data) setRiders(ridersRes.data as { id: string; rider_name: string; status: string; battery_level: number }[]);
 
       } catch (err) {
         console.error('Error loading dashboard stats:', err);
@@ -158,7 +175,58 @@ export default function AdminDashboard() {
         runSecurityScan();
     }, 300000);
 
-    return () => clearInterval(shieldScan);
+    // Real-time Subscriptions Hub
+    if (!supabase) return;
+
+    const ordersSub = supabase.channel('orders-live')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, payload => {
+            const newOrder = payload.new as OrderRecord;
+            setOrders(prev => [newOrder, ...prev]);
+
+            // Dispatch to Command Relay
+            const event = new CustomEvent('ob-command-relay', {
+                detail: {
+                    id: `order-${newOrder.id}`,
+                    type: 'ORDER',
+                    title: 'Mission Initialized',
+                    message: `Patron ${newOrder.customer_name} established mission Unit #${newOrder.id}.`,
+                    timestamp: new Date(),
+                    href: `/admin/orders?id=${newOrder.id}`
+                } as RelayNotification
+            });
+            window.dispatchEvent(event);
+        })
+        .subscribe();
+
+    const ledgerSub = supabase.channel('ledger-live')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'financial_ledger' }, () => {
+            loadStats(); // Trigger full refresh for precision
+        })
+        .subscribe();
+
+    const securitySub = supabase.channel('security-live')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'security_threats' }, payload => {
+            const threat = payload.new;
+            const event = new CustomEvent('ob-command-relay', {
+                detail: {
+                    id: `threat-${threat.id}`,
+                    type: 'SECURITY',
+                    title: 'Shield Alert',
+                    message: `${threat.type} threat identified! Action required.`,
+                    timestamp: new Date(),
+                    href: `/admin/security`
+                } as RelayNotification
+            });
+            window.dispatchEvent(event);
+        })
+        .subscribe();
+
+    return () => {
+        clearInterval(shieldScan);
+        ordersSub.unsubscribe();
+        ledgerSub.unsubscribe();
+        securitySub.unsubscribe();
+    };
   }, []);
 
   const sparklineData = React.useMemo(() => {
@@ -170,20 +238,21 @@ export default function AdminDashboard() {
 
       return days.map(date => {
           const dayOrders = orders.filter(o => o.created_at?.startsWith(date));
-          const dayRevenue = dayOrders.filter(o => o.status === 'Delivered' || o.status === 'Completed').reduce((sum, o) => sum + Number(o.total_price || 0), 0);
-          const dayCost = dayOrders.filter(o => o.status === 'Delivered' || o.status === 'Completed').reduce((sum, o) => {
-              const itemCost = o.order_items?.reduce((s, item) => s + (Number(item.unit_cost) * (item.quantity || 1)), 0) || 0;
-              return sum + itemCost;
-          }, 0);
+          const dayLedger = ledger.filter(l => l.created_at?.startsWith(date));
+
+          const dayRevenue = dayLedger.filter(l => l.entry_type === 'REVENUE').reduce((sum, l) => sum + Number(l.amount || 0), 0);
+          const dayExpenses = Math.abs(dayLedger.filter(l => l.entry_type === 'SUPPLIER_PAYABLE' || l.entry_type === 'COST' || l.entry_type === 'PAYMENT_FEE').reduce((sum, l) => sum + Number(l.amount || 0), 0));
 
           return {
               date: date.split('-').slice(1).join('/'),
               count: dayOrders.length,
               revenue: dayRevenue,
-              profit: dayRevenue - dayCost
+              profit: dayRevenue - dayExpenses
           };
       });
-  }, [orders]);
+  }, [orders, ledger]);
+
+  // Stats calculated in sparklineData
 
   if (isLoading) {
     return (
@@ -196,6 +265,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-12 animate-in fade-in duration-700 bg-slate-50 min-h-screen p-8 pb-20 text-left selection:bg-primary/20">
+      <CommandRelay />
 
       {/* EXECUTIVE HEADER */}
       <header className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 border-b border-slate-200 pb-10">
@@ -223,6 +293,9 @@ export default function AdminDashboard() {
       {/* LIVE PULSE: REAL-TIME TRAFFIC */}
       <LivePulseHUD />
 
+      {/* INTELLIGENCE COMMAND: MISSION BOARD */}
+      <IntelligenceCommand />
+
       {/* COMMAND HUD: REAL-TIME NODES */}
       <TodayCommandCenter />
 
@@ -230,7 +303,12 @@ export default function AdminDashboard() {
       <AICommanderBrief />
 
       {/* JOURNEY & CONVERSION: BEHAVIORAL INTELLIGENCE */}
-      <CustomerJourney />
+      <CustomerJourneyMap />
+
+      {/* SESSION FORENSICS: DEEP AUDIT (Requires ID from Feed) */}
+      <section id="deep-forensics" className="scroll-mt-24">
+          <SessionForensics sessionId={orders[0]?.id ? String(orders[0].id) : ''} /> {/* Mock using last order session ID for UI preview */}
+      </section>
 
       {/* DELIVERY PERFORMANCE: SPEED LOGISTICS */}
       <DeliveryMetrics />
@@ -261,7 +339,7 @@ export default function AdminDashboard() {
               </Link>
           </div>
           <div className="h-[600px] w-full rounded-[3.5rem] border border-slate-100 overflow-hidden shadow-2xl">
-              <LiveDispatchMap riders={[]} /> {/* Riders state could be shared later */}
+              <LiveDispatchMap riders={riders} />
           </div>
       </section>
 
@@ -382,6 +460,7 @@ export default function AdminDashboard() {
                                   </div>
                                   <div className="min-w-0">
                                       <p className="text-[11px] font-black text-foreground uppercase truncate tracking-tight">{p.name}</p>
+                                      <p className="text-[9px] font-bold text-slate-400 uppercase mt-1 tracking-widest">{p.warehouse_location || 'Cellar Hub'}</p>
                                       <p className="text-[10px] font-bold text-rose-500 uppercase mt-1 tracking-widest">Only {p.stock} remain</p>
                                   </div>
                               </div>

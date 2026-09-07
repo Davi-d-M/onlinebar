@@ -332,7 +332,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
 Once set up:
 1. Go to http://localhost:3000/admin/upload
 2. Fill in:
-   - Product name: "AirPods Pro Gen 2"
+   - Product name: "Glenfiddich 12 Year Old"
    - Price: "32000"
    - Description: "MagSafe Charging Case (USB-C)"
    - Upload: photo.jpg

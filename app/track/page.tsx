@@ -282,7 +282,7 @@ function TrackingContent() {
                                             {order.rider_name ? `Runner ${order.rider_name} is moving!` : 'Your delivery is moving!'}
                                         </p>
                                         <p className="text-indigo-600 text-[10px] font-bold uppercase">
-                                            {order.rider_name ? 'Our elite runner is approaching your location.' : 'Our runner is approaching your location.'}
+                                            {order.rider_name ? 'Our premium runner is approaching your location.' : 'Our runner is approaching your location.'}
                                         </p>
                                     </div>
                                 </div>
@@ -345,7 +345,7 @@ function TrackingContent() {
                                     </div>
 
                                     <p className="mt-8 text-[10px] text-slate-400 font-medium italic leading-relaxed">
-                                        &quot;Genuine spirits guarantee. If your selection is not up to our standard, our elite team will replace it instantly within 24 hours.&quot;
+                                        &quot;Genuine spirits guarantee. If your selection is not up to our standard, our team will replace it instantly within 24 hours.&quot;
                                     </p>
                                 </div>
                             </div>

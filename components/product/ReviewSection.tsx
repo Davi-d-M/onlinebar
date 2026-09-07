@@ -242,7 +242,7 @@ export default function ReviewSection({ productId, isLive = true }: { productId:
               <Textarea
                 value={comment}
                 onChange={e => setComment(e.target.value)}
-                placeholder="What do you think about this gadget?"
+                placeholder="What do you think about this drink?"
                 className="rounded-xl border-none bg-white min-h-[100px] resize-none"
                 required
                 disabled={!isLive}
@@ -301,7 +301,7 @@ export default function ReviewSection({ productId, isLive = true }: { productId:
           ) : reviews.length === 0 ? (
             <div className="bg-slate-50/50 rounded-[2rem] p-12 text-center border border-slate-100">
               <MessageSquare className="h-8 w-8 text-slate-100 mx-auto mb-4" />
-              <p className="text-slate-300 font-bold uppercase tracking-widest text-[10px]">No reviews yet for this gadget.</p>
+              <p className="text-slate-300 font-bold uppercase tracking-widest text-[10px]">No reviews yet for this selection.</p>
             </div>
           ) : (
             reviews.map((review) => (

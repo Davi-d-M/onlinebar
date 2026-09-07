@@ -48,7 +48,7 @@ export default function SalesPopup() {
 
                 return {
                     name: `${firstName} from ${location}`,
-                    item: product?.name || "Premium Tech",
+                    item: product?.name || "Premium Drink",
                     time: getTimeAgo(order.created_at)
                 };
             });
@@ -57,9 +57,10 @@ export default function SalesPopup() {
 
         fetchRealSales();
 
-        // Real-time Pulse Listener
+        // Real-time Pulse Listener with unique channel name
+        const channelId = `realtime-sales-pulse-${Math.random().toString(36).substring(7)}`;
         const channel = supabase
-            ?.channel('realtime-sales-pulse')
+            ?.channel(channelId)
             .on(
                 'postgres_changes',
                 { event: 'INSERT', schema: 'public', table: 'orders' },
@@ -79,7 +80,7 @@ export default function SalesPopup() {
 
                     const newSale: Sale = {
                         name: `${firstName} from ${location}`,
-                        item: prod?.name || "Premium Tech",
+                        item: prod?.name || "Premium Drink",
                         time: "Just now 🔥"
                     };
 

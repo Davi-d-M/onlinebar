@@ -182,7 +182,7 @@ export default function AdminOrdersPage() {
     const orderToUpdate = orders.find(o => o.id === orderId);
     if (!orderToUpdate) return;
 
-    // Apex OS: State Machine Enforcement
+    // Online Bar OS: State Machine Enforcement
     if (!isValidTransition(orderToUpdate.status, status)) {
         setStatusMessage({
             type: 'error',

@@ -47,7 +47,7 @@ export default function BottleVerificationPage() {
             const meta = {
                 ip: '197.248.31.2',
                 city: 'Nairobi',
-                deviceInfo: 'iPhone 15 Pro'
+                deviceInfo: 'Authorized Terminal'
             };
             const res = await verifyBottle(id as string, meta);
             setResult(res);

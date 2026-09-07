@@ -140,7 +140,7 @@ export default function RiderOnboarding() {
         doc.setFontSize(14);
         addText("RUNNER PARTNER & DELIVERY NETWORK SERVICES AGREEMENT", true);
         doc.setFontSize(10);
-        addText("1. PURPOSE: The Company operates a digital delivery platform connecting merchants with runners.");
+        addText("1. PURPOSE: The Company operates a premium dispatch network connecting merchants with runners.");
         addText("2. INDEPENDENT CONTRACTOR: The Runner is an independent contractor, not an employee.");
         addText("3. ELIGIBILITY: Runner must provide valid ID, License, and proof of vehicle ownership.");
         addText("4. VEHICLE: Vehicle must be mechanically safe, insured, and capable of chilled transport.");
@@ -284,7 +284,7 @@ export default function RiderOnboarding() {
                             <div className="space-y-8 text-center animate-in slide-in-from-bottom-4 duration-500">
                                 <div className="space-y-2">
                                     <h2 className="text-2xl font-black text-foreground uppercase leading-tight">Join the <br/> Runner Fleet</h2>
-                                    <p className="text-sm text-slate-500 font-medium italic">&quot;Deliver chilled beverages and elite snacks. Start your shift today.&quot;</p>
+                                    <p className="text-sm text-slate-500 font-medium italic">&quot;Deliver chilled beverages and premium snacks. Start your shift today.&quot;</p>
                                 </div>
                                 <Button onClick={() => setStep(getNextEnabledStep('welcome'))} className="w-full h-18 rounded-[1.8rem] bg-primary text-white font-black uppercase text-xs tracking-widest shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95">
                                     Initialize Onboarding
@@ -413,7 +413,7 @@ export default function RiderOnboarding() {
                                 </div>
                                 <div className="h-64 overflow-y-auto p-6 bg-slate-50 rounded-3xl border border-slate-100 text-[10px] font-medium leading-relaxed text-slate-600 space-y-4">
                                     <p className="font-black text-foreground uppercase">RUNNER PARTNER & DELIVERY NETWORK SERVICES AGREEMENT</p>
-                                    <p>1. PURPOSE: The Company operates a digital delivery platform. The Runner wishes to provide delivery services as an independent contractor.</p>
+                                    <p>1. PURPOSE: The Company operates a premium dispatch network. The Runner wishes to provide delivery services as an independent contractor.</p>
                                     <p>2. ELIGIBILITY: Runner must provide valid ID, License, and proof of vehicle ownership.</p>
                                     <p>3. VEHICLE: Vehicle must be mechanically safe, insured, and capable of chilled transport.</p>
                                     <p>4. CONDUCT: Runner shall deliver safely, treat patrons respectfully, and avoid fraud.</p>

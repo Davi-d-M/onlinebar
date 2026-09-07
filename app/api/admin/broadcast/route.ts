@@ -48,7 +48,7 @@ export async function POST(request: Request) {
                     subject: subject || "Update from Online Bar Nairobi",
                     html: `
                         <div style="font-family: sans-serif; padding: 20px; color: #333;">
-                            <h2 style="color: #ff6b00;">Online Bar Nairobi Elite Update</h2>
+                            <h2 style="color: #ff6b00;">Online Bar Nairobi Premium Update</h2>
                             <p>${message.replace(/\n/g, '<br>')}</p>
                             <hr style="border: 1px solid #eee; margin: 20px 0;" />
                             <p style="font-size: 12px; color: #999;">You received this because you subscribed to Online Bar Nairobi.</p>

@@ -466,7 +466,7 @@ export default function ProfilePage() {
 
       setProfile(prev => prev ? { ...prev, ...editForm } : null);
       setIsEditing(false);
-      alert("Elite profile synchronized successfully! 🛡️");
+      alert("Premium profile synchronized successfully! 🛡️");
     } catch (err: unknown) {
       console.error("Profile Update Error:", err);
       alert(`Failed to sync profile: ${(err as Error).message}`);
@@ -551,7 +551,7 @@ export default function ProfilePage() {
                             value={supportSubject}
                             onChange={e => setSupportSubject(e.target.value)}
                             className="h-14 rounded-2xl bg-secondary border-border font-bold text-foreground"
-                            placeholder="e.g. Technical Help with AirPods"
+                            placeholder="e.g. Quality inquiry about my order"
                           />
                       </div>
                       <div className="space-y-2">
@@ -561,7 +561,7 @@ export default function ProfilePage() {
                             value={supportMessage}
                             onChange={e => setSupportMessage(e.target.value)}
                             className="min-h-[150px] rounded-2xl bg-secondary border-border font-medium text-foreground resize-none p-5"
-                            placeholder="Describe your technical inquiry..."
+                            placeholder="Describe your inquiry..."
                           />
                       </div>
                       <Button
@@ -578,7 +578,7 @@ export default function ProfilePage() {
 
       <div className="max-w-7xl mx-auto space-y-10">
 
-                {/* 1. ELITE HERO SECTION */}
+                {/* 1. PREMIUM HERO SECTION */}
                 {abandonedBag && (
                     <div className="mb-6 bg-primary/5 border border-primary/20 rounded-3xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4 animate-in slide-in-from-top-4 duration-500">
                         <div className="flex items-center gap-4">
@@ -694,7 +694,7 @@ export default function ProfilePage() {
                         <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shadow-sm"><Trophy className="h-5 w-5" /></div>
                         <h2 className="text-4xl font-black uppercase tracking-tighter text-foreground leading-none">Mission Control</h2>
                     </div>
-                    <p className="text-slate-500 font-medium text-lg max-w-2xl leading-relaxed italic">&quot;Execute daily tech assignments to accelerate your rank and unlock elite rewards.&quot;</p>
+                    <p className="text-slate-500 font-medium text-lg max-w-2xl leading-relaxed italic">&quot;Execute daily assignments to accelerate your rank and unlock premium rewards.&quot;</p>
                 </div>
             </div>
 
@@ -727,7 +727,7 @@ export default function ProfilePage() {
             <Card className="p-8 rounded-[3rem] bg-white border border-slate-100 shadow-sm space-y-6 group hover:shadow-xl transition-all">
                 <div className="flex items-center gap-3">
                     <div className="h-10 w-10 rounded-xl bg-primary/5 flex items-center justify-center text-primary"><StatsIcon className="h-5 w-5" /></div>
-                    <h3 className="text-lg font-black uppercase tracking-tighter text-foreground">Elite Insights</h3>
+                    <h3 className="text-lg font-black uppercase tracking-tighter text-foreground">Premium Insights</h3>
                 </div>
                 <div className="grid grid-cols-2 gap-4 border-b border-slate-50 pb-4">
                     <div>
@@ -740,7 +740,7 @@ export default function ProfilePage() {
                     </div>
                 </div>
                 <div className="flex justify-between items-center text-[10px] font-black uppercase text-slate-400">
-                    <span className="flex items-center gap-2"><Check className="h-3 w-3 text-primary" /> Elite Member Status</span>
+                    <span className="flex items-center gap-2"><Check className="h-3 w-3 text-primary" /> Premium Member Status</span>
                     <button onClick={() => document.getElementById('order-summary-metrics')?.scrollIntoView({ behavior: 'smooth' })} className="text-primary hover:underline">Portfolio Stats ↓</button>
                 </div>
             </Card>
@@ -810,10 +810,10 @@ export default function ProfilePage() {
                     </section>
                 )}
 
-                {/* REGISTERED TECH (DEVICE INVENTORY) */}
+                {/* BOTTLE INVENTORY */}
                 <section className="space-y-6">
                     <div className="flex items-center justify-between">
-                        <h2 className="text-xl font-black uppercase tracking-tighter text-foreground">My Devices</h2>
+                        <h2 className="text-xl font-black uppercase tracking-tighter text-foreground">Security Sessions</h2>
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                         {devices.length > 0 ? devices.map((device: Device) => (
@@ -828,7 +828,7 @@ export default function ProfilePage() {
                             </div>
                         )) : (
                             <div className="col-span-full py-10 text-center bg-slate-50 rounded-3xl border border-dashed border-slate-200">
-                                <p className="text-[10px] font-black uppercase text-slate-300 italic">No verified devices registered.</p>
+                                <p className="text-[10px] font-black uppercase text-slate-300 italic">No active security sessions registered.</p>
                             </div>
                         )}
                     </div>
@@ -844,7 +844,7 @@ export default function ProfilePage() {
                                 { level: 'Regular', icon: 'ShieldCheck' },
                                 { level: 'Insider', icon: 'Rocket' },
                                 { level: 'VIP', icon: 'Crown' },
-                                { level: 'Elite', icon: 'Gem' },
+                                { level: 'Diamond', icon: 'Gem' },
                                 { level: 'Legend', icon: 'Trophy' },
                             ]).map((step) => {
                                 const Icon = IconMap[step.icon] || Star;
@@ -870,7 +870,7 @@ export default function ProfilePage() {
                     <section className="space-y-6 scroll-mt-24" id="buy-again-section">
                         <div className="flex items-center justify-between">
                             <h2 className="text-xl font-black uppercase tracking-tighter text-foreground">Buy Again</h2>
-                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest italic">Fast restock for your tech</p>
+                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest italic">Fast restock for your cellar</p>
                         </div>
                         <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
                             {purchasedItems.map(item => (
@@ -892,7 +892,7 @@ export default function ProfilePage() {
                     </section>
                 )}
 
-                {/* AI TECH ASSISTANT HUB */}
+                {/* AI BEVERAGE ASSISTANT HUB */}
                 <section className="space-y-6">
                     <Card className="rounded-[3.5rem] bg-slate-50 border border-slate-100 p-10 text-foreground relative overflow-hidden shadow-inner group text-left">
                         <div className="relative z-10 grid sm:grid-cols-2 gap-10 items-center">
@@ -901,7 +901,7 @@ export default function ProfilePage() {
                                     <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shadow-sm group-hover:scale-105 transition-transform"><Cpu className="h-5 w-5" /></div>
                                     <h2 className="text-2xl font-black uppercase tracking-tighter">Mixology Assistant</h2>
                                 </div>
-                                <p className="text-slate-500 font-medium italic text-sm leading-relaxed">&quot;Describe your celebration or preferred taste, and I&apos;ll recommend the perfect elite pairing.&quot;</p>
+                                <p className="text-slate-500 font-medium italic text-sm leading-relaxed">&quot;Describe your celebration or preferred taste, and I&apos;ll recommend the perfect premium pairing.&quot;</p>
                                 <div className="relative">
                                     <Input
                                         ref={assistantInputRef}
@@ -948,7 +948,7 @@ export default function ProfilePage() {
                             <h3 className="text-sm font-black uppercase tracking-widest text-slate-400 flex items-center gap-2"><Hammer className="h-4 w-4" /> Technical Support</h3>
                             <div className="space-y-4">
                                 {[
-                                    { label: 'Repair Request', href: `https://wa.me/${settings.contact.whatsapp}?text=I need a technical repair request.` },
+                                    { label: 'Quality Inquiry', href: `https://wa.me/${settings.contact.whatsapp}?text=I need a quality check request.` },
                                     { label: 'Replacement', href: `https://wa.me/${settings.contact.whatsapp}?text=I want to inquire about a product replacement.` },
                                     { label: 'Refund Hub', href: `/returns` }
                                 ].map(type => (
@@ -968,7 +968,7 @@ export default function ProfilePage() {
                             <div className="relative z-10 space-y-4">
                                 <Headphones className="h-10 w-10 text-primary" />
                                 <h3 className="text-2xl font-black uppercase tracking-tighter leading-none text-foreground">Global <br /> <span className="text-primary italic">Support Hub</span></h3>
-                                <p className="text-[10px] text-slate-400 font-medium italic">&quot;Real-time support. No bots, just elite assistance.&quot;</p>
+                                <p className="text-[10px] text-slate-400 font-medium italic">&quot;Real-time support. No bots, just premium assistance.&quot;</p>
                                 <Button
                                     onClick={() => setIsSupportFormOpen(true)}
                                     className="w-full h-12 rounded-xl bg-primary text-white font-black uppercase text-[9px] tracking-widest active:scale-95 shadow-lg shadow-primary/20"
@@ -1024,7 +1024,7 @@ export default function ProfilePage() {
 
                 {/* 📜 WARRANTY & INVOICE CENTER */}
                 <section id="warranty-section" className="space-y-6 scroll-mt-24">
-                    <h2 className="text-xl font-black uppercase tracking-tighter text-foreground">Tech Insurance & Documents</h2>
+                    <h2 className="text-xl font-black uppercase tracking-tighter text-foreground">Drink Insurance & Documents</h2>
                     <div className="bg-white rounded-[3rem] border border-slate-100 shadow-sm overflow-hidden text-left">
                         <div className="p-8 border-b border-slate-50 flex items-center justify-between">
                             <div className="flex items-center gap-3">
@@ -1060,9 +1060,9 @@ export default function ProfilePage() {
                     </div>
                 </section>
 
-                {/* 📚 YOUR TECH LIBRARY */}
+                {/* 📚 YOUR BEVERAGE LIBRARY */}
                 <section className="space-y-6">
-                    <h2 className="text-xl font-black uppercase tracking-tighter text-foreground">Elite Accomplishments</h2>
+                    <h2 className="text-xl font-black uppercase tracking-tighter text-foreground">Premium Accomplishments</h2>
                     {achievements.length > 0 ? <AchievementBadges userId={user?.id || ''} /> : (
                         <div className="py-12 text-center bg-slate-50 rounded-[2.5rem] border-2 border-dashed border-slate-100">
                              <Trophy className="h-10 w-10 text-slate-200 mx-auto mb-4" />
@@ -1119,7 +1119,7 @@ export default function ProfilePage() {
                             <div className="space-y-2">
                                 {[
                                     { level: 'Regular', perks: ['2% Cashback', 'Early Access'], locked: stats.title === 'Newcomer' },
-                                    { level: 'VIP', perks: ['5% Cashback', 'Birthday Gift'], locked: !['VIP', 'Elite', 'Legend'].includes(stats.title) },
+                                    { level: 'VIP', perks: ['5% Cashback', 'Birthday Gift'], locked: !['VIP', 'Diamond', 'Legend'].includes(stats.title) },
                                 ].map(p => (
                                     <div key={p.level} className={cn("p-4 rounded-2xl border transition-all", p.locked ? "bg-slate-50 border-slate-100 opacity-60" : "bg-white border-primary/20 shadow-sm")}>
                                         <div className="flex justify-between items-center mb-2">
@@ -1167,7 +1167,7 @@ export default function ProfilePage() {
                         </div>
                         <div>
                             <h3 className="text-2xl font-black uppercase tracking-tighter leading-none mb-2">Birthday <br /> <span className="text-primary italic">Rewards</span></h3>
-                            <p className="text-slate-500 text-[10px] font-medium leading-relaxed italic opacity-80">&quot;Elite gifts are reserved for your special day. Add your birth date to unlock exclusive member coupons.&quot;</p>
+                            <p className="text-slate-500 text-[10px] font-medium leading-relaxed italic opacity-80">&quot;Premium gifts are reserved for your special day. Add your birth date to unlock exclusive member coupons.&quot;</p>
                         </div>
                         {profile?.birth_date ? (
                             <div className="p-4 bg-white rounded-2xl text-center border border-slate-100 shadow-sm">
@@ -1226,7 +1226,7 @@ export default function ProfilePage() {
                 >
                     <div className="flex items-center justify-between">
                         <h2 className="text-xl font-black text-foreground uppercase flex items-center gap-3">
-                            <CircleCheck className="h-5 w-5 text-primary" /> Digital Profile
+                            <CircleCheck className="h-5 w-5 text-primary" /> Service Profile
                         </h2>
                         <span className="text-lg font-black text-foreground group-hover:text-primary transition-colors">{stats.completion}%</span>
                     </div>
@@ -1243,7 +1243,7 @@ export default function ProfilePage() {
                                 { label: 'Address', done: !!profile?.address },
                                 { label: 'Birthday', done: !!profile?.birth_date },
                                 { label: 'Drop Point', done: !!profile?.latitude && !!profile?.longitude },
-                                { label: 'Device ID', done: devices.length > 0 },
+                                { label: 'Session ID', done: devices.length > 0 },
                             ].map(task => (
                                 <div key={task.label} className={cn("flex items-center gap-2 text-[9px] font-black uppercase tracking-widest", task.done ? "text-primary" : "text-slate-300")}>
                                     {task.done ? <CheckCircle className="h-3 w-3" /> : <XCircle className="h-3 w-3" />}
@@ -1347,7 +1347,7 @@ export default function ProfilePage() {
                     <div className="relative z-10 space-y-6 text-left">
                         <div className="h-12 w-12 rounded-2xl bg-primary/5 flex items-center justify-center text-primary border border-primary/10 group-hover:scale-110 transition-transform"><Users className="h-6 w-6" /></div>
                         <h3 className="text-2xl font-black uppercase tracking-tighter leading-none">Invite Friends <br/> <span className="text-primary italic">Earn Ksh 200</span></h3>
-                        <p className="text-slate-500 text-[11px] font-medium leading-relaxed italic">&quot;Both you and your friend earn Ksh 200 store credit instantly when they initialize their first tech mission.&quot;</p>
+                        <p className="text-slate-500 text-[11px] font-medium leading-relaxed italic">&quot;Both you and your friend earn Ksh 200 store credit instantly when they initialize their first mission.&quot;</p>
                         <div className="p-5 bg-white border border-slate-100 rounded-2xl text-center shadow-inner relative group/key">
                             <p className="text-[8px] font-black uppercase text-slate-400 mb-2 tracking-widest">Your Private Referral Link</p>
                             <p className="text-[10px] font-black tracking-tight text-primary select-all cursor-pointer hover:scale-105 transition-transform break-all">
@@ -1357,7 +1357,7 @@ export default function ProfilePage() {
                                 <Zap className="h-3 w-3 text-primary animate-pulse" />
                             </div>
                         </div>
-                        <Button onClick={handleShareReferral} className="w-full h-14 rounded-2xl bg-primary hover:bg-primary/90 text-white font-black uppercase text-[10px] tracking-widest shadow-xl transition-all shadow-primary/20 active:scale-95">WhatsApp Elite Invite</Button>
+                        <Button onClick={handleShareReferral} className="w-full h-14 rounded-2xl bg-primary hover:bg-primary/90 text-white font-black uppercase text-[10px] tracking-widest shadow-xl transition-all shadow-primary/20 active:scale-95">WhatsApp Premium Invite</Button>
                     </div>
                     <Users className="absolute -bottom-10 -left-10 h-64 w-64 text-primary/5 -z-0 rotate-12" />
                 </div>
@@ -1411,7 +1411,7 @@ export default function ProfilePage() {
                           <div className="h-10 w-10 rounded-xl bg-white/20 flex items-center justify-center text-white"><UserIcon className="h-5 w-5" /></div>
                           <div className="text-left">
                               <h2 className="text-xl font-black uppercase tracking-tighter">Update Profile</h2>
-                              <p className="text-[10px] font-black uppercase tracking-widest opacity-60">Titan Account Management</p>
+                              <p className="text-[10px] font-black uppercase tracking-widest opacity-60">Security Hub Management</p>
                           </div>
                       </div>
                       <button onClick={() => setIsEditing(false)} className="h-10 w-10 rounded-full hover:bg-white/10 flex items-center justify-center transition-colors"><X className="h-6 w-6" /></button>

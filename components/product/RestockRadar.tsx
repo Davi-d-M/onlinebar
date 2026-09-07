@@ -62,12 +62,12 @@ export default function RestockRadar({ productId, productName }: { productId: nu
                     </div>
                     <div>
                         <h3 className="text-lg font-black uppercase tracking-tighter text-foreground leading-none">Restock Radar</h3>
-                        <p className="text-[9px] font-black text-primary uppercase tracking-[0.2em] mt-1.5">Elite Priority Notification</p>
+                        <p className="text-[9px] font-black text-primary uppercase tracking-[0.2em] mt-1.5">Priority Notification</p>
                     </div>
                 </div>
 
                 <p className="text-sm font-medium text-slate-500 leading-relaxed italic">
-                    &quot;This gadget is currently high-demand. Join the radar to get an instant alert the second we restock.&quot;
+                    &quot;This bottle is currently high-demand. Join the radar to get an instant alert the second we restock.&quot;
                 </p>
 
                 <form onSubmit={handleSubmit} className="space-y-3">

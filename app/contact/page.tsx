@@ -101,8 +101,8 @@ export default function Contact() {
   const features = [
     {
       icon: Headphones,
-      title: "Tech Support",
-      description: "Assistance with all gadget setups",
+      title: "Bar Support",
+      description: "Assistance with all product inquiries",
     },
     {
       icon: MessageSquare,
@@ -130,11 +130,11 @@ export default function Contact() {
             <h1 className="text-4xl lg:text-6xl font-black text-foreground mb-6 uppercase tracking-tighter">
               Get in touch with{" "}
               <span className="text-primary block lg:inline">
-                our tech team
+                our beverage team
               </span>
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-medium">
-              Have a question about a product, compatibility, or your order? We&apos;re here to help you get the best out of your tech.
+              Have a question about a product, compatibility, or your order? We&apos;re here to help you get the best out of your experience.
             </p>
           </div>
         </div>
@@ -339,24 +339,24 @@ export default function Contact() {
           <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto text-left">
             {[
               {
-                question: "Are your gadgets authentic?",
+                question: "Are your drinks authentic?",
                 answer:
-                  "Yes, we strictly deal in 100% authentic tech products. All chargers, AirPods, and accessories come in their original manufacturer packaging.",
+                  "Yes, we strictly deal in 100% authentic products. All vintages and spirits come in their original manufacturer packaging.",
               },
               {
                 question: "How long does delivery take?",
                 answer:
-                  "Nairobi deliveries are usually within 24 hours. For upcountry orders, we dispatch via regional parcel services which typically take 2-3 business days.",
+                  "Nairobi deliveries are usually within 2 hours. For upcountry orders, we dispatch via regional parcel services which typically take 2-3 business days.",
               },
               {
-                question: "Do you offer warranties?",
+                question: "Do you offer quality checks?",
                 answer:
-                  "All our electronic items undergo technical testing before dispatch to ensure zero defects upon delivery. Specific manufacturer warranties apply to select premium items.",
+                  "All our items undergo rigorous quality testing before dispatch to ensure zero defects upon delivery. Authenticity is our priority.",
               },
               {
                 question: "What is the return policy?",
                 answer:
-                  "To maintain product integrity and security, all sales are final. We encourage customers to verify device compatibility before placing an order.",
+                  "To maintain product integrity and security, all sales are final. We encourage customers to verify their selection before placing an order.",
               },
             ].map((faq, index) => (
               <div key={index} className="bg-slate-50 border border-slate-100 rounded-[2rem] p-8 hover:bg-slate-100 transition-colors shadow-sm">
@@ -377,7 +377,7 @@ export default function Contact() {
                 Still have questions?
               </h2>
               <p className="text-xl text-white/80 mb-12 max-w-2xl mx-auto font-medium">
-                Our technical support team is ready to assist you with any gadget compatibility or order inquiries.
+                Our beverage support team is ready to assist you with any quality compatibility or order inquiries.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">

@@ -72,7 +72,7 @@ export default function DispatchPortal() {
         <div className="min-h-screen flex flex-col items-center justify-center bg-white p-8 text-center">
             <AlertCircle className="h-16 w-16 text-rose-500 mb-6" />
             <h1 className="text-3xl font-black uppercase tracking-tighter text-foreground">Dispatch Expired</h1>
-            <p className="text-slate-400 mt-2 font-medium">The order could not be located in our elite pipeline.</p>
+            <p className="text-slate-400 mt-2 font-medium">The order could not be located in our premium pipeline.</p>
             <Link href="/" className="mt-8">
                 <Button variant="outline" className="rounded-xl border-slate-200">Return to Base</Button>
             </Link>
@@ -145,7 +145,7 @@ export default function DispatchPortal() {
                         <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-5">Package Authentication</p>
                         <div className="flex items-center justify-between p-5 bg-slate-50 rounded-3xl border border-slate-100 group">
                             <div className="min-w-0 text-left">
-                                <p className="text-xs font-black uppercase text-foreground truncate">{productName || 'Tech Payload'}</p>
+                                <p className="text-xs font-black uppercase text-foreground truncate">{productName || 'Beverage Payload'}</p>
                                 <p className="text-[9px] font-bold text-slate-400 uppercase mt-1 tracking-widest">{order.size} Edition</p>
                             </div>
                             <div className="h-10 w-10 rounded-xl bg-primary text-white flex items-center justify-center text-xs font-black shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">

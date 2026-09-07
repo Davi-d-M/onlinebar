@@ -32,6 +32,7 @@ import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import RestockRadar from "@/components/product/RestockRadar";
+import BundleUpsell from "@/components/product/BundleUpsell";
 import { useSettings } from "@/lib/useSettings";
 
 interface Tutorial {
@@ -434,7 +435,7 @@ export default function Product() {
                       <div className="h-10 w-10 rounded-2xl bg-primary/20 flex items-center justify-center text-primary"><BookOpen className="h-6 w-6" /></div>
                       <h2 className="text-3xl font-black uppercase tracking-tighter">Mixology Hub</h2>
                   </div>
-                  <p className="text-slate-500 text-lg font-medium max-w-xl mb-12 italic">&quot;Don&apos;t just drink it, bro. Lead the pack with these elite mixology guides from the Bar Library.&quot;</p>
+                  <p className="text-slate-500 text-lg font-medium max-w-xl mb-12 italic">&quot;Don&apos;t just drink it, bro. Lead the pack with these professional mixology guides from the Bar Library.&quot;</p>
 
                   <div className="grid sm:grid-cols-2 gap-6">
                       {tutorials.map((t) => (
@@ -448,9 +449,32 @@ export default function Product() {
                       ))}
                   </div>
               </div>
-              {/* Subtle tech background glow */}
+              {/* Subtle background glow */}
               <div className="absolute -bottom-20 -right-20 w-96 h-96 bg-primary/10 rounded-full blur-[100px]"></div>
           </div>
+      )}
+
+      {/* [BAR GOODS] Bundle Upsell - Intelligence Layer */}
+      {product.category === 'whiskey' && (
+          <BundleUpsell
+            mainProduct={{ id: Number(product.id), name: product.name, price: product.price, image_url: product.image_url || '' }}
+            bundleProductId={2} // Assume ID 2 is Crystal Whiskey Tumblers
+            discountPercent={10}
+          />
+      )}
+      {product.category === 'spirits' && (
+          <BundleUpsell
+            mainProduct={{ id: Number(product.id), name: product.name, price: product.price, image_url: product.image_url || '' }}
+            bundleProductId={3} // Assume ID 3 is Pro Cocktail Shaker Set
+            discountPercent={15}
+          />
+      )}
+      {product.category === 'wine' && (
+          <BundleUpsell
+            mainProduct={{ id: Number(product.id), name: product.name, price: product.price, image_url: product.image_url || '' }}
+            bundleProductId={4} // Assume ID 4 is Double-Hinged Corkscrew
+            discountPercent={5}
+          />
       )}
 
       <Features />

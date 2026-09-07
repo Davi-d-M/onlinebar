@@ -13,7 +13,7 @@ const CONFIG: Record<string, { color: string, bg: string, icon: React.ElementTyp
     'Regular': { color: 'text-emerald-500', bg: 'bg-emerald-50', icon: Shield },
     'Insider': { color: 'text-indigo-500', bg: 'bg-indigo-50', icon: Rocket },
     'VIP': { color: 'text-primary', bg: 'bg-primary/10', icon: Crown },
-    'Elite': { color: 'text-purple-500', bg: 'bg-purple-50', icon: Gem },
+    'Diamond': { color: 'text-purple-500', bg: 'bg-purple-50', icon: Gem },
     'Legend': { color: 'text-amber-500', bg: 'bg-amber-50', icon: Trophy },
 };
 

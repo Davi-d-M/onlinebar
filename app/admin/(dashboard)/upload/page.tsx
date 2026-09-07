@@ -36,6 +36,7 @@ import { cn, formatPrice } from '@/lib/utils';
 import { useAdmin } from '@/context/AdminContext';
 import { logAuditAction } from '@/lib/auditService';
 import { useSettings } from '@/lib/useSettings';
+import { auditImageQuality, standardizeImageCanvas, type ImageAuditResult } from '@/lib/engines/imageEngine';
 
 const initialForm = {
   name: '',
@@ -111,7 +112,7 @@ interface Product {
   width_cm?: number;
   height_cm?: number;
   variant_stock?: Record<string, number>;
-  tech_specs?: Record<string, string>;
+  beverage_specs?: Record<string, string>;
   status?: string;
   supplier_id?: number;
   min_loyalty_tier?: string;
@@ -139,7 +140,7 @@ function UploadContent() {
   const [activeTab, setActiveTab] = useState<'live' | 'proposals'>('live');
   const [form, setForm] = useState(initialForm);
   const [variantStock, setVariantStock] = useState<Record<string, string>>({});
-  const [techSpecs, setTechSpecs] = useState<{ key: string, value: string }[]>([]);
+  const [beverageSpecs, setBeverageSpecs] = useState<{ key: string, value: string }[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [existingImages, setExistingImages] = useState<string[]>([]);
   const [selectedVideo, setSelectedVideo] = useState<File | null>(null);
@@ -152,6 +153,7 @@ function UploadContent() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [isVisionScanning, setIsVisionScanning] = useState(false);
+  const [imageAudits, setImageAudits] = useState<Record<string, ImageAuditResult>>({});
 
   // Section States
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
@@ -169,10 +171,25 @@ function UploadContent() {
       setOpenSections(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
         const files = Array.from(e.target.files);
-        setSelectedFiles(prev => [...prev, ...files]);
+        setLoadingProducts(true); // Reusing loader for UI feedback during audit
+
+        for (const file of files) {
+            const audit = await auditImageQuality(file);
+            setImageAudits(prev => ({ ...prev, [file.name]: audit }));
+
+            if (audit.isApproved) {
+                // If it's a good image, we auto-standardize it for the marketplace
+                const normalizedBlob = await standardizeImageCanvas(file);
+                const normalizedFile = new File([normalizedBlob], file.name, { type: 'image/webp' });
+                setSelectedFiles(prev => [...prev, normalizedFile]);
+            } else {
+                setSelectedFiles(prev => [...prev, file]); // Still add it but audit will show warnings
+            }
+        }
+        setLoadingProducts(false);
     }
   };
 
@@ -210,20 +227,20 @@ function UploadContent() {
     }
 
     // Bridge Listener: Handle Native SKU Scans
-    (window as Window & { onTitanScan?: (sku: string) => void }).onTitanScan = (sku: string) => {
+    (window as Window & { onBarScan?: (sku: string) => void }).onBarScan = (sku: string) => {
         setForm(prev => ({ ...prev, sku: sku }));
         setMessage({ type: 'success', text: `Node Synced: ${sku}` });
         setTimeout(() => setMessage(null), 3000);
     };
 
-    return () => { delete (window as Window & { onTitanScan?: (sku: string) => void }).onTitanScan; };
+    return () => { delete (window as Window & { onBarScan?: (sku: string) => void }).onBarScan; };
   }, []);
 
-  const triggerTitanScanner = () => {
-    if ((window as Window & { TitanNode?: { triggerScanner: () => void } }).TitanNode?.triggerScanner) {
-        (window as Window & { TitanNode?: { triggerScanner: () => void } }).TitanNode?.triggerScanner();
+  const triggerBarScanner = () => {
+    if ((window as Window & { BarNode?: { triggerScanner: () => void } }).BarNode?.triggerScanner) {
+        (window as Window & { BarNode?: { triggerScanner: () => void } }).BarNode?.triggerScanner();
     } else {
-        alert("Native Scanner Node not detected. Use the Titan Mobile App, bro.");
+        alert("Native Scanner Node not detected. Use the Online Bar Mobile App, bro.");
     }
   };
 
@@ -275,17 +292,17 @@ function UploadContent() {
     setVariantStock(prev => ({ ...prev, [variant]: value }));
   };
 
-  const handleAddSpec = () => setTechSpecs([...techSpecs, { key: '', value: '' }]);
+  const handleAddSpec = () => setBeverageSpecs([...beverageSpecs, { key: '', value: '' }]);
   const handleSpecChange = (index: number, field: 'key' | 'value', value: string) => {
-      const newSpecs = [...techSpecs];
+      const newSpecs = [...beverageSpecs];
       newSpecs[index][field] = value;
-      setTechSpecs(newSpecs);
+      setBeverageSpecs(newSpecs);
   };
-  const handleRemoveSpec = (index: number) => setTechSpecs(techSpecs.filter((_, i) => i !== index));
+  const handleRemoveSpec = (index: number) => setBeverageSpecs(beverageSpecs.filter((_, i) => i !== index));
 
   const handleGenerateDescription = async () => {
     if (!form.name.trim()) {
-        setMessage({ type: 'error', text: "Enter gadget name first!" });
+        setMessage({ type: 'error', text: "Enter product name first!" });
         setTimeout(() => setMessage(null), 3000);
         return;
     }
@@ -364,7 +381,7 @@ function UploadContent() {
 
     setExistingImages(product.images || [product.image_url]);
     setVariantStock(vStock);
-    setTechSpecs(product.tech_specs ? Object.entries(product.tech_specs).map(([key, value]) => ({ key, value })) : []);
+    setBeverageSpecs(product.beverage_specs ? Object.entries(product.beverage_specs).map(([key, value]) => ({ key, value })) : []);
     setVideoPreviewUrl(product.video_url || null);
     setEditingId(product.id);
     setFormSession(prev => prev + 1);
@@ -375,7 +392,7 @@ function UploadContent() {
     setEditingId(null);
     setForm(initialForm);
     setVariantStock({});
-    setTechSpecs([]);
+    setBeverageSpecs([]);
     setSelectedFiles([]);
     setExistingImages([]);
     setSelectedVideo(null);
@@ -422,7 +439,11 @@ function UploadContent() {
       currentVariants.forEach(v => vStock[v] = Number(variantStock[v] || 0));
 
       const specs: Record<string, string> = {};
-      techSpecs.forEach(s => { if (s.key) specs[s.key] = s.value; });
+      beverageSpecs.forEach(s => { if (s.key) specs[s.key] = s.value; });
+
+      // Calculate aggregate quality score
+      const audits = Object.values(imageAudits);
+      const avgScore = audits.length > 0 ? Math.round(audits.reduce((s, a) => s + a.score, 0) / audits.length) : 0;
 
       const productData = {
           name: form.name.trim(),
@@ -441,7 +462,13 @@ function UploadContent() {
           low_stock_alert: Number(form.low_stock_alert),
           warehouse_location: form.warehouse_location,
           variant_stock: vStock,
-          tech_specs: specs,
+          beverage_specs: specs,
+          image_quality_score: avgScore,
+          image_metadata: {
+              audit_count: audits.length,
+              last_audit_at: new Date().toISOString(),
+              all_audits: imageAudits
+          },
           category: form.category,
           sale_end_date: form.sale_end_date || null,
           featured_rank: Number(form.featured_rank),
@@ -593,7 +620,7 @@ function UploadContent() {
                                       <option value="Explorer">Explorer (All)</option>
                                       <option value="Silver">Silver Rank</option>
                                       <option value="Gold">Gold Rank</option>
-                                      <option value="Diamond">Diamond Elite</option>
+                                      <option value="Diamond">Diamond Premium</option>
                                       <option value="Legend">Legend Rank</option>
                                   </select>
                               </div>
@@ -603,7 +630,7 @@ function UploadContent() {
                                       <Input name="sku" value={form.sku} onChange={handleInputChange} className="h-14 rounded-2xl border-slate-100 bg-slate-50 font-mono text-xs flex-1" />
                                       <Button
                                           type="button"
-                                          onClick={triggerTitanScanner}
+                                          onClick={triggerBarScanner}
                                           className="h-14 w-14 rounded-2xl bg-indigo-50 text-indigo-600 border border-indigo-100 hover:bg-indigo-600 hover:text-white transition-all shadow-sm"
                                           title="Native Scan Node"
                                       >
@@ -928,7 +955,7 @@ function UploadContent() {
                           <div className="space-y-2"><label className="text-[9px] font-black uppercase text-slate-400">Full Product Story</label><Textarea name="description" value={form.description} onChange={handleInputChange} rows={6} className="rounded-[2rem] bg-slate-50 border-slate-100 p-6 text-sm" /></div>
                           <div className="space-y-6">
                               <div className="flex justify-between items-center"><h3 className="text-[10px] font-black uppercase text-foreground">Bottle Specifications</h3><Button type="button" onClick={handleAddSpec} variant="outline" className="h-8 rounded-lg text-[8px] font-black uppercase"><Plus className="h-3 w-3 mr-1" /> Add Spec</Button></div>
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">{techSpecs.map((s, i) => (
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">{beverageSpecs.map((s, i) => (
                                   <div key={i} className="flex gap-2 p-3 bg-slate-50 rounded-2xl border border-slate-100">
                                       <input value={s.key} onChange={e => handleSpecChange(i, 'key', e.target.value)} placeholder="Key" className="bg-transparent text-[10px] font-black uppercase w-1/2 outline-none" />
                                       <input value={s.value} onChange={e => handleSpecChange(i, 'value', e.target.value)} placeholder="Value" className="bg-transparent text-[10px] font-bold text-slate-500 w-1/2 border-l border-slate-200 pl-3 outline-none" />
@@ -1019,14 +1046,39 @@ function UploadContent() {
                                       </div>
                                   ))}
                                   {/* New Files */}
-                                  {selectedFiles.map((file, idx) => (
-                                      <div key={`new-${idx}`} className="relative aspect-square rounded-2xl bg-primary/5 border border-primary/20 overflow-hidden group">
-                                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                                          <img src={URL.createObjectURL(file)} alt="" className="w-full h-full object-contain" />
-                                          <button type="button" onClick={() => removeNewFile(idx)} className="absolute top-2 right-2 h-6 w-6 bg-rose-500 text-white rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"><X className="h-3 w-3" /></button>
-                                          <div className="absolute bottom-1 left-1 right-1 bg-primary text-white text-[6px] font-bold text-center rounded py-0.5">NEW</div>
-                                      </div>
-                                  ))}
+                                  {selectedFiles.map((file, idx) => {
+                                      const audit = imageAudits[file.name];
+                                      return (
+                                          <div key={`new-${idx}`} className="relative aspect-square rounded-2xl bg-primary/5 border border-primary/20 overflow-hidden group">
+                                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                                              <img src={URL.createObjectURL(file)} alt="" className="w-full h-full object-contain" />
+                                              <button type="button" onClick={() => removeNewFile(idx)} className="absolute top-2 right-2 h-6 w-6 bg-rose-500 text-white rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-20"><X className="h-3 w-3" /></button>
+
+                                              {/* Quality Badge */}
+                                              {audit && (
+                                                  <div className={cn(
+                                                      "absolute top-2 left-2 px-2 py-0.5 rounded-lg text-[7px] font-black uppercase tracking-widest shadow-lg z-20",
+                                                      audit.score >= 80 ? "bg-emerald-500 text-white" :
+                                                      audit.score >= 60 ? "bg-amber-500 text-white" : "bg-rose-500 text-white"
+                                                  )}>
+                                                      Score: {audit.score}
+                                                  </div>
+                                              )}
+
+                                              <div className="absolute bottom-1 left-1 right-1 bg-primary text-white text-[6px] font-bold text-center rounded py-0.5 z-20">NEW</div>
+
+                                              {/* Audit Tooltip on Hover */}
+                                              {audit && audit.issues.length > 0 && (
+                                                  <div className="absolute inset-0 bg-black/80 backdrop-blur-sm p-4 flex flex-col justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-30 overflow-y-auto no-scrollbar">
+                                                      <p className="text-[8px] font-black uppercase text-primary tracking-widest">Quality Audit</p>
+                                                      {audit.issues.map((iss, i) => (
+                                                          <p key={i} className="text-[7px] text-white font-medium leading-tight">• {iss}</p>
+                                                      ))}
+                                                  </div>
+                                              )}
+                                          </div>
+                                      );
+                                  })}
                                   {/* Upload Button */}
                                   <label className="aspect-square rounded-2xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all text-slate-300 hover:text-primary group relative">
                                       <input type="file" multiple accept="image/*" onChange={handleFileChange} className="hidden" />
@@ -1047,8 +1099,8 @@ function UploadContent() {
                                                 type="button"
                                                 onClick={(e) => {
                                                     e.preventDefault();
-                                                    const win = window as unknown as { TitanNode?: { triggerScanner: (mode: string) => void } };
-                                                    win.TitanNode?.triggerScanner('TRIAGE');
+                                                    const win = window as unknown as { BarNode?: { triggerScanner: (mode: string) => void } };
+                                                    win.BarNode?.triggerScanner('TRIAGE');
                                                 }}
                                                 disabled={isVisionScanning}
                                                 className="flex-1 h-8 rounded-lg bg-emerald-600 text-white font-black uppercase text-[7px] tracking-widest animate-in zoom-in-95"

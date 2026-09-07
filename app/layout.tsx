@@ -14,19 +14,19 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: 'Online Bar | Premium Wine, Spirits & Late Night Snacks Nairobi',
-  description: 'Chilled wine, elite spirits, and your favorite late-night snacks delivered instantly across Nairobi. Fast dispatch. 100% genuine products guaranteed.',
+  description: 'Chilled wine, premium spirits, and your favorite late-night snacks delivered instantly across Nairobi. Fast dispatch. 100% genuine products guaranteed.',
   keywords: ['Wine delivery Nairobi', 'Whiskey delivery Kenya', 'Late night snacks Nairobi', 'Online Bar Kenya', 'Alcohol delivery Nairobi'],
   openGraph: {
     title: 'Online Bar | Premium Drinks & Snacks',
     description: 'Shop the best wine and spirits with Nairobi fast dispatch and secure M-Pesa checkout.',
-    url: process.env.NEXT_PUBLIC_BASE_URL || 'https://tech-paxv.onrender.com',
+    url: process.env.NEXT_PUBLIC_BASE_URL || 'https://onlinebar-os.onrender.com',
     siteName: 'Online Bar',
     locale: 'en_KE',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Online Bar | Elite Drinks Catalog',
+    title: 'Online Bar | Premium Drinks Catalog',
     description: 'Premium spirits and snacks delivered instantly across Kenya.',
   },
   manifest: '/manifest.json',

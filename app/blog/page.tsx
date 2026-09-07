@@ -60,7 +60,7 @@ export default function BlogListPage() {
                   Drink <span className="text-primary italic">Guides.</span>
               </h1>
               <p className="text-slate-500 text-lg font-medium max-w-2xl mx-auto">
-                  Master your mixology with our elite tutorials, beverage reviews, and pairing guides for Kenyan patrons.
+                  Master your mixology with our tutorials, beverage reviews, and pairing guides for Kenyan patrons.
               </p>
           </div>
           <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -z-0"></div>
@@ -109,7 +109,7 @@ export default function BlogListPage() {
       {/* CTA section */}
       <section className="bg-slate-50 py-24 text-center text-foreground border-t border-slate-100">
           <h2 className="text-4xl font-black uppercase tracking-tighter mb-4">Want the latest deals?</h2>
-          <p className="text-slate-500 font-medium mb-10 max-w-sm mx-auto">Join 1,000+ patrons getting weekly elite beverage tips.</p>
+          <p className="text-slate-500 font-medium mb-10 max-w-sm mx-auto">Join 1,000+ patrons getting weekly premium beverage tips.</p>
           <div className="flex justify-center">
               <Button
                 onClick={() => document.getElementById('footer-newsletter')?.scrollIntoView({ behavior: 'smooth' })}

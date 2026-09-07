@@ -286,7 +286,7 @@ export default function AdminAffiliates() {
                 <div className="lg:col-span-4 flex flex-col gap-10">
                     <Card className="rounded-[3rem] border border-border overflow-hidden bg-card shadow-sm flex flex-col h-full min-h-[300px]">
                         <div className="p-8 border-b border-border flex items-center justify-between">
-                            <h2 className="text-xl font-black text-foreground uppercase tracking-tighter">Elite Partners</h2>
+                            <h2 className="text-xl font-black text-foreground uppercase tracking-tighter">Premium Partners</h2>
                             <Trophy className="h-5 w-5 text-amber-500" />
                         </div>
                         <div className="flex-1 overflow-y-auto p-4 space-y-3 no-scrollbar">
@@ -340,7 +340,7 @@ export default function AdminAffiliates() {
                                 try {
                                     const { generateProductCatalog } = await import('@/lib/catalogService');
                                     const doc = await generateProductCatalog(new Date().toLocaleString('default', { month: 'long' }));
-                                    doc.save('Elite_Tech_Catalog.pdf');
+                                    doc.save('Premium_Beverage_Catalog.pdf');
                                     setMessage({ type: 'success', text: "Catalog compilation successful! 📁" });
                                     setTimeout(() => setMessage(null), 3000);
                                 } catch {
@@ -419,36 +419,36 @@ export default function AdminAffiliates() {
                                             <p className="text-[8px] font-black text-emerald-500 uppercase mt-1">{aff.order_count} Orders</p>
                                         </td>
                                         <td className="px-10 py-8 text-right">
-                                            <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <Button
-                                                    onClick={() => window.open(`https://wa.me/${aff.phone_number}`, '_blank')}
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    className="h-10 w-10 rounded-xl hover:text-primary hover:bg-white transition-all shadow-sm"
-                                                >
-                                                    <MessageSquare className="h-4 w-4" />
-                                                </Button>
-                                                <Button
-                                                    onClick={() => {
-                                                        const status = aff.status === 'Verified' ? 'Flagged' : 'Verified';
-                                                        updateAffiliateStatus(aff.id, status);
-                                                    }}
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    className="h-10 w-10 rounded-xl hover:text-amber-500 hover:bg-white transition-all shadow-sm"
-                                                >
-                                                    <ShieldCheck className="h-4 w-4" />
-                                                </Button>
-                                                <Link href={`/admin/customers/${aff.phone_number}`}>
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        className="h-10 w-10 rounded-xl hover:text-foreground hover:bg-white transition-all shadow-sm"
-                                                    >
-                                                        <ChevronRight className="h-4 w-4" />
-                                                    </Button>
-                                                </Link>
-                                            </div>
+                                <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <Button
+                                        onClick={() => window.open(`https://wa.me/${aff.phone_number}`, '_blank')}
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-10 w-10 rounded-xl hover:text-primary hover:bg-white transition-all shadow-sm"
+                                    >
+                                        <MessageSquare className="h-4 w-4" />
+                                    </Button>
+                                    <Button
+                                        onClick={() => {
+                                            const status = aff.status === 'Verified' ? 'Flagged' : 'Verified';
+                                            updateAffiliateStatus(aff.id, status);
+                                        }}
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-10 w-10 rounded-xl hover:text-amber-500 hover:bg-white transition-all shadow-sm"
+                                    >
+                                        <ShieldCheck className="h-4 w-4" />
+                                    </Button>
+                                    <Link href={`/admin/customers/${aff.phone_number}`}>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="h-10 w-10 rounded-xl hover:text-foreground hover:bg-white transition-all shadow-sm"
+                                        >
+                                            <ChevronRight className="h-4 w-4" />
+                                        </Button>
+                                    </Link>
+                                </div>
                                         </td>
                                     </tr>
                                 ))}

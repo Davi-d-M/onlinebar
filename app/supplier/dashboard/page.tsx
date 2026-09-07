@@ -218,7 +218,7 @@ export default function SupplierDashboard() {
                                 <div>
                                     <h3 className="text-2xl font-black uppercase tracking-tighter leading-none mb-2 text-foreground">Legal <br/> <span className="text-primary italic">Document Vault</span></h3>
                                     <p className="text-[10px] text-slate-500 font-medium italic leading-relaxed">&quot;All compliance artifacts are encrypted and verified. Maintain your status by keeping your license and permits updated.&quot;</p>
-                                0.</div>
+                                </div>
                                 <Button className="w-full h-14 rounded-2xl bg-primary text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-primary/20 hover:scale-105 transition-all active:scale-95">Open Secure Vault</Button>
                             </div>
                             <Activity className="absolute -bottom-10 -left-10 h-48 w-48 text-primary/5 rotate-45 -z-0" />

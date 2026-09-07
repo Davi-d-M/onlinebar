@@ -38,7 +38,7 @@ export default function DynamicHero({ initialSettings }: { initialSettings?: Sto
             </h1>
 
             <p className="text-lg text-slate-500 font-medium max-w-lg leading-relaxed">
-              {settings?.branding?.hero_subtitle || 'Experience authentic vintages and elite spirits curated for excellence.'}
+              {settings?.branding?.hero_subtitle || 'Experience authentic vintages and premium spirits curated for excellence.'}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 pt-4">

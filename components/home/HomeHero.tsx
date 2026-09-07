@@ -26,7 +26,7 @@ export default function HomeHero() {
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black tracking-tighter text-foreground uppercase leading-[1.1] sm:leading-[0.9]">
-              Elite <span className="text-primary italic">Vintages.</span><br />
+              Premium <span className="text-primary italic">Vintages.</span><br />
               Chilled <span className="text-slate-400">Spirits.</span>
             </h1>
 
@@ -35,7 +35,7 @@ export default function HomeHero() {
             )}
 
             <p className="text-lg text-slate-500 font-medium max-w-lg leading-relaxed">
-              Experience authentic wine and elite spirits curated for excellence. From premium champagne to chilled local brews, we power your celebrations.
+              Experience authentic wine and premium spirits curated for excellence. From premium champagne to chilled local brews, we power your celebrations.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 pt-4">

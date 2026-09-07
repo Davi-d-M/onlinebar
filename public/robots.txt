@@ -22,4 +22,4 @@ Allow: /
 User-agent: Amazonbot
 Allow: /
 
-Sitemap: https://tech-paxv.onrender.com/sitemap.xml
+Sitemap: https://onlinebar-os.onrender.com/sitemap.xml

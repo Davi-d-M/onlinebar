@@ -69,7 +69,7 @@ export default function BundleUpsell({ mainProduct, bundleProductId, discountPer
                         Buy Together &amp; <span className="text-primary italic">Save {discountPercent}%</span>
                     </h3>
                     <p className="text-slate-500 font-medium leading-relaxed">
-                        Complete your setup. Add <span className="text-foreground font-black uppercase tracking-tight">{bundleProduct.name}</span> to your order and get an instant elite discount.
+                        Complete your experience. Add <span className="text-foreground font-black uppercase tracking-tight">{bundleProduct.name}</span> to your order and get an instant premium discount.
                     </p>
                 </div>
 

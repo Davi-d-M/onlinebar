@@ -119,7 +119,7 @@ export default function RiderLogin() {
                                 />
                                 <Key className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
                             </div>
-                            <p className="text-[8px] font-black text-slate-400 uppercase text-center mt-2">Check your device for the 6-digit code.</p>
+                            <p className="text-[8px] font-black text-slate-400 uppercase text-center mt-2">Check your device for the grid access key.</p>
                         </div>
 
                         <Button

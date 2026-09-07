@@ -5,7 +5,6 @@ import { supabase } from '@/lib/supabaseClient';
 import {
     DollarSign,
     TrendingUp,
-    Wallet,
     Target,
     Zap,
     Scale,
@@ -16,6 +15,9 @@ import {
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { formatPrice, cn } from '@/lib/utils';
+import TaxControlCenter from '@/components/admin/finance/TaxControlCenter';
+import InventoryValuation from '@/components/admin/finance/InventoryValuation';
+import ReconciliationEngine from '@/components/admin/finance/ReconciliationEngine';
 
 interface LedgerEntry {
     id: number;
@@ -71,11 +73,13 @@ export default function AdminFinancePage() {
         setIsReconciling(true);
         setMessage(null);
         try {
-            // Apex OS: Automatic Reconciliation Logic
+            // Online Bar OS: Automatic Reconciliation Logic
             // In real app, this would hit gateway APIs
             await new Promise(r => setTimeout(r, 2000));
 
-            const { error } = await supabase!
+            if (!supabase) throw new Error("Database offline");
+
+            const { error } = await supabase
                 .from('financial_ledger')
                 .update({ is_reconciled: true, reconciliation_ref: `RECON-${Date.now()}` })
                 .eq('is_reconciled', false);
@@ -162,10 +166,10 @@ export default function AdminFinancePage() {
             {/* Financial KPIs 2.0 */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 items-stretch">
                 {[
-                    { label: 'Available Cash', val: stats.revenue - stats.payables, icon: Wallet, color: 'emerald' },
+                    { label: 'Total Revenue', val: stats.revenue, icon: DollarSign, color: 'primary' },
                     { label: 'Unreconciled', val: stats.totalVariances, icon: Target, color: 'amber' },
-                    { label: 'Net Profit', val: stats.contributionProfit, icon: TrendingUp, color: 'primary' },
-                    { label: 'Margin Efficiency', val: `${stats.margin.toFixed(1)}%`, icon: DollarSign, color: 'indigo' },
+                    { label: 'Gross Profit', val: stats.contributionProfit, icon: TrendingUp, color: 'emerald' },
+                    { label: 'Margin efficiency', val: `${stats.margin.toFixed(1)}%`, icon: Scale, color: 'indigo' },
                 ].map((item) => (
                     <Card key={item.label} className="p-10 rounded-[3rem] bg-white border border-slate-100 shadow-sm group hover:shadow-xl transition-all relative overflow-hidden h-full flex flex-col justify-between">
                         <div className="relative z-10 space-y-8">
@@ -187,6 +191,15 @@ export default function AdminFinancePage() {
                         </div>
                     </Card>
                 ))}
+            </div>
+
+            {/* FINANCE OS MODULES */}
+            <div className="grid lg:grid-cols-2 gap-8">
+                <TaxControlCenter />
+                <InventoryValuation />
+                <div className="lg:col-span-2">
+                    <ReconciliationEngine />
+                </div>
             </div>
 
             <div className="grid lg:grid-cols-12 gap-10">

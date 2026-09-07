@@ -104,7 +104,7 @@ function RiderDashboardContent() {
 
             localStorage.setItem('ob_rider_phone', riderPhone);
             localStorage.setItem('ob_rider_pin', riderPin);
-            setRider(riderData as Record<string, unknown>);
+            setRider(riderData);
             setMissions(currentMissions);
             setIsIdentified(true);
             setIsOnline(riderData.status !== 'Offline');

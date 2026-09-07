@@ -243,7 +243,7 @@ CREATE TABLE IF NOT EXISTS public.daily_rewards_log (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
 );
 
--- 10. INDEXES FOR ELITE SPEED
+-- 10. INDEXES FOR MAXIMUM SPEED
 CREATE INDEX IF NOT EXISTS idx_orders_customer_phone ON public.orders(customer_phone);
 CREATE INDEX IF NOT EXISTS idx_orders_created_at ON public.orders(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_products_category ON public.products(category);

@@ -52,7 +52,7 @@ export default function EmailPreview({ productName, productPrice, imageUrl, subj
                     </div>
 
                     <div className="space-y-4">
-                        <h3 className="text-lg font-black uppercase text-foreground">{productName || "Gadget Specification"}</h3>
+                        <h3 className="text-lg font-black uppercase text-foreground">{productName || "Product Specification"}</h3>
                         <p className="text-[11px] text-slate-500 font-medium leading-relaxed italic whitespace-pre-wrap">
                             {body || "Design your email narrative in the content assistant step..."}
                         </p>

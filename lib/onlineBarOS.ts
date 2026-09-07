@@ -1,6 +1,7 @@
 import { supabase } from './supabaseClient';
 import { emitEvent, SystemEventType } from './engines/eventEngine';
 import { generateCorrelationId, generateRequestId } from './utils/correlation';
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  * ONLINE BAR OS: THE MASTER CONTROLLER
@@ -64,20 +65,36 @@ interface OSEventPayload {
     campaignId?: string;
     experimentId?: string;
     variantId?: string;
+    sessionId?: string;
+    dwellTimeSec?: number;
+    failureReason?: string;
     details?: Record<string, unknown>;
 }
 
 class OnlineBarOS {
     private static instance: OnlineBarOS;
     private correlationId: string | null = null;
+    private sessionId: string | null = null;
 
-    private constructor() {}
+    private constructor() {
+        if (typeof window !== 'undefined') {
+            this.sessionId = localStorage.getItem('ob_session_active_id');
+            if (!this.sessionId) {
+                this.sessionId = uuidv4();
+                localStorage.setItem('ob_session_active_id', this.sessionId);
+            }
+        }
+    }
 
     public static getInstance(): OnlineBarOS {
         if (!OnlineBarOS.instance) {
             OnlineBarOS.instance = new OnlineBarOS();
         }
         return OnlineBarOS.instance;
+    }
+
+    public getSessionId(): string | null {
+        return this.sessionId;
     }
 
     /**
@@ -88,18 +105,37 @@ class OnlineBarOS {
 
         const corrId = this.correlationId || generateCorrelationId();
         const reqId = generateRequestId();
+        const sessId = this.sessionId || undefined;
 
         // 1. Emit System Event (Logic + Automation)
         if (this.isSystemEvent(eventType)) {
-            await emitEvent(eventType as SystemEventType, payload, { corrId, reqId });
+            await emitEvent(eventType as SystemEventType, payload, { corrId, reqId, sessId });
         }
 
-        // 2. Log to Behavioral Analytics (Respecting Consent)
-        await this.logAnalytics(eventType, payload, { corrId, reqId });
+        // 2. Log to Behavioral Analytics
+        await this.logAnalytics(eventType, { ...payload, sessionId: sessId }, { corrId, reqId });
 
         // 3. Heartbeat/Session Management
         if (eventType === 'HEARTBEAT' && payload.userId) {
             await this.refreshSession(payload.userId);
+        }
+
+        // 4. Session Forensics (The "Line-by-Line" Audit)
+        await this.logForensics(eventType, { ...payload, sessionId: sessId });
+    }
+
+    private async logForensics(type: string, payload: OSEventPayload) {
+        if (!supabase || !payload.sessionId) return;
+
+        try {
+            await supabase.from('session_forensics').insert([{
+                session_id: payload.sessionId,
+                action_type: type,
+                page_url: typeof window !== 'undefined' ? window.location.pathname : undefined,
+                metadata: payload.details || {}
+            }]);
+        } catch {
+            // Silently fail forensics if DB is busy
         }
     }
 
@@ -115,7 +151,7 @@ class OnlineBarOS {
         try {
             await supabase.from('security_sessions').upsert({
                 user_id: userId,
-                device_name: isMobile ? 'Mobile Terminal' : 'Desktop Node',
+                device_name: isMobile ? 'Mobile Terminal' : 'Desktop Terminal',
                 device_type: isMobile ? 'Mobile' : 'Desktop',
                 browser: this.getBrowserName(userAgent),
                 ip_address: 'Logged via Node', // In prod, get from server headers

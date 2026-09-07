@@ -43,8 +43,8 @@ export default function DailyStreak({ currentStreak, milestoneDays = 14, milesto
                     <div>
                         <p className="text-[10px] text-slate-500 font-medium leading-relaxed italic">
                             {daysLeft > 0
-                                ? `Keep shopping for ${daysLeft} more days to unlock your elite ${milestoneReward}. Don't break the chain!`
-                                : `Elite Milestone Reached! Your ${milestoneReward} has been credited.`
+                                ? `Keep shopping for ${daysLeft} more days to unlock your ${milestoneReward}. Don't break the chain!`
+                                : `Milestone Reached! Your ${milestoneReward} has been credited.`
                             }
                         </p>
                     </div>

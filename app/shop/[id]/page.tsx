@@ -8,7 +8,7 @@ interface Props {
 }
 
 /**
- * Dynamic SEO for Gadget Pages
+ * Dynamic SEO for Beverage Pages
  */
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: `${product.name} | Online Bar Nairobi`,
-    description: product.description || `Buy authentic ${product.name} with Nairobi fast dispatch. Genuine products and elite service.`,
+    description: product.description || `Buy authentic ${product.name} with Nairobi fast dispatch. Genuine products and premium service.`,
     openGraph: {
       title: product.name,
       description: product.description || undefined,
@@ -46,7 +46,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { id } = await params;
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://tech-paxv.onrender.com';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://onlinebar-os.onrender.com';
 
   let product: Product | null = null;
   let related: Product[] = [];
@@ -82,7 +82,7 @@ export default async function Page({ params }: Props) {
 
   if (!product) return (
     <div className="min-h-[50dvh] flex flex-col items-center justify-center p-8 text-center">
-        <h1 className="text-2xl font-black uppercase text-foreground">Gadget Not Found</h1>
+        <h1 className="text-2xl font-black uppercase text-foreground">Drink Not Found</h1>
         <p className="text-slate-500 mt-2">This item may have been removed from the catalog.</p>
     </div>
   );
@@ -119,7 +119,7 @@ export default async function Page({ params }: Props) {
             {
               "@context": "https://schema.org/",
               "@type": "Product",
-              "name": product.name || 'Premium Gadget',
+              "name": product.name || 'Premium Selection',
               "image": product.image_url ? [product.image_url, ...(Array.isArray(product.image_url) ? [product.image_url] : [])] : ['/placeholder.jpg'],
               "description": product.description || '',
               "brand": {

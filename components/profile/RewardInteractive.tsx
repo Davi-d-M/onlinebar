@@ -70,7 +70,7 @@ export default function RewardInteractive({ userId }: { userId: string }) {
                         activeTab === 'spin' ? "bg-primary text-white shadow-lg" : "text-slate-400 hover:text-slate-600"
                     )}
                 >
-                    Elite Spin
+                    Premium Spin
                 </button>
             </div>
 
@@ -83,7 +83,7 @@ export default function RewardInteractive({ userId }: { userId: string }) {
                         <div className="space-y-2">
                             <h4 className="text-4xl font-black uppercase tracking-tighter">Mission Accomplished</h4>
                             <p className="text-primary font-black text-2xl italic tracking-widest">{prize.label} Received</p>
-                            <p className="text-slate-400 text-xs font-medium italic mt-4">&quot;Your elite reward has been added to your account ledger, bro!&quot;</p>
+                            <p className="text-slate-400 text-xs font-medium italic mt-4">&quot;Your reward has been added to your account ledger, bro!&quot;</p>
                         </div>
                         <Button onClick={() => setStatus('idle')} className="h-14 px-12 rounded-2xl bg-primary text-white font-black uppercase tracking-widest text-[10px] hover:bg-primary/90 transition-all active:scale-95 mt-4">
                             Dismiss
@@ -106,7 +106,7 @@ export default function RewardInteractive({ userId }: { userId: string }) {
                         </div>
 
                         <div className="space-y-4 max-w-xs mx-auto">
-                            <h4 className="text-2xl font-black uppercase tracking-tighter text-foreground">Daily Tech Crate</h4>
+                            <h4 className="text-2xl font-black uppercase tracking-tighter text-foreground">Daily Bar Crate</h4>
                             <p className="text-slate-500 text-[10px] font-medium leading-relaxed">
                                 Contains random XP boosts or secret store credits. Refreshes every 24 hours.
                             </p>
@@ -139,7 +139,7 @@ export default function RewardInteractive({ userId }: { userId: string }) {
                         </div>
 
                         <div className="space-y-4 max-w-xs mx-auto">
-                            <h4 className="text-2xl font-black uppercase tracking-tighter text-foreground">Elite Wheel</h4>
+                            <h4 className="text-2xl font-black uppercase tracking-tighter text-foreground">Premium Wheel</h4>
                             <p className="text-slate-500 text-[10px] font-medium leading-relaxed">
                                 One spin, total power. High probability of XP, low probability of vouchers.
                             </p>

@@ -17,7 +17,7 @@ INSERT INTO public.mission_definitions (id, label, description, xp_reward, targe
 VALUES
 ('buy-mixers', 'Explore Mixers', 'Purchase 2 or more mixers in a single order.', 250, 2),
 ('review-product', 'Patron Voice', 'Share your tasting notes with the community.', 100, 1),
-('refer-friend', 'Spread the Word', 'Bring an elite patron to the bar grid.', 500, 1)
+('refer-friend', 'Spread the Word', 'Bring a premium patron to the bar grid.', 500, 1)
 ON CONFLICT (id) DO NOTHING;
 
 -- RLS

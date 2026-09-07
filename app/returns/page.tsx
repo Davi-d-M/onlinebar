@@ -59,7 +59,7 @@ export default function ReturnsAndExchangesPage() {
               We stand firmly behind our fulfillment workflows. The absolute only exception to this policy is if an error was explicitly made by the Online Bar dispatch center.
             </p>
             <p className="mt-2 font-medium text-slate-500">
-              If we inadvertently dispatch the completely wrong beverage variant compared to what is explicitly listed on your digital invoice receipt, please flag it with our team within <strong>24 hours</strong> of delivery. The product must remain completely sealed, unused, and in its original packaging to qualify for a corrective replacement.
+              If we inadvertently dispatch the completely wrong beverage variant compared to what is explicitly listed on your digital invoice.ce receipt, please flag it with our team within <strong>24 hours</strong> of delivery. The product must remain completely sealed, unused, and in its original packaging to qualify for a corrective replacement.
             </p>
           </section>
 

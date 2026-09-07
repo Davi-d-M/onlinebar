@@ -1,19 +1,23 @@
-# Tasks - Hardened Grid Establishment 🛡️🏰
+# Tasks - Online Bar Affiliate OS 🚀🤝💰
 
-## Phase 1: SQL Master Crafting
-- [x] Create `supabase/migrations/grid_establishment_hardened.sql`:
-    - [x] Add `active_visitors` table.
-    - [x] Rename `ledger_entries` to `financial_ledger`.
-    - [x] Implement `DROP POLICY IF EXISTS` for all RLS rules.
-    - [x] Add indexes for high-fidelity analytics.
+## Phase 1: Infrastructure
+- [x] Create SQL migration `20260904_affiliate_os_core.sql` for partner nodes.
+- [x] Implement Affiliate Registration `app/affiliate/register/page.tsx`.
+- [ ] Create `lib/engines/affiliateEngine.ts` for commission logic.
 
-## Phase 2: System Connectivity Check
-- [x] Verify `onlineBarOS.ts` connectivity with the new schema.
-- [x] Verify Admin Dashboard stats (Revenue, Orders) sync with `financial_ledger`.
-- [x] Ensure "No dark colors" in any generated UI artifacts.
+## Phase 2: Partner Experience
+- [ ] Overhaul `app/affiliate/dashboard/page.tsx` (Professional Command Center).
+- [ ] Implement Product Marketplace for affiliates.
+- [ ] Build "One-Tap Sharing" logic for WhatsApp/Instagram.
+- [ ] Add Commission Calculator to partner dashboard.
 
-## Phase 3: Final Verification
-- [x] Run build check.
-- [x] Provide final walkthrough.
-- [x] **✓ All linting warnings gone.**
-- [x] **✓ Project is 100% clean build ready.**
+## Phase 3: Administrative Control
+- [ ] Enhance Admin Affiliate Hub `app/admin/(dashboard)/affiliates/page.tsx`.
+- [ ] Implement Partner Approval/Verification workflow.
+- [ ] Build Fraud Monitoring dashboard for admins.
+
+## Phase 4: Production Hardening
+- [ ] Remove all `any` types from admin components.
+- [ ] Clean up unused variables and verify dependencies.
+- [ ] Run final production build (`npm run build`).
+- [ ] Push code to GitHub.

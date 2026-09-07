@@ -13,7 +13,7 @@ export default function ShippingInfoPage() {
           <h1 className="text-3xl font-extrabold text-foreground tracking-tight">Shipping & Delivery Info</h1>
           <p className="text-sm text-slate-400 mt-2">Last Updated: {lastUpdated}</p>
           <p className="text-slate-600 mt-4 leading-relaxed">
-            At <strong>Apexstores</strong>, we work to get your premium gadgets and accessories processed, packed, and dispatched into your hands as quickly as possible. Below you will find everything you need to know about our local delivery zones, timelines, and courier fulfillment methods.
+            At <strong>Online Bar</strong>, we work to get your premium beverages and snacks processed, packed, and dispatched into your hands as quickly as possible. Below you will find everything you need to know about our local delivery zones, timelines, and courier fulfillment methods.
           </p>
         </div>
 
@@ -63,7 +63,7 @@ export default function ShippingInfoPage() {
           <section>
             <h2 className="text-lg font-bold text-foreground mb-3">2. Upcountry Pick-up Points</h2>
             <p>
-              For accessory deliveries outside of Nairobi, packages are securely routed via established regional parcel networks or major courier services. Once dispatch manifests are signed off at the terminals, a digital receipt containing the vehicle plate numbers, courier tracking number, or parcel office desk contact will be pushed out to your phone.
+              For beverage deliveries outside of Nairobi, packages are securely routed via established regional parcel networks or major towns. courier services. Once dispatch manifests are signed off at the terminals, a digital receipt containing the vehicle plate numbers, courier tracking number, or parcel office desk contact will be pushed out to your phone.
             </p>
             <p className="mt-2">
               Please present your official identification matching your checkout billing sheet when collecting your order at your local town&apos;s parcel office drop-point.

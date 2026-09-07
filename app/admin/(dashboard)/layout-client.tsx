@@ -88,31 +88,31 @@ export default function AdminLayoutClient({
       };
       window.addEventListener('keydown', handleKeyDown);
 
-      // Phase 9: Titan Mobile OS Bridge (Offline Sync Node)
-      const titanWindow = window as unknown as {
-        onTitanOfflineSync: boolean;
-        onTitanSyncOrder: (orderId: string) => Promise<void>;
+      // Phase 9: Bar Grid Bridge (Offline Sync Node)
+      const barWindow = window as unknown as {
+        onBarOfflineSync: boolean;
+        onBarSyncOrder: (orderId: string) => Promise<void>;
       };
 
-      titanWindow.onTitanOfflineSync = true;
-      titanWindow.onTitanSyncOrder = async (orderId: string) => {
+      barWindow.onBarOfflineSync = true;
+      barWindow.onBarSyncOrder = async (orderId: string) => {
           if (!supabase) return;
           try {
               const { error } = await supabase
                   .from('orders')
-                  .update({ status: 'Delivered', captured_by: 'titan-offline-sync' })
+                  .update({ status: 'Delivered', captured_by: 'bar-offline-sync' })
                   .eq('id', parseInt(orderId));
 
               if (error) throw error;
           } catch (err) {
-              console.error(`📡 [TITAN_BRIDGE] Sync Failed: ${orderId}`, err);
+              console.error(`📡 [BAR_BRIDGE] Sync Failed: ${orderId}`, err);
           }
       };
 
       return () => {
           window.removeEventListener('keydown', handleKeyDown);
-          delete (titanWindow as unknown as Record<string, unknown>).onTitanOfflineSync;
-          delete (titanWindow as unknown as Record<string, unknown>).onTitanSyncOrder;
+          delete (barWindow as unknown as Record<string, unknown>).onBarOfflineSync;
+          delete (barWindow as unknown as Record<string, unknown>).onBarSyncOrder;
       };
   }, []);
 

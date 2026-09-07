@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { MessageSquare, ShoppingCart, Share2, ArrowLeft, Zap, ChevronLeft, ChevronRight, Layers, Check, Loader2 } from 'lucide-react';
+import { MessageSquare, ShoppingCart, Share2, ArrowLeft, Zap, ChevronLeft, ChevronRight, Layers, Check, Loader2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { formatPrice, cn, getReferralLink } from '@/lib/utils';
 import ReviewSection from '@/components/product/ReviewSection';
@@ -39,7 +39,7 @@ interface Product {
   category?: string;
   stock?: number;
   variant_stock?: Record<string, number>;
-  tech_specs?: Record<string, string>;
+  beverage_specs?: Record<string, string>;
   bundle_product_id?: number;
   bundle_discount_percent?: number;
   wholesale_price?: number;
@@ -53,6 +53,7 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
   );
   const [isAdding, setIsAdding] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false); // NEW
 
   const [justAdded, setJustAdded] = useState(false);
   const [referralCode, setReferralCode] = useState<string | null>(null);
@@ -242,7 +243,10 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
                       src={(hasVideo ? allImages[activeImageIndex - 1] : allImages[activeImageIndex]) || '/placeholder.jpg'}
                       alt={product.name}
                       fill
-                      className="object-contain p-10 transform hover:scale-110 transition-transform duration-700 ease-out"
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      className="object-contain p-10 transform hover:scale-110 transition-transform duration-700 ease-out cursor-zoom-in"
+                      onClick={() => setIsLightboxOpen(true)}
+                      priority
                     />
                 )}
 
@@ -336,13 +340,13 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
               </div>
 
               {/* Product Specifications */}
-              {product.tech_specs && typeof product.tech_specs === 'object' && !Array.isArray(product.tech_specs) && Object.keys(product.tech_specs).length > 0 && (
+              {product.beverage_specs && typeof product.beverage_specs === 'object' && !Array.isArray(product.beverage_specs) && Object.keys(product.beverage_specs).length > 0 && (
                 <div className="mb-12 text-left">
                     <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-6 ml-1 flex items-center gap-2">
                         <Layers className="h-4 w-4" /> Beverage Specifications
                     </h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {Object.entries(product.tech_specs).map(([key, value]) => (
+                        {Object.entries(product.beverage_specs).map(([key, value]) => (
                             <div key={key} className="flex justify-between items-center p-4 rounded-2xl bg-slate-50 border border-slate-100">
                                 <span className="text-[10px] font-black uppercase tracking-tight text-slate-400">{key}</span>
                                 <span className="text-xs font-black text-foreground">{String(value)}</span>
@@ -452,6 +456,61 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
             </div>
           </div>
         </div>
+
+        {/* LIGHTBOX / FULLSCREEN ZOOM */}
+        {isLightboxOpen && (
+            <div className="fixed inset-0 z-[5000] bg-white/95 backdrop-blur-2xl flex flex-col animate-in fade-in duration-300">
+                <div className="p-8 flex justify-between items-center border-b border-slate-100">
+                    <div>
+                        <h4 className="text-xl font-black uppercase text-foreground tracking-tighter">{product.name}</h4>
+                        <p className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mt-1">High-Resolution Payload View</p>
+                    </div>
+                    <button onClick={() => setIsLightboxOpen(false)} className="h-14 w-14 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:text-rose-500 transition-all border border-slate-100 shadow-sm"><X size={24} /></button>
+                </div>
+                <div className="flex-1 relative flex items-center justify-center p-12">
+                    <div className="relative w-full h-full max-w-5xl">
+                        <Image
+                            src={allImages[activeImageIndex] || '/placeholder.jpg'}
+                            alt={product.name}
+                            fill
+                            className="object-contain animate-in zoom-in-95 duration-500"
+                            sizes="90vw"
+                        />
+                    </div>
+
+                    {allImages.length > 1 && (
+                        <div className="absolute inset-x-12 top-1/2 -translate-y-1/2 flex justify-between pointer-events-none">
+                            <button
+                                onClick={() => setActiveImageIndex(i => i === 0 ? allImages.length - 1 : i - 1)}
+                                className="h-16 w-16 rounded-full bg-white/50 backdrop-blur shadow-2xl flex items-center justify-center text-foreground hover:bg-white transition-all pointer-events-auto border border-white/20"
+                            >
+                                <ChevronLeft size={32} />
+                            </button>
+                            <button
+                                onClick={() => setActiveImageIndex(i => i === allImages.length - 1 ? 0 : i + 1)}
+                                className="h-16 w-16 rounded-full bg-white/50 backdrop-blur shadow-2xl flex items-center justify-center text-foreground hover:bg-white transition-all pointer-events-auto border border-white/20"
+                            >
+                                <ChevronRight size={32} />
+                            </button>
+                        </div>
+                    )}
+                </div>
+                <div className="p-8 border-t border-slate-100 flex justify-center gap-4 bg-slate-50/30 overflow-x-auto no-scrollbar">
+                    {allImages.map((img, idx) => (
+                        <button
+                            key={idx}
+                            onClick={() => setActiveImageIndex(idx)}
+                            className={cn(
+                                "h-20 w-20 rounded-2xl bg-white border-4 transition-all shrink-0 relative overflow-hidden",
+                                activeImageIndex === idx ? "border-primary shadow-xl scale-110" : "border-transparent opacity-40 hover:opacity-100"
+                            )}
+                        >
+                            <Image src={img} alt="" fill className="object-contain p-2" />
+                        </button>
+                    ))}
+                </div>
+            </div>
+        )}
 
         <ReviewSection productId={product.id} />
 

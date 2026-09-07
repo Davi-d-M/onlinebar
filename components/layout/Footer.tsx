@@ -86,6 +86,7 @@ export default function Footer({ initialSettings }: { initialSettings?: StoreSet
       title: "Logistics",
       links: [
         { href: "/rider/dashboard", label: "Runner Command" },
+        { href: "/admin/login", label: "Control Center" },
         { href: "/track", label: "Live Tracking" },
       ],
     },
@@ -217,7 +218,7 @@ export default function Footer({ initialSettings }: { initialSettings?: StoreSet
               <span>All Rights Reserved.</span>
             </div>
             <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight mt-2">
-                Developed by <a href={loading ? "#" : (settings?.branding?.portfolio_url || "#")} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">{loading ? "..." : (settings?.branding?.owner_name || "David")}</a>
+                Curated by <span className="text-primary">{loading ? "..." : "The Online Bar Team"}</span>
             </p>
           </div>
 

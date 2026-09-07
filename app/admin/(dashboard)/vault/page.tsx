@@ -44,8 +44,8 @@ export default function DocumentVault() {
             const { data, error } = await supabase.from('admin_vault').select('*').order('created_at', { ascending: false });
             if (error) throw error;
             setDocuments(data || []);
-        } catch (err) {
-            console.error(err);
+        } catch (err: unknown) {
+            console.error("Vault Sync Failure:", (err as Error).message || err);
         } finally {
             setLoading(false);
         }

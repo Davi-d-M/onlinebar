@@ -1,624 +1,343 @@
 'use client';
 
-import { useEffect, useState, useMemo, useCallback } from 'react';
-import { useParams } from 'next/navigation';
+import * as React from 'react';
+import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import {
-  ArrowLeft,
-  Crown,
-  Star,
-  Package,
-  DollarSign,
-  TrendingUp,
-  History as HistoryIcon,
-  Phone,
-  ChevronRight,
-  ShieldCheck,
-  Zap,
-  Tag,
-  Gem,
-  Loader2,
-  MapPin,
-  ExternalLink,
-  MessageSquare,
-  Search,
-  MousePointer2,
-  Activity,
-  ShoppingBag,
-  Home,
-  ShoppingCart,
-  CreditCard,
-  CheckCircle2,
-  ArrowDown,
-  Layout as LayoutIcon
+    Phone,
+    Mail,
+    MapPin,
+    ShoppingBag,
+    Clock,
+    History,
+    Loader2,
+    ArrowLeft,
+    Smartphone,
+    Bot,
+    BarChart3
 } from 'lucide-react';
+import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { formatPrice, cn } from '@/lib/utils';
-import Link from 'next/link';
-import { useAdmin } from '@/context/AdminContext';
-import CustomerFunnel from '@/components/admin/CustomerFunnel';
+import { cn, formatPrice } from '@/lib/utils';
+import dynamic from 'next/dynamic';
 
-interface Order {
-  id: number;
-  created_at: string;
-  total_price: number;
-  status: string;
-  product_id: number;
-  quantity: number;
-  payment_method: string;
-  customer_name: string;
+const SessionForensics = dynamic(() => import('@/components/admin/SessionForensics'), { ssr: false });
+
+interface Customer360 {
+    profile: {
+        id: string;
+        full_name: string;
+        phone_number: string;
+        email: string;
+        address: string;
+        created_at: string;
+        status_flag: string;
+        lifetime_value: number;
+        total_orders: number;
+    };
+    intelligence: {
+        intent_score: number;
+        churn_risk_score: number;
+        predicted_next_action: string;
+    };
+    sessions: {
+        id: string;
+        created_at: string;
+        source_channel: string;
+        total_dwell_time_sec: number;
+    }[];
+    orders: {
+        id: number;
+        created_at: string;
+        status: string;
+        total_price: number;
+        order_items?: { size: string }[];
+    }[];
+    preferences: {
+        category_id: string;
+        affinity_score: number;
+    }[];
+    interactions: unknown[];
 }
 
-interface CustomerProfile {
-  id: string;
-  full_name: string | null;
-  phone_number: string | null;
-  address: string | null;
-  latitude: number | null;
-  longitude: number | null;
-  birth_date: string | null;
-  referral_code: string | null;
-  created_at: string;
-  is_partner?: boolean;
-  credit_limit?: number;
-  relationship_manager?: string;
-}
+export default function CustomerProfilePage() {
+    const { phone } = useParams();
+    const router = useRouter();
+    const [data, setData] = React.useState<Customer360 | null>(null);
+    const [loading, setLoading] = React.useState(true);
+    const [selectedSessionId, setSelectedSessionId] = React.useState<string | null>(null);
 
-interface ProductInfo {
-  id: number;
-  name: string;
-  category: string | null;
-}
+    const fetchCustomerData = React.useCallback(async () => {
+        if (!supabase || !phone) return;
+        setLoading(true);
+        try {
+            // 1. Fetch Core Profile
+            const { data: profile } = await supabase.from('profiles').select('*').eq('phone_number', phone).single();
+            if (!profile) throw new Error("Patron not found");
 
-interface AnalyticsEvent {
-  event_name: string;
-  timestamp: string;
-  payload: {
-    url?: string;
-    query?: string;
-    category?: string;
-    productId?: number;
-    title?: string;
-    active_time_ms?: number;
-    max_scroll?: number;
-    depth?: number;
-    results_count?: number;
-  };
-}
+            // 2. Fetch Intelligence & Commercial Data
+            const [intRes, sessRes, ordersRes, prefRes] = await Promise.all([
+                supabase.from('customer_intelligence').select('*').eq('user_id', (profile as { id: string }).id).maybeSingle(),
+                supabase.from('customer_sessions').select('*').eq('user_id', (profile as { id: string }).id).order('created_at', { ascending: false }).limit(5),
+                supabase.from('orders').select('*, order_items(*)').eq('customer_phone', phone).order('created_at', { ascending: false }),
+                supabase.from('customer_product_preferences').select('*').eq('user_id', (profile as { id: string }).id)
+            ]);
 
-export default function CustomerIntelligence() {
-  const { phone } = useParams();
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [profile, setProfile] = useState<CustomerProfile | null>(null);
-  const [products, setProducts] = useState<ProductInfo[]>([]);
-  const [referrals, setReferrals] = useState<{ id: number; total_price: number; created_at: string }[]>([]);
-  const [reviews, setReviews] = useState<{ id: string; rating: number; comment: string; created_at: string; is_verified_owner: boolean }[]>([]);
-  const [supportTickets, setSupportTickets] = useState<{ id: number; subject: string; status: string; created_at: string }[]>([]);
-  const [loyaltyLedger, setLoyaltyLedger] = useState<{ id: number; amount: number; description: string; created_at: string }[]>([]);
-  const [analyticsEvents, setAnalyticsEvents] = useState<AnalyticsEvent[]>([]);
-  const [activeTab, setActiveTab] = useState<'timeline' | 'funnel' | 'behavior'>('timeline');
-  const [loading, setLoading] = useState(true);
+            setData({
+                profile,
+                intelligence: intRes.data || { intent_score: 0, churn_risk_score: 0 },
+                sessions: sessRes.data || [],
+                orders: ordersRes.data || [],
+                preferences: prefRes.data || [],
+                interactions: []
+            });
 
-  const loadData = useCallback(async () => {
-    if (!supabase || !phone) return;
+            if (sessRes.data?.[0]) setSelectedSessionId(sessRes.data[0].id);
 
-    try {
-      const initialRes = await supabase.from('profiles').select('*').eq('phone_number', phone).maybeSingle();
-      const profileData = initialRes.data as CustomerProfile;
-
-      const [ordersRes, productsRes, referralsRes, reviewsRes, ticketsRes, ledgerRes, analyticsRes] = await Promise.all([
-        supabase.from('orders').select('*').eq('customer_phone', phone).order('created_at', { ascending: false }),
-        supabase.from('products').select('id, name, category'),
-        profileData?.referral_code ? supabase.from('orders').select('id, total_price, created_at').eq('referred_by_code', profileData.referral_code) : Promise.resolve({ data: [] }),
-        supabase.from('reviews').select('*').or(`customer_phone.eq.${phone},customer_name.eq.${profileData?.full_name || 'NONE'}`).order('created_at', { ascending: false }),
-        profileData?.id ? supabase.from('support_tickets').select('*').eq('user_id', profileData.id).order('created_at', { ascending: false }) : Promise.resolve({ data: [] }),
-        profileData?.id ? supabase.from('loyalty_ledger').select('*').eq('profile_id', profileData.id).order('created_at', { ascending: false }) : Promise.resolve({ data: [] }),
-        profileData?.id ? supabase.from('analytics_events').select('*').eq('user_id', profileData.id).order('timestamp', { ascending: false }).limit(50) : Promise.resolve({ data: [] })
-      ]);
-
-      if (ordersRes.data) setOrders(ordersRes.data as Order[]);
-      if (profileData) setProfile(profileData);
-      if (productsRes.data) setProducts(productsRes.data as ProductInfo[]);
-      if (referralsRes.data) setReferrals(referralsRes.data as { id: number; total_price: number; created_at: string }[]);
-      if (reviewsRes.data) setReviews(reviewsRes.data as { id: string; rating: number; comment: string; created_at: string; is_verified_owner: boolean }[]);
-      if (ticketsRes.data) setSupportTickets(ticketsRes.data);
-      if (ledgerRes.data) setLoyaltyLedger(ledgerRes.data);
-      if (analyticsRes.data) setAnalyticsEvents(analyticsRes.data);
-    } catch (err: unknown) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  }, [phone]);
-
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
-
-  const stats = useMemo(() => {
-    const delivered = orders.filter(o => o.status === 'Delivered');
-    const totalSpend = delivered.reduce((sum, o) => sum + (o.total_price || 0), 0);
-    const avgOrder = delivered.length > 0 ? totalSpend / delivered.length : 0;
-
-    // Active Time Calculation
-    const totalActiveTimeMs = analyticsEvents.reduce((sum, e) => sum + (e.payload?.active_time_ms || 0), 0);
-    const avgActiveTime = analyticsEvents.length > 0 ? totalActiveTimeMs / analyticsEvents.filter(e => e.payload?.active_time_ms).length : 0;
-    const activeTimeString = avgActiveTime > 0 ? `${Math.floor(avgActiveTime / 60000)}m ${Math.floor((avgActiveTime % 60000) / 1000)}s` : 'N/A';
-
-    // Age Calculation
-    let age = "Unknown";
-    if (profile?.birth_date) {
-        const birth = new Date(profile.birth_date);
-        const now = new Date();
-        let calculatedAge = now.getFullYear() - birth.getFullYear();
-        const m = now.getMonth() - birth.getMonth();
-        if (m < 0 || (m === 0 && now.getDate() < birth.getDate())) {
-            calculatedAge--;
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoading(false);
         }
-        age = `${calculatedAge} Years`;
-    }
+    }, [phone]);
 
-    // Risk Score
-    const cancelled = orders.filter(o => o.status === 'Cancelled' || o.status === 'Payment Failed');
-    const riskRatio = orders.length > 0 ? (cancelled.length / orders.length) : 0;
-    let risk = "Very Low";
-    let riskColor = "text-primary";
-    if (riskRatio > 0.5) { risk = "High"; riskColor = "text-primary"; }
-    else if (riskRatio > 0.2) { risk = "Moderate"; riskColor = "text-primary"; }
+    React.useEffect(() => {
+        fetchCustomerData();
+    }, [fetchCustomerData]);
 
-    // Favorite Brand / Category
-    const catMap = new Map<string, number>();
-    delivered.forEach(o => {
-        const prod = products.find(p => p.id === o.product_id);
-        if (prod?.category) {
-            const category = prod.category;
-            catMap.set(category, (catMap.get(category) || 0) + 1);
-        }
-    });
-    const favCat = Array.from(catMap.entries()).sort((a,b) => b[1] - a[1])[0]?.[0] || 'Unknown';
-
-    // Loyalty Tier
-    let tier = "Bronze";
-    let TierIcon = Star;
-    let tierColor = "text-slate-400 bg-slate-50 border-slate-100";
-    if (totalSpend >= 100000) {
-        tier = "Diamond";
-        TierIcon = Gem;
-        tierColor = "text-primary bg-primary/10 border-primary/20 shadow-primary/20 animate-pulse";
-    }
-    else if (totalSpend >= 50000) {
-        tier = "Gold";
-        TierIcon = Crown;
-        tierColor = "text-primary bg-primary/10 border-primary/20";
-    }
-    else if (totalSpend >= 20000) {
-        tier = "Silver";
-        TierIcon = Star;
-        tierColor = "text-primary bg-primary/10 border-primary/20";
-    }
-
-    return { totalSpend, avgOrder, risk, riskColor, favCat, tier, TierIcon, tierColor, age, referralCount: referrals.length, activeTimeString, totalOrders: orders.length };
-  }, [orders, products, profile, referrals, analyticsEvents]);
-
-  const timelineEvents = useMemo(() => {
-    const events: { id: string; type: 'Order' | 'Support' | 'Loyalty' | 'Review'; title: string; subtitle: string; date: string; status?: string; value?: string; color?: string }[] = [];
-
-    orders.forEach(o => {
-        const prod = products.find(p => p.id === o.product_id);
-        events.push({
-            id: `ord-${o.id}`,
-            type: 'Order',
-            title: prod?.name || `Gadget #${o.product_id}`,
-            subtitle: `Purchase via ${o.payment_method}`,
-            date: o.created_at,
-            status: o.status,
-            value: formatPrice(o.total_price),
-            color: 'primary'
-        });
-    });
-
-    supportTickets.forEach(t => {
-        events.push({
-            id: `tix-${t.id}`,
-            type: 'Support',
-            title: t.subject,
-            subtitle: `Support Ticket #${t.id}`,
-            date: t.created_at,
-            status: t.status,
-            color: 'rose'
-        });
-    });
-
-    loyaltyLedger.forEach(l => {
-        events.push({
-            id: `loy-${l.id}`,
-            type: 'Loyalty',
-            title: l.description,
-            subtitle: 'Points Adjustment',
-            date: l.created_at,
-            value: `${l.amount > 0 ? '+' : ''}${l.amount} Pts`,
-            color: 'emerald'
-        });
-    });
-
-    reviews.forEach(r => {
-        events.push({
-            id: `rev-${r.id}`,
-            type: 'Review',
-            title: `${r.rating} Star Review`,
-            subtitle: r.comment,
-            date: r.created_at,
-            color: 'amber'
-        });
-    });
-
-    return events.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  }, [orders, products, supportTickets, loyaltyLedger, reviews]);
-
-  const { role, permissions } = useAdmin();
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-slate-50">
-        <Loader2 className="h-10 w-10 text-primary animate-spin" />
-        <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest text-left">Scanning Vault...</p>
-      </div>
+    if (loading) return (
+        <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 gap-4">
+            <Loader2 className="h-10 w-10 text-primary animate-spin" />
+            <p className="font-black text-slate-400 uppercase tracking-widest text-[10px]">Reconstructing Patron Profile...</p>
+        </div>
     );
-  }
 
-  return (
-    <div className="p-8 space-y-12 bg-slate-50 min-h-screen text-left">
-      <header className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 border-b border-slate-200 pb-10">
-        <div className="space-y-4">
-          <Link href="/admin/customers" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-primary transition-colors">
-            <ArrowLeft className="h-4 w-4" /> Back to Directory
-          </Link>
-          <div className="flex items-center gap-6">
-            <div className="h-20 w-20 rounded-[2rem] bg-slate-50 border border-slate-100 flex items-center justify-center text-foreground text-2xl font-black uppercase shadow-inner">
-                {profile?.full_name?.substring(0, 2) || orders[0]?.customer_name?.substring(0, 2) || '??'}
-            </div>
-            <div>
-              <h1 className="text-4xl font-black text-foreground uppercase tracking-tighter leading-none">
-                  {profile?.full_name || orders[0]?.customer_name || 'Anonymous User'}
-              </h1>
-              <div className="flex items-center gap-3 mt-3">
-                  <span className={cn("px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border flex items-center gap-2", stats.tierColor)}>
-                      <stats.TierIcon className="h-3 w-3" /> {stats.tier} Loyalty
-                  </span>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Joined {new Date(profile?.created_at || orders[orders.length - 1]?.created_at || new Date()).toLocaleDateString()}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="flex gap-3">
-            <Button onClick={() => window.open(`tel:${phone}`, '_self')} variant="outline" className="h-14 px-8 rounded-2xl border-slate-200 bg-white font-black uppercase text-[10px] tracking-widest shadow-sm hover:shadow-xl transition-all">
-                <Phone className="h-4 w-4 mr-2" /> Direct Call
-            </Button>
-            <Button onClick={() => window.open(`https://wa.me/${phone}`, '_blank')} className="h-14 px-8 rounded-2xl bg-primary hover:bg-primary/90 text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-primary/20">
-                WhatsApp VIP
-            </Button>
-        </div>
-      </header>
+    if (!data) return null;
 
-      <div className="grid lg:grid-cols-4 gap-8">
-          {[
-              { label: 'Lifetime Spend', val: formatPrice(stats.totalSpend), icon: DollarSign, color: 'primary' },
-              { label: 'Avg Active Time', val: stats.activeTimeString, icon: Zap, color: 'primary' },
-              { label: 'Average Order', val: formatPrice(stats.avgOrder), icon: TrendingUp, color: 'primary' },
-              { label: 'Favorite Category', val: stats.favCat, icon: Tag, color: 'primary' },
-          ].map((item) => (
-              <Card key={item.label} className="p-8 rounded-[2.5rem] border-slate-100 shadow-sm relative overflow-hidden group">
-                  <div className={`h-12 w-12 rounded-2xl bg-primary/5 flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform`}>
-                      <item.icon className="h-6 w-6" />
-                  </div>
-                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">{item.label}</p>
-                  <h3 className="text-2xl font-black text-foreground uppercase tracking-tighter truncate">{item.val}</h3>
-              </Card>
-          ))}
-      </div>
+    const { profile, intelligence, sessions, orders, preferences } = data;
 
-      <div className="grid lg:grid-cols-3 gap-12">
-          <div className="lg:col-span-1 space-y-8">
-              <Card className="p-10 rounded-[3rem] border-slate-100 shadow-sm bg-white">
-                  <h2 className="text-xl font-black text-foreground uppercase mb-8 flex items-center gap-3">
-                      <ShieldCheck className="h-5 w-5 text-primary" /> Intelligence Data
-                  </h2>
-                  <div className="space-y-6">
-                      <div className="flex justify-between items-center py-4 border-b border-slate-50">
-                          <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Journey ID</span>
-                          <span className="text-[10px] font-mono font-bold text-foreground uppercase">OB-CUS-{profile?.id?.substring(0, 8).toUpperCase() || 'ANON'}</span>
-                      </div>
-                      <div className="flex justify-between items-center py-4 border-b border-slate-50">
-                          <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Risk Score</span>
-                          <span className={cn("text-xs font-black uppercase", stats.riskColor)}>{stats.risk}</span>
-                      </div>
-                      <div className="flex justify-between items-center py-4 border-b border-slate-50">
-                          <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Age</span>
-                          <span className="text-xs font-black text-foreground uppercase">{stats.age}</span>
-                      </div>
-                      <div className="flex justify-between items-center py-4 border-b border-slate-50">
-                          <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Birthday</span>
-                          <span className="text-xs font-black text-foreground uppercase">{profile?.birth_date ? new Date(profile.birth_date).toLocaleDateString('en-KE', { day: 'numeric', month: 'long' }) : 'Not Logged'}</span>
-                      </div>
-                      <div className="flex justify-between items-center py-4 border-b border-slate-50">
-                          <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Latitude</span>
-                          <span className="text-xs font-black text-foreground uppercase">
-                              {role === 'owner' || permissions.can_view_sensitive_rider_data ? (profile?.latitude?.toFixed(6) || 'N/A') : 'PROTECTED'}
-                          </span>
-                      </div>
-                      <div className="flex justify-between items-center py-4 border-b border-slate-50">
-                          <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Longitude</span>
-                          <span className="text-xs font-black text-foreground uppercase">
-                              {role === 'owner' || permissions.can_view_sensitive_rider_data ? (profile?.longitude?.toFixed(6) || 'N/A') : 'PROTECTED'}
-                          </span>
-                      </div>
-                      <div className="flex justify-between items-center py-4 border-b border-slate-50">
-                          <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Location</span>
-                          <span className="text-xs font-black text-foreground uppercase truncate max-w-[150px]">{profile?.address || 'No Address'}</span>
-                      </div>
-                      <div className="flex justify-between items-center py-4 border-b border-slate-50">
-                          <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Preferred Method</span>
-                          <span className="text-xs font-black text-foreground uppercase">{orders[0]?.payment_method || 'M-Pesa'}</span>
-                      </div>
-                      {profile?.is_partner && (
-                          <div className="pt-6 mt-2 space-y-4 animate-in zoom-in-95">
-                              <div className="p-5 rounded-2xl bg-indigo-50 border border-indigo-100 space-y-4">
-                                  <div className="flex justify-between items-center">
-                                      <p className="text-[10px] font-black uppercase text-indigo-600">Credit Limit</p>
-                                      <span className="text-sm font-black text-indigo-700">{formatPrice(profile.credit_limit || 0)}</span>
-                                  </div>
-                                  <div className="h-1.5 w-full bg-white rounded-full overflow-hidden border border-indigo-100">
-                                      <div className="h-full bg-indigo-500 w-[20%]" />
-                                  </div>
-                              </div>
-                              <div className="flex justify-between items-center px-2">
-                                  <p className="text-[9px] font-black uppercase text-slate-400">Account Manager</p>
-                                  <span className="text-[10px] font-bold text-foreground">{profile.relationship_manager || 'Global Team'}</span>
-                              </div>
-                          </div>
-                      )}
-                  </div>
-              </Card>
-
-              <Card className="p-10 rounded-[3rem] border-slate-100 shadow-sm bg-white">
-                  <h2 className="text-xl font-black text-foreground uppercase mb-8 flex items-center gap-3">
-                      <Zap className="h-5 w-5 text-primary" /> Behavioral Insight
-                  </h2>
-                  <div className="space-y-6">
-                      <div className="p-6 rounded-[2rem] bg-blue-50 border border-blue-100 space-y-3">
-                          <div className="flex items-center gap-2">
-                              <CheckCircle2 className="h-4 w-4 text-blue-600" />
-                              <span className="text-[10px] font-black uppercase text-blue-600">Highly Engaged</span>
-                          </div>
-                          <p className="text-[10px] text-blue-700 font-medium italic">
-                              &quot;Frequently views {stats.favCat} and premium beverages. Typical session: {stats.activeTimeString}.&quot;
-                          </p>
-                      </div>
-
-                      <div className="space-y-4">
-                          <div className="flex justify-between items-center">
-                              <span className="text-[10px] font-black uppercase text-slate-400">Checkout Abandonment</span>
-                              <span className="text-xs font-black text-rose-500">{analyticsEvents.filter(e => e.event_name === 'CHECKOUT_STARTED').length - orders.length} Carts</span>
-                          </div>
-                          <div className="flex justify-between items-center">
-                              <span className="text-[10px] font-black uppercase text-slate-400">Return Frequency</span>
-                              <span className="text-xs font-black text-emerald-600">High</span>
-                          </div>
-                      </div>
-                  </div>
-              </Card>
-
-              <div className="bg-white rounded-[3rem] p-10 border-2 border-primary/10 text-foreground relative overflow-hidden shadow-2xl group hover:border-primary/30 transition-all">
-                  <Zap className="h-10 w-10 text-primary mb-6 animate-pulse fill-current" />
-                  <h3 className="text-2xl font-black uppercase tracking-tighter leading-none mb-4">Tactical Lead</h3>
-                  <p className="text-slate-500 font-medium leading-relaxed italic text-sm group-hover:text-foreground transition-colors">&quot;Recommended Action: Send early-access WhatsApp alert for restocks.&quot;</p>
-                  <div className="absolute -bottom-10 -right-10 h-48 w-48 bg-primary/5 rounded-full blur-3xl"></div>
-              </div>
-          </div>
-
-          <div className="lg:col-span-2 space-y-8">
-              {profile?.latitude && profile?.longitude && (
-                  <Card className="rounded-[3rem] border-slate-100 shadow-sm overflow-hidden bg-white">
-                      <div className="p-8 border-b border-slate-50 flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                              <MapPin className="h-6 w-6 text-primary" />
-                              <h2 className="text-xl font-black text-foreground uppercase">Tactical Drop Point</h2>
-                          </div>
-                          <Button
-                            onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${profile.latitude},${profile.longitude}`, '_blank')}
-                            variant="outline"
-                            className="h-10 px-4 rounded-xl text-[8px] font-black uppercase border-slate-200"
-                          >
-                              <ExternalLink className="h-3.5 w-3.5 mr-2" /> Open Navigation
-                          </Button>
-                      </div>
-                      <div className="h-64 bg-slate-50 relative group">
-                          <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
-                              <div className="h-16 w-16 rounded-full bg-primary/20 animate-ping absolute" />
-                              <MapPin className="h-12 w-12 text-primary relative z-10" />
-                              <div className="text-center">
-                                  <p className="text-[10px] font-black uppercase text-foreground">Coordinates Locked</p>
-                                  <p className="text-[8px] font-bold text-slate-400 uppercase mt-1">{profile.latitude.toFixed(6)}, {profile.longitude.toFixed(6)}</p>
-                              </div>
-                          </div>
-                      </div>
-                  </Card>
-              )}
-
-              <div className="bg-white rounded-[3rem] p-1 border border-slate-100 shadow-sm flex mb-8">
-                  <button
-                    onClick={() => setActiveTab('timeline')}
-                    className={cn(
-                        "flex-1 py-4 rounded-[2rem] text-[10px] font-black uppercase tracking-widest transition-all",
-                        activeTab === 'timeline' ? "bg-primary text-white shadow-xl shadow-primary/20" : "text-slate-400 hover:text-slate-600"
-                    )}
-                  >
-                      Timeline
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('funnel')}
-                    className={cn(
-                        "flex-1 py-4 rounded-[2rem] text-[10px] font-black uppercase tracking-widest transition-all",
-                        activeTab === 'funnel' ? "bg-primary text-white shadow-xl shadow-primary/20" : "text-slate-400 hover:text-slate-600"
-                    )}
-                  >
-                      Conversion Funnel
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('behavior')}
-                    className={cn(
-                        "flex-1 py-4 rounded-[2rem] text-[10px] font-black uppercase tracking-widest transition-all",
-                        activeTab === 'behavior' ? "bg-primary text-white shadow-xl shadow-primary/20" : "text-slate-400 hover:text-slate-600"
-                    )}
-                  >
-                      Behavioral Trail
-                  </button>
-              </div>
-
-              {activeTab === 'timeline' && (
-                <Card className="rounded-[3rem] border-slate-100 shadow-sm overflow-hidden bg-white animate-in fade-in duration-500">
-                    <div className="p-10 border-b border-slate-50 flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                            <HistoryIcon className="h-6 w-6 text-primary" />
-                            <h2 className="text-2xl font-black text-foreground uppercase tracking-tighter">Action Timeline</h2>
-                        </div>
-                        <span className="text-[10px] font-black uppercase text-slate-400 bg-slate-50 px-4 py-2 rounded-full">{timelineEvents.length} Events</span>
+    return (
+        <div className="p-8 space-y-10 bg-slate-50 min-h-screen text-left selection:bg-primary/20 pb-40">
+            <header className="flex items-center gap-6 border-b border-slate-200 pb-8">
+                <Button onClick={() => router.back()} variant="outline" size="icon" className="h-12 w-12 rounded-xl bg-white border-slate-200">
+                    <ArrowLeft size={20} />
+                </Button>
+                <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-1">
+                        <span className={cn(
+                            "px-2 py-0.5 rounded-md text-[7px] font-black uppercase tracking-widest",
+                            profile.status_flag === 'Active' ? "bg-emerald-500 text-white" : "bg-slate-200 text-slate-400"
+                        )}>{profile.status_flag}</span>
+                        <p className="text-[10px] font-black text-primary uppercase tracking-[0.3em]">Customer since {new Date(profile.created_at).toLocaleDateString()}</p>
                     </div>
-                    <div className="divide-y divide-slate-50 max-h-[800px] overflow-y-auto no-scrollbar">
-                        {timelineEvents.length === 0 ? (
-                            <div className="p-20 text-center opacity-30">
-                                <HistoryIcon className="h-10 w-10 mx-auto mb-4" />
-                                <p className="text-[10px] font-black uppercase tracking-widest">No activity logged.</p>
-                            </div>
-                        ) : timelineEvents.map((event) => {
-                            const Icon = event.type === 'Order' ? Package :
-                                        event.type === 'Support' ? MessageSquare :
-                                        event.type === 'Loyalty' ? Zap : Star;
+                    <h1 className="text-4xl font-black text-foreground uppercase tracking-tighter leading-none">{profile.full_name}</h1>
+                </div>
+                <div className="flex gap-2">
+                    <Button className="h-12 px-6 rounded-xl bg-primary text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-primary/20">
+                        Launch Recovery Nudge
+                    </Button>
+                </div>
+            </header>
 
-                            return (
-                                <div key={event.id} className="p-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 hover:bg-slate-50/50 transition-all group">
-                                    <div className="flex items-center gap-6">
-                                        <div className={cn(
-                                            "h-14 w-14 rounded-2xl flex items-center justify-center shadow-lg transition-transform group-hover:scale-110",
-                                            event.color === 'primary' ? "bg-primary text-white shadow-primary/20" :
-                                            event.color === 'rose' ? "bg-rose-500 text-white shadow-rose-500/20" :
-                                            event.color === 'emerald' ? "bg-emerald-500 text-white shadow-emerald-500/20" :
-                                            "bg-amber-500 text-white shadow-amber-500/20"
-                                        )}>
-                                            <Icon className="h-6 w-6" />
-                                        </div>
-                                        <div className="text-left">
-                                            <div className="flex items-center gap-2 mb-1">
-                                                <span className="text-[8px] font-black uppercase text-slate-400 tracking-widest">{event.type}</span>
-                                                <span className="text-[10px] font-bold text-slate-300">•</span>
-                                                <span className="text-[9px] font-bold text-slate-400 uppercase">{new Date(event.date).toLocaleDateString()}</span>
-                                            </div>
-                                            <h4 className="font-black text-foreground uppercase text-sm tracking-tight">{event.title}</h4>
-                                            <p className="text-[10px] font-bold text-slate-400 uppercase mt-1 italic">{event.subtitle}</p>
-                                        </div>
+            <div className="grid lg:grid-cols-12 gap-10">
+
+                {/* LEFT: 360 SUMMARY */}
+                <div className="lg:col-span-4 space-y-8">
+                    {/* VALUE HUD */}
+                    <div className="grid grid-cols-2 gap-4">
+                        <Card className="p-6 rounded-[2.5rem] bg-white border border-slate-100 shadow-sm space-y-1">
+                            <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Lifetime Value</p>
+                            <p className="text-xl font-black text-foreground">{formatPrice(profile.lifetime_value || 0)}</p>
+                        </Card>
+                        <Card className="p-6 rounded-[2.5rem] bg-white border border-slate-100 shadow-sm space-y-1 text-right">
+                            <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Total Orders</p>
+                            <p className="text-xl font-black text-foreground">{profile.total_orders || 0}</p>
+                        </Card>
+                    </div>
+
+                    {/* INTELLIGENCE SCORES */}
+                    <Card className="p-10 rounded-[3.5rem] bg-white border border-slate-100 shadow-sm space-y-10 relative overflow-hidden">
+                        <div className="relative z-10 space-y-8">
+                            <div className="flex justify-between items-center">
+                                <h3 className="text-sm font-black uppercase tracking-[0.4em] text-slate-400">Derived Intel</h3>
+                                <Bot className="h-5 w-5 text-primary" />
+                            </div>
+
+                            <div className="space-y-6">
+                                <div className="space-y-2">
+                                    <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest">
+                                        <span>Purchase Intent</span>
+                                        <span className="text-primary">{intelligence.intent_score}%</span>
                                     </div>
-                                    <div className="flex items-center gap-8 w-full sm:w-auto justify-between">
-                                        <div className="text-right">
-                                            {event.value && <p className="text-lg font-black text-foreground">{event.value}</p>}
-                                            {event.status && (
-                                                <span className={cn(
-                                                    "px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest border",
-                                                    event.status === 'Delivered' || event.status === 'Resolved' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
-                                                    event.status === 'Open' || event.status === 'Pending' ? "bg-primary/10 text-primary border-primary/10" :
-                                                    "bg-slate-50 text-slate-400 border-slate-100"
-                                                )}>
-                                                    {event.status}
-                                                </span>
-                                            )}
-                                        </div>
-                                        {event.type === 'Order' ? (
-                                            <Link href="/admin/orders">
-                                                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl bg-slate-50 group-hover:bg-primary group-hover:text-white transition-all"><ChevronRight className="h-4 w-4" /></Button>
-                                            </Link>
-                                        ) : event.type === 'Support' ? (
-                                            <Link href="/admin/messages">
-                                                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl bg-slate-50 group-hover:bg-rose-500 group-hover:text-white transition-all"><ChevronRight className="h-4 w-4" /></Button>
-                                            </Link>
-                                        ) : null}
+                                    <div className="h-1.5 w-full bg-slate-50 rounded-full overflow-hidden">
+                                        <div className="h-full bg-primary transition-all duration-1000" style={{ width: `${intelligence.intent_score}%` }} />
                                     </div>
                                 </div>
-                            );
-                        })}
-                    </div>
-                </Card>
-              )}
 
-              {activeTab === 'funnel' && (
-                  <Card className="rounded-[3rem] border-slate-100 shadow-sm overflow-hidden bg-white animate-in zoom-in-95 duration-500">
-                      <div className="p-10 border-b border-slate-50 flex items-center justify-between text-left">
-                          <div>
-                              <h2 className="text-2xl font-black text-foreground uppercase tracking-tighter leading-none">Journey Funnel</h2>
-                              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">Home to Purchase conversion</p>
-                          </div>
-                          <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-sm">
-                              <Activity className="h-6 w-6" />
-                          </div>
-                      </div>
-                      <CardContent className="p-10">
-                          <CustomerFunnel events={analyticsEvents} />
-                      </CardContent>
-                  </Card>
-              )}
+                                <div className="space-y-2">
+                                    <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest">
+                                        <span>Churn Risk</span>
+                                        <span className="text-rose-500">{intelligence.churn_risk_score}%</span>
+                                    </div>
+                                    <div className="h-1.5 w-full bg-slate-50 rounded-full overflow-hidden">
+                                        <div className="h-full bg-rose-500 transition-all duration-1000" style={{ width: `${intelligence.churn_risk_score}%` }} />
+                                    </div>
+                                </div>
+                            </div>
 
-              {activeTab === 'behavior' && (
-                <Card className="rounded-[3rem] border-slate-100 shadow-sm overflow-hidden bg-white animate-in fade-in duration-500">
-                    <div className="p-10 border-b border-slate-50 flex items-center justify-between">
+                            <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100 space-y-3">
+                                <p className="text-[8px] font-black uppercase text-slate-400">AI Prediction</p>
+                                <p className="text-xs font-bold text-foreground italic leading-relaxed">
+                                    &quot;{intelligence.predicted_next_action || 'Maintaining tactical standby. Customer awaiting new vintage drops.'}&quot;
+                                </p>
+                            </div>
+                        </div>
+                        <Bot className="absolute -bottom-10 -left-10 h-48 w-48 text-primary/5 -rotate-12" />
+                    </Card>
+
+                    {/* CONTACT & LOGISTICS */}
+                    <Card className="p-10 rounded-[3.5rem] bg-white border border-slate-100 shadow-sm space-y-8">
                         <div className="flex items-center gap-4">
-                            <MousePointer2 className="h-6 w-6 text-primary" />
-                            <h2 className="text-2xl font-black text-foreground uppercase tracking-tighter">Behavioral Trail</h2>
+                            <div className="h-10 w-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400">
+                                <Smartphone size={20} />
+                            </div>
+                            <h3 className="text-lg font-black uppercase tracking-tight">Identity Relay</h3>
                         </div>
-                        <span className="text-[10px] font-black uppercase text-slate-400">Past 50 Events</span>
-                    </div>
-                    <div className="divide-y divide-slate-50 max-h-[800px] overflow-y-auto no-scrollbar">
-                        {analyticsEvents.length === 0 ? (
-                            <div className="p-24 text-center opacity-30">
-                                <Search className="h-10 w-10 mx-auto mb-4" />
-                                <p className="text-[10px] font-black uppercase tracking-widest italic">No tracking signal detected.</p>
+                        <div className="space-y-4">
+                            <div className="flex items-center gap-4">
+                                <Phone className="h-4 w-4 text-primary" />
+                                <span className="text-sm font-bold text-foreground">{profile.phone_number}</span>
                             </div>
-                        ) : analyticsEvents.map((event, i) => (
-                            <div key={i} className="p-8 flex items-center justify-between hover:bg-slate-50/50 transition-all group">
-                                <div className="flex items-center gap-6">
-                                    <div className="h-12 w-12 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400 group-hover:text-primary transition-colors">
-                                        {event.event_name === 'PAGE_VIEW' ? <Home className="h-5 w-5" /> :
-                                         event.event_name === 'CATEGORY_VIEW' ? <LayoutIcon className="h-5 w-5" /> :
-                                         event.event_name === 'PRODUCT_VIEW' ? <ShoppingBag className="h-5 w-5" /> :
-                                         event.event_name === 'ADD_TO_CART' ? <ShoppingCart className="h-5 w-5" /> :
-                                         event.event_name === 'CHECKOUT_STARTED' ? <CreditCard className="h-5 w-5" /> :
-                                         event.event_name === 'PURCHASE_COMPLETED' ? <CheckCircle2 className="h-5 w-5" /> :
-                                         event.event_name === 'SEARCH' ? <Search className="h-5 w-5" /> :
-                                         event.event_name.startsWith('SCROLL_') ? <ArrowDown className="h-5 w-5" /> :
-                                         <Activity className="h-5 w-5" />}
-                                    </div>
-                                    <div className="text-left">
-                                        <p className="text-[10px] font-black uppercase text-primary tracking-widest">{event.event_name.replace(/_/g, ' ')}</p>
-                                        <h4 className="font-bold text-foreground text-sm mt-1">
-                                            {event.payload?.url || event.payload?.query || event.payload?.category || (event.payload?.productId ? `Product #${event.payload.productId}` : 'Interaction')}
-                                        </h4>
-                                        <div className="flex items-center gap-3 mt-1.5">
-                                            <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">{new Date(event.timestamp).toLocaleTimeString()}</span>
-                                            <div className="h-1 w-1 rounded-full bg-slate-200" />
-                                            <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">{event.payload?.title || 'System Page'}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="text-right">
-                                    {event.payload?.active_time_ms && <span className="text-[10px] font-black text-blue-500 uppercase">{Math.floor(event.payload.active_time_ms / 1000)}s Active</span>}
-                                    {event.payload?.max_scroll && <span className="text-[10px] font-black text-emerald-500 uppercase ml-3">{event.payload.max_scroll}% Scroll</span>}
-                                </div>
+                            <div className="flex items-center gap-4">
+                                <Mail className="h-4 w-4 text-primary" />
+                                <span className="text-sm font-bold text-foreground">{profile.email}</span>
                             </div>
-                        ))}
-                    </div>
-                </Card>
-              )}
+                            <div className="flex items-center gap-4">
+                                <MapPin className="h-4 w-4 text-primary" />
+                                <span className="text-sm font-bold text-foreground truncate">{profile.address || 'No Address Logged'}</span>
+                            </div>
+                        </div>
+                    </Card>
 
-          </div>
-      </div>
-    </div>
-  );
+                    {/* TOP INTERESTS */}
+                    <Card className="p-10 rounded-[3.5rem] bg-white border border-slate-100 shadow-sm space-y-8">
+                        <div className="flex items-center justify-between">
+                            <h3 className="text-lg font-black uppercase tracking-tight">Category Affinity</h3>
+                            <BarChart3 className="h-5 w-5 text-indigo-500" />
+                        </div>
+                        <div className="space-y-4">
+                            {preferences.length > 0 ? preferences.map(pref => (
+                                <div key={pref.category_id} className="space-y-2">
+                                    <div className="flex justify-between items-center text-[8px] font-black uppercase">
+                                        <span>{pref.category_id}</span>
+                                        <span className="text-indigo-600">{pref.affinity_score}%</span>
+                                    </div>
+                                    <div className="h-1 w-full bg-slate-50 rounded-full overflow-hidden">
+                                        <div className="h-full bg-indigo-500" style={{ width: `${pref.affinity_score}%` }} />
+                                    </div>
+                                </div>
+                            )) : (
+                                <p className="text-center py-6 text-[9px] font-bold text-slate-300 uppercase italic">Awaiting behavioral data...</p>
+                            )}
+                        </div>
+                    </Card>
+                </div>
+
+                {/* RIGHT: TIMELINE & FORENSICS */}
+                <div className="lg:col-span-8 space-y-8">
+                    {/* COMMERCIAL HISTORY */}
+                    <Card className="rounded-[3rem] border border-slate-100 bg-white shadow-sm overflow-hidden">
+                        <div className="p-8 border-b border-slate-50 flex items-center justify-between bg-slate-50/30">
+                            <div className="flex items-center gap-3">
+                                <ShoppingBag className="h-6 w-6 text-primary" />
+                                <h2 className="text-2xl font-black uppercase tracking-tighter text-foreground">Mission History</h2>
+                            </div>
+                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{orders.length} Deliveries</span>
+                        </div>
+                        <div className="divide-y divide-slate-50 overflow-x-auto no-scrollbar">
+                            <table className="w-full text-left min-w-[600px]">
+                                <thead>
+                                    <tr className="text-[8px] font-black uppercase text-slate-400 tracking-widest bg-slate-50/50">
+                                        <th className="px-8 py-4">Unit #</th>
+                                        <th className="px-8 py-4">Date</th>
+                                        <th className="px-8 py-4">Payload</th>
+                                        <th className="px-8 py-4">Status</th>
+                                        <th className="px-8 py-4 text-right">Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {orders.map(order => (
+                                        <tr key={order.id} className="group hover:bg-slate-50/50 transition-colors">
+                                            <td className="px-8 py-6 font-black text-xs text-foreground">#{order.id}</td>
+                                            <td className="px-8 py-6 text-[10px] font-bold text-slate-400 uppercase">{new Date(order.created_at).toLocaleDateString()}</td>
+                                            <td className="px-8 py-6">
+                                                <div className="flex -space-x-2">
+                                                    {order.order_items?.map((item: { size: string }, i: number) => (
+                                                        <div key={i} className="h-8 w-8 rounded-lg bg-slate-100 border-2 border-white flex items-center justify-center text-[10px] font-black text-slate-400 shadow-sm uppercase">
+                                                            {item.size?.substring(0,1)}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </td>
+                                            <td className="px-8 py-6">
+                                                <span className={cn(
+                                                    "px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest",
+                                                    order.status === 'Delivered' ? "bg-emerald-50 text-emerald-600 border border-emerald-100" :
+                                                    order.status === 'Cancelled' ? "bg-rose-50 text-rose-600 border border-rose-100" :
+                                                    "bg-slate-50 text-slate-500 border border-slate-100"
+                                                )}>
+                                                    {order.status}
+                                                </span>
+                                            </td>
+                                            <td className="px-8 py-6 text-right font-black text-sm text-foreground">{formatPrice(order.total_price)}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </Card>
+
+                    {/* RECENT JOURNEY & FORENSICS */}
+                    <div className="grid md:grid-cols-12 gap-8">
+                        {/* Session Selector */}
+                        <div className="md:col-span-4 space-y-6">
+                            <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">Recent Visits</h3>
+                            <div className="space-y-3">
+                                {sessions.map(sess => (
+                                    <button
+                                        key={sess.id}
+                                        onClick={() => setSelectedSessionId(sess.id)}
+                                        className={cn(
+                                            "w-full p-6 rounded-3xl border text-left transition-all group relative overflow-hidden",
+                                            selectedSessionId === sess.id ? "bg-primary text-white border-primary shadow-xl" : "bg-white border-slate-100 hover:border-primary/20"
+                                        )}
+                                    >
+                                        <div className="relative z-10">
+                                            <p className={cn("text-[8px] font-black uppercase tracking-widest mb-1", selectedSessionId === sess.id ? "text-white/60" : "text-slate-400")}>
+                                                {new Date(sess.created_at).toLocaleDateString()} &bull; {new Date(sess.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            </p>
+                                            <h4 className="font-black uppercase text-xs leading-none">{sess.source_channel} Source</h4>
+                                            <p className={cn("text-[9px] font-bold mt-2", selectedSessionId === sess.id ? "text-white/80" : "text-slate-400")}>{sess.total_dwell_time_sec}s Dwell</p>
+                                        </div>
+                                        <History className={cn("absolute -bottom-2 -right-2 h-12 w-12 opacity-5", selectedSessionId === sess.id ? "text-white" : "text-primary")} />
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Forensics Component Integration */}
+                        <div className="md:col-span-8">
+                            {selectedSessionId ? (
+                                <SessionForensics sessionId={selectedSessionId} />
+                            ) : (
+                                <div className="h-full bg-slate-50 rounded-[3rem] border border-slate-100 border-dashed flex items-center justify-center opacity-40">
+                                    <Clock className="h-10 w-10 text-slate-300" />
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
 }

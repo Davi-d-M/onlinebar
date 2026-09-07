@@ -48,8 +48,8 @@ export default function SupplierLayoutClient({
   const navItems = [
     { name: 'Dashboard', href: '/supplier', icon: LayoutDashboard },
     { name: 'Stock Pulse', href: '/supplier/inventory', icon: Box },
-    { name: 'Settlements', href: '/supplier/settlements', icon: Wallet },
-    { name: 'Propose Gadget', href: '/supplier/propose', icon: Plus },
+    { name: 'Settlements', href: '/supplier/settlements', icon: Wallet    },
+    { name: 'Propose Drink', href: '/supplier/propose', icon: Plus },
   ];
 
   const isActive = (href: string) => {
@@ -87,7 +87,7 @@ export default function SupplierLayoutClient({
                       <Truck className="h-6 w-6 text-white" />
                     </div>
                     <div>
-                      <h2 className="font-black text-foreground leading-none uppercase tracking-tighter text-lg">TechPax</h2>
+                      <h2 className="font-black text-foreground leading-none uppercase tracking-tighter text-lg">Online Bar</h2>
                       <p className="text-[9px] font-black text-primary uppercase tracking-[0.2em] mt-1">Partner Portal</p>
                     </div>
                 </div>

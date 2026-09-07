@@ -15,7 +15,7 @@ export const formatPrice = (price: number | string | undefined | null) => {
 };
 
 export const getReferralLink = (code: string, path: string = '/shop') => {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || (typeof window !== 'undefined' ? window.location.origin : 'https://tech-paxv.onrender.com');
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || (typeof window !== 'undefined' ? window.location.origin : 'https://onlinebar-os.onrender.com');
     const separator = path.includes('?') ? '&' : '?';
     return `${baseUrl}${path}${separator}ref=${code}`;
 };

@@ -90,12 +90,12 @@ export default function CreateCampaign() {
         setTimeout(() => {
             const content = {
                 en: {
-                    ig: `🚀 NEW ARRIVAL: ${selectedProduct.name} has landed! \n\nElevate your setup with our latest ${selectedProduct.category} essential. Engineered for high-fidelity performance. \n\nPrice: ${formatPrice(selectedProduct.price)} \nShop now at the link in bio! 🔗`,
-                    wa: `*Tactical Alert* 🚨\n\nYo bro! The new *${selectedProduct.name}* is officially live. \n\nLimited stock available for our elite members. \n\n🛒 *Price:* ${formatPrice(selectedProduct.price)}\n📍 Nairobi Fast Dispatch Active\n\nLink: tech-paxv.onrender.com/product/${selectedProduct.id}`
+                    ig: `🚀 NEW ARRIVAL: ${selectedProduct.name} has landed! \n\nElevate your experience with our latest ${selectedProduct.category} selection. Curated for premium quality. \n\nPrice: ${formatPrice(selectedProduct.price)} \nShop now at the link in bio! 🔗`,
+                    wa: `*Tactical Alert* 🚨\n\nYo bro! The new *${selectedProduct.name}* is officially live. \n\nLimited stock available for our premium members. \n\n🛒 *Price:* ${formatPrice(selectedProduct.price)}\n📍 Nairobi Fast Dispatch Active\n\nLink: onlinebar-os.onrender.com/product/${selectedProduct.id}`
                 },
                 sw: {
-                    ig: `🚀 MZIGO MPYA: ${selectedProduct.name} imefika! \n\nUpgrade setup yako na hii ${selectedProduct.category} kali. Imetengenezwa kudumu na kuperform fiti. \n\nBei: ${formatPrice(selectedProduct.price)} \nNunua sasa kupitia link kwa bio! 🔗`,
-                    wa: `*Tactical Alert* 🚨\n\nMambo vipi bro! Ile *${selectedProduct.name}* mpya sasa iko live. \n\nMzigo ni mchache, chukua yako mapema. \n\n🛒 *Bei:* ${formatPrice(selectedProduct.price)}\n📍 Nairobi Fast Dispatch Iko Active\n\nLink: tech-paxv.onrender.com/product/${selectedProduct.id}`
+                    ig: `🚀 MZIGO MPYA: ${selectedProduct.name} imefika! \n\nUpgrade bar yako na hii ${selectedProduct.category} kali. Imechaguliwa kwa quality na ladha fiti. \n\nBei: ${formatPrice(selectedProduct.price)} \nNunua sasa kupitia link kwa bio! 🔗`,
+                    wa: `*Tactical Alert* 🚨\n\nMambo vipi bro! Ile *${selectedProduct.name}* mpya sasa iko live. \n\nMzigo ni mchache, chukua yako mapema. \n\n🛒 *Bei:* ${formatPrice(selectedProduct.price)}\n📍 Nairobi Fast Dispatch Iko Active\n\nLink: onlinebar-os.onrender.com/product/${selectedProduct.id}`
                 }
             };
 
@@ -105,7 +105,7 @@ export default function CreateCampaign() {
                 ...prev,
                 instagram: { ...prev.instagram, caption: content[lang].ig, generated: true },
                 whatsapp: { ...prev.whatsapp, body: content[lang].wa, generated: true },
-                email: { ...prev.email, subject: `Tactical Drop: ${selectedProduct.name} is Live 🚀`, body: `Hello Elite member,\n\nThe next evolution in tech has arrived. Discover the ${selectedProduct.name}.`, generated: true }
+                email: { ...prev.email, subject: `Tactical Drop: ${selectedProduct.name} is Live 🚀`, body: `Hello Premium member,\n\nThe next evolution in beverages has arrived. Discover the ${selectedProduct.name}.`, generated: true }
             }));
             setIsGenerating(false);
             setStep('content');
@@ -527,7 +527,7 @@ export default function CreateCampaign() {
                                             {selectedProduct.image_url && <Image src={selectedProduct.image_url} fill className="object-contain" alt="" />}
                                         </div>
                                         <div>
-                                            <p className="text-[9px] font-black text-primary uppercase leading-none mb-1">Target Device</p>
+                                            <p className="text-[9px] font-black text-primary uppercase leading-none mb-1">Target Viewport</p>
                                             <p className="text-sm font-black text-foreground uppercase tracking-tight leading-tight">{selectedProduct.name}</p>
                                         </div>
                                     </div>

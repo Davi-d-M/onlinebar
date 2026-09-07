@@ -26,12 +26,32 @@ export default function AnalyticsTracker() {
 
             const { data: { session } } = await supabase.auth.getSession();
             const anonId = localStorage.getItem('ob_anonymous_id');
+            const activeSessId = OB_OS.getSessionId();
+            const source = searchParams.get('utm_source') || (document.referrer.includes('instagram.com') ? 'Instagram' : document.referrer.includes('google.com') ? 'Google' : 'Direct');
+
             const commonProps = {
                 userId: session?.user?.id,
                 anonymousId: anonId || undefined,
+                sessionId: activeSessId || undefined
             };
 
-            // Basic Page View
+            // 0. Ensure Session Record Exists (Internal Sync)
+            if (activeSessId) {
+                await supabase.from('customer_sessions').upsert({
+                    id: activeSessId,
+                    user_id: session?.user?.id,
+                    anonymous_id: anonId,
+                    entry_page: pathname,
+                    source_channel: source,
+                    device_info: {
+                        ua: navigator.userAgent,
+                        res: `${window.screen.width}x${window.screen.height}`,
+                        lang: navigator.language
+                    }
+                }, { onConflict: 'id' });
+            }
+
+            // 1. Basic Page View
             await OB_OS.track('PAGE_VIEW', {
                 ...commonProps,
                 details: {
@@ -59,12 +79,20 @@ export default function AnalyticsTracker() {
         trackPage();
 
         const heartbeat = setInterval(async () => {
-            const { data: { session } } = await supabase!.auth.getSession();
+            if (!supabase) return;
+            const { data: { session } } = await supabase.auth.getSession();
+            const activeSessId = OB_OS.getSessionId();
+
+            if (activeSessId) {
+                // Update dwell time on every heartbeat (active or visibility)
+                await supabase.rpc('increment_session_dwell_time', { sess_id: activeSessId, inc_sec: 15 });
+            }
+
             OB_OS.track('HEARTBEAT', {
                 userId: session?.user?.id,
                 details: { path: pathname, active_time_ms: activeTimeRef.current }
             });
-        }, 30000);
+        }, 15000); // Higher resolution heartbeat (15s)
 
         return () => {
             clearInterval(heartbeat);

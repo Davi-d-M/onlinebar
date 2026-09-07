@@ -11,7 +11,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { formatPrice, cn } from "@/lib/utils";
 import { validateCoupon } from "@/lib/couponService";
 import { runPostCheckoutAudit } from "@/lib/achievementService";
-import { ArrowLeft, CreditCard, Shield, Truck, Smartphone, Loader2, MapPin, Tag, CheckCircle2, Zap, UserPlus, PartyPopper, Link2, MessageSquare } from "lucide-react";
+import { ArrowLeft, CreditCard, Shield, Truck, Smartphone, Loader2, MapPin, Tag, CheckCircle2, Zap, UserPlus, PartyPopper, Link2, MessageSquare, Heart } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import Script from "next/script";
@@ -84,6 +84,8 @@ function CheckoutContent() {
 
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const [isPickingLocation, setIsPickingLocation] = useState(false);
+  const [isGift, setIsGift] = useState(false);
+  const [giftMessage, setGiftMessage] = useState("");
   const [coords, setCoords] = useState<{ lat: number | null, lng: number | null }>({ lat: null, lng: null });
   const [checkoutStatus, setCheckoutStatus] = useState<CheckoutStatus>({
     type: "idle",
@@ -408,7 +410,7 @@ function CheckoutContent() {
           captured_by: 'system',
           latitude: coords.lat || profile?.latitude || null,
           longitude: coords.lng || profile?.longitude || null,
-          note: `Region: ${currentRegion.label}${activeCoupon ? ` | Coupon: ${activeCoupon.code}` : ''}${usePoints ? ` | Used ${pointsDiscount * 10} points` : ''}${referralCode ? ` | Referred by ${referralCode}` : ''}`
+          note: `Region: ${currentRegion.label}${activeCoupon ? ` | Coupon: ${activeCoupon.code}` : ''}${usePoints ? ` | Used ${pointsDiscount * 10} points` : ''}${referralCode ? ` | Referred by ${referralCode}` : ''}${isGift ? ` | GIFT: ${giftMessage}` : ''}`
       };
 
       const { data: headerData, error: headerError } = await client
@@ -737,6 +739,52 @@ function CheckoutContent() {
                 </div>
                 {/* Decoration */}
                 <Zap className="absolute -bottom-6 -right-6 h-20 w-20 sm:h-24 sm:w-24 text-slate-100/50 rotate-12" />
+            </Card>
+          </section>
+
+          {/* 🎁 GIFTING OPTIONS */}
+          <section className="space-y-6">
+            <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary"><PartyPopper className="h-5 w-5" /></div>
+                <h2 className="text-xl font-black uppercase tracking-tighter">Gifting Details</h2>
+            </div>
+            <Card className={cn(
+                "p-8 rounded-[2.5rem] border-2 transition-all cursor-pointer relative overflow-hidden",
+                isGift ? "border-primary/20 bg-primary/5" : "border-slate-50 bg-slate-50/50"
+            )} onClick={() => setIsGift(!isGift)}>
+                <div className="flex items-center justify-between relative z-10">
+                    <div className="flex items-center gap-4">
+                        <div className={cn(
+                            "h-12 w-12 rounded-2xl flex items-center justify-center shadow-sm transition-all",
+                            isGift ? "bg-primary text-white scale-110" : "bg-white text-slate-300"
+                        )}>
+                            <Heart className="h-6 w-6 fill-current" />
+                        </div>
+                        <div className="text-left">
+                            <h3 className="font-black uppercase text-foreground text-base tracking-tight">This is a Gift</h3>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Add a personal message & gift wrap</p>
+                        </div>
+                    </div>
+                    <div className={cn(
+                        "h-6 w-6 rounded-full border-2 flex items-center justify-center transition-all",
+                        isGift ? "bg-primary border-primary" : "border-slate-100"
+                    )}>
+                        {isGift && <CheckCircle2 className="h-4 w-4 text-white" />}
+                    </div>
+                </div>
+
+                {isGift && (
+                    <div className="mt-8 space-y-4 animate-in slide-in-from-top-4 duration-500" onClick={e => e.stopPropagation()}>
+                        <textarea
+                            value={giftMessage}
+                            onChange={e => setGiftMessage(e.target.value)}
+                            placeholder="Enter your gift message here... (e.g. Happy Birthday Kelvin!)"
+                            className="w-full h-32 rounded-[1.8rem] border border-primary/10 bg-white p-6 text-sm font-medium italic outline-none focus:ring-4 focus:ring-primary/5 transition-all resize-none"
+                        />
+                        <p className="text-[9px] font-black uppercase text-primary/60 tracking-widest text-left ml-2 animate-pulse">✓ Premium wrapping included</p>
+                    </div>
+                )}
+                <PartyPopper className="absolute -bottom-6 -right-6 h-24 w-24 text-primary/5 rotate-12 -z-0" />
             </Card>
           </section>
 

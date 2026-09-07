@@ -68,19 +68,22 @@ export default function AIConcierge() {
 
             if (low.includes('setup') || low.includes('office') || low.includes('gaming')) {
                 const limit = config.build_setup_limit || 5000;
-                const { data: prods } = await supabase!.from('products').select('*').lte('price', limit).limit(3);
+                if (!supabase) throw new Error("Database offline");
+                const { data: prods } = await supabase.from('products').select('*').lte('price', limit).limit(3);
                 suggestions = (prods || []).map(p => ({ id: p.id, name: p.name, price: p.price, image_url: p.image_url }));
                 if (suggestions.length === 0) {
-                    reply = `I couldn't find a complete setup under ${formatPrice(limit)}, bro. I've pulled our closest elite essentials instead:`;
-                    const { data: alt } = await supabase!.from('products').select('*').limit(2);
+                    reply = `I couldn't find a complete setup under ${formatPrice(limit)}, bro. I've pulled our closest premium essentials instead:`;
+                    const { data: alt } = await supabase.from('products').select('*').limit(2);
                     suggestions = (alt || []).map(p => ({ id: p.id, name: p.name, price: p.price, image_url: p.image_url }));
                 }
             } else if (low.includes('cheap') || low.includes('budget') || low.includes('under')) {
-                const { data: prods } = await supabase!.from('products').select('*').order('price', { ascending: true }).limit(2);
+                if (!supabase) throw new Error("Database offline");
+                const { data: prods } = await supabase.from('products').select('*').order('price', { ascending: true }).limit(2);
                 suggestions = (prods || []).map(p => ({ id: p.id, name: p.name, price: p.price, image_url: p.image_url }));
             } else {
-                reply = "I recommend these elite essentials to upgrade your mobile experience, bro. 🛡️";
-                const { data: prods } = await supabase!.from('products').select('*').limit(2);
+                reply = "I recommend these premium essentials to upgrade your mobile experience, bro. 🛡️";
+                if (!supabase) throw new Error("Database offline");
+                const { data: prods } = await supabase.from('products').select('*').limit(2);
                 suggestions = (prods || []).map(p => ({ id: p.id, name: p.name, price: p.price, image_url: p.image_url }));
             }
 
@@ -120,7 +123,7 @@ export default function AIConcierge() {
                             <div className="h-12 w-12 rounded-2xl bg-white/20 flex items-center justify-center backdrop-blur-md border border-white/20"><Bot size={24} /></div>
                             <div>
                                 <h3 className="text-xl font-black uppercase tracking-tighter">AI Concierge</h3>
-                                <p className="text-[10px] font-black uppercase tracking-widest opacity-60">Elite Shopping Agent</p>
+                                <p className="text-[10px] font-black uppercase tracking-widest opacity-60">Premium Shopping Agent</p>
                             </div>
                         </div>
                         <button onClick={() => setIsOpen(false)} className="h-10 w-10 rounded-full hover:bg-white/10 flex items-center justify-center transition-colors relative z-10"><X size={24} /></button>

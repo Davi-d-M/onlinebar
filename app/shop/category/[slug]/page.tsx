@@ -72,7 +72,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
 
   const displayTitle = categorySlug
     ? (categorySlug || '').split('-').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
-    : 'Gadgets';
+    : 'Drinks';
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8 text-left min-h-screen bg-white">
@@ -81,7 +81,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           {displayTitle} {!displayTitle.toLowerCase().includes('arrivals') && 'Items'}
         </h1>
         <p className="mt-2 text-slate-500 font-medium">
-          Discover our curated collection of premium gadgets and tech accessories.
+          Discover our curated collection of premium vintages and spirits.
         </p>
       </div>
 

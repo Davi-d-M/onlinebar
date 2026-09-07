@@ -63,14 +63,14 @@ export default function SignInTrigger() {
           <div className="space-y-3">
             <h2 className="text-3xl font-black uppercase tracking-tighter text-foreground">Elevate Your Experience</h2>
             <p className="text-slate-500 font-medium italic text-sm">
-                &quot;Join the elite circle of patrons and unlock a new dimension of rewards.&quot;
+                &quot;Join our circle of patrons and unlock a new dimension of rewards.&quot;
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
             {[
               { icon: Zap, label: "Daily Streaks & XP", color: "text-primary" },
-              { icon: Crown, label: "Elite Member Perks", color: "text-primary" },
+              { icon: Crown, label: "Member Perks", color: "text-primary" },
               { icon: ShieldCheck, label: "Priority Care", color: "text-emerald-500" },
               { icon: TrendingUp, label: "Better Service", color: "text-indigo-500" },
             ].map((benefit, i) => (

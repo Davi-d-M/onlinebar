@@ -96,6 +96,15 @@ function UserMenu({ isMobileMenu = false }: { isMobileMenu?: boolean }) {
   return (
     <div className={cn("flex items-center", isMobileMenu ? "flex-col w-full gap-2" : "gap-2 sm:gap-4")}>
       <Link
+        href="/admin/login"
+        className={cn(
+            "text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-primary transition-colors mr-2",
+            !isMobileMenu && "hidden lg:inline-block"
+        )}
+      >
+        Staff
+      </Link>
+      <Link
         href="/auth?mode=signin"
         className={cn(
             "text-[10px] font-black uppercase tracking-widest text-foreground hover:text-primary transition-colors",
@@ -243,7 +252,8 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
     { href: "/shop/category/sale", label: "Deals" },
     { href: "/blog", label: "Mixology" },
     { href: "/warranty", label: "Quality" },
-    { href: "/track", label: "Track" }
+    { href: "/track", label: "Track" },
+    { href: "/admin/login", label: "Portal" }
   ];
 
   return (
@@ -495,7 +505,7 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
                 <div className="relative flex-1">
                 <input
                     type="search"
-                    placeholder="Search gadgets..."
+                    placeholder="Search bottles..."
                     autoFocus
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}

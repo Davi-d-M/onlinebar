@@ -136,7 +136,7 @@ export default function LocationPicker({ initialLat, initialLng, onConfirm, onCl
                         <div className="p-4 sm:p-5 bg-emerald-50 rounded-2xl border border-emerald-100 flex items-start gap-3 sm:gap-4">
                             <CheckCircle2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-emerald-500 shrink-0 mt-0.5" />
                             <p className="text-[8px] sm:text-[10px] font-medium text-emerald-700 leading-relaxed italic">
-                                Pinned location will be linked to your Elite account for future orders.
+                                Pinned location will be linked to your account for future orders.
                             </p>
                         </div>
                     </div>

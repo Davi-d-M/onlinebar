@@ -41,8 +41,8 @@ export async function logAuditAction(
         } catch { ip = 'client-unreachable'; }
     }
 
-    // Parse User Agent for elite display
-    let deviceInfo = 'Titan Node';
+    // Parse User Agent for premium display
+    let deviceInfo = 'Bar Node';
     if (typeof navigator !== 'undefined') {
         const ua = navigator.userAgent;
         if (ua.includes('Windows')) deviceInfo = 'Windows Desktop';

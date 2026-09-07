@@ -12,7 +12,7 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: "Unauthorized Command 🛡️" }, { status: 401 });
         }
 
-        const { nodeId } = await request.json();
+        const { nodeId } = (await request.json()) as { nodeId: string };
 
         // 1. Simulate Connection Logic
         // In prod, this would attempt a real API handshake (e.g. Meta Graph API / WhatsApp health)

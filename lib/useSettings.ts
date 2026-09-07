@@ -83,10 +83,10 @@ export const DEFAULT_SETTINGS: StoreSettings = {
         address: "Nairobi, Kenya"
     },
     branding: {
-        owner_name: "David Maganga",
-        portfolio_url: "https://davi-d-m.github.io/my_portfolio/",
-        hero_title: "Elite Vintages. Chilled Spirits.",
-        hero_subtitle: "Experience authentic vintages and elite spirits curated for excellence."
+        owner_name: "Online Bar Team",
+        portfolio_url: "#",
+        hero_title: "Premium Vintages. Chilled Spirits.",
+        hero_subtitle: "Experience authentic vintages and premium spirits curated for excellence."
     },
     homepage: {
         hero_image_url: "",
@@ -100,7 +100,8 @@ export const DEFAULT_SETTINGS: StoreSettings = {
             { id: 'spirits', label: 'Premium Spirits' },
             { id: 'snacks', label: 'Late Night Snacks' },
             { id: 'beer', label: 'Chilled Beers' },
-            { id: 'mixers', label: 'Mixers' }
+            { id: 'mixers', label: 'Mixers' },
+            { id: 'essentials', label: 'Bar Essentials' }
         ]
     },
     shipping: {

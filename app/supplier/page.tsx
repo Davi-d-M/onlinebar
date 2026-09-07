@@ -65,7 +65,7 @@ export default function SupplierDashboard() {
                         <span className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600">Secure Duty Channel</span>
                     </div>
                     <h1 className="text-4xl font-black text-foreground uppercase tracking-tighter leading-none">Partner Command</h1>
-                    <p className="text-muted-foreground text-sm font-medium mt-1">Manage your inventory pulse and propose new tactical gadgets.</p>
+                    <p className="text-muted-foreground text-sm font-medium mt-1">Manage your inventory pulse and propose new premium selections.</p>
                 </div>
                 <Link href="/supplier/propose">
                     <Button className="h-14 px-8 rounded-2xl bg-primary text-white font-black uppercase text-xs tracking-widest shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all">

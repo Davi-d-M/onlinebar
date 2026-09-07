@@ -182,7 +182,7 @@ export default function SupportBubble() {
                                 <div className="flex-1 overflow-y-auto space-y-3 pr-2 scrollbar-hide no-scrollbar">
                                     <div className="bg-slate-50 p-3 rounded-2xl border border-slate-100">
                                         <p className="text-[9px] font-black uppercase text-primary mb-1">Bar AI</p>
-                                        <p className="text-[10px] font-bold text-slate-600 leading-relaxed italic">&quot;Yo bro! I&apos;m your elite beverage assistant. What drink can I help you find today?&quot;</p>
+                                        <p className="text-[10px] font-bold text-slate-600 leading-relaxed italic">&quot;Yo bro! I&apos;m your beverage assistant. What drink can I help you find today?&quot;</p>
                                     </div>
 
                                     {aiChat.map((chat, i) => (
@@ -260,7 +260,7 @@ export default function SupportBubble() {
                                             <CheckCircle className="h-6 w-6" />
                                         </div>
                                         <p className="text-[10px] font-black uppercase text-foreground tracking-tight">Message Received!</p>
-                                        <p className="text-[9px] text-slate-400 font-medium px-4 leading-relaxed">Our elite team will reach out via email shortly.</p>
+                                        <p className="text-[9px] text-slate-400 font-medium px-4 leading-relaxed">Our support team will reach out via email shortly.</p>
                                     </div>
                                 ) : (
                                     <form onSubmit={handleSubmitMessage} className="space-y-3">

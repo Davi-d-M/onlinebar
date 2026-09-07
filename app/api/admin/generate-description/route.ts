@@ -42,7 +42,7 @@ export async function POST(request: Request) {
         }
 
         // 2. Fallback to advanced Template System if API fails or is missing
-        const adjectives = ["Premium", "Elite", "Chilled", "Rich", "Smooth", "Hand-crafted", "Authentic", "Aged", "Gourmet", "Refreshing"];
+        const adjectives = ["Premium", "Platinum", "Chilled", "Rich", "Smooth", "Hand-crafted", "Authentic", "Aged", "Gourmet", "Refreshing"];
         const powerWords = ["Immersive flavor", "full-bodied", "crisp finish", "perfectly balanced", "top-shelf quality"];
         const verbs = ["Experience", "Savor", "Indulge", "Celebrate", "Toast", "Enjoy", "Discover"];
 

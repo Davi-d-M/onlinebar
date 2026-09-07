@@ -143,7 +143,9 @@ export default function SupportCaseManagement() {
             const tableMap = { Support: 'support_tickets', Message: 'messages', Review: 'reviews' };
             const id = parseInt(activeChat.id.split('-')[1]);
 
-            const { error } = await supabase!.from(tableMap[activeChat.type]).update({
+            if (!supabase) throw new Error("Database offline");
+
+            const { error } = await supabase.from(tableMap[activeChat.type as keyof typeof tableMap]).update({
                 admin_response: replyText.trim(),
                 status: 'Resolved'
             }).eq('id', id);

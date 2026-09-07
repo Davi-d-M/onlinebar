@@ -9,7 +9,7 @@ import CountdownTimer from "./CountdownTimer";
 export default function PromotionalBanner() {
   const { settings } = useSettings();
 
-  const promo = settings.promotions || { flash_sale_text: 'Flash Sale: 20% OFF All Tech!', discount_percent: 20, is_active: true, flash_sale_end: '' };
+  const promo = settings.promotions || { flash_sale_text: 'Flash Sale: 20% OFF All Vintages!', discount_percent: 20, is_active: true, flash_sale_end: '' };
 
   const saleEndDate = promo.flash_sale_end || new Date(new Date().getTime() + 48 * 60 * 60 * 1000).toISOString();
 

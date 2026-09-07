@@ -71,7 +71,7 @@ export default function AdminRatingsPage() {
       <header className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 border-b border-slate-200 pb-8">
         <div>
           <h1 className="text-4xl font-black text-foreground uppercase tracking-tighter">Trust Control</h1>
-          <p className="text-slate-500 text-sm font-medium mt-1">Set the star rating (0-5) for each gadget in your catalog.</p>
+          <p className="text-slate-500 text-sm font-medium mt-1">Set the star rating (0-5) for each selection in your catalog.</p>
         </div>
         <Button onClick={fetchRatings} variant="outline" className="rounded-xl h-12 px-6 border-slate-200 bg-white font-black uppercase text-[10px] tracking-widest transition-all">
           <RefreshCcw className="h-4 w-4 mr-2" /> Sync Records
@@ -91,7 +91,7 @@ export default function AdminRatingsPage() {
             <table className="w-full text-left text-sm">
               <thead className="bg-slate-50 text-slate-400 font-black uppercase text-[9px] tracking-[0.2em] border-b border-slate-100">
                 <tr>
-                  <th className="px-8 py-5">Gadget Name</th>
+                  <th className="px-8 py-5">Selection Name</th>
                   <th className="px-8 py-5">Reputation</th>
                   <th className="px-8 py-5 text-right">Commit</th>
                 </tr>

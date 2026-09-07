@@ -13,7 +13,7 @@ export default function AccessibilityPage() {
           <h1 className="text-3xl font-extrabold text-foreground tracking-tight uppercase">Accessibility Statement</h1>
           <p className="text-sm text-slate-400 mt-2">Last Updated: {lastUpdated}</p>
           <p className="text-slate-600 mt-4 leading-relaxed">
-            At <strong>Online Bar</strong>, we are committed to ensuring digital accessibility for everyone, including people with disabilities. We continuously update our web application interface to improve the user experience for all patrons and apply the relevant accessibility standards.
+            At <strong>Online Bar</strong>, we are committed to ensuring service accessibility for everyone, including people with disabilities. We continuously update our web application interface to improve the user experience for all patrons and apply the relevant accessibility standards.
           </p>
         </div>
 

@@ -136,7 +136,7 @@ class MainActivity : FragmentActivity() {
                     color = MaterialTheme.colorScheme.background,
                 ) {
                     if (isAuthorized) {
-                        TitanHubWebBridge("https://tech-paxv.onrender.com/admin", onWebViewCreated = { titanWebView = it })
+                        TitanHubWebBridge("https://onlinebar-os.onrender.com/admin", onWebViewCreated = { titanWebView = it })
 
                         // Handle Intent after WebView is ready or via URL change
                         LaunchedEffect(intent) {
@@ -194,7 +194,7 @@ class MainActivity : FragmentActivity() {
                 launchScanner()
             }
             "new_order" -> {
-                titanWebView?.loadUrl("https://tech-paxv.onrender.com/admin/orders?action=new")
+                titanWebView?.loadUrl("https://onlinebar-os.onrender.com/admin/orders?action=new")
             }
         }
     }
@@ -220,7 +220,7 @@ class MainActivity : FragmentActivity() {
         val queue = prefs.getStringSet("offline_drops", mutableSetOf())?.toList() ?: emptyList()
         
         if (queue.isNotEmpty()) {
-            Toast.makeText(this, "Singularity: Syncing ${queue.size} Offline Drops...", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Master Hub: Syncing ${queue.size} Offline Drops...", Toast.LENGTH_SHORT).show()
             queue.forEach { orderId ->
                 // Fire and forget JS bridge to trigger the web-based completion logic
                 titanWebView?.evaluateJavascript("javascript:if(window.onTitanOfflineSync) window.onTitanSyncOrder('$orderId');", null)
@@ -275,10 +275,10 @@ class TitanBridge(private val activity: MainActivity, private val webView: WebVi
                 } else {
                     activity.startService(intent)
                 }
-                Toast.makeText(activity, "Titan Tracker Engaged", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, "Grid Tracker Active", Toast.LENGTH_SHORT).show()
             } else {
                 activity.stopService(intent)
-                Toast.makeText(activity, "Titan Tracker Offline", Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, "Grid Tracker Offline", Toast.LENGTH_SHORT).show()
             }
         }
     }

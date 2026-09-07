@@ -89,7 +89,7 @@ export default function BlogDetailPage() {
                     </div>
                     <div>
                         <p className="text-[10px] font-black uppercase tracking-widest text-foreground">{post.author}</p>
-                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Certified Tech Analyst</p>
+                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Certified Beverage Analyst</p>
                     </div>
                 </div>
                 <button className="h-10 w-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 hover:text-primary transition-all shadow-sm">
@@ -116,7 +116,7 @@ export default function BlogDetailPage() {
         <section className="bg-slate-50 rounded-[2.5rem] p-12 flex flex-col sm:flex-row gap-12 items-center justify-between border border-slate-100 shadow-inner">
             <div className="flex-1 text-center sm:text-left space-y-4">
                 <h3 className="text-2xl font-black text-foreground uppercase tracking-tighter">Powering Your Drink Journey</h3>
-                <p className="text-slate-500 font-medium text-sm leading-relaxed">At Online Bar Nairobi, we don&apos;t just sell premium drinks—we know them. All information provided in our guides is verified by elite mixology analysts.</p>
+                <p className="text-slate-500 font-medium text-sm leading-relaxed">At Online Bar Nairobi, we don&apos;t just sell premium drinks—we know them. All information provided in our guides is verified by our mixology analysts.</p>
             </div>
             <div className="flex gap-4">
                 <div className="h-16 w-16 rounded-2xl bg-white flex items-center justify-center text-primary shadow-xl border border-slate-100"><Zap className="h-8 w-8" /></div>

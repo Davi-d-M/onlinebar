@@ -66,7 +66,7 @@ const DEFAULTS = {
         { id: 'patron', label: 'Patron', threshold: 0, icon: 'Star' },
         { id: 'silver', label: 'Silver VIP', threshold: 500, icon: 'ShieldCheck' },
         { id: 'gold', label: 'Gold VIP', threshold: 1000, icon: 'Crown' },
-        { id: 'elite', label: 'Elite VIP', threshold: 2000, icon: 'Gem' },
+        { id: 'diamond', label: 'Diamond VIP', threshold: 2000, icon: 'Gem' },
         { id: 'legend', label: 'Mixology Legend', threshold: 5000, icon: 'Trophy' },
     ],
     badges: [

@@ -5,7 +5,7 @@ import { useSettings } from "@/lib/useSettings";
 export default function JsonLd() {
   const { settings } = useSettings();
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://tech-paxv.onrender.com';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://onlinebar-os.onrender.com';
 
   const organizationSchema = {
     "@context": "https://schema.org",

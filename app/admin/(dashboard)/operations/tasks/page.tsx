@@ -45,8 +45,10 @@ export default function TaskCenter() {
             const { data, error } = await supabase.from('admin_tasks').select('*').order('created_at', { ascending: false });
             if (error) throw error;
             setTasks(data || []);
-        } catch (err) {
-            console.error(err);
+        } catch (err: unknown) {
+            const errorMsg = err instanceof Error ? err.message : String(err);
+            console.error("Operations Board Sync Failure:", errorMsg);
+            setMessage({ type: 'error', text: "Uplink to operations board lost." });
         } finally {
             setLoading(false);
         }
@@ -75,8 +77,10 @@ export default function TaskCenter() {
             setIsAdding(false);
             setNewTask({ title: '', description: '', priority: 'Medium' });
             fetchTasks();
-        } catch (err) {
-            console.error(err);
+        } catch (err: unknown) {
+            const errorMsg = err instanceof Error ? err.message : String(err);
+            console.error("Protocol Establishment Failure:", errorMsg);
+            alert("Failed to establish new protocol.");
         }
     };
 

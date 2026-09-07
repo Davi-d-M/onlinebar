@@ -133,7 +133,7 @@ export default function AdminMessagesPage() {
       <header className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 border-b border-slate-200 pb-8">
         <div>
           <h1 className="text-4xl font-black text-foreground uppercase tracking-tighter">Support Inbox</h1>
-          <p className="text-slate-500 text-sm font-medium mt-1">Manage customer inquiries and technical support tickets.</p>
+          <p className="text-slate-500 text-sm font-medium mt-1">Manage customer inquiries and support tickets.</p>
         </div>
         <Button onClick={fetchMessages} variant="outline" className="rounded-xl h-12 px-6 border-slate-200 bg-white font-black uppercase text-[10px] tracking-widest transition-all hover:shadow-lg">
             <RefreshCcw className="h-4 w-4 mr-2" /> Sync Inbox

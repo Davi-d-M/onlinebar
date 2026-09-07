@@ -447,7 +447,7 @@ export default function AdminAnalyticsPage() {
                             <div className="pt-8 border-t border-slate-100 flex justify-between items-center">
                                 <div className="flex items-center gap-3">
                                     <div className="h-8 w-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-500"><Zap size={14} className="fill-current" /></div>
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-foreground">Operational Elite</span>
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-foreground">Operational Excellence</span>
                                 </div>
                                 <ArrowUpRight className="h-5 w-5 text-primary" />
                             </div>
@@ -472,7 +472,7 @@ export default function AdminAnalyticsPage() {
                             </div>
                             <div className="flex justify-between items-center">
                                 <span className="text-[10px] font-black uppercase text-primary tracking-widest">Growth Velocity</span>
-                                <span className="text-lg font-black text-emerald-500 tracking-tighter">ELITE</span>
+                                <span className="text-lg font-black text-emerald-500 tracking-tighter">PEAK</span>
                             </div>
                         </div>
                     </div>

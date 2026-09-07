@@ -1,0 +1,24 @@
+-- ONLINE BAR: PRODUCTS TABLE SCHEMA HARDENING
+-- Ensures all columns required for advanced features (Brand, SKU, Cost, Gating) exist.
+
+ALTER TABLE public.products
+ADD COLUMN IF NOT EXISTS brand TEXT,
+ADD COLUMN IF NOT EXISTS sku TEXT UNIQUE,
+ADD COLUMN IF NOT EXISTS cost_price NUMERIC DEFAULT 0,
+ADD COLUMN IF NOT EXISTS old_price NUMERIC,
+ADD COLUMN IF NOT EXISTS short_description TEXT,
+ADD COLUMN IF NOT EXISTS what_is_in_the_box TEXT,
+ADD COLUMN IF NOT EXISTS images TEXT[] DEFAULT ARRAY[]::TEXT[],
+ADD COLUMN IF NOT EXISTS is_snack BOOLEAN DEFAULT false,
+ADD COLUMN IF NOT EXISTS is_new BOOLEAN DEFAULT true,
+ADD COLUMN IF NOT EXISTS is_best_seller BOOLEAN DEFAULT false,
+ADD COLUMN IF NOT EXISTS is_featured BOOLEAN DEFAULT false,
+ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'Live',
+ADD COLUMN IF NOT EXISTS image_quality_score INTEGER DEFAULT 0,
+ADD COLUMN IF NOT EXISTS image_metadata JSONB DEFAULT '{}'::JSONB,
+ADD COLUMN IF NOT EXISTS beverage_specs JSONB DEFAULT '{}'::JSONB,
+ADD COLUMN IF NOT EXISTS min_loyalty_tier TEXT DEFAULT 'Explorer',
+ADD COLUMN IF NOT EXISTS supplier_id BIGINT;
+
+-- Ensure category defaults to wine if not specified
+ALTER TABLE public.products ALTER COLUMN category SET DEFAULT 'wine';

@@ -113,7 +113,7 @@ fun EdgeAiTriage(onTriageDetected: (String) -> Unit) {
             }
         )
         Text(
-            text = "AI Triage Active: Point at Gadget",
+            text = "AI Triage Active: Point at Bottle",
             color = Color.White,
             modifier = Modifier.align(Alignment.TopCenter).padding(top = 20.dp),
             style = MaterialTheme.typography.titleMedium
@@ -184,7 +184,7 @@ fun BarcodeScanner(onBarcodeDetected: (String) -> Unit) {
             }
         )
         Text(
-            text = "Scan Gadget SKU",
+            text = "Scan Bottle SKU",
             color = Color.White,
             modifier = Modifier.align(Alignment.TopCenter),
             style = MaterialTheme.typography.headlineSmall

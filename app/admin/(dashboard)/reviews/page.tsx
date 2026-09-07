@@ -179,7 +179,7 @@ export default function AdminReviewHub() {
       });
   }, [reviews, searchQuery, statusFilter]);
 
-  const getProductName = (id: number) => products.find(p => p.id === id)?.name || `Gadget #${id}`;
+  const getProductName = (id: number) => products.find(p => p.id === id)?.name || `Beverage #${id}`;
 
   return (
     <div className="p-8 space-y-8 bg-slate-50 min-h-screen text-left">

@@ -94,7 +94,7 @@ export default function AskOB() {
                 const top = Array.from(spendingMap.entries()).sort((a,b) => b[1] - a[1]).slice(0, 3);
                 return (
                     <div className="space-y-2">
-                        <p className="font-bold text-xs uppercase">Elite Tier Shoppers:</p>
+                        <p className="font-bold text-xs uppercase">Top Tier Shoppers:</p>
                         {top.map(([name, val], i) => (
                             <div key={name} className="flex justify-between items-center bg-slate-50 p-3 rounded-xl border border-slate-100 shadow-sm">
                                 <span className="font-black text-[10px] text-foreground">{i+1}. {name}</span>

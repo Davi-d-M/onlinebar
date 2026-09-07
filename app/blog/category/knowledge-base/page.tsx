@@ -24,7 +24,7 @@ export default function KnowledgeBase() {
                   <ArrowLeft className="h-4 w-4" /> Back to Hub
               </Link>
               <div className="max-w-3xl space-y-6">
-                <Badge className="bg-primary/10 text-primary border-none font-black uppercase text-[10px] tracking-widest px-4 py-2 rounded-full">Elite Knowledge Base</Badge>
+                <Badge className="bg-primary/10 text-primary border-none font-black uppercase text-[10px] tracking-widest px-4 py-2 rounded-full">Premium Knowledge Base</Badge>
                 <h1 className="text-5xl lg:text-7xl font-black text-foreground uppercase tracking-tighter leading-none">
                     Beverage <span className="text-primary italic">Intelligence.</span>
                 </h1>
@@ -63,7 +63,7 @@ export default function KnowledgeBase() {
               )) : (
                   <div className="lg:col-span-3 text-center py-24 bg-slate-50 rounded-[3rem] border-2 border-dashed border-slate-100">
                       <HelpCircle className="h-12 w-12 text-slate-200 mx-auto mb-4" />
-                      <p className="text-slate-400 font-black uppercase text-xs tracking-widest italic">Awaiting technical artifacts from the hub...</p>
+                      <p className="text-slate-400 font-black uppercase text-xs tracking-widest italic">Awaiting beverage artifacts from the hub...</p>
                   </div>
               )}
           </div>

@@ -77,7 +77,7 @@ export default function OrderSummary() {
           </div>
           <div className="flex items-center gap-3 text-sm text-muted-foreground font-medium">
             <Heart className="h-4 w-4 text-primary" />
-            <span>100% Genuine Tech Verified</span>
+            <span>100% Genuine Quality Verified</span>
           </div>
         </div>
       </CardContent>

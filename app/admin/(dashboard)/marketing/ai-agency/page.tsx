@@ -201,7 +201,7 @@ export default function AIAdAgency() {
                                 <h3 className="text-xl font-black uppercase tracking-tighter">Budget Agent</h3>
                             </div>
                             <p className="text-xs font-medium leading-relaxed opacity-70 italic">
-                                &quot;Detected high margin velocity on Audio items. I recommend shifting KSh 5,000 from stagnant Case ads to the Amaya AM-05 campaign to maximize ROI.&quot;
+                                &quot;Detected high margin velocity on Vintage items. I recommend shifting KSh 5,000 from stagnant Snack ads to the Blue Label campaign to maximize ROI.&quot;
                             </p>
                             <Button
                                 onClick={handleAuthorizePivot}

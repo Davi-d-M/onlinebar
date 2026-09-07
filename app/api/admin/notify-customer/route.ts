@@ -31,12 +31,12 @@ export async function POST(request: Request) {
 
         if (status === 'Dispatched') {
             subject = `Your Order #${orderId} is on the way!`;
-            headline = "Good news, your tech is moving!";
+            headline = "Good news, your order is moving!";
             body = `Hello ${name}, your order #${orderId} has been dispatched and is currently with our rider. You should receive it shortly.`;
         } else if (status === 'Delivered') {
-            subject = `Order #${orderId} Delivered - Enjoy your tech!`;
+            subject = `Order #${orderId} Delivered - Enjoy your drink!`;
             headline = "Delivery Complete!";
-            body = `Hello ${name}, your order #${orderId} has been successfully delivered. We hope you love your new gadgets!`;
+            body = `Hello ${name}, your order #${orderId} has been successfully delivered. We hope you enjoy your selection! 🍷`;
         } else if (status === 'Paid') {
             subject = `Payment Confirmed for Order #${orderId} 💳✨`;
             headline = "We've received your payment!";
@@ -53,7 +53,7 @@ export async function POST(request: Request) {
                 <div style="font-family: sans-serif; padding: 20px; color: #333;">
                     <h1 style="color: #ff6b00;">${headline}</h1>
                     <p>${body}</p>
-                    <p>Track your order anytime here: <a href="${process.env.NEXT_PUBLIC_BASE_URL || 'https://tech-paxv.onrender.com'}/track">Track Order</a></p>
+                    <p>Track your order anytime here: <a href="${process.env.NEXT_PUBLIC_BASE_URL || 'https://onlinebar-os.onrender.com'}/track">Track Order</a></p>
                     <hr style="border: 1px solid #eee; margin: 20px 0;" />
                     <p style="font-size: 12px; color: #999;">Online Bar Nairobi</p>
                 </div>

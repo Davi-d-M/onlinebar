@@ -56,7 +56,7 @@ export default function SystemHealthMonitor() {
                     </div>
                     <div>
                         <h3 className="text-xl font-black uppercase tracking-tighter text-foreground leading-none">System Health</h3>
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Global Technical Observability</p>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Global Operational Observability</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-2 px-3 py-1 bg-slate-50 border border-slate-100 rounded-full text-[9px] font-black uppercase text-slate-500">

@@ -30,9 +30,10 @@ export default function LiveCityPulse() {
         }
         fetchTrends();
 
-        // Optional: Subscribe to real-time updates
+        // Optional: Subscribe to real-time updates with unique channel name
+        const channelId = `city-pulse-${Math.random().toString(36).substring(7)}`;
         const channel = supabase
-            ?.channel('city-pulse')
+            ?.channel(channelId)
             .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'neighborhood_trends' }, fetchTrends)
             .subscribe();
 
@@ -87,7 +88,7 @@ export default function LiveCityPulse() {
                         {/* Status Icon Background */}
                         {zone.status === 'Trending' && <Flame className="absolute -bottom-6 -right-6 h-24 w-24 text-rose-500/5 rotate-12" />}
                         {zone.status === 'Busy' && <Zap className="absolute -bottom-6 -right-6 h-24 w-24 text-amber-500/5 rotate-12" />}
-                        {zone.status === 'Elite Choice' && <Star className="absolute -bottom-6 -right-6 h-24 w-24 text-primary/5 rotate-12" />}
+                        {zone.status === 'Premium Choice' && <Star className="absolute -bottom-6 -right-6 h-24 w-24 text-primary/5 rotate-12" />}
                     </Card>
                 ))}
             </div>

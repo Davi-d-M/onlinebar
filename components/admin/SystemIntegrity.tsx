@@ -77,7 +77,7 @@ export default function SystemIntegrity() {
                     </div>
                     <div>
                         <h3 className="text-xl font-black uppercase tracking-tighter text-foreground leading-none">System Integrity</h3>
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Global Technical Heartbeat</p>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Global Operational Heartbeat</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-2">

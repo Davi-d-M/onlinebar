@@ -126,7 +126,7 @@ export default function MerchantOnboarding() {
                             <div className="space-y-8 text-center animate-in slide-in-from-bottom-4 duration-500">
                                 <div className="space-y-2">
                                     <h2 className="text-2xl font-black text-foreground uppercase leading-tight">Apply for the <br/> Partner Grid</h2>
-                                    <p className="text-sm text-slate-500 font-medium italic">&quot;Connect your cellar to Nairobi&apos;s elite patron network.&quot;</p>
+                                    <p className="text-sm text-slate-500 font-medium italic">&quot;Connect your cellar to Nairobi&apos;s premium patron network.&quot;</p>
                                 </div>
                                 <div className="p-6 bg-slate-50 rounded-3xl space-y-4 text-left">
                                     <div className="flex items-center gap-3">

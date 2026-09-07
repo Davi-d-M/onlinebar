@@ -50,7 +50,7 @@ export default class AdminErrorBoundary extends Component<Props, State> {
             </p>
 
             <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 mb-10 overflow-hidden">
-                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Technical Insight</p>
+                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Operational Insight</p>
                 <code className="text-xs font-bold text-rose-600 break-words block">
                     {this.state.error?.message || 'Unexpected application failure'}
                 </code>

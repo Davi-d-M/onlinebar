@@ -1,37 +1,42 @@
-# Implementation Plan - Hardened Grid Establishment Master 🛡️🏰🏛️
+# Implementation Plan - Final Brand Polish & Technical Hardening 🛡️🍷🧹
 
-This plan consolidates all "Online Bar" database structures into a single, idempotent Master Script. It resolves existing policy conflicts, aligns table names with the production codebase, and ensures 100% connectivity between the Admin Panel and the backend.
+This plan focuses on two objectives: completing the "Tech" terminology purge to align with the premium Online Bar brand, and fixing all remaining linting/type warnings to ensure a flawless production build on Render.com.
 
 ## User Review Required
 
-> [!CAUTION]
-> - **Schema Alignment**: I am changing `ledger_entries` to `financial_ledger` to match the existing codebase. If you have data in a table named `ledger_entries`, it should be migrated to `financial_ledger`.
-> - **Idempotency**: All `CREATE POLICY` statements will be preceded by `DROP POLICY IF EXISTS` to prevent the "Policy already exists" error seen in your screenshot.
+> [!IMPORTANT]
+> **Terminology Shift**: I will replace words like "Device", "Hardware", and "Software" with "Node", "Terminal", "Selection", or "System" to sound less like a tech shop and more like a luxury beverage service.
+> **Build Stability**: I am fixing the `MessageSquare` import error in Settings and removing all `any` types that were flagged in your Render.com build logs.
 
 ## Proposed Changes
 
-### 🧱 1. Database Consolidation & Hardening
+### 🧼 1. Final Terminology Purge
+I will perform a surgical sweep of the codebase to replace tech-heavy words:
+- **"Device"** -> **"Terminal"** or **"Unit"**
+- **"Hardware"** -> **"Infrastructure"** or **"Dispatch Unit"**
+- **"Software"** -> **"System"**
+- **"Digital"** -> **"Online"** or **"Quality"**
+- **"Electronic"** -> **"Beverage"**
 
-#### [NEW] [grid_establishment_hardened.sql](file:///C:/Users/hp/AndroidStudioProjects/onbar/supabase/migrations/grid_establishment_hardened.sql)
-- **Identity & Profiles**: Enhanced with `xp`, `level`, and `loyalty_points`.
-- **Products**: Full cellar specs including `dynamic_pricing` and `wholesale` logic.
-- **Orders & Items**: 1:N relationship structure with `unit_cost` tracking for profit automation.
-- **Financial Ledger**: Corrected table name (`financial_ledger`) used by the Profit Automation engine.
-- **Real-Time Traffic**: Added `active_visitors` table used by the Admin Shift Console.
-- **Observability**: Tables for `request_traces`, `exception_log`, and `system_autonomous_state`.
-- **Security**: Hardened `security_sessions` with RLS.
-- **RLS Fix**: Uses `DROP POLICY IF EXISTS` for all tables (Passports, Products, Marketing).
+### 🧹 2. Technical Hardening (Zero Warning Build)
+I will fix every file flagged in the Render.com logs:
+- **[MODIFY] settings/page.tsx**: Fix `MessageSquare` import and remove `any`.
+- **[MODIFY] customers/[phone]/page.tsx**: Replace `any` with strict types.
+- **[MODIFY] rider/dashboard/page.tsx**: Fix unused variables and `useCallback` dependencies.
+- **[MODIFY] AnalyticsTracker.tsx**: Remove `any` from event listeners.
+- **[MODIFY] api/admin/pulse/route.ts**: Hardened type definitions.
 
-### 🏰 2. Admin connectivity Sync
-
-- Ensure all tables used in the **Personal Customer Journey Audit** (like `analytics_events` and `mission_definitions`) are present and properly indexed.
-- Add `active_visitors` which was missing from the previous master draft but is critical for the Admin Pulse.
+### 🏗️ 3. Grid Integrity
+- **[MODIFY] MASTER_ESTABLISHMENT_V3.sql**: Ensure the schema is 100% aligned with the latest app logic (e.g., `beverage_specs` instead of `tech_specs`).
 
 ---
 
 ## Verification Plan
 
+### Automated Tests
+- `npm run lint`: Goal is `✔ No ESLint warnings or errors`.
+- `npm run build`: Must complete successfully locally before pushing.
+
 ### Manual Verification
-1. **SQL Execution**: Run the script in Supabase SQL Editor. It should execute with **Zero Errors** even if some tables/policies already exist.
-2. **Connectivity Check**: Open the Admin "Control Tower" and verify the "Live Now" counter (powered by `active_visitors`) is active.
-3. **Audit Trail**: Verify that customer interactions are still being logged to `analytics_events`.
+- Verify the "Control Tower" (Dashboard) looks clean and uses "Bar" terminology.
+- Check the "Security Sessions" section in the Profile to ensure it no longer says "My Devices".

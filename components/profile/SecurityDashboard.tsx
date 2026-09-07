@@ -122,7 +122,7 @@ export default function SecurityDashboard({ userId }: { userId: string }) {
                                 </div>
                                 <div className="text-left">
                                     <div className="flex items-center gap-3">
-                                        <p className="text-xs font-black uppercase text-foreground">{s.device_name || 'Authorized Device'}</p>
+                                        <p className="text-xs font-black uppercase text-foreground">{s.device_name || 'Authorized Session'}</p>
                                         {s.is_current_session && (
                                             <span className="px-2 py-0.5 rounded bg-emerald-500 text-white text-[7px] font-black uppercase animate-pulse shadow-lg shadow-emerald-500/20">Current Node</span>
                                         )}

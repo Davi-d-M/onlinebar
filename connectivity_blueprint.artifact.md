@@ -28,7 +28,7 @@ This document maps the primary UI components to their underlying Supabase infras
 The Android application (`app_android`) acts as a secure "Mobile Controller" for the ecosystem.
 
 - **Bridge Type**: Native WebView with Hardware Acceleration.
-- **Primary Endpoint**: `https://tech-paxv.onrender.com/admin` (Configurable in `MainActivity.kt`).
+- **Primary Endpoint**: `https://onlinebar-os.onrender.com/admin` (Configurable in `MainActivity.kt`).
 - **Security**: Requires Internet Permission and Cleartext support for Render.com SSL handshake.
 
 ## 4. Meta Ecosystem Integration (Ads & IG) 🛰️

@@ -71,7 +71,7 @@ export default function SnackShopPage() {
                             The Snack <span className="text-primary italic">Shop.</span> 🍿
                         </h1>
                         <p className="text-slate-500 text-lg font-medium leading-relaxed italic">
-                            &quot;Elite pairings for your favorite beverages. Chilled, crunchy, and delivered with surgical speed.&quot;
+                            &quot;Premium pairings for your favorite beverages. Chilled, crunchy, and delivered with surgical speed.&quot;
                         </p>
                     </div>
                 </div>

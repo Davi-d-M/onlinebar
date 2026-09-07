@@ -55,10 +55,10 @@ export default function PersonalizedFeed() {
 
                     // 2. Cross-Sell Mapping (Manual Intelligence)
                     const crossSellMap: Record<string, string[]> = {
-                        'smartphones': ['chargers', 'cases', 'screen-protectors'],
-                        'airpods': ['cases', 'chargers'],
-                        'watches': ['straps', 'chargers'],
-                        'laptops': ['hubs', 'bags', 'mice']
+                        'wine': ['glassware', 'mixers', 'snacks'],
+                        'whiskey': ['ice-molds', 'glassware', 'mixers'],
+                        'spirits': ['mixers', 'snacks', 'glassware'],
+                        'beer': ['snacks', 'coolers']
                     };
 
                     const relatedCategories = [...categories];

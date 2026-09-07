@@ -13,16 +13,17 @@ export default function LevelUpCelebration() {
     useEffect(() => {
         if (!supabase) return;
 
-        // Listener for profile updates
+        // Listener for profile updates with unique channel name to avoid subscription race conditions
+        const channelId = `level-up-${Math.random().toString(36).substring(7)}`;
         const channel = supabase
-            .channel('level-up')
+            .channel(channelId)
             .on('postgres_changes', {
                 event: 'UPDATE',
                 schema: 'public',
                 table: 'profiles'
             }, (payload) => {
-                const oldLevel = payload.old.level;
-                const newLevel = payload.new.level;
+                const oldLevel = payload.old.level || 0;
+                const newLevel = payload.new.level || 0;
 
                 if (newLevel > oldLevel) {
                     setLevelData({ level: newLevel, title: payload.new.title });

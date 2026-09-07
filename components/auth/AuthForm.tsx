@@ -11,7 +11,8 @@ import {
     Key,
     Smartphone,
     Globe,
-    ShieldCheck
+    ShieldCheck,
+    MapPin
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -29,6 +30,7 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: 'si
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [address, setAddress] = useState(''); // NEW
   const [otp, setOtp] = useState('');
   const [showOtpField, setShowOtpField] = useState(false);
 
@@ -59,7 +61,13 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: 'si
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
-          options: { data: { full_name: fullName, phone_number: phoneNumber } }
+          options: {
+              data: {
+                  full_name: fullName,
+                  phone_number: phoneNumber,
+                  address: address // Map new field
+              }
+          }
         });
         if (error) throw error;
         if (data.user) {
@@ -156,11 +164,27 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: 'si
       {method === 'email' ? (
           <form onSubmit={handleEmailAuth} className="space-y-5">
             {isSignUp && (
-              <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Full Identity</label>
-                <div className="relative">
-                    <Input required value={fullName} onChange={e => setFullName(e.target.value)} placeholder="Full Name" className="h-14 rounded-2xl bg-slate-50 border-slate-100 pl-12 font-bold" />
-                    <Globe className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
+              <div className="space-y-4 animate-in slide-in-from-top-2 duration-300">
+                <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Full Identity</label>
+                    <div className="relative">
+                        <Input required value={fullName} onChange={e => setFullName(e.target.value)} placeholder="Full Name" className="h-14 rounded-2xl bg-slate-50 border-slate-100 pl-12 font-bold" />
+                        <Globe className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
+                    </div>
+                </div>
+                <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Mobile Uplink</label>
+                    <div className="relative">
+                        <Input required value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} placeholder="07XXXXXXXX" className="h-14 rounded-2xl bg-slate-50 border-slate-100 pl-12 font-bold" />
+                        <Smartphone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
+                    </div>
+                </div>
+                <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Delivery Address</label>
+                    <div className="relative">
+                        <Input required value={address} onChange={e => setAddress(e.target.value)} placeholder="e.g. Kilimani, Galana Rd" className="h-14 rounded-2xl bg-slate-50 border-slate-100 pl-12 font-bold" />
+                        <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
+                    </div>
                 </div>
               </div>
             )}

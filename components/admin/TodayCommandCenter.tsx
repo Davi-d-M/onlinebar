@@ -34,7 +34,7 @@ export default function TodayCommandCenter() {
                     supabase.from('profiles').select('id', { count: 'exact' }),
                     supabase.from('rider_status').select('id', { count: 'exact' }).eq('status', 'Online'),
                     supabase.from('suppliers').select('id', { count: 'exact' }).eq('is_active', true),
-                    supabase.from('ledger_entries').select('amount').eq('entry_type', 'REVENUE')
+                    supabase.from('financial_ledger').select('amount').eq('entry_type', 'REVENUE')
                 ]);
 
                 const totalRev = revenueRes.data?.reduce((sum, e) => sum + Number(e.amount), 0) || 0;
@@ -53,8 +53,21 @@ export default function TodayCommandCenter() {
         }
 
         fetchCommandData();
-        const interval = setInterval(fetchCommandData, 30000);
-        return () => clearInterval(interval);
+
+        if (!supabase) return;
+
+        const channelId = `command-hud-sync-${Math.random().toString(36).substring(7)}`;
+        const channel = supabase.channel(channelId)
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, fetchCommandData)
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'financial_ledger' }, fetchCommandData)
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'rider_status' }, fetchCommandData)
+            .subscribe();
+
+        return () => {
+            if (supabase) {
+                supabase.removeChannel(channel);
+            }
+        };
     }, []);
 
     const nodes = [

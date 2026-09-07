@@ -16,11 +16,20 @@ interface SearchResult {
     id: string | number;
     title: string;
     subtitle: string;
-    type: 'order' | 'product' | 'customer' | 'rider';
+    type: 'order' | 'product' | 'customer' | 'rider' | 'action';
     url: string;
     image?: string;
     meta?: string;
 }
+
+const STATIC_ACTIONS: SearchResult[] = [
+    { id: 'act-1', title: 'Add Inventory', subtitle: 'Global Cellar Hub', type: 'action', url: '/admin/upload' },
+    { id: 'act-2', title: 'Dispatch Runner', subtitle: 'Logistics Deployment', type: 'action', url: '/admin/dispatch' },
+    { id: 'act-3', title: 'Create Coupon', subtitle: 'Marketing Promotions', type: 'action', url: '/admin/coupons' },
+    { id: 'act-4', title: 'Financial Audit', subtitle: 'Finance Vault', type: 'action', url: '/admin/finance' },
+    { id: 'act-5', title: 'Staff Control', subtitle: 'Identity Grid', type: 'action', url: '/admin/staff' },
+    { id: 'act-6', title: 'Security Scan', subtitle: 'Threat Analysis', type: 'action', url: '/admin/security' },
+];
 
 export default function GlobalCommandPalette({ isOpen, setIsOpen }: CommandPaletteProps) {
     const [query, setQuery] = useState('');
@@ -40,7 +49,8 @@ export default function GlobalCommandPalette({ isOpen, setIsOpen }: CommandPalet
 
     useEffect(() => {
         if (query.length < 2) {
-            setResults([]);
+            setResults(STATIC_ACTIONS);
+            setActiveIndex(0);
             return;
         }
 
@@ -166,6 +176,7 @@ export default function GlobalCommandPalette({ isOpen, setIsOpen }: CommandPalet
                                     )}>
                                         {result.type === 'order' ? <ShoppingBag className="h-5 w-5" /> :
                                          result.type === 'rider' ? <Truck className="h-5 w-5" /> :
+                                         result.type === 'action' ? <Zap className="h-5 w-5" /> :
                                          result.type === 'product' ? (
                                              result.image ? <div className="h-8 w-8 relative"><Image src={result.image} fill className="object-contain" alt={result.title || ""} /></div> : <Package className="h-5 w-5" />
                                          ) : <Users className="h-5 w-5" />}

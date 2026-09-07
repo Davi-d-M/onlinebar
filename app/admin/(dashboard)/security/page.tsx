@@ -138,7 +138,7 @@ export default function SecurityHub() {
                             {threats.length === 0 ? (
                                 <div className="p-16 text-center bg-white rounded-[3rem] border border-slate-100 opacity-40">
                                     <ShieldCheck className="h-10 w-10 mx-auto mb-4 text-emerald-500" />
-                                    <p className="text-[10px] font-black uppercase tracking-widest">No active threats detected by the Singularity.</p>
+                                    <p className="text-[10px] font-black uppercase tracking-widest">No active threats detected by the Core Grid.</p>
                                 </div>
                             ) : threats.map(t => (
                                 <Card key={t.id} className="p-8 rounded-[3rem] border border-rose-100 bg-white shadow-sm flex items-center justify-between group hover:shadow-xl transition-all">
@@ -208,7 +208,7 @@ export default function SecurityHub() {
                                                     {att.success ? 'Authorized' : 'Violation'}
                                                 </span>
                                             </td>
-                                            <td className="px-10 py-8 text-center font-mono text-[10px] font-black text-slate-400 tracking-widest">{att.ip_address || 'Titan Node'}</td>
+                                            <td className="px-10 py-8 text-center font-mono text-[10px] font-black text-slate-400 tracking-widest">{'Bar Node'}</td>
                                             <td className="px-10 py-8 text-right">
                                                 <p className="text-[11px] font-bold text-foreground uppercase leading-none">{new Date(att.attempt_time).toLocaleTimeString()}</p>
                                                 <p className="text-[9px] font-black text-slate-400 uppercase mt-2 tracking-widest">{new Date(att.attempt_time).toLocaleDateString()}</p>
@@ -233,7 +233,7 @@ export default function SecurityHub() {
                             </p>
                             <div className="pt-6 border-t border-slate-50 flex justify-between items-center">
                                 <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Stability Level</span>
-                                <span className="text-xs font-black text-emerald-600 tracking-tight">TITAN-Grade Verified</span>
+                                <span className="text-xs font-black text-emerald-600 tracking-tight">Security Hardened</span>
                             </div>
                         </div>
                     </Card>

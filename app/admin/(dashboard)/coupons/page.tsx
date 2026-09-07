@@ -49,8 +49,9 @@ export default function AdminCouponsPage() {
 
       if (error) throw error;
       setCoupons(data || []);
-    } catch (err) {
-      console.error(err);
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      console.error("Voucher Vault Sync Failure:", errorMsg);
     } finally {
       setLoading(false);
     }
@@ -98,8 +99,9 @@ export default function AdminCouponsPage() {
           const { error } = await supabase.from('coupons').update({ is_active: !currentStatus }).eq('id', id);
           if (error) throw error;
           setCoupons(coupons.map(c => c.id === id ? { ...c, is_active: !currentStatus } : c));
-      } catch (err) {
-          console.error(err);
+      } catch (err: unknown) {
+          const errorMsg = err instanceof Error ? err.message : String(err);
+          console.error("Voucher Status Toggle Failure:", errorMsg);
       }
   };
 
@@ -110,8 +112,9 @@ export default function AdminCouponsPage() {
           if (error) throw error;
           // await logAuditAction(adminEmail, 'DELETE_COUPON', { code });
           setCoupons(coupons.filter(c => c.id !== id));
-      } catch (err) {
-          console.error(err);
+      } catch (err: unknown) {
+          const errorMsg = err instanceof Error ? err.message : String(err);
+          console.error("Voucher Decommission Failure:", errorMsg);
       }
   };
 

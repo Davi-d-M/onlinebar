@@ -35,11 +35,13 @@ export default function ThemeSynchronizer() {
 
         syncTheme();
         // Listen for auth changes to re-sync
-        const { data: { subscription } } = supabase!.auth.onAuthStateChange(() => {
-            syncTheme();
-        });
+        if (supabase) {
+            const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
+                syncTheme();
+            });
 
-        return () => subscription.unsubscribe();
+            return () => subscription.unsubscribe();
+        }
     }, []);
 
     return null; // Side-effect only component

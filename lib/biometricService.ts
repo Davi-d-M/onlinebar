@@ -1,5 +1,5 @@
 /**
- * TechPax Biometric Security Service
+ * Online Bar Biometric Security Service
  * Implements WebAuthn (Passkeys) for secure, pin-less rider login.
  */
 
@@ -17,7 +17,7 @@ export async function registerBiometrics(riderPhone: string) {
             publicKey: {
                 challenge,
                 rp: {
-                    name: "TechPax Logistics",
+                    name: "Online Bar Logistics",
                     id: window.location.hostname === 'localhost' ? undefined : window.location.hostname
                 },
                 user: {

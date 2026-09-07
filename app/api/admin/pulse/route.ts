@@ -15,6 +15,7 @@ export async function GET() {
             .gte('timestamp', sixtySecondsAgo);
 
         const uniqueVisitors = new Set();
+        const cities = new Set<string>();
         let shoppingCount = 0;
         let checkoutCount = 0;
 
@@ -22,7 +23,9 @@ export async function GET() {
             const id = event.user_id || event.anonymous_id;
             if (id) uniqueVisitors.add(id);
 
-            const payload = event.payload as { url?: string; path?: string };
+            const payload = event.payload as { url?: string; path?: string; city?: string } | null;
+            if (payload?.city) cities.add(payload.city);
+
             const path = payload?.url || payload?.path || '';
             if (path.includes('/shop') || path.includes('/product')) shoppingCount++;
             if (path.includes('/checkout') || path.includes('/cart')) checkoutCount++;
@@ -32,6 +35,7 @@ export async function GET() {
             live_now: uniqueVisitors.size,
             shopping: Math.min(uniqueVisitors.size, shoppingCount),
             checkout: Math.min(uniqueVisitors.size, checkoutCount),
+            active_zones: Array.from(cities).slice(0, 3),
             timestamp: new Date().toISOString()
         });
 

@@ -16,7 +16,7 @@ interface RiskSignal {
  * Logs a security event and updates the user's risk profile.
  */
 export async function logSecurityEvent(
-    eventType: 'LOGIN_FAILED' | 'NEW_DEVICE' | 'SUSPICIOUS_VELOCITY' | 'PAYMENT_MISMATCH',
+    eventType: 'LOGIN_FAILED' | 'NEW_SESSION' | 'SUSPICIOUS_VELOCITY' | 'PAYMENT_MISMATCH',
     signal: RiskSignal,
     severity: 'INFO' | 'WARNING' | 'CRITICAL' = 'INFO'
 ) {
@@ -25,7 +25,7 @@ export async function logSecurityEvent(
     // Define Risk Weighting
     const weights: Record<string, number> = {
         'LOGIN_FAILED': 5,
-        'NEW_DEVICE': 10,
+        'NEW_SESSION': 10,
         'SUSPICIOUS_VELOCITY': 25,
         'PAYMENT_MISMATCH': 40
     };

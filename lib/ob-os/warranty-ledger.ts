@@ -3,7 +3,7 @@ import { supabase } from '../supabaseClient';
 
 /**
  * Online Bar: Immutability Protocol
- * Generates and verifies tamper-proof digital warranty certificates.
+ * Generates and verifies tamper-proof quality assurance certificates.
  */
 export interface WarrantyCertificate {
     id: string;

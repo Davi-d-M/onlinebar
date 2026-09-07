@@ -99,7 +99,7 @@ export default function SupplierInventory() {
                 <Input
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
-                    placeholder="Search your gadgets..."
+                    placeholder="Search your inventory..."
                     className="h-14 rounded-2xl border-slate-100 bg-white pl-12 text-sm font-medium shadow-sm"
                 />
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
@@ -181,7 +181,7 @@ export default function SupplierInventory() {
 
                         <div className="space-y-6">
                             <div className="space-y-2 text-left">
-                                <label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Gadget Title</label>
+                                <label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Drink Title</label>
                                 <Input value={isEditing.name} readOnly className="h-14 rounded-2xl bg-slate-50 border-slate-100 font-bold opacity-60" />
                                 <p className="text-[8px] font-bold text-slate-400 uppercase italic leading-relaxed px-1">
                                     * Title and SKU changes require Command Center authorization.

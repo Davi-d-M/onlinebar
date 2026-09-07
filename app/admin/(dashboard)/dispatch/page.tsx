@@ -79,8 +79,8 @@ interface Rider {
 const WAREHOUSES = [
     { id: 'all', name: 'Global Network', city: 'All' },
     { id: 'nairobi', name: 'Nairobi Central Hub', city: 'Nairobi' },
-    { id: 'mombasa', name: 'Mombasa Port Node', city: 'Mombasa' },
-    { id: 'kisumu', name: 'Kisumu Tech Base', city: 'Kisumu' }
+    { id: 'mombasa', name: 'Mombasa Port Node', city: 'Mombasa'    },
+    { id: 'kisumu', name: 'Kisumu Bar Base', city: 'Kisumu' }
 ];
 
 export default function AdminDispatchPage() {
@@ -230,12 +230,12 @@ export default function AdminDispatchPage() {
         }
     }, []);
 
-    const runAutonomousSingularity = React.useCallback(async () => {
+    const runAutonomousMaster = React.useCallback(async () => {
         const pending = orders.filter(o => o.status === 'Pending');
         if (pending.length === 0) return;
 
         setLoading(true);
-        setMessage({ type: 'success', text: `Initializing Singularity: Geo-fencing mission routing...` });
+        setMessage({ type: 'success', text: `Initializing Master Hub: Geo-fencing mission routing...` });
 
         try {
             for (const order of pending) {
@@ -253,7 +253,7 @@ export default function AdminDispatchPage() {
                     rider.status = 'Delivering';
                 }
             }
-            setMessage({ type: 'success', text: "Singularity Deployment Complete. Nodes Synchronized. 🦾" });
+            setMessage({ type: 'success', text: "Grid Deployment Complete. Nodes Synchronized. 🦾" });
         } finally {
             setLoading(false);
             setTimeout(() => setMessage(null), 3000);
@@ -264,15 +264,15 @@ export default function AdminDispatchPage() {
     useEffect(() => {
         if (!autoDispatch) return;
 
-        const singularityLoop = setInterval(() => {
+        const masterLoop = setInterval(() => {
             const pending = orders.filter(o => o.status === 'Pending');
             if (pending.length > 0) {
-                runAutonomousSingularity();
+                runAutonomousMaster();
             }
         }, 15000); // Check every 15s when armed
 
-        return () => clearInterval(singularityLoop);
-    }, [autoDispatch, orders, runAutonomousSingularity]);
+        return () => clearInterval(masterLoop);
+    }, [autoDispatch, orders, runAutonomousMaster]);
 
     return (
         <div className="p-8 space-y-8 bg-background min-h-screen text-left">

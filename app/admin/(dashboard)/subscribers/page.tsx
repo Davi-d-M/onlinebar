@@ -90,7 +90,7 @@ export default function AdminSubscribersPage() {
           </Link>
           <div>
             <h1 className="text-4xl font-black text-foreground uppercase tracking-tighter leading-none">Subscriber Base</h1>
-            <p className="text-slate-500 text-sm font-medium mt-2">Manage your community of elite tech enthusiasts.</p>
+            <p className="text-slate-500 text-sm font-medium mt-2">Manage your community of premium beverage enthusiasts.</p>
           </div>
         </div>
         <div className="flex gap-2">

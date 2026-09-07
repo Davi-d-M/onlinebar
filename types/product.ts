@@ -13,5 +13,5 @@ export interface Product {
   stock?: number;
   sizes?: string[];
   variant_stock?: Record<string, number>;
-  tech_specs?: Record<string, string>;
+  beverage_specs?: Record<string, string>;
 }

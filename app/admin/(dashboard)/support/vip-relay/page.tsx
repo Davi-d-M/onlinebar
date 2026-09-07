@@ -32,7 +32,7 @@ export default function VIPVideoRelay() {
                         <span className="text-[10px] font-black uppercase tracking-[0.3em] text-indigo-600">VIP High-Touch Channel</span>
                     </div>
                     <h1 className="text-4xl font-black text-foreground uppercase tracking-tighter leading-none">Video Support Relay</h1>
-                    <p className="text-muted-foreground text-sm font-medium mt-1">Direct unboxing assistance and hardware diagnostics for elite members.</p>
+                    <p className="text-muted-foreground text-sm font-medium mt-1">Direct tasting guidance and cellar curation for VIP members.</p>
                 </div>
             </header>
 
@@ -55,7 +55,7 @@ export default function VIPVideoRelay() {
                                 className="h-16 px-12 rounded-2xl bg-indigo-600 text-white font-black uppercase text-xs tracking-widest shadow-xl shadow-indigo-100 hover:bg-indigo-700 transition-all active:scale-95"
                             >
                                 {isConnecting ? <Loader2 className="animate-spin mr-3" /> : <Zap className="mr-3" />}
-                                {isConnecting ? 'Establishing Neural Link...' : 'Initiate Relay'}
+                                {isConnecting ? 'Establishing Core Hub Link...' : 'Initiate Relay'}
                             </Button>
                         </div>
 
@@ -76,7 +76,7 @@ export default function VIPVideoRelay() {
                                 <h3 className="text-lg font-black uppercase text-foreground">AI Diagnostic AI</h3>
                             </div>
                             <p className="text-[10px] text-slate-500 font-medium leading-relaxed italic">
-                                &quot;Our bot will automatically scan the video feed for gadget identifiers and log technical serial numbers for verification.&quot;
+                                &quot;Our bot will automatically scan the video feed for bottle identifiers and log quality serial numbers for verification.&quot;
                             </p>
                         </Card>
 
@@ -86,7 +86,7 @@ export default function VIPVideoRelay() {
                                 <h3 className="text-lg font-black uppercase text-foreground">Encrypted Stream</h3>
                             </div>
                             <p className="text-[10px] text-slate-500 font-medium leading-relaxed italic">
-                                &quot;All high-touch relay sessions are end-to-end encrypted under the Apex Singularity protocol. No recordings are stored without consent.&quot;
+                                &quot;All high-touch relay sessions are end-to-end encrypted under the Online Bar OS protocol. No recordings are stored without consent.&quot;
                             </p>
                         </Card>
                     </div>
@@ -102,7 +102,7 @@ export default function VIPVideoRelay() {
                                     <MessageSquare size={16} className="text-indigo-500" /> Open Side Chat
                                 </Button>
                                 <Button className="w-full h-14 rounded-2xl bg-slate-50 border border-slate-100 text-foreground font-black uppercase text-[10px] hover:bg-white hover:shadow-lg transition-all flex items-center gap-3">
-                                    <ShieldCheck size={16} className="text-emerald-500" /> Verify Device Ownership
+                                    <ShieldCheck size={16} className="text-emerald-500" /> Verify Patron Identity
                                 </Button>
                                 <Button className="w-full h-14 rounded-2xl bg-rose-50 border border-rose-100 text-rose-600 font-black uppercase text-[10px] hover:bg-rose-600 hover:text-white transition-all flex items-center gap-3 shadow-sm">
                                     <PhoneCall size={16} /> Terminate Link
@@ -113,7 +113,7 @@ export default function VIPVideoRelay() {
 
                     <div className="p-8 rounded-[3rem] bg-white border border-slate-100 shadow-sm space-y-6 text-left">
                         <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shadow-sm"><Sparkles size={20} /></div>
-                        <h4 className="text-lg font-black uppercase text-foreground leading-none">Elite Perk Active</h4>
+                        <h4 className="text-lg font-black uppercase text-foreground leading-none">VIP Perk Active</h4>
                         <p className="text-[10px] text-muted-foreground font-medium leading-relaxed italic">
                             &quot;Video support is exclusive to Diamond and Legend rank members. This feature boosts customer trust by 94% on average.&quot;
                         </p>

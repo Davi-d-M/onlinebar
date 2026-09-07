@@ -204,7 +204,7 @@ export default function MarketingOverview() {
                             <h3 className="text-xl font-black uppercase tracking-tighter text-foreground leading-none">Personalization</h3>
                         </div>
                         <p className="text-[10px] text-muted-foreground font-medium leading-relaxed italic">
-                            &quot;Current category affinity maps show elite preference for Vintages. Personalized &apos;Happy Hour&apos; triggers active for Gold VIPs.&quot;
+                            &quot;Current category affinity maps show premium preference for Vintages. Personalized &apos;Happy Hour&apos; triggers active for Gold VIPs.&quot;
                         </p>
                         <div className="pt-4 border-t border-border flex justify-between items-center">
                             <span className="text-[8px] font-black text-indigo-600 uppercase tracking-widest">Logic Active</span>

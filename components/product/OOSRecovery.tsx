@@ -50,7 +50,7 @@ export default function OOSRecovery({ productId, isOpen, onClose }: { productId:
                             <div className="space-y-2">
                                 <h4 className="text-2xl font-black text-foreground uppercase tracking-tighter leading-tight">{recoveryData?.message}</h4>
                                 <p className="text-xs text-slate-500 font-medium italic italic leading-relaxed pr-4">
-                                    &quot;Our sentinel node detected this vintage is currently out of reach, but these elite alternatives are chilled and ready for immediate dispatch.&quot;
+                                    &quot;Our sentinel node detected this vintage is currently out of reach, but these alternatives are chilled and ready for immediate dispatch.&quot;
                                 </p>
                             </div>
 

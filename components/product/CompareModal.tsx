@@ -12,7 +12,7 @@ interface Product {
   price: number;
   image_url?: string;
   image?: string;
-  tech_specs?: Record<string, string>;
+  beverage_specs?: Record<string, string>;
 }
 
 export default function CompareModal({
@@ -29,8 +29,8 @@ export default function CompareModal({
 
     // Collect all unique spec keys
     const allSpecKeys = Array.from(new Set([
-        ...Object.keys(p1.tech_specs || {}),
-        ...Object.keys(p2.tech_specs || {})
+        ...Object.keys(p1.beverage_specs || {}),
+        ...Object.keys(p2.beverage_specs || {})
     ]));
 
     const cheaperProduct = p1.price < p2.price ? p1 : p2;
@@ -41,7 +41,7 @@ export default function CompareModal({
 
                 <header className="p-8 sm:p-12 border-b border-slate-50 flex items-center justify-between shrink-0 bg-slate-50/50">
                     <div>
-                        <h2 className="text-3xl font-black text-foreground uppercase tracking-tighter">Elite Comparison</h2>
+                        <h2 className="text-3xl font-black text-foreground uppercase tracking-tighter">Premium Comparison</h2>
                         <p className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mt-1">Deep Spec Analysis Active</p>
                     </div>
                     <button onClick={onClose} className="h-14 w-14 rounded-full bg-white shadow-xl flex items-center justify-center text-slate-400 hover:text-rose-500 hover:rotate-90 transition-all duration-300 border border-slate-100">
@@ -113,7 +113,7 @@ export default function CompareModal({
 
                     <div className="space-y-2">
                         <div className="grid grid-cols-3 gap-8 items-center py-4 px-6 bg-slate-50 border border-slate-100 rounded-2xl mb-6 shadow-sm">
-                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Technical Specs</span>
+                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Beverage Specs</span>
                             <span className="text-[10px] font-black uppercase tracking-widest text-foreground text-center">Unit Alpha</span>
                             <span className="text-[10px] font-black uppercase tracking-widest text-foreground text-center">Unit Beta</span>
                         </div>
@@ -124,10 +124,10 @@ export default function CompareModal({
                                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 group-hover/row:text-primary transition-colors">{key}</span>
                                 </div>
                                 <div className="text-center">
-                                    <span className="text-xs font-bold text-foreground">{p1.tech_specs?.[key] || 'Not specified'}</span>
+                                    <span className="text-xs font-bold text-foreground">{p1.beverage_specs?.[key] || 'Not specified'}</span>
                                 </div>
                                 <div className="text-center">
-                                    <span className="text-xs font-bold text-foreground">{p2.tech_specs?.[key] || 'Not specified'}</span>
+                                    <span className="text-xs font-bold text-foreground">{p2.beverage_specs?.[key] || 'Not specified'}</span>
                                 </div>
                             </div>
                         ))}
@@ -138,7 +138,7 @@ export default function CompareModal({
                             <div className="h-12 w-12 rounded-xl bg-white flex items-center justify-center text-primary shadow-sm border border-primary/10"><Trophy className="h-6 w-6" /></div>
                             <div>
                                 <p className="font-black text-foreground uppercase text-xs">Apex Recommendation</p>
-                                <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest italic">Best choice for your elite setup</p>
+                                <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest italic">Best choice for your selection</p>
                             </div>
                         </div>
                         <div className="text-right">

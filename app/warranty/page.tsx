@@ -51,7 +51,7 @@ export default function WarrantyVault() {
                 .single();
 
             if (dbError || !data) {
-                setError("Order not found or not yet delivered. Only delivered gadgets have active cloud warranties.");
+                setError("Order not found or not yet delivered. Only delivered items have active cloud protection.");
             } else {
                 setResult(data as unknown as OrderWithProducts);
             }
@@ -73,7 +73,7 @@ export default function WarrantyVault() {
                     </div>
                     <h1 className="text-5xl lg:text-7xl font-black text-foreground tracking-tighter uppercase leading-none">Digital <br/> <span className="text-primary italic">Warranty Vault</span></h1>
                     <p className="text-slate-500 font-medium max-w-lg mx-auto italic text-lg leading-relaxed">
-                        &quot;Your drinks are premium. Your protection should be too. Enter your order ID to access your digital beverage certificate.&quot;
+                        &quot;Your drinks are premium. Your assurance should be too. Enter your order ID to access your quality certificate.&quot;
                     </p>
                 </header>
 
@@ -127,8 +127,8 @@ export default function WarrantyVault() {
                                         <p className="text-2xl font-black text-foreground uppercase tracking-tight">{result.customer_name}</p>
                                     </div>
                                     <div>
-                                        <p className="text-[9px] font-black uppercase text-slate-300 mb-2">Device Specification</p>
-                                        <p className="text-xl font-black text-primary uppercase leading-tight">{result.products?.name || 'Titan Grade Gadget'}</p>
+                                        <p className="text-[9px] font-black uppercase text-slate-300 mb-2">Selection Details</p>
+                                        <p className="text-xl font-black text-primary uppercase leading-tight">{result.products?.name || 'Titan Grade Product'}</p>
                                     </div>
                                     <div className="flex gap-8">
                                         <div>
@@ -150,7 +150,7 @@ export default function WarrantyVault() {
                                         <CheckCircle2 className="h-12 w-12" />
                                         <div className="absolute inset-0 rounded-full border-2 border-primary animate-ping opacity-20"></div>
                                     </div>
-                                    <p className="text-xl font-black text-foreground uppercase tracking-tighter mb-2">Elite Warranty Active</p>
+                                    <p className="text-xl font-black text-foreground uppercase tracking-tighter mb-2">Premium Warranty Active</p>
                                     <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">180 Days Protection Remaining</p>
                                 </div>
                             </div>
@@ -184,12 +184,12 @@ export default function WarrantyVault() {
                     <div className="space-y-3">
                         <div className="h-10 w-10 rounded-xl bg-primary/5 flex items-center justify-center text-primary mx-auto"><CheckCircle2 className="h-5 w-5" /></div>
                         <h3 className="font-black uppercase text-xs">Seamless Returns</h3>
-                        <p className="text-[10px] text-slate-500 leading-relaxed font-medium">Verified faults are resolved within 48 hours under our elite program.</p>
+                        <p className="text-[10px] text-slate-500 leading-relaxed font-medium">Verified faults are resolved within 48 hours under our quality program.</p>
                     </div>
                     <div className="space-y-3">
                         <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary mx-auto"><Trophy className="h-5 w-5" /></div>
                         <h3 className="font-black uppercase text-xs">Life-Time Support</h3>
-                        <p className="text-[10px] text-slate-500 leading-relaxed font-medium">Get priority assistance for as long as you own your registered gadget.</p>
+                        <p className="text-[10px] text-slate-500 leading-relaxed font-medium">Get priority assistance for any quality issues or cellar discrepancies.</p>
                     </div>
                 </div>
 

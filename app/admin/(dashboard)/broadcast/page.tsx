@@ -36,15 +36,15 @@ export default function AdminBroadcastPage() {
     const [resendActive, setResendActive] = React.useState<boolean | null>(null);
 
     const CAMPAIGN_TEMPLATES = [
-        { id: 'flash', label: 'Flash Sale', content: `🚨 ALERT: Elite Flash Sale active now! Get 20% OFF all premium accessories for the next 4 hours only. Secure yours: ${process.env.NEXT_PUBLIC_BASE_URL || 'https://tech-paxv.onrender.com'}/shop` },
-        { id: 'weekend', label: 'Weekend Drop', content: `Yo bro! Our Weekend Drop is live. Restocked AirPods Pro and MagSafe kits. Nairobi fast dispatch active until 6 PM. Shop: ${process.env.NEXT_PUBLIC_BASE_URL || 'https://tech-paxv.onrender.com'}` },
-        { id: 'loyalty', label: 'Reward Boost', content: `Sparkle your tech! ✨ VIP rewards just boosted. Complete your profile to unlock a KSh 500 voucher instantly. Link: ${process.env.NEXT_PUBLIC_BASE_URL || 'https://tech-paxv.onrender.com'}/profile` },
+        { id: 'flash', label: 'Flash Sale', content: `🚨 ALERT: Premium Flash Sale active now! Get 20% OFF all premium vintages for the next 4 hours only. Secure yours: ${process.env.NEXT_PUBLIC_BASE_URL || 'https://onlinebar-os.onrender.com'}/shop` },
+        { id: 'weekend', label: 'Weekend Drop', content: `Yo bro! Our Weekend Drop is live. Restocked premium selections are ready for chilled dispatch. Nairobi fast dispatch active until 6 PM. Shop: ${process.env.NEXT_PUBLIC_BASE_URL || 'https://onlinebar-os.onrender.com'}` },
+        { id: 'loyalty', label: 'Reward Boost', content: `Sparkle your bar! ✨ VIP rewards just boosted. Complete your profile to unlock a KSh 500 voucher instantly. Link: ${process.env.NEXT_PUBLIC_BASE_URL || 'https://onlinebar-os.onrender.com'}/profile` },
     ];
 
     const AUDIENCES = [
         { id: 'all', label: 'Everyone', icon: Users },
         { id: 'new', label: 'New Customers', icon: Sparkles },
-        { id: 'vip', label: 'Elite (VIP)', icon: Target },
+        { id: 'vip', label: 'Premium (VIP)', icon: Target },
         { id: 'inactive', label: 'Inactive 30d', icon: Clock },
     ];
 

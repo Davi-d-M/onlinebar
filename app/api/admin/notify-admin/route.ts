@@ -54,7 +54,7 @@ export async function POST(request: Request) {
                         <p><b>Payment:</b> ${details.paymentMethod}</p>
                         <hr />
                         <p>Check the dashboard to manage dispatch.</p>
-                        <a href="${process.env.NEXT_PUBLIC_BASE_URL || 'https://tech-paxv.onrender.com'}/admin/orders" style="background: #000; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;">VIEW ORDERS</a>
+                        <a href="${process.env.NEXT_PUBLIC_BASE_URL || 'https://onlinebar-os.onrender.com'}/admin/orders" style="background: #000; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;">VIEW ORDERS</a>
                     </div>
                 `;
                 break;
@@ -69,7 +69,7 @@ export async function POST(request: Request) {
                         <p><b>Remaining:</b> <span style="color: #e11d48; font-weight: bold;">${details.currentStock} units</span></p>
                         <hr />
                         <p>Restock soon to avoid losing sales!</p>
-                        <a href="${process.env.NEXT_PUBLIC_BASE_URL || 'https://tech-paxv.onrender.com'}/admin/upload" style="background: #000; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;">MANAGE INVENTORY</a>
+                        <a href="${process.env.NEXT_PUBLIC_BASE_URL || 'https://onlinebar-os.onrender.com'}/admin/upload" style="background: #000; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px;">MANAGE INVENTORY</a>
                     </div>
                 `;
                 break;

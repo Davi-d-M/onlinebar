@@ -139,7 +139,7 @@ export default function ProductCard({ product }: { product: Product }) {
       <Card className="group overflow-hidden bg-white border-slate-100 hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 rounded-[2rem] text-left relative">
       <div className="relative overflow-hidden aspect-square bg-slate-50 flex items-center justify-center p-3 sm:p-6">
 
-        {/* Elite Locked Overlay */}
+        {/* Premium Locked Overlay */}
         {isLocked && (
             <div className="absolute inset-0 z-30 bg-white/60 backdrop-blur-[2px] flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-500">
                 <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-4 shadow-sm animate-bounce">
@@ -211,7 +211,7 @@ export default function ProductCard({ product }: { product: Product }) {
               toggleCompare(product);
               trackClick('compare-btn', 'Toggle Compare', { productId: product.id });
           }}
-          title="Compare with other gadgets"
+          title="Compare with other bottles"
         >
           <ArrowUpDown className="h-3 w-3 sm:h-4 sm:w-4" />
         </Button>
@@ -222,8 +222,10 @@ export default function ProductCard({ product }: { product: Product }) {
                 src={imageUrl}
                 alt={product.name}
                 fill
-                className="object-contain transition-transform duration-700 group-hover:scale-110"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                className="object-contain transition-transform duration-700 group-hover:scale-110 p-4"
                 onError={() => setImageError(true)}
+                priority={product.is_new}
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-slate-300">

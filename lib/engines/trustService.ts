@@ -62,7 +62,7 @@ export async function verifyBottle(bottleId: string, metadata: { userId?: string
             user_id: metadata.userId,
             ip_address: metadata.ip,
             city_coarse: metadata.city,
-            device_info: metadata.deviceInfo,
+            device_info: metadata.deviceInfo || 'Authorized Terminal',
             is_anomaly: isAnomaly,
             anomaly_reason: anomalyReason
         }]);

@@ -21,7 +21,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 
-export default function ProposeGadget() {
+export default function ProposeSelection() {
     const { supplier_id } = useAdmin();
     const [loading, setLoading] = React.useState(false);
     const [success, setSuccess] = React.useState(false);
@@ -71,7 +71,7 @@ export default function ProposeGadget() {
             </div>
             <div className="space-y-2">
                 <h2 className="text-3xl font-black text-foreground uppercase tracking-tighter">Proposal Transmitted</h2>
-                <p className="text-slate-500 font-medium italic">Your gadget has been logged. Admin review will commence shortly.</p>
+                <p className="text-slate-500 font-medium italic">Your selection has been logged. Admin review will commence shortly.</p>
             </div>
             <div className="flex gap-4">
                 <Button onClick={() => setSuccess(false)} variant="outline" className="h-14 px-8 rounded-2xl border-slate-200 font-black uppercase text-[10px] tracking-widest">Submit Another</Button>
@@ -89,8 +89,8 @@ export default function ProposeGadget() {
                     <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary shadow-sm"><Plus size={16} /></div>
                     <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">New Proposal</span>
                 </div>
-                <h1 className="text-4xl font-black text-foreground uppercase tracking-tighter leading-none">Propose Gadget</h1>
-                <p className="text-muted-foreground text-sm font-medium mt-1">Upload technical specs and media for administrative approval.</p>
+                <h1 className="text-4xl font-black text-foreground uppercase tracking-tighter leading-none">Propose Selection</h1>
+                <p className="text-muted-foreground text-sm font-medium mt-1">Upload beverage specs and media for administrative approval.</p>
             </header>
 
             <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-10">
@@ -101,7 +101,7 @@ export default function ProposeGadget() {
                         <div className="space-y-1">
                             <label className="text-[10px] font-black uppercase text-foreground ml-1">Product Name</label>
                             <div className="relative">
-                                <Input required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder="e.g. iPhone 17 Pro Max" className="h-14 rounded-2xl border-slate-100 bg-slate-50/50 pl-12 font-bold" />
+                                <Input required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder="e.g. Johnnie Walker Blue Label" className="h-14 rounded-2xl border-slate-100 bg-slate-50/50 pl-12 font-bold" />
                                 <Tag className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
                             </div>
                         </div>
@@ -147,13 +147,13 @@ export default function ProposeGadget() {
                         </div>
 
                         <div className="space-y-1">
-                            <label className="text-[10px] font-black uppercase text-foreground ml-1">Technical Brief</label>
+                            <label className="text-[10px] font-black uppercase text-foreground ml-1">Product Brief</label>
                             <div className="relative">
                                 <textarea
                                     required
                                     value={formData.description}
                                     onChange={e => setFormData({...formData, description: e.target.value})}
-                                    placeholder="Enter key specifications..."
+                                    placeholder="Enter tasting notes and flavor profile..."
                                     className="w-full h-32 rounded-[2rem] border border-slate-100 bg-slate-50/50 p-6 text-sm font-medium outline-none focus:border-primary/20 transition-all resize-none"
                                 />
                                 <FileText className="absolute right-6 top-6 h-5 w-5 text-slate-200" />
@@ -175,7 +175,7 @@ export default function ProposeGadget() {
                     <div className="p-8 rounded-[2.5rem] bg-slate-50 border border-slate-100 flex items-start gap-4">
                         <Camera size={20} className="text-slate-300 shrink-0 mt-1" />
                         <p className="text-[9px] text-slate-400 font-bold uppercase leading-relaxed tracking-widest italic">
-                            &quot;All proposed products undergo rigorous quality verification by the Apex OS Command Center before being authorized for the live grid.&quot;
+                            &quot;All proposed products undergo rigorous quality verification by the Online Bar Command Center before being authorized for the live grid.&quot;
                         </p>
                     </div>
                 </div>

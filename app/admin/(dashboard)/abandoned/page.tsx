@@ -169,7 +169,7 @@ export default function AdminAbandonedPage() {
               <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Ghost Worker: {ghostStatus.toUpperCase()}</span>
           </div>
           <h1 className="text-4xl font-black text-foreground uppercase tracking-tighter">Baggage Rescue</h1>
-          <p className="text-slate-500 text-sm font-medium mt-1">AI-powered recovery suite for high-intent abandoned tech bags.</p>
+          <p className="text-slate-500 text-sm font-medium mt-1">AI-powered recovery suite for high-intent abandoned beverage bags.</p>
         </div>
         <div className="flex gap-2">
             <Button

@@ -4,7 +4,7 @@ import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { CheckCircle2, Package, Smartphone, MessageSquare, ArrowRight, Truck, ShieldCheck, Heart, Zap } from "lucide-react";
+import { CheckCircle2, PackageCheck, Smartphone, MessageSquare, ArrowRight, Truck, ShieldCheck, Heart, Zap } from "lucide-react";
 import Link from "next/link";
 import { formatPrice, getReferralLink } from "@/lib/utils";
 import { supabase } from "@/lib/supabaseClient";
@@ -86,7 +86,7 @@ function SuccessContent() {
                     <CheckCircle2 className="h-12 w-12" />
                 </div>
                 <h1 className="text-5xl font-black uppercase tracking-tighter text-foreground mb-2">Order Confirmed</h1>
-                <p className="text-slate-500 font-medium italic">Your tech is officially secured. Preparing for dispatch.</p>
+                <p className="text-slate-500 font-medium italic">Your order is officially secured. Preparing for dispatch.</p>
             </div>
 
             <Card className="rounded-[2.5rem] border-slate-100 shadow-2xl shadow-slate-200/50 overflow-hidden mb-10">
@@ -111,7 +111,7 @@ function SuccessContent() {
                                 <Smartphone className="h-6 w-6" />
                             </div>
                             <div>
-                                <h4 className="font-bold text-foreground">Tech Secured</h4>
+                                <h4 className="font-bold text-foreground">Order Secured</h4>
                                 <p className="text-sm text-slate-500">We&apos;ve received your payment and are validating the items.</p>
                             </div>
                         </div>
@@ -154,7 +154,7 @@ function SuccessContent() {
                 </CardContent>
             </Card>
 
-            {/* Elite Invitation Section */}
+            {/* Premium Invitation Section */}
             {referralCode && (
                 <Card className="rounded-[2.5rem] border-2 border-primary/10 bg-primary/5 shadow-2xl p-10 mb-10 overflow-hidden relative group">
                     <div className="relative z-10 text-center space-y-6">
@@ -163,7 +163,7 @@ function SuccessContent() {
                         </div>
                         <div>
                             <h3 className="text-2xl font-black uppercase tracking-tighter text-foreground leading-none mb-2">Invite Friends, <br /> <span className="text-primary italic">Earn Ksh 200</span></h3>
-                            <p className="text-slate-500 text-xs font-medium leading-relaxed italic">&quot;Help your squad level up their gear. Both of you get Ksh 200 credit upon their first tech mission.&quot;</p>
+                            <p className="text-slate-500 text-xs font-medium leading-relaxed italic">&quot;Help your squad level up. Both of you get Ksh 200 credit upon their first mission.&quot;</p>
                         </div>
                         <Button
                             onClick={() => {
@@ -184,7 +184,7 @@ function SuccessContent() {
                     <ShieldCheck className="h-4 w-4 text-primary" /> Secure Payment
                 </div>
                 <div className="flex items-center gap-2">
-                    <Package className="h-4 w-4 text-primary" /> Original Tech
+                    <PackageCheck className="h-4 w-4 text-primary" /> Original Quality
                 </div>
                 <div className="flex items-center gap-2 text-foreground">
                     <Heart className="h-4 w-4 text-rose-500 fill-rose-500" /> Thanks for choosing Online Bar Nairobi

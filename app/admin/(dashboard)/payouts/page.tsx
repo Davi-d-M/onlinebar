@@ -51,8 +51,9 @@ export default function AdminPayoutsPage() {
 
             if (error) throw error;
             setPayouts(data || []);
-        } catch (err) {
-            console.error(err);
+        } catch (err: unknown) {
+            const errorMsg = err instanceof Error ? err.message : String(err);
+            console.error("Payout Queue Sync Failure:", errorMsg);
         } finally {
             setLoading(false);
         }
@@ -70,8 +71,9 @@ export default function AdminPayoutsPage() {
 
             await logAuditAction(adminEmail, 'UPDATE_PAYOUT_STATUS', { id, status });
             setPayouts(payouts.map(p => p.id === id ? { ...p, status } : p));
-        } catch (err) {
-            console.error(err);
+        } catch (err: unknown) {
+            const errorMsg = err instanceof Error ? err.message : String(err);
+            console.error("Payout Authorization Failure:", errorMsg);
         }
     };
 

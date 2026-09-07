@@ -21,7 +21,7 @@ BEGIN
         WHERE user_id = cust_id AND status = 'Delivered';
 
         -- 3. Determine Segment
-        IF v_total_spend >= 100000 OR v_order_count >= 10 THEN v_segment := 'VIP Elite';
+        IF v_total_spend >= 100000 OR v_order_count >= 10 THEN v_segment := 'VIP Premium';
         ELSIF v_total_spend >= 50000 THEN v_segment := 'High Value';
         ELSE v_segment := 'Repeat Buyer';
         END IF;

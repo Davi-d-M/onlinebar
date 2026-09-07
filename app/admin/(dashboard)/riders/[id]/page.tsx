@@ -173,7 +173,7 @@ export default function RiderProfilePage() {
                             </div>
                             <div>
                                 <h3 className="text-xl font-black uppercase tracking-tighter text-foreground">Unit Specs</h3>
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Hardware Telemetry</p>
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Operational Telemetry</p>
                             </div>
                         </div>
                         <div className="space-y-4">

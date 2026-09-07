@@ -60,7 +60,7 @@ export default function RelatedProducts({ product }: RelatedProductsProps) {
         <div className="text-left">
             <div className="flex items-center gap-2 mb-2">
                 <Sparkles className="h-4 w-4 text-primary" />
-                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Elite Curations</span>
+                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Premium Curations</span>
             </div>
             <h2 className="text-4xl font-black text-foreground uppercase tracking-tighter">Perfect Pairings</h2>
         </div>

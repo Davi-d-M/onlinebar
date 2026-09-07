@@ -44,7 +44,7 @@ import { cn } from '@/lib/utils';
 
 const DEFAULTS = {
     contact: { whatsapp: "254769345599", email: "support@onlinebar.co.ke", address: "Nairobi, Kenya" },
-    branding: { owner_name: "David Maganga", portfolio_url: "https://davi-d-m.github.io/my_portfolio/", hero_title: "Elite Vintages. Chilled Spirits.", hero_subtitle: "Experience authentic vintages and elite spirits curated for excellence.", logo_url: "", favicon_url: "" },
+    branding: { owner_name: "Online Bar Team", portfolio_url: "#", hero_title: "Premium Vintages. Chilled Spirits.", hero_subtitle: "Experience authentic vintages and premium spirits curated for excellence.", logo_url: "", favicon_url: "" },
     homepage: { hero_image_url: "", hero_starting_price: 2500, hero_badge_text: "The Premium Bar is Open", hero_visual_label: "Online Bar Selection" },
     shipping: { nairobi_cbd_label: "Nairobi CBD / Local", nairobi_cbd: 0, nairobi_outskirts_label: "Nairobi Outskirts", nairobi_outskirts: 300, upcountry_label: "Upcountry / Major Towns", upcountry: 500 },
     logistics: { dispatch_zones: ["CBD", "Westlands", "Kilimani", "Lavington", "Kileleshwa", "Karen", "Langata", "South C", "South B", "Embakasi", "Roysambu", "Kasarani", "Kahawa", "Githurai", "Zimmerman", "Utawala", "Syokimau", "Kitengela", "Rongai", "Ngong", "Kikuyu", "Thika Road", "Mombasa Road"] },
@@ -54,7 +54,7 @@ const DEFAULTS = {
     seo_config: { title: "Online Bar | Premium Drinks", description: "Premium wine, spirits and snacks delivery in Nairobi.", keywords: "Wine delivery, Whiskey Nairobi, Late night snacks, Kenya Bar", og_image: "" },
     social_links: { instagram: "", tiktok: "", facebook: "", x: "", youtube: "" },
     store_info: { name: "ONLINE BAR", hours: "24/7 Dispatch", google_maps: "", footer_copy: "© 2026 Online Bar™" },
-    ai_config: { build_setup_limit: 5000, assistant_name: "Bar AI", response_style: "Elite" },
+    ai_config: { build_setup_limit: 5000, assistant_name: "Bar AI", response_style: "Premium" },
     onboarding_config: {
         rider_steps: [
             { id: 'welcome', label: 'Welcome Screen', enabled: true },
@@ -131,7 +131,7 @@ export default function AdminSettingsPage() {
         try {
             const { data: settingsData } = await supabase.from('settings').select('*');
             if (settingsData && settingsData.length > 0) {
-                settingsData.forEach((item: { key: string; value: unknown }) => {
+                settingsData.forEach((item: { key: string; value: Record<string, unknown> }) => {
                     if (item.key === 'contact') setContact(item.value as typeof DEFAULTS.contact);
                     if (item.key === 'branding') {
                         setBranding(item.value as typeof DEFAULTS.branding);
@@ -483,7 +483,7 @@ export default function AdminSettingsPage() {
                                                 onChange={e => setBranding({...branding, hero_title: e.target.value})}
                                                 className="h-14 rounded-2xl bg-secondary border-border font-black text-lg text-foreground"
                                             />
-                                            <p className="text-[7px] font-bold text-primary uppercase italic px-1">* PRO TIP: Use a &quot;.&quot; to split colors. (e.g., &quot;Elite Vintages. Chilled Spirits.&quot;)</p>
+                                            <p className="text-[7px] font-bold text-primary uppercase italic px-1">* PRO TIP: Use a &quot;.&quot; to split colors. (e.g., &quot;Premium Vintages. Chilled Spirits.&quot;)</p>
                                         </div>
                                         <div className="space-y-2">
                                             <label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Subtitle Mission</label>

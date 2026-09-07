@@ -8,7 +8,7 @@ import SnackCrossSell from "@/components/engagement/SnackCrossSell";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Utensils, ArrowRight } from "lucide-react";
+import { BookOpen, Utensils, ArrowRight, GlassWater } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { getCachedHomeData } from "@/lib/cachedData";
@@ -75,25 +75,41 @@ export default async function Home() {
           <LiveCityPulse />
       </section>
 
-      {/* 2.6 Dedicated Snack Shop Entry */}
-      <section id="snack-hub-entry" className="max-w-7xl mx-auto px-4 mb-24 sm:px-6 lg:px-8">
-          <Link href="/shop/snacks">
-              <Card className="p-10 rounded-[3.5rem] bg-indigo-600 text-white border-none shadow-2xl relative overflow-hidden group hover:scale-[1.01] transition-all">
-                  <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-8 text-left">
-                      <div className="space-y-4">
+      {/* 2.6 Dedicated Snack & Essentials Hub */}
+      <section id="goods-hub-entry" className="max-w-7xl mx-auto px-4 mb-24 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-2 gap-8">
+              <Link href="/shop/snacks" className="group">
+                  <Card className="p-10 rounded-[3.5rem] bg-indigo-600 text-white border-none shadow-2xl relative overflow-hidden group-hover:scale-[1.01] transition-all">
+                      <div className="relative z-10 space-y-4">
                           <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full text-[10px] font-black uppercase tracking-widest border border-white/10">
-                              <Utensils className="h-3 w-3" /> New Sector Open
+                              <Utensils className="h-3 w-3" /> New Sector
                           </div>
-                          <h2 className="text-5xl font-black uppercase tracking-tighter leading-none">The Snack <span className="text-primary italic">Hub.</span> 🍿</h2>
-                          <p className="text-lg font-medium opacity-70 italic max-w-md">Discover elite pairings, crunchy bites, and movie night bundles delivered chilled.</p>
+                          <h2 className="text-4xl font-black uppercase tracking-tighter leading-none">The Snack <span className="text-primary italic">Hub.</span></h2>
+                          <p className="text-sm font-medium opacity-70 italic max-w-xs">Gourmet pairings delivered chilled.</p>
+                          <Button className="h-12 px-8 rounded-2xl bg-white text-indigo-600 font-black uppercase text-[10px] tracking-widest hover:bg-primary hover:text-white transition-all shadow-xl active:scale-95">
+                              Explore Snacks <ArrowRight className="ml-2 h-4 w-4" />
+                          </Button>
                       </div>
-                      <Button className="h-16 px-10 rounded-2xl bg-white text-indigo-600 font-black uppercase text-xs tracking-widest hover:bg-primary hover:text-white transition-all shadow-xl active:scale-95">
-                          Explore Snacks <ArrowRight className="ml-2 h-4 w-4" />
-                      </Button>
-                  </div>
-                  <Utensils className="absolute -bottom-20 -left-20 h-96 w-96 text-white/5 rotate-12 -z-0" />
-              </Card>
-          </Link>
+                      <Utensils className="absolute -bottom-10 -left-10 h-64 w-64 text-white/5 rotate-12 -z-0" />
+                  </Card>
+              </Link>
+
+              <Link href="/shop/category/essentials" className="group">
+                  <Card className="p-10 rounded-[3.5rem] bg-slate-900 text-white border-none shadow-2xl relative overflow-hidden group-hover:scale-[1.01] transition-all">
+                      <div className="relative z-10 space-y-4">
+                          <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 rounded-full text-[10px] font-black uppercase tracking-widest border border-primary/10">
+                              <GlassWater className="h-3 w-3 text-primary" /> Premium Goods
+                          </div>
+                          <h2 className="text-4xl font-black uppercase tracking-tighter leading-none">Bar <span className="text-primary italic">Essentials.</span></h2>
+                          <p className="text-sm font-medium opacity-70 italic max-w-xs">Glassware, tools & gifting kits.</p>
+                          <Button className="h-12 px-8 rounded-2xl bg-primary text-white font-black uppercase text-[10px] tracking-widest hover:bg-white hover:text-slate-900 transition-all shadow-xl active:scale-95">
+                              Shop Essentials <ArrowRight className="ml-2 h-4 w-4" />
+                          </Button>
+                      </div>
+                      <GlassWater className="absolute -bottom-10 -left-10 h-64 w-64 text-white/5 rotate-12 -z-0" />
+                  </Card>
+              </Link>
+          </div>
       </section>
 
       {/* 3. Collections Feed */}
@@ -105,7 +121,7 @@ export default async function Home() {
             </Badge>
             <h2 className="text-4xl font-black tracking-tighter text-foreground uppercase leading-none">Premium Spirits & Snacks</h2>
             <p className="text-slate-500 font-medium text-lg max-w-2xl leading-relaxed">
-              Curated selection of fine wines, elite spirits, and gourmet snacks for your late-night cravings. Delivered chilled to your doorstep.
+              Curated selection of fine wines, premium spirits, and gourmet snacks for your late-night cravings. Delivered chilled to your doorstep.
             </p>
           </div>
           <div className="hidden md:block">
@@ -156,7 +172,7 @@ export default async function Home() {
                   )) : (
                       <div className="col-span-full py-16 text-center bg-slate-50 rounded-[3rem] border-2 border-dashed border-slate-100">
                           <BookOpen className="h-10 w-10 text-slate-200 mx-auto mb-4" />
-                          <p className="text-slate-400 font-black uppercase text-[10px] tracking-widest italic">Awaiting technical artifacts from the library...</p>
+                          <p className="text-slate-400 font-black uppercase text-[10px] tracking-widest italic">Awaiting beverage artifacts from the library...</p>
                       </div>
                   )}
               </div>

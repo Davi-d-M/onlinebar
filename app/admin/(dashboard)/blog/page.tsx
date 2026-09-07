@@ -128,9 +128,9 @@ export default function AdminBlogPage() {
 
   const applyTemplate = (type: string) => {
       const templates: Record<string, string> = {
-          faq: "# Frequently Asked Questions\n\n### Q: [Your Question Here]?\nA: [Your Answer Here]\n\n### Q: How do I track my order?\nA: You can track your order via the Track Package hub.",
-          update: "# Product Update: [Product Name]\n\nWe are excited to announce a major restock of [Product]. \n\n## Key Improvements\n- Better battery life\n- New color variants\n- Improved packaging",
-          guide: "# Ultimate Troubleshooting Guide\n\nFollow these steps to get your tech back in action.\n\n1. Check the power source\n2. Hold the reset button\n3. Contact Apex Support"
+          faq: "# Frequently Asked Questions\n\n### Q: [Your Question Here]?\nA: [Your Answer Here]\n\n### Q: How do I track my order?\nA: You can track your order via the Order Tracking hub.",
+          update: "# Product Update: [Product Name]\n\nWe are excited to announce a major restock of [Product]. \n\n## Key Improvements\n- Better flavor profile\n- New vintage variants\n- Improved packaging",
+          guide: "# Ultimate Quality Guide\n\nFollow these steps to keep your selection in prime condition.\n\n1. Storage: Keep in a cool, dark environment.\n2. Temperature: Serve at recommended temperature for peak flavor.\n3. Glassware: Use proper stems to enhance the profile."
       };
       setForm(prev => ({ ...prev, content: templates[type] || prev.content }));
   };
@@ -217,7 +217,7 @@ export default function AdminBlogPage() {
       <header className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 border-b border-slate-200 pb-8">
         <div>
           <h1 className="text-4xl font-black text-foreground uppercase tracking-tighter">Library Center</h1>
-          <p className="text-slate-500 text-sm font-medium mt-1">Manage technical guides, news, and system documentation.</p>
+          <p className="text-slate-500 text-sm font-medium mt-1">Manage beverage guides, news, and system documentation.</p>
         </div>
         <Button onClick={fetchPosts} variant="outline" className="rounded-xl h-12 px-6 border-slate-200 bg-white font-black uppercase text-[10px] tracking-widest transition-all hover:shadow-lg">
             <RefreshCcw className="h-4 w-4 mr-2" /> Sync Data
@@ -408,7 +408,7 @@ export default function AdminBlogPage() {
                       </div>
                       <div className="max-w-md space-y-2">
                           <p className="text-xl font-black text-foreground uppercase tracking-tight leading-none">Your Library is Silent</p>
-                          <p className="text-slate-400 text-xs font-medium leading-relaxed italic">&quot;Authorize your first tech guide to begin building the knowledge pool.&quot;</p>
+                          <p className="text-slate-400 text-xs font-medium leading-relaxed italic">&quot;Authorize your first guide to begin building the beverage knowledge pool.&quot;</p>
                       </div>
                   </div>
               ) : (

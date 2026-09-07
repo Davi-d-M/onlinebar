@@ -59,7 +59,7 @@ export default function WarrantyHub() {
 
             const formatted = (data || []).map(c => ({
                 ...c,
-                product_name: c.products?.name || 'Unknown Gadget'
+                product_name: c.products?.name || 'Unknown Item'
             }));
 
             setCases(formatted);
@@ -98,7 +98,7 @@ export default function WarrantyHub() {
                         <span className="text-[10px] font-black uppercase tracking-[0.3em] text-rose-600">Reverse Logistics Active</span>
                     </div>
                     <h1 className="text-4xl font-black text-foreground uppercase tracking-tighter leading-none">Warranty Hub</h1>
-                    <p className="text-muted-foreground text-sm font-medium mt-1">Technical diagnostics, repair flows, and replacement logistics.</p>
+                    <p className="text-muted-foreground text-sm font-medium mt-1">Quality diagnostics, replacement flows, and digital protection status.</p>
                 </div>
                 <div className="flex gap-2">
                     <Button onClick={fetchCases} variant="outline" className="rounded-xl h-12 px-6 border-slate-200 bg-white font-black uppercase text-[10px] tracking-widest hover:bg-slate-50">

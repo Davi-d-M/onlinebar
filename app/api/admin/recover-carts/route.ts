@@ -86,7 +86,7 @@ export async function GET() {
                             <h2 style="color:#ff6b00;">Wait, ${cart.customer_name.split(' ')[0] || ownerName}!</h2>
                             <p>You left <b>${itemsList}</b> in your bag.</p>
                             <p>Finish your order in the next 6 hours to secure priority dispatch.</p>
-                            <a href="${process.env.NEXT_PUBLIC_BASE_URL || 'https://tech-paxv.onrender.com'}/cart" style="background:#111;color:#fff;padding:12px 24px;text-decoration:none;border-radius:8px;font-weight:bold;">RETURN TO BAG</a>
+                            <a href="${process.env.NEXT_PUBLIC_BASE_URL || 'https://onlinebar-os.onrender.com'}/cart" style="background:#111;color:#fff;padding:12px 24px;text-decoration:none;border-radius:8px;font-weight:bold;">RETURN TO BAG</a>
                         </div>`
                     });
                 } catch {
