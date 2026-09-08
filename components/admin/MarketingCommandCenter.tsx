@@ -61,8 +61,8 @@ export default function MarketingCommandCenter() {
             setTitle('');
             setMessage('');
             fetchCampaigns();
-        } catch (err) {
-            console.error(err);
+        } catch (err: unknown) {
+            console.error("Campaign Launch Failure:", (err as Error).message || err);
         } finally {
             setLoading(false);
         }

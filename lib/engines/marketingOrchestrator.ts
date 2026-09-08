@@ -49,7 +49,8 @@ export async function orchestrateCampaign(pkg: CampaignPackage) {
         try {
             await publishToChannel(campaign.id, channel, pkg);
         } catch (err: unknown) {
-            console.error(`❌ [MARKETING_ORCHESTRATOR] ${(err as Error).message} Publishing Failed:`, err);
+            const errorMsg = err instanceof Error ? err.message : String(err);
+            console.error(`❌ [MARKETING_ORCHESTRATOR] ${errorMsg} Publishing Failed:`, err);
         }
     });
 
@@ -92,9 +93,10 @@ async function publishToChannel(campaignId: string, channel: string, pkg: Campai
 
     } catch (err: unknown) {
         // Log Error & Mark Failed
+        const errorMsg = err instanceof Error ? err.message : String(err);
         await supabase.from('campaign_jobs').update({
             status: 'FAILED',
-            errors: (err as Error).message
+            errors: errorMsg
         }).eq('campaign_id', campaignId).eq('channel', channel);
     }
 }

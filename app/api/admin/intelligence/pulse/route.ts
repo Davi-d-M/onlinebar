@@ -22,7 +22,7 @@ export async function GET() {
             const id = event.user_id || event.anonymous_id;
             if (id) uniqueVisitors.add(id);
 
-            const payload = event.payload as { url?: string };
+            const payload = event.payload as { url?: string } | null;
             const path = payload?.url || '';
             if (path.includes('/shop')) shoppingCount++;
             if (path.includes('/checkout') || path.includes('/cart')) checkoutCount++;

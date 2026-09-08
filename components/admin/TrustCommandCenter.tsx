@@ -38,7 +38,7 @@ export default function TrustCommandCenter() {
                 supabase.from('trust_alerts').select('*, bottle_passports(id, current_status)').eq('status', 'OPEN').order('created_at', { ascending: false })
             ]);
 
-            const scans = scansRes.data || [];
+            const scans = (scansRes.data || []) as { is_anomaly: boolean }[];
             const suspiciousCount = scans.filter(s => s.is_anomaly).length;
 
             setStats({

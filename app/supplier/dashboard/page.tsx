@@ -46,12 +46,12 @@ export default function SupplierDashboard() {
             if (!supabase) return;
             const { data: { session } } = await supabase.auth.getSession();
             if (session) {
-                const { data } = await supabase.from('suppliers').select('*').eq('user_id', session.user.id).single();
+                const { data } = await supabase.from('suppliers').select('*').eq('user_id', session.user.id).single<Supplier>();
                 setSupplier(data);
 
                 if (data) {
                     const { data: prods } = await supabase.from('products').select('*').eq('supplier_id', data.id);
-                    setMyInventory(prods || []);
+                    setMyInventory((prods as InventoryProduct[]) || []);
                 }
             }
             setLoading(false);

@@ -3,8 +3,8 @@
 import * as React from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Zap, ShoppingBag, Plus, X } from 'lucide-react';
-import { cn, formatPrice } from '@/lib/utils';
+import { Zap, ShoppingBag, Plus, X, RefreshCcw } from 'lucide-react';
+import { formatPrice } from '@/lib/utils';
 import Image from 'next/image';
 import { handleOutOfStock } from '@/lib/engines/SaveTheSaleEngine';
 import { useCart } from '@/context/CartContext';
@@ -42,7 +42,7 @@ export default function OOSRecovery({ productId, isOpen, onClose }: { productId:
                 <div className="p-10 space-y-8 flex-1">
                     {loading ? (
                         <div className="py-20 text-center space-y-4">
-                            <Loader2 className="animate-spin text-primary mx-auto" size={32} />
+                            <RefreshCcw className="animate-spin text-primary mx-auto h-8 w-8" />
                             <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Scanning Cellar for Alternatives...</p>
                         </div>
                     ) : (
@@ -96,11 +96,3 @@ export default function OOSRecovery({ productId, isOpen, onClose }: { productId:
         </div>
     );
 }
-
-const Loader2 = ({ className, size }: { className?: string, size?: number }) => (
-    <div className={cn("animate-spin", className)} style={{ width: size, height: size }}>
-        <RefreshCcw size={size} />
-    </div>
-);
-
-import { RefreshCcw } from 'lucide-react';
