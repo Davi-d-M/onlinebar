@@ -187,10 +187,10 @@ export default function AffiliateCommandCenter() {
                         {/* 2. PERFORMANCE NODES */}
                         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
                             {[
-                                { label: 'Tactical Clicks', val: stats.clicks.toLocaleString(), icon: MousePointer2, color: 'indigo', meta: '+12% Velocity' },
-                                { label: 'Conversions', val: stats.conversions, icon: Target, color: 'emerald', meta: '4.8% Conv Rate' },
+                                { label: 'Tactical Clicks', val: stats.clicks.toLocaleString(), icon: MousePointer2, color: 'indigo', meta: '+0% Velocity' },
+                                { label: 'Conversions', val: stats.conversions, icon: Target, color: 'emerald', meta: '0.0% Conv Rate' },
                                 { label: 'Pending Payout', val: formatPrice(stats.pending_earnings), icon: Clock, color: 'amber', meta: 'Hold: 7 Days' },
-                                { label: 'Total Value', val: formatPrice(stats.available_earnings + stats.pending_earnings / 0.05), icon: DollarSign, color: 'primary', meta: 'Gross Generated' },
+                                { label: 'Total Value', val: formatPrice(0), icon: DollarSign, color: 'primary', meta: 'Gross Generated' },
                             ].map((item) => (
                                 <Card key={item.label} className="p-8 rounded-[2.5rem] bg-white border border-slate-100 shadow-sm flex flex-col justify-between group hover:shadow-xl transition-all relative overflow-hidden">
                                     <div className="relative z-10 space-y-6">
@@ -258,7 +258,7 @@ export default function AffiliateCommandCenter() {
                                 <p className="text-slate-500 font-medium italic">Select premium inventory to promote via your tactical nodes.</p>
                             </div>
                             <div className="relative w-full md:w-96">
-                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300" />
+                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
                                 <Input
                                     value={searchQuery}
                                     onChange={e => setSearchQuery(e.target.value)}
@@ -323,31 +323,10 @@ export default function AffiliateCommandCenter() {
                                     </Button>
                                 </div>
                                 <div className="divide-y divide-slate-50">
-                                    {[
-                                        { id: '10421', type: 'Commission', status: 'Approved', amount: 850, date: '04 Sep 2026' },
-                                        { id: '10398', type: 'Commission', status: 'Pending', amount: 1240, date: '03 Sep 2026' },
-                                        { id: 'PAY-88', type: 'Payout', status: 'Completed', amount: -5000, date: '30 Aug 2026' },
-                                    ].map(entry => (
-                                        <div key={entry.id} className="py-6 flex items-center justify-between group">
-                                            <div className="flex items-center gap-6">
-                                                <div className="h-10 w-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-300 font-black text-[10px]">#{entry.id.substring(0,4)}</div>
-                                                <div>
-                                                    <p className="text-sm font-black text-foreground uppercase tracking-tight">{entry.type}</p>
-                                                    <p className="text-[9px] font-bold text-slate-400 uppercase mt-1">{entry.date}</p>
-                                                </div>
-                                            </div>
-                                            <div className="flex items-center gap-10">
-                                                <span className={cn(
-                                                    "px-3 py-1 rounded-full text-[8px] font-black uppercase border tracking-widest",
-                                                    entry.status === 'Approved' || entry.status === 'Completed' ? "bg-emerald-50 text-emerald-600 border-emerald-100" : "bg-amber-50 text-amber-600 border-amber-100"
-                                                )}>{entry.status}</span>
-                                                <p className={cn(
-                                                    "text-lg font-black w-24 text-right tabular-nums",
-                                                    entry.amount > 0 ? "text-emerald-600" : "text-rose-600"
-                                                )}>{entry.amount > 0 ? '+' : ''}{formatPrice(Math.abs(entry.amount))}</p>
-                                            </div>
-                                        </div>
-                                    ))}
+                                    <div className="py-20 text-center opacity-30">
+                                        <History size={48} className="mx-auto mb-4" />
+                                        <p className="text-[10px] font-black uppercase tracking-widest">Awaiting first conversion.</p>
+                                    </div>
                                 </div>
                             </Card>
 
@@ -381,16 +360,16 @@ export default function AffiliateCommandCenter() {
                                         <div className="space-y-2">
                                             <div className="flex justify-between items-center text-[10px] font-black uppercase text-slate-400">
                                                 <span>EPC (Earn per click)</span>
-                                                <span className="text-foreground">KSh 14.2</span>
+                                                <span className="text-foreground">KSh 0.0</span>
                                             </div>
                                             <div className="h-1 w-full bg-slate-50 rounded-full overflow-hidden border border-slate-100">
-                                                <div className="h-full bg-indigo-500 w-[65%]" />
+                                                <div className="h-full bg-indigo-500 w-[0%]" />
                                             </div>
                                         </div>
                                         <div className="space-y-2">
                                             <div className="flex justify-between items-center text-[10px] font-black uppercase text-slate-400">
                                                 <span>Monthly Lift</span>
-                                                <span className="text-emerald-500">+12%</span>
+                                                <span className="text-emerald-500">+0%</span>
                                             </div>
                                         </div>
                                     </div>

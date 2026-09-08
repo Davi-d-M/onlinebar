@@ -1,23 +1,18 @@
-# Tasks - Online Bar Affiliate OS 🚀🤝💰
+# Tasks - Total Mock Data & Image Purge 🛡️🍷🧹
 
-## Phase 1: Infrastructure
-- [x] Create SQL migration `20260904_affiliate_os_core.sql` for partner nodes.
-- [x] Implement Affiliate Registration `app/affiliate/register/page.tsx`.
-- [ ] Create `lib/engines/affiliateEngine.ts` for commission logic.
-
-## Phase 2: Partner Experience
-- [ ] Overhaul `app/affiliate/dashboard/page.tsx` (Professional Command Center).
-- [ ] Implement Product Marketplace for affiliates.
-- [ ] Build "One-Tap Sharing" logic for WhatsApp/Instagram.
-- [ ] Add Commission Calculator to partner dashboard.
-
-## Phase 3: Administrative Control
-- [ ] Enhance Admin Affiliate Hub `app/admin/(dashboard)/affiliates/page.tsx`.
-- [ ] Implement Partner Approval/Verification workflow.
-- [ ] Build Fraud Monitoring dashboard for admins.
-
-## Phase 4: Production Hardening
-- [ ] Remove all `any` types from admin components.
-- [ ] Clean up unused variables and verify dependencies.
-- [ ] Run final production build (`npm run build`).
-- [ ] Push code to GitHub.
+- [x] Zero out Operations & Finance Mocks
+    - [x] `app/admin/(dashboard)/page.tsx`: Remove mock session ID
+    - [x] `components/admin/finance/InventoryValuation.tsx`: Reset `shrinkage_variance`
+- [x] Clean Affiliate & Marketing Dashboards
+    - [x] `components/admin/MarketingCommandCenter.tsx`: Reset stats to 0
+    - [x] `app/affiliate/dashboard/page.tsx`: Purge hardcoded stats & ledger
+- [x] Neutralize Database Seed Data
+    - [x] `supabase/migrations/20260904_bar_essentials_seed_v2.sql`: Replace image URLs with placeholders
+- [x] Scrub UI Placeholders
+    - [x] `app/checkout/page.tsx`: Clear example email
+- [x] Deep Scrape of remaining UI Mocks
+    - [x] `components/admin/MarketIntel.tsx`: Zero out simulated data
+    - [x] `components/admin/marketing/InstagramPreview.tsx`: Remove mock likes
+    - [x] `components/profile/RewardInteractive.tsx`: Verify spin segments
+- [x] Final Build & Grep Verification
+- [x] Git commit and push to GitHub

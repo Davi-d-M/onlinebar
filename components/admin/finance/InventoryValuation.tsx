@@ -33,7 +33,7 @@ export default function InventoryValuation() {
             setStats({
                 total_value: totalValue,
                 sku_count: data?.length || 0,
-                shrinkage_variance: 14200, // Mock for UI (Difference between ledger and physical)
+                shrinkage_variance: 0, // Difference between ledger and physical
                 low_stock_skus: lowStockCount
             });
         } catch (e) {

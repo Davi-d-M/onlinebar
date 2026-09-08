@@ -305,9 +305,8 @@ export default function AdminDashboard() {
       {/* JOURNEY & CONVERSION: BEHAVIORAL INTELLIGENCE */}
       <CustomerJourneyMap />
 
-      {/* SESSION FORENSICS: DEEP AUDIT (Requires ID from Feed) */}
       <section id="deep-forensics" className="scroll-mt-24">
-          <SessionForensics sessionId={orders[0]?.id ? String(orders[0].id) : ''} /> {/* Mock using last order session ID for UI preview */}
+          <SessionForensics sessionId={orders[0]?.id ? String(orders[0].id) : ''} />
       </section>
 
       {/* DELIVERY PERFORMANCE: SPEED LOGISTICS */}

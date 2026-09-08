@@ -50,12 +50,12 @@ export default function BarIntelligence() {
                 const riskySuppliers = suppliersRes.data?.filter(s => s.rating < 80).length || 0;
 
                 setData({
-                    growth: 14.8, // Dynamic calculation logic to be added
-                    ordersUp: 8.2,
-                    marginChange: -2.4,
+                    growth: 0,
+                    ordersUp: 0,
+                    marginChange: 0,
                     inventoryRisk: lowStock,
                     supplierRisk: riskySuppliers,
-                    atRiskCustomers: 4
+                    atRiskCustomers: 0
                 });
             } catch (err) {
                 console.error(err);

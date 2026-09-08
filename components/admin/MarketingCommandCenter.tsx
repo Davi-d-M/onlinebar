@@ -78,10 +78,10 @@ export default function MarketingCommandCenter() {
             {/* 1. GROWTH HUD */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
                 {[
-                    { label: 'Attributed Revenue', val: formatPrice(42800), icon: Target, color: 'primary' },
-                    { label: 'Active Campaigns', val: 12, icon: Rocket, color: 'indigo' },
-                    { label: 'Avg. Conversion', val: '8.7%', icon: Activity, color: 'emerald' },
-                    { label: 'Audience Reach', val: '2.4k', icon: Users, color: 'rose' },
+                    { label: 'Attributed Revenue', val: formatPrice(0), icon: Target, color: 'primary' },
+                    { label: 'Active Campaigns', val: campaigns.length, icon: Rocket, color: 'indigo' },
+                    { label: 'Avg. Conversion', val: '0.0%', icon: Activity, color: 'emerald' },
+                    { label: 'Audience Reach', val: '0', icon: Users, color: 'rose' },
                 ].map((item) => (
                     <Card key={item.label} className="p-8 rounded-[2.5rem] bg-white border border-slate-100 shadow-sm flex items-center gap-6 group hover:shadow-xl transition-all h-full">
                         <div className={cn(

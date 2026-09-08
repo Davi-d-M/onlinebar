@@ -1,42 +1,54 @@
-# Implementation Plan - Final Brand Polish & Technical Hardening 🛡️🍷🧹
+# Implementation Plan - Total Mock Data & Image Purge 🛡️🍷🧹
 
-This plan focuses on two objectives: completing the "Tech" terminology purge to align with the premium Online Bar brand, and fixing all remaining linting/type warnings to ensure a flawless production build on Render.com.
+This plan systematically removes all hardcoded "fake" data, placeholder images (Unsplash/Dummy), and simulated stats across the Online Bar ecosystem to ensure the grid is 100% clean for real inventory and patrons.
 
 ## User Review Required
 
-> [!IMPORTANT]
-> **Terminology Shift**: I will replace words like "Device", "Hardware", and "Software" with "Node", "Terminal", "Selection", or "System" to sound less like a tech shop and more like a luxury beverage service.
-> **Build Stability**: I am fixing the `MessageSquare` import error in Settings and removing all `any` types that were flagged in your Render.com build logs.
+> [!WARNING]
+> **Data Reset**: This will zero out the visual "stats" in your Admin and Affiliate dashboards. Clicks, Revenue, and Orders will show 0 until real activity occurs.
+> **Image Removal**: Seeded products will now use a local `/placeholder.jpg` or empty state until you upload real bottle photography.
 
 ## Proposed Changes
 
-### 🧼 1. Final Terminology Purge
-I will perform a surgical sweep of the codebase to replace tech-heavy words:
-- **"Device"** -> **"Terminal"** or **"Unit"**
-- **"Hardware"** -> **"Infrastructure"** or **"Dispatch Unit"**
-- **"Software"** -> **"System"**
-- **"Digital"** -> **"Online"** or **"Quality"**
-- **"Electronic"** -> **"Beverage"**
+### 🛡️ 1. Operations & Finance Mocks
 
-### 🧹 2. Technical Hardening (Zero Warning Build)
-I will fix every file flagged in the Render.com logs:
-- **[MODIFY] settings/page.tsx**: Fix `MessageSquare` import and remove `any`.
-- **[MODIFY] customers/[phone]/page.tsx**: Replace `any` with strict types.
-- **[MODIFY] rider/dashboard/page.tsx**: Fix unused variables and `useCallback` dependencies.
-- **[MODIFY] AnalyticsTracker.tsx**: Remove `any` from event listeners.
-- **[MODIFY] api/admin/pulse/route.ts**: Hardened type definitions.
+#### [MODIFY] [app/admin/(dashboard)/page.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/admin/(dashboard)/page.tsx)
+- Remove the mock session ID fallback for forensics.
 
-### 🏗️ 3. Grid Integrity
-- **[MODIFY] MASTER_ESTABLISHMENT_V3.sql**: Ensure the schema is 100% aligned with the latest app logic (e.g., `beverage_specs` instead of `tech_specs`).
+#### [MODIFY] [InventoryValuation.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/components/admin/finance/InventoryValuation.tsx)
+- Zero out the mock `shrinkage_variance`.
+
+### 🤝 2. Affiliate & Marketing OS Cleanup
+
+#### [MODIFY] [MarketingCommandCenter.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/components/admin/MarketingCommandCenter.tsx)
+- Reset "Attributed Revenue" and "Audience Reach" to 0.
+
+#### [MODIFY] [AffiliateDashboard](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/affiliate/dashboard/page.tsx)
+- Remove hardcoded earnings ledger entries and stats (clicks, conversion, etc.).
+
+### 🗄️ 3. Database Seed Neutralization
+
+#### [MODIFY] [bar_essentials_seed_v2.sql](file:///C:/Users/hp/AndroidStudioProjects/onbar/supabase/migrations/20260904_bar_essentials_seed_v2.sql)
+- Replace all Unsplash URLs with generic placeholders.
+- Clear out sample descriptions that don't match your actual inventory.
+
+### 📝 4. UI Placeholder Scrub
+
+#### [MODIFY] [checkout/page.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/checkout/page.tsx)
+- Replace `you@example.com` with an empty string or generic hint.
+
+#### [MODIFY] [OOSRecovery.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/components/product/OOSRecovery.tsx)
+- Ensure suggestions are pulled from real DB only, with zero hardcoded fallbacks.
 
 ---
 
 ## Verification Plan
 
 ### Automated Tests
-- `npm run lint`: Goal is `✔ No ESLint warnings or errors`.
-- `npm run build`: Must complete successfully locally before pushing.
+- `npm run build`: Ensure no broken references to deleted mock objects.
+- `grep` check: Final scan for "unsplash", "mock", and "example.com".
 
 ### Manual Verification
-- Verify the "Control Tower" (Dashboard) looks clean and uses "Bar" terminology.
-- Check the "Security Sessions" section in the Profile to ensure it no longer says "My Devices".
+1. **Admin Hub**: Verify the revenue charts start at 0 (or real DB data only).
+2. **Partner Hub**: Confirm "Rocket Links" use the real domain and show 0 initial clicks.
+3. **Storefront**: Check that "Bar Essentials" show placeholder icons instead of stock photography.

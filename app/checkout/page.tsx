@@ -659,7 +659,7 @@ function CheckoutContent() {
             <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
                   <label className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Full Name</label>
-                  <Input placeholder="John Doe" className="rounded-2xl border-slate-100 bg-slate-50/50 h-14" value={customerName} onChange={(e) => setCustomerName(e.target.value)} disabled={isPlacingOrder} />
+                  <Input placeholder="Patron Name" className="rounded-2xl border-slate-100 bg-slate-50/50 h-14" value={customerName} onChange={(e) => setCustomerName(e.target.value)} disabled={isPlacingOrder} />
                 </div>
                 <div className="space-y-2">
                   <label className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Phone Number</label>
@@ -667,7 +667,7 @@ function CheckoutContent() {
                 </div>
                 <div className="space-y-2 sm:col-span-2">
                   <label className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Email Address (For PDF Receipt)</label>
-                  <Input type="email" placeholder="you@example.com" className="rounded-2xl border-slate-100 bg-slate-50/50 h-14" value={customerEmail} onChange={(e) => setCustomerEmail(e.target.value)} disabled={isPlacingOrder} />
+                  <Input type="email" placeholder="patron@onlinebar.co.ke" className="rounded-2xl border-slate-100 bg-slate-50/50 h-14" value={customerEmail} onChange={(e) => setCustomerEmail(e.target.value)} disabled={isPlacingOrder} />
                 </div>
             </div>
           </section>

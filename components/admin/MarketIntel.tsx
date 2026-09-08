@@ -15,18 +15,11 @@ interface CompetitorData {
 
 export default function MarketIntel() {
     const [loading, setLoading] = React.useState(true);
-    const [intel, setIntel] = React.useState<CompetitorData[]>([]);
+    const [intel] = React.useState<CompetitorData[]>([]);
 
     React.useEffect(() => {
-        // Simulated market scrape
-        setTimeout(() => {
-            setIntel([
-                { name: 'Glovo', product: 'Johnnie Walker Black', price: 4200, variance: +5.2, sentiment: 'Positive' },
-                { name: 'Jumia Food', product: 'Glenfiddich 12', price: 6800, variance: -2.1, sentiment: 'Neutral' },
-                { name: 'Uber Eats', product: 'Casamigos Blanco', price: 10500, variance: +1.8, sentiment: 'Negative' }
-            ]);
-            setLoading(false);
-        }, 2000);
+        // Online Bar OS: Real-time market node sync would go here
+        setLoading(false);
     }, []);
 
     if (loading) return <div className="h-64 bg-slate-50 rounded-[3rem] animate-pulse flex items-center justify-center"><Loader2 className="animate-spin text-slate-200" /></div>;
@@ -46,7 +39,7 @@ export default function MarketIntel() {
             </div>
 
             <div className="grid gap-4">
-                {intel.map((c) => (
+                {intel.length > 0 ? intel.map((c) => (
                     <div key={c.name + c.product} className="p-6 rounded-[2rem] bg-slate-50 border border-slate-100 flex items-center justify-between group hover:bg-white hover:shadow-xl transition-all">
                         <div className="flex items-center gap-6">
                             <div className="h-14 w-14 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-[10px] font-black uppercase text-slate-400 shadow-sm">
@@ -78,7 +71,12 @@ export default function MarketIntel() {
                             </div>
                         </div>
                     </div>
-                ))}
+                )) : (
+                    <div className="py-20 text-center bg-slate-50 rounded-[2.5rem] border-2 border-dashed border-slate-100 opacity-30 flex flex-col items-center gap-4">
+                        <Globe size={40} className="text-slate-200" />
+                        <p className="text-[10px] font-black uppercase tracking-widest italic">Awaiting competitive intelligence uplink...</p>
+                    </div>
+                )}
             </div>
 
             <div className="p-8 bg-indigo-50 border border-indigo-100 rounded-[2.5rem] space-y-4">

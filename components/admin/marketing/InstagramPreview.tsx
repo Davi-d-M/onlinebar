@@ -51,12 +51,12 @@ export default function InstagramPreview({ imageUrl, caption }: InstagramPreview
                 </div>
 
                 <div className="space-y-1">
-                    <p className="text-[10px] font-black text-foreground">842 likes</p>
+                    <p className="text-[10px] font-black text-foreground">Awaiting engagement...</p>
                     <div className="text-[11px] leading-relaxed">
-                        <span className="font-black mr-2 uppercase">apexstores_kenya</span>
+                        <span className="font-black mr-2 uppercase">onlinebar_kenya</span>
                         <span className="text-slate-600 italic whitespace-pre-wrap">{caption || "Write your tactical hook in the content assistant..."}</span>
                     </div>
-                    <p className="text-[8px] font-bold text-slate-300 uppercase tracking-widest pt-1">2 MINUTES AGO</p>
+                    <p className="text-[8px] font-bold text-slate-300 uppercase tracking-widest pt-1">JUST NOW</p>
                 </div>
             </div>
         </div>
