@@ -68,6 +68,11 @@ export interface StoreSettings {
         gamification_enabled: boolean;
         fraud_shield_enabled: boolean;
     };
+    ai_config?: {
+        build_setup_limit: number;
+        assistant_name: string;
+        response_style: string;
+    };
     promotions?: {
         flash_sale_text: string;
         discount_percent: number;
@@ -181,6 +186,7 @@ export function useSettings() {
                         if (item.key === 'social_links') newSettings.social_links = { ...newSettings.social_links, ...item.value };
                         if (item.key === 'store_info') newSettings.store_info = { ...newSettings.store_info, ...item.value };
                         if (item.key === 'features') newSettings.features = { ...newSettings.features, ...item.value };
+                        if (item.key === 'ai_config') newSettings.ai_config = { ...newSettings.ai_config, ...item.value };
                         if (item.key === 'promotions') newSettings.promotions = { ...newSettings.promotions, ...item.value };
                     });
                     setSettings(newSettings);

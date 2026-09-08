@@ -369,6 +369,7 @@ BEGIN
     ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
     ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
     ALTER TABLE public.staff ENABLE ROW LEVEL SECURITY;
+    ALTER TABLE public.settings ENABLE ROW LEVEL SECURITY;
 EXCEPTION WHEN others THEN NULL; END $$;
 
 DROP POLICY IF EXISTS "Admins have full access" ON public.products;
@@ -379,3 +380,9 @@ CREATE POLICY "Public Read Products" ON public.products FOR SELECT USING (true);
 
 DROP POLICY IF EXISTS "Admins manage staff" ON public.staff;
 CREATE POLICY "Admins manage staff" ON public.staff FOR ALL TO authenticated USING (true);
+
+DROP POLICY IF EXISTS "Admins manage settings" ON public.settings;
+CREATE POLICY "Admins manage settings" ON public.settings FOR ALL TO authenticated USING (true);
+
+DROP POLICY IF EXISTS "Public view settings" ON public.settings;
+CREATE POLICY "Public view settings" ON public.settings FOR SELECT TO anon, authenticated USING (is_published = true);

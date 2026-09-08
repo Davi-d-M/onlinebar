@@ -1,6 +1,16 @@
 import { supabase } from "@/lib/supabaseClient";
 import { NextResponse } from "next/server";
 
+interface AnalyticsEvent {
+    anonymous_id: string | null;
+    user_id: string | null;
+    payload: {
+        url?: string;
+        path?: string;
+        city?: string;
+    } | null;
+}
+
 export async function GET() {
     if (!supabase) return NextResponse.json({ error: "DB offline" }, { status: 500 });
 
@@ -14,16 +24,16 @@ export async function GET() {
             .or(`event_name.eq.HEARTBEAT,event_name.eq.PAGE_VIEW,event_name.eq.SEARCH_SUBMITTED`)
             .gte('timestamp', sixtySecondsAgo);
 
-        const uniqueVisitors = new Set();
+        const uniqueVisitors = new Set<string>();
         const cities = new Set<string>();
         let shoppingCount = 0;
         let checkoutCount = 0;
 
-        heartbeats?.forEach(event => {
+        (heartbeats as unknown as AnalyticsEvent[] | null)?.forEach(event => {
             const id = event.user_id || event.anonymous_id;
             if (id) uniqueVisitors.add(id);
 
-            const payload = event.payload as { url?: string; path?: string; city?: string } | null;
+            const payload = event.payload;
             if (payload?.city) cities.add(payload.city);
 
             const path = payload?.url || payload?.path || '';
