@@ -152,7 +152,7 @@ export default function BarIntelligence() {
                                     <p className="text-[10px] font-black uppercase text-primary">Pour Optimization</p>
                                 </div>
                                 <p className="text-xs font-bold text-slate-600 leading-relaxed italic relative z-10">
-                                    &quot;Distributor B has lowered cost on Vintages by 4.2%. Adjust cellar allocation to maintain 14% target margin.&quot;
+                                    &quot;Cellar dynamics stable. Our sentinel node is monitoring supply chain fluctuations across all linked distributors.&quot;
                                 </p>
                                 <Wine className="absolute -bottom-4 -right-4 h-16 w-16 text-primary/10 rotate-12" />
                             </div>

@@ -138,7 +138,7 @@ export default function AdminReviewHub() {
       if (!supabase) return;
       setScrubbing(true);
       try {
-          const placeholders = ['john doe', 'member', 'anonymous', 'anonymous user', '??', 'apex member'];
+          const placeholders = ['member', 'anonymous', 'anonymous user', '??'];
           const { data: toDelete, error: fetchErr } = await supabase
               .from('reviews')
               .select('id')
