@@ -8,17 +8,17 @@ import {
     Search,
     Package,
     User,
-    Wine
+    Flame
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useCart } from '@/context/CartContext';
 
 const NAV_ITEMS = [
     { label: 'Home', icon: Home, href: '/' },
-    { label: 'Search', icon: Search, href: '/shop' },
-    { label: 'Menu', icon: Wine, href: '/shop' }, // Could be a specialized 'Menu' page later
+    { label: 'Shop', icon: Search, href: '/shop' },
+    { label: 'Buzz', icon: Flame, href: '/buzz' },
     { label: 'Orders', icon: Package, href: '/profile#orders' },
-    { label: 'Account', icon: User, href: '/profile' }
+    { label: 'My Bar', icon: User, href: '/profile' }
 ];
 
 export default function MobileBottomNav() {

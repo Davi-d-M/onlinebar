@@ -115,6 +115,11 @@ class OnlineBarOS {
         // 2. Log to Behavioral Analytics
         await this.logAnalytics(eventType, { ...payload, sessionId: sessId }, { corrId, reqId });
 
+        // 2.5 Update Taste DNA on Discovery
+        if (eventType === 'PRODUCT_VIEW' && payload.userId && payload.productId) {
+            await this.evolveTasteDNA(payload.userId, payload.productId);
+        }
+
         // 3. Heartbeat/Session Management
         if (eventType === 'HEARTBEAT' && payload.userId) {
             await this.refreshSession(payload.userId);
@@ -122,6 +127,28 @@ class OnlineBarOS {
 
         // 4. Session Forensics (The "Line-by-Line" Audit)
         await this.logForensics(eventType, { ...payload, sessionId: sessId });
+    }
+
+    private async evolveTasteDNA(userId: string, productId: number) {
+        if (!supabase) return;
+        try {
+            // Fetch category
+            const { data: prod } = await supabase.from('products').select('category').eq('id', productId).single();
+            if (!prod?.category) return;
+
+            const cat = prod.category.toLowerCase();
+
+            // Online Bar OS: Incremental taste weight logic
+            const { data: prof } = await supabase.from('profiles').select('taste_dna').eq('id', userId).single();
+            const dna = (prof?.taste_dna as Record<string, number>) || { whiskey: 0, wine: 0, gin: 0, beer: 0, vodka: 0, tequila: 0 };
+
+            if (dna[cat] !== undefined) {
+                dna[cat] = Math.min(100, (dna[cat] || 0) + 2); // Cap at 100
+                await supabase.from('profiles').update({ taste_dna: dna }).eq('id', userId);
+            }
+        } catch (err) {
+            console.warn("Taste DNA evolution failed:", err);
+        }
     }
 
     private async logForensics(type: string, payload: OSEventPayload) {

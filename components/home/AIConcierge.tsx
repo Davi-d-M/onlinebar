@@ -65,7 +65,17 @@ export default function AIConcierge() {
             let reply = `I'm analyzing the cellar for your premium selection, bro. As ${config.assistant_name}, I recommend these:`;
             let suggestions: Suggestion[] = [];
 
-            if (low.includes('setup') || low.includes('office') || low.includes('gaming')) {
+            if (low.includes('date night') || low.includes('couple') || low.includes('romantic')) {
+                reply = "I've curated an exclusive 'Date Night' experience for you, bro. A refined vintage paired with gourmet chocolate and chilled mixers.";
+                if (!supabase) throw new Error("Database offline");
+                const { data: prods } = await supabase.from('products').select('*').in('category', ['wine', 'snacks', 'mixers']).limit(3);
+                suggestions = (prods || []).map(p => ({ id: p.id, name: p.name, price: p.price, image_url: p.image_url }));
+            } else if (low.includes('host') || low.includes('people') || low.includes('party')) {
+                reply = "For your gathering, I recommend the 'Hosting Pack'. Premium spirits, bulk snacks, and a full mixer suite to keep the grid alive.";
+                if (!supabase) throw new Error("Database offline");
+                const { data: prods } = await supabase.from('products').select('*').in('category', ['spirits', 'snacks', 'mixers']).limit(4);
+                suggestions = (prods || []).map(p => ({ id: p.id, name: p.name, price: p.price, image_url: p.image_url }));
+            } else if (low.includes('setup') || low.includes('office') || low.includes('gaming')) {
                 const limit = config.build_setup_limit || 5000;
                 if (!supabase) throw new Error("Database offline");
                 const { data: prods } = await supabase.from('products').select('*').lte('price', limit).limit(3);
@@ -140,7 +150,7 @@ export default function AIConcierge() {
                                     </p>
                                 </div>
                                 <div className="grid grid-cols-2 gap-3 w-full px-4">
-                                    {['Gaming Setup', 'Home Office', 'Under 5k', 'Best Sellers'].map(opt => (
+                                    {['Date Night', 'Hosting 8 People', 'Sophisticated Mood', 'Under 5k'].map(opt => (
                                         <button key={opt} onClick={() => setQuery(opt)} className="p-4 rounded-2xl bg-white border border-slate-100 text-[9px] font-black uppercase text-slate-500 hover:border-primary hover:text-primary transition-all shadow-sm">
                                             {opt}
                                         </button>

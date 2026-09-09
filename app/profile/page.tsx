@@ -38,6 +38,7 @@ import {
   Calendar,
   Heart,
   Lock,
+  Wine,
   XCircle,
   Check,
   CheckCircle2,
@@ -62,11 +63,11 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import PointsLedger from '@/components/profile/PointsLedger';
-import DailyStreak from '@/components/profile/DailyStreak';
 import DailyMissions from '@/components/profile/DailyMissions';
 import RewardInteractive from '@/components/profile/RewardInteractive';
 import AchievementBadges from '@/components/profile/AchievementBadges';
 import SecurityDashboard from '@/components/profile/SecurityDashboard';
+import TasteDNA from '@/components/profile/TasteDNA';
 
 const LocationPicker = dynamic(() => import('@/components/profile/LocationPicker'), {
     ssr: false,
@@ -89,6 +90,8 @@ interface Profile {
   xp: number;
   level: number;
   title: string;
+  membership_tier: string;
+  taste_dna: Record<string, number>;
   latitude?: number;
   longitude?: number;
   birth_date?: string;
@@ -630,9 +633,18 @@ export default function ProfilePage() {
                                     </div>
                                 )}
                             </div>
-                            <h1 className="text-4xl sm:text-5xl font-black tracking-tighter text-foreground uppercase">{profile?.full_name?.split(' ')[0] || 'Member'} 👋</h1>
+                            <h1 className="text-4xl sm:text-5xl font-black tracking-tighter text-foreground uppercase">My Bar 👋</h1>
 
                             <div className="flex gap-2 mt-4 overflow-x-auto no-scrollbar pb-2">
+                                <div className={cn(
+                                    "flex items-center gap-2 px-3 py-2 rounded-2xl border-2 transition-all cursor-default shrink-0",
+                                    profile?.membership_tier === 'Black' ? "bg-slate-900 border-slate-800 text-white shadow-xl" : "bg-white border-slate-100 text-slate-400"
+                                )}>
+                                    <Crown className={cn("h-4 w-4", profile?.membership_tier === 'Black' ? "text-primary" : "text-slate-200")} />
+                                    <span className="text-[9px] font-black uppercase tracking-widest">
+                                        {profile?.membership_tier === 'Black' ? 'Online Bar Black' : 'Standard Tier'}
+                                    </span>
+                                </div>
                                 {([] as { id: string; icon: React.ElementType; color: string; label: string }[]).map((badge) => (
                                     <div key={badge.id} className="flex items-center gap-2 px-3 py-2 bg-white rounded-2xl border border-slate-100 shadow-sm shrink-0 hover:border-primary/20 transition-all cursor-default group/badge">
                                         {React.createElement(badge.icon, { className: cn("h-3 w-3", badge.color === 'primary' ? 'text-primary' : 'text-slate-400') })}
@@ -658,7 +670,7 @@ export default function ProfilePage() {
                 <div className="grid grid-cols-2 gap-4 animate-in fade-in zoom-in-95 duration-700 delay-200">
                     {[
                         { label: 'Bar XP', val: stats.points, icon: Zap, color: 'primary', href: '#points-ledger-section' },
-                        { label: 'Active Orders', val: stats.activeWarranties, icon: ShieldCheck, color: 'primary', href: '#warranty-section' },
+                        { label: 'Taste DNA', val: 'Profiling', icon: Wine, color: 'primary', href: '#taste-dna-section' },
                         { label: 'Wishlist', val: stats.wishlistCount, icon: Heart, color: 'primary', href: '/wishlist' },
                         { label: 'Rank', val: stats.title, icon: Rocket, color: 'primary', href: '#loyalty-pathway-section' },
                     ].map(item => (
@@ -682,7 +694,9 @@ export default function ProfilePage() {
         </header>
 
         <div className="grid lg:grid-cols-2 gap-10">
-            <DailyStreak currentStreak={profile?.current_streak || 0} />
+            <div id="taste-dna-section" className="scroll-mt-24">
+                <TasteDNA dna={profile?.taste_dna || {}} />
+            </div>
             <RewardInteractive userId={user?.id || ''} />
         </div>
 

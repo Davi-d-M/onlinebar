@@ -48,6 +48,7 @@ import IntelligenceCommand from '@/components/admin/IntelligenceCommand'; // NEW
 import SnackCommandCenter from '@/components/admin/SnackCommandCenter';
 import DeliveryMetrics from '@/components/admin/DeliveryMetrics';
 import MarketIntel from '@/components/admin/MarketIntel';
+import BuzzHUD from '@/components/buzz/BuzzHUD';
 import TrustCommandCenter from '@/components/admin/TrustCommandCenter';
 import MarketingCommandCenter from '@/components/admin/MarketingCommandCenter';
 import CommandRelay, { RelayNotification } from '@/components/admin/CommandRelay';
@@ -291,7 +292,14 @@ export default function AdminDashboard() {
       </header>
 
       {/* LIVE PULSE: REAL-TIME TRAFFIC */}
-      <LivePulseHUD />
+      <div className="grid lg:grid-cols-12 gap-6 items-stretch">
+          <div className="lg:col-span-8">
+              <LivePulseHUD />
+          </div>
+          <div className="lg:col-span-4">
+              <BuzzHUD />
+          </div>
+      </div>
 
       {/* INTELLIGENCE COMMAND: MISSION BOARD */}
       <IntelligenceCommand />

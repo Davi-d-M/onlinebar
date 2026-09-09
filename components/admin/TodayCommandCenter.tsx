@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { Card } from '@/components/ui/card';
-import { ShoppingBag, Truck, Wine, DollarSign, Users, Bot, Zap } from 'lucide-react';
+import { Truck, Wine, DollarSign, Users, Bot, Zap } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface CommandStats {
@@ -13,16 +13,18 @@ interface CommandStats {
     riders: number;
     shops: number;
     automation: number;
+    demand_hotspot?: string;
 }
 
-export default function TodayCommandCenter() {
+export default function OperatingBrainHUD() {
     const [stats, setStats] = React.useState<CommandStats>({
         revenue: 0,
         orders: 0,
         users: 0,
         riders: 0,
         shops: 0,
-        automation: 94.7
+        automation: 94.7,
+        demand_hotspot: 'Neutral'
     });
 
     React.useEffect(() => {
@@ -39,16 +41,20 @@ export default function TodayCommandCenter() {
 
                 const totalRev = revenueRes.data?.reduce((sum, e) => sum + Number(e.amount), 0) || 0;
 
+                // Online Bar Brain: Determine Hotspot
+                const { data: buzz } = await supabase.from('buzz_metrics').select('zone_name').order('buzz_score', { ascending: false }).limit(1).single();
+
                 setStats(prev => ({
                     ...prev,
                     revenue: totalRev,
                     orders: ordersRes.count || 0,
                     users: usersRes.count || 0,
                     riders: ridersRes.count || 0,
-                    shops: shopsRes.count || 0
+                    shops: shopsRes.count || 0,
+                    demand_hotspot: buzz?.zone_name || 'Neutral'
                 }));
             } catch {
-                console.error("Command HUD Link unstable.");
+                console.error("Brain HUD Link unstable.");
             }
         }
 
@@ -72,7 +78,7 @@ export default function TodayCommandCenter() {
 
     const nodes = [
         { label: 'Revenue', val: `KSh ${(stats.revenue / 1000).toFixed(1)}K`, icon: DollarSign, color: 'primary' },
-        { label: 'Orders', val: stats.orders, icon: ShoppingBag, color: 'indigo' },
+        { label: 'Demand Radar', val: stats.demand_hotspot, icon: Zap, color: 'rose' },
         { label: 'Patrons', val: stats.users, icon: Users, color: 'emerald' },
         { label: 'Runners', val: stats.riders, icon: Truck, color: 'amber' },
         { label: 'Active Shops', val: stats.shops, icon: Wine, color: 'rose' },
@@ -83,8 +89,8 @@ export default function TodayCommandCenter() {
         <section className="space-y-6">
             <div className="flex items-center justify-between px-2">
                 <div className="flex items-center gap-3 text-left">
-                    <div className="h-2 w-2 rounded-full bg-primary animate-pulse"></div>
-                    <h2 className="text-xl font-black uppercase tracking-tighter text-foreground leading-none">Command Center HUD</h2>
+                    <div className="h-3 w-3 rounded-full bg-primary animate-ping"></div>
+                    <h2 className="text-xl font-black uppercase tracking-tighter text-foreground leading-none">Operating Brain HUD</h2>
                 </div>
                 <div className="flex items-center gap-2">
                     <Zap size={10} className="text-primary animate-pulse" />
