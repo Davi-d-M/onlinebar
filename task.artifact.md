@@ -1,10 +1,11 @@
-# Tasks - Visual Alignment & Functional Hardening 🛡️🍷🎨
+# Tasks - Global Spacing & Layout Hardening 🛡️📐🚀
 
-- [ ] Refine Homepage Hub Cards
-    - [ ] `app/page.tsx`: Change Snack Hub to `bg-primary` (Gold) and Bar Essentials to `bg-black`.
-- [ ] Establish Admin Pulse Deletion
-    - [ ] `app/admin/(dashboard)/pulse/page.tsx`: Implement `handleDeletePost` and add the Trash button.
-- [ ] Harden Support Bubble Interaction
-    - [ ] `components/layout/SupportBubble.tsx`: Improve "x" dismissal button hit area and logic.
+- [ ] Harden Admin Header Spacing
+    - [ ] `app/admin/(dashboard)/layout-client.tsx`: Adjust gaps and paddings.
+- [ ] Refactor HUD Metrics (Oval Refinement)
+    - [ ] `components/admin/MarketingCommandCenter.tsx`: Shift to vertical oval layout.
+    - [ ] `components/admin/TodayCommandCenter.tsx`: Standardize oval geometry.
+- [ ] Stabilize Dashboard Grid
+    - [ ] `app/admin/(dashboard)/page.tsx`: Refine grid gaps and container padding.
 - [ ] Final Build & Verification
-- [ ] Push to GitHub
+- [ ] Git commit and push to GitHub

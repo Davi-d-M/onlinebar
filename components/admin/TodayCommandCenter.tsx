@@ -98,24 +98,22 @@ export default function OperatingBrainHUD() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
                 {nodes.map((node) => (
-                    <Card key={node.label} className="p-6 rounded-[2.5rem] bg-white border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-xl transition-all">
-                        <div className="relative z-10 flex flex-col gap-4 text-left">
-                            <div className={cn(
-                                "h-10 w-10 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110",
-                                node.color === 'primary' ? 'bg-primary/10 text-primary' :
-                                node.color === 'indigo' ? 'bg-indigo-50 text-indigo-500' :
-                                node.color === 'emerald' ? 'bg-emerald-50 text-emerald-500' :
-                                node.color === 'amber' ? 'bg-amber-50 text-amber-500' :
-                                'bg-rose-50 text-rose-500'
-                            )}>
-                                <node.icon size={20} />
-                            </div>
-                            <div className="space-y-0.5">
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{node.label}</p>
-                                <h3 className="text-2xl font-black text-foreground tracking-tighter uppercase leading-none">{node.val}</h3>
-                            </div>
+                    <Card key={node.label} className="aspect-[4/5] rounded-[4rem] bg-white border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-xl transition-all flex flex-col items-center justify-center gap-4 text-center p-4">
+                        <div className={cn(
+                            "h-12 w-12 rounded-full flex items-center justify-center transition-transform group-hover:scale-110 shadow-inner",
+                            node.color === 'primary' ? 'bg-primary/10 text-primary' :
+                            node.color === 'indigo' ? 'bg-indigo-50 text-indigo-500' :
+                            node.color === 'emerald' ? 'bg-emerald-50 text-emerald-500' :
+                            node.color === 'amber' ? 'bg-amber-50 text-amber-500' :
+                            'bg-rose-50 text-rose-500'
+                        )}>
+                            <node.icon size={22} />
+                        </div>
+                        <div className="space-y-1">
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">{node.label}</p>
+                            <h3 className="text-xl font-black text-foreground tracking-tighter uppercase leading-none">{node.val}</h3>
                         </div>
                     </Card>
                 ))}

@@ -342,20 +342,22 @@ export default function AdminLayoutClient({
                       </button>
                   </div>
 
-                  <div className="flex items-center gap-4">
-                      <Button onClick={() => setIsActivityOpen(true)} variant="ghost" size="icon" className="h-12 w-12 rounded-2xl text-muted-foreground hover:text-primary hover:bg-primary/5 relative">
-                          <Activity className="h-5 w-5" />
-                      </Button>
+                  <div className="flex items-center gap-6 lg:gap-8">
+                      <div className="flex items-center gap-2 lg:gap-4">
+                          <Button onClick={() => setIsActivityOpen(true)} variant="ghost" size="icon" className="h-12 w-12 rounded-2xl text-muted-foreground hover:text-primary hover:bg-primary/5 relative">
+                              <Activity className="h-5 w-5" />
+                          </Button>
 
-                      <Button onClick={() => setIsNotificationsOpen(true)} variant="ghost" size="icon" className="h-12 w-12 rounded-2xl text-muted-foreground hover:text-primary hover:bg-primary/5 relative">
-                          <Bell className="h-5 w-5" />
-                          <span className="absolute top-3 right-3 h-2 w-2 bg-primary rounded-full border-2 border-background"></span>
-                      </Button>
+                          <Button onClick={() => setIsNotificationsOpen(true)} variant="ghost" size="icon" className="h-12 w-12 rounded-2xl text-muted-foreground hover:text-primary hover:bg-primary/5 relative">
+                              <Bell className="h-5 w-5" />
+                              <span className="absolute top-3 right-3 h-2 w-2 bg-primary rounded-full border-2 border-background"></span>
+                          </Button>
+                      </div>
 
-                      <div className="h-6 w-px bg-border mx-2"></div>
+                      <div className="h-6 w-px bg-border mx-2 opacity-50"></div>
 
                       <Link href="/admin/upload">
-                          <Button className="h-12 px-6 rounded-2xl bg-primary text-white font-black uppercase text-[9px] tracking-widest shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2">
+                          <Button className="h-12 px-8 rounded-2xl bg-primary text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-3">
                               <Wine className="h-4 w-4" /> Stock Cellar
                           </Button>
                       </Link>
