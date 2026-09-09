@@ -79,30 +79,30 @@ export default async function Home() {
       <section id="goods-hub-entry" className="max-w-7xl mx-auto px-4 mb-24 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-8">
               <Link href="/shop/snacks" className="group">
-                  <Card className="p-10 rounded-[3.5rem] bg-indigo-600 text-white border-none shadow-2xl relative overflow-hidden group-hover:scale-[1.01] transition-all">
+                  <Card className="p-10 rounded-[4rem] bg-primary text-black border-none shadow-2xl relative overflow-hidden group-hover:scale-[1.01] transition-all duration-700">
                       <div className="relative z-10 space-y-4">
-                          <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full text-[10px] font-black uppercase tracking-widest border border-white/10">
+                          <div className="inline-flex items-center gap-2 px-3 py-1 bg-black/10 rounded-full text-[10px] font-black uppercase tracking-widest border border-black/10">
                               <Utensils className="h-3 w-3" /> New Sector
                           </div>
-                          <h2 className="text-4xl font-black uppercase tracking-tighter leading-none">The Snack <span className="text-primary italic">Hub.</span></h2>
-                          <p className="text-sm font-medium opacity-70 italic max-w-xs">Gourmet pairings delivered chilled.</p>
-                          <Button className="h-12 px-8 rounded-2xl bg-white text-indigo-600 font-black uppercase text-[10px] tracking-widest hover:bg-primary hover:text-white transition-all shadow-xl active:scale-95">
+                          <h2 className="text-4xl font-serif font-black uppercase tracking-tighter leading-none">The Snack <span className="text-white italic">Hub.</span></h2>
+                          <p className="text-sm font-medium opacity-70 italic max-w-xs leading-relaxed">Gourmet pairings curated for your evening selection.</p>
+                          <Button className="h-12 px-8 rounded-2xl bg-black text-white font-black uppercase text-[10px] tracking-widest hover:bg-white hover:text-black transition-all shadow-xl active:scale-95">
                               Explore Snacks <ArrowRight className="ml-2 h-4 w-4" />
                           </Button>
                       </div>
-                      <Utensils className="absolute -bottom-10 -left-10 h-64 w-64 text-white/5 rotate-12 -z-0" />
+                      <Utensils className="absolute -bottom-10 -right-10 h-64 w-64 text-black/5 rotate-12 -z-0" />
                   </Card>
               </Link>
 
               <Link href="/shop/category/essentials" className="group">
-                  <Card className="p-10 rounded-[3.5rem] bg-slate-900 text-white border-none shadow-2xl relative overflow-hidden group-hover:scale-[1.01] transition-all">
+                  <Card className="p-10 rounded-[4rem] bg-black text-white border-none shadow-2xl relative overflow-hidden group-hover:scale-[1.01] transition-all duration-700">
                       <div className="relative z-10 space-y-4">
-                          <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 rounded-full text-[10px] font-black uppercase tracking-widest border border-primary/10">
+                          <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full text-[10px] font-black uppercase tracking-widest border border-white/10">
                               <GlassWater className="h-3 w-3 text-primary" /> Premium Goods
                           </div>
-                          <h2 className="text-4xl font-black uppercase tracking-tighter leading-none">Bar <span className="text-primary italic">Essentials.</span></h2>
-                          <p className="text-sm font-medium opacity-70 italic max-w-xs">Glassware, tools & gifting kits.</p>
-                          <Button className="h-12 px-8 rounded-2xl bg-primary text-white font-black uppercase text-[10px] tracking-widest hover:bg-white hover:text-slate-900 transition-all shadow-xl active:scale-95">
+                          <h2 className="text-4xl font-serif font-black uppercase tracking-tighter leading-none">Bar <span className="text-primary italic">Essentials.</span></h2>
+                          <p className="text-sm font-medium opacity-60 italic max-w-xs leading-relaxed">Luxury glassware, tools & gifting kits.</p>
+                          <Button className="h-12 px-8 rounded-2xl bg-primary text-black font-black uppercase text-[10px] tracking-widest hover:bg-white transition-all shadow-xl active:scale-95">
                               Shop Essentials <ArrowRight className="ml-2 h-4 w-4" />
                           </Button>
                       </div>

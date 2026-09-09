@@ -66,12 +66,12 @@ export default function AIConcierge() {
             let suggestions: Suggestion[] = [];
 
             if (low.includes('date night') || low.includes('couple') || low.includes('romantic')) {
-                reply = "I've curated an exclusive 'Date Night' experience for you, bro. A refined vintage paired with gourmet chocolate and chilled mixers.";
+                reply = "I've curated a refined selection for your evening, bro. Our cellar recommends these pairings:";
                 if (!supabase) throw new Error("Database offline");
                 const { data: prods } = await supabase.from('products').select('*').in('category', ['wine', 'snacks', 'mixers']).limit(3);
                 suggestions = (prods || []).map(p => ({ id: p.id, name: p.name, price: p.price, image_url: p.image_url }));
             } else if (low.includes('host') || low.includes('people') || low.includes('party')) {
-                reply = "For your gathering, I recommend the 'Hosting Pack'. Premium spirits, bulk snacks, and a full mixer suite to keep the grid alive.";
+                reply = "For your gathering, I recommend these essentials to keep the grid alive:";
                 if (!supabase) throw new Error("Database offline");
                 const { data: prods } = await supabase.from('products').select('*').in('category', ['spirits', 'snacks', 'mixers']).limit(4);
                 suggestions = (prods || []).map(p => ({ id: p.id, name: p.name, price: p.price, image_url: p.image_url }));
@@ -81,7 +81,7 @@ export default function AIConcierge() {
                 const { data: prods } = await supabase.from('products').select('*').lte('price', limit).limit(3);
                 suggestions = (prods || []).map(p => ({ id: p.id, name: p.name, price: p.price, image_url: p.image_url }));
                 if (suggestions.length === 0) {
-                    reply = `I couldn't find a complete setup under ${formatPrice(limit)}, bro. I've pulled our closest premium essentials instead:`;
+                    reply = `I couldn't find a complete selection under ${formatPrice(limit)}, bro. I've pulled our closest premium essentials instead:`;
                     const { data: alt } = await supabase.from('products').select('*').limit(2);
                     suggestions = (alt || []).map(p => ({ id: p.id, name: p.name, price: p.price, image_url: p.image_url }));
                 }
@@ -90,7 +90,7 @@ export default function AIConcierge() {
                 const { data: prods } = await supabase.from('products').select('*').order('price', { ascending: true }).limit(2);
                 suggestions = (prods || []).map(p => ({ id: p.id, name: p.name, price: p.price, image_url: p.image_url }));
             } else {
-                reply = "I recommend these premium essentials to upgrade your mobile experience, bro. 🛡️";
+                reply = "I recommend these premium essentials to upgrade your bar experience, bro. 🛡️";
                 if (!supabase) throw new Error("Database offline");
                 const { data: prods } = await supabase.from('products').select('*').limit(2);
                 suggestions = (prods || []).map(p => ({ id: p.id, name: p.name, price: p.price, image_url: p.image_url }));

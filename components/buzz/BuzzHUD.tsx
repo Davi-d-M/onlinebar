@@ -93,8 +93,8 @@ export default function BuzzHUD() {
             </div>
 
             <div className="pt-4 border-t border-slate-50 flex items-center justify-between text-[8px] font-black uppercase text-slate-400">
-                <p className="flex items-center gap-1.5"><TrendingUp size={10} className="text-emerald-500" /> Sector velocity stable</p>
-                <p className="italic">Aggregated 1h Data</p>
+                <p className="flex items-center gap-1.5"><TrendingUp size={10} className="text-primary" /> Sector velocity stable</p>
+                <p className="italic">GPRS Pulse Established</p>
             </div>
         </Card>
 

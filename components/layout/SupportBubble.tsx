@@ -133,7 +133,13 @@ export default function SupportBubble() {
                             {userProfile?.full_name ? `Need help with your order, ${userProfile.full_name.split(' ')[0]}?` : "Need help with an order, bro?"}
                         </p>
                     </div>
-                    <button onClick={handleDismissLabel} className="text-slate-300 hover:text-rose-500 ml-4 transition-colors"><X className="h-3 w-3" /></button>
+                    <button
+                        onClick={(e) => { e.stopPropagation(); handleDismissLabel(); }}
+                        className="h-10 w-10 -mr-2 flex items-center justify-center text-slate-300 hover:text-rose-500 hover:bg-rose-50 rounded-full transition-all active:scale-90"
+                        title="Dismiss help bubble"
+                    >
+                        <X className="h-4 w-4" />
+                    </button>
                 </div>
             )}
 

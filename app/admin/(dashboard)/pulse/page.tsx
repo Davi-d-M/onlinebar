@@ -11,6 +11,7 @@ import {
     MoreHorizontal,
     Play,
     Pause,
+    Trash2,
     TrendingUp,
     ShieldAlert
 } from 'lucide-react';
@@ -74,6 +75,18 @@ export default function PulseControlCenter() {
         if (!supabase) return;
         const { error } = await supabase.from('pulse_posts').update({ status }).eq('id', postId);
         if (!error) fetchData();
+    };
+
+    const handleDeletePost = async (postId: string, title: string) => {
+        if (!supabase || !confirm(`Permanently delete "${title}" moment?`)) return;
+        try {
+            const { error } = await supabase.from('pulse_posts').delete().eq('id', postId);
+            if (error) throw error;
+            fetchData();
+        } catch (err) {
+            console.error(err);
+            alert("Deletion protocol failed.");
+        }
     };
 
     if (loading && posts.length === 0) return <div className="min-h-screen flex items-center justify-center bg-slate-50"><Loader2 className="animate-spin text-primary" /></div>;
@@ -171,6 +184,7 @@ export default function PulseControlCenter() {
                                                 ) : (
                                                     <Button onClick={() => handleUpdateStatus(post.id, 'LIVE')} variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-emerald-500 hover:bg-emerald-50 border border-transparent hover:border-emerald-100"><Play size={16} /></Button>
                                                 )}
+                                                <Button onClick={() => handleDeletePost(post.id, post.title)} variant="ghost" size="icon" className="h-9 w-9 rounded-xl text-slate-300 hover:text-rose-500 hover:bg-rose-50 transition-all border border-transparent hover:border-rose-100"><Trash2 size={16} /></Button>
                                             </div>
                                         </td>
                                     </tr>

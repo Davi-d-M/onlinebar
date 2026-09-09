@@ -85,7 +85,7 @@ export default function MarketIntel() {
                     <p className="text-xs font-black uppercase text-indigo-700">Market Insight</p>
                 </div>
                 <p className="text-sm font-medium italic text-indigo-600 leading-relaxed">
-                    &quot;Competitors have increased pricing on Premium Whiskeys by 5% this weekend. Recommend maintaining current levels to capture price-sensitive patrons in the Westlands sector.&quot;
+                    &quot;Real-time market scanning active. Our sentinel node is monitoring competitor price fluctuations across the Nairobi sector.&quot;
                 </p>
             </div>
         </Card>

@@ -181,7 +181,7 @@ class OnlineBarOS {
                 device_name: isMobile ? 'Mobile Terminal' : 'Desktop Terminal',
                 device_type: isMobile ? 'Mobile' : 'Desktop',
                 browser: this.getBrowserName(userAgent),
-                ip_address: 'Logged via Node', // In prod, get from server headers
+                ip_address: '', // To be captured by server-side middleware
                 is_current_session: true,
                 last_active_at: new Date().toISOString()
             }, { onConflict: 'user_id, device_name, browser' });

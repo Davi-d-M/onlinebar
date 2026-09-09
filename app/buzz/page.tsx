@@ -128,19 +128,19 @@ export default function CityBuzzPage() {
                                     <h3 className="text-xl font-black uppercase text-foreground">Mobile Velocity</h3>
                                 </div>
                                 <p className="text-[10px] text-slate-500 font-medium italic leading-relaxed">
-                                    &quot;High density of mobile shoppers detected in the Westlands sector. 12 missions currently out for delivery.&quot;
+                                    &quot;Real-time mobile density detection active. Monitoring mission volume across all sectors.&quot;
                                 </p>
                              </Card>
                              <Card className="p-10 rounded-[3rem] bg-white border border-slate-100 shadow-sm space-y-6 text-left group hover:border-indigo-100 transition-all">
                                 <div className="flex items-center gap-4">
                                     <div className="h-12 w-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 shadow-sm transition-transform group-hover:scale-110"><TrendingUp size={24} /></div>
-                                    <h3 className="text-xl font-black uppercase text-foreground">Trending Vintages</h3>
+                                    <h3 className="text-xl font-black uppercase text-foreground">Trending Selections</h3>
                                 </div>
                                 <div className="space-y-3">
-                                    {['Red Wine', 'Premium Whiskey', 'Gourmet Snacks'].map(cat => (
+                                    {['Awaiting Data', 'Scanning Grid', 'Calibrating...'].map(cat => (
                                         <div key={cat} className="flex justify-between items-center text-[9px] font-black uppercase text-slate-400">
                                             <span>{cat}</span>
-                                            <span className="text-indigo-600">+18% Today</span>
+                                            <span className="text-indigo-600">--%</span>
                                         </div>
                                     ))}
                                 </div>
@@ -216,12 +216,12 @@ export default function CityBuzzPage() {
                                     </div>
 
                                     <div className="p-6 bg-white/5 rounded-3xl border border-white/10 space-y-4">
-                                        <p className="text-[10px] font-black uppercase text-primary">Top Selection Tonight</p>
-                                        <div className="flex items-center gap-4 text-left">
+                                        <p className="text-[10px] font-black uppercase text-primary">Sector Top Selection</p>
+                                        <div className="flex items-center gap-4 text-left opacity-30">
                                             <div className="h-12 w-12 rounded-xl bg-white flex items-center justify-center text-slate-900"><Wine size={24} /></div>
                                             <div className="min-w-0 flex-1 text-left">
-                                                <p className="text-xs font-black uppercase truncate">Johnnie Walker Blue Label</p>
-                                                <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest mt-1">42 Views in Sector</p>
+                                                <p className="text-xs font-black uppercase truncate italic">Awaiting Sector Sales</p>
+                                                <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest mt-1">Uplink Stable</p>
                                             </div>
                                         </div>
                                     </div>
