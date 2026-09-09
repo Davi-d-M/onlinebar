@@ -41,6 +41,12 @@ export default function OperatingBrainHUD() {
 
                 const totalRev = revenueRes.data?.reduce((sum, e) => sum + Number(e.amount), 0) || 0;
 
+                // 2. Fetch Automation Status
+                const { data: autoStates } = await supabase.from('system_autonomous_state').select('is_autonomous');
+                const autoRate = autoStates && autoStates.length > 0
+                    ? (autoStates.filter(s => s.is_autonomous).length / autoStates.length) * 100
+                    : 0;
+
                 // Online Bar Brain: Determine Hotspot
                 const { data: buzz } = await supabase.from('buzz_metrics').select('zone_name').order('buzz_score', { ascending: false }).limit(1).single();
 
@@ -51,6 +57,7 @@ export default function OperatingBrainHUD() {
                     users: usersRes.count || 0,
                     riders: ridersRes.count || 0,
                     shops: shopsRes.count || 0,
+                    automation: Number(autoRate.toFixed(1)),
                     demand_hotspot: buzz?.zone_name || 'Neutral'
                 }));
             } catch {

@@ -35,11 +35,30 @@ export default function MarketingCommandCenter() {
     const [loading, setLoading] = React.useState(false);
     const [success, setSuccess] = React.useState(false);
     const [campaigns, setCampaigns] = React.useState<{ id: string, title: string, status: string, created_at: string, campaign_jobs?: { id: string, channel: string, status: string }[] }[]>([]);
+    const [marketingStats, setMarketingStats] = React.useState({ attributed_revenue: 0, audience_reach: 0, conversion_rate: 0 });
 
     const fetchCampaigns = React.useCallback(async () => {
         if (!supabase) return;
-        const { data } = await supabase.from('marketing_campaigns_v2').select('*, campaign_jobs(*)').order('created_at', { ascending: false }).limit(5);
-        if (data) setCampaigns(data as { id: string, title: string, status: string, created_at: string, campaign_jobs?: { id: string, channel: string, status: string }[] }[]);
+        try {
+            const [campRes, analyticsRes] = await Promise.all([
+                supabase.from('marketing_campaigns_v2').select('*, campaign_jobs(*)').order('created_at', { ascending: false }).limit(5),
+                supabase.from('pulse_analytics').select('view_count, conversion_count')
+            ]);
+
+            if (campRes.data) setCampaigns(campRes.data);
+
+            if (analyticsRes.data) {
+                const totalViews = analyticsRes.data.reduce((s, a) => s + (a.view_count || 0), 0);
+                const totalConvs = analyticsRes.data.reduce((s, a) => s + (a.conversion_count || 0), 0);
+                setMarketingStats({
+                    attributed_revenue: totalConvs * 4500, // Est value based on avg bottle price
+                    audience_reach: totalViews,
+                    conversion_rate: totalViews > 0 ? (totalConvs / totalViews) * 100 : 0
+                });
+            }
+        } catch (err) {
+            console.error("Marketing Link Failed:", err);
+        }
     }, []);
 
     React.useEffect(() => {
@@ -77,10 +96,10 @@ export default function MarketingCommandCenter() {
 
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
                 {[
-                    { label: 'Attributed Revenue', val: formatPrice(0), icon: Target, color: 'primary' },
+                    { label: 'Attributed Rev (Est.)', val: formatPrice(marketingStats.attributed_revenue), icon: Target, color: 'primary' },
                     { label: 'Active Campaigns', val: campaigns.length, icon: Rocket, color: 'indigo' },
-                    { label: 'Avg. Conversion', val: '0.0%', icon: Activity, color: 'emerald' },
-                    { label: 'Audience Reach', val: '0', icon: Users, color: 'rose' },
+                    { label: 'Avg. Conversion', val: `${marketingStats.conversion_rate.toFixed(1)}%`, icon: Activity, color: 'emerald' },
+                    { label: 'Audience Reach', val: marketingStats.audience_reach.toLocaleString(), icon: Users, color: 'rose' },
                 ].map((item) => (
                     <Card key={item.label} className="aspect-[4/5] rounded-[4rem] bg-white border border-slate-100 shadow-sm flex flex-col items-center justify-center gap-6 group hover:shadow-2xl transition-all relative overflow-hidden text-center p-6">
                         <div className={cn(

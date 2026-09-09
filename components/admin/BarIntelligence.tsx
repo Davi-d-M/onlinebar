@@ -38,24 +38,54 @@ export default function BarIntelligence() {
         async function fetchDailyBrief() {
             if (!supabase) return;
             try {
+                const now = new Date();
+                const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
+                const fourteenDaysAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000).toISOString();
+
                 // Tactical Data Scans
-                const [, productsRes, suppliersRes] = await Promise.all([
-                    supabase.from('orders').select('total_price, status, created_at'),
+                const [ordersRes, productsRes, suppliersRes, intelRes, ledgerRes] = await Promise.all([
+                    supabase.from('orders').select('total_price, created_at').gte('created_at', fourteenDaysAgo),
                     supabase.from('products').select('stock'),
-                    supabase.from('suppliers').select('rating')
+                    supabase.from('suppliers').select('rating'),
+                    supabase.from('customer_intelligence').select('user_id').gt('churn_risk_score', 80),
+                    supabase.from('financial_ledger').select('amount, entry_type, created_at').gte('created_at', fourteenDaysAgo)
                 ]);
 
-                // Calculate metrics
+                // Calculate Volume Trends
+                const recentOrders = ordersRes.data?.filter(o => o.created_at >= sevenDaysAgo) || [];
+                const previousOrders = ordersRes.data?.filter(o => o.created_at < sevenDaysAgo) || [];
+
+                const recentVol = recentOrders.reduce((s, o) => s + Number(o.total_price), 0);
+                const prevVol = previousOrders.reduce((s, o) => s + Number(o.total_price), 0);
+
+                const growth = prevVol > 0 ? ((recentVol - prevVol) / prevVol) * 100 : 0;
+                const ordersUp = previousOrders.length > 0 ? ((recentOrders.length - previousOrders.length) / previousOrders.length) * 100 : 0;
+
+                // Margin Trend
+                const recentLedger = ledgerRes.data?.filter(l => l.created_at >= sevenDaysAgo) || [];
+                const prevLedger = ledgerRes.data?.filter(l => l.created_at < sevenDaysAgo) || [];
+
+                const calcMargin = (entries: { amount: number, entry_type: string }[]) => {
+                    const rev = entries.filter(l => l.entry_type === 'REVENUE').reduce((s, l) => s + Number(l.amount), 0);
+                    const cost = Math.abs(entries.filter(l => l.entry_type === 'SUPPLIER_PAYABLE' || l.entry_type === 'COST').reduce((s, l) => s + Number(l.amount), 0));
+                    return rev > 0 ? ((rev - cost) / rev) * 100 : 0;
+                };
+
+                const recentMargin = calcMargin(recentLedger);
+                const prevMargin = calcMargin(prevLedger);
+                const marginChange = recentMargin - prevMargin;
+
+                // Anomaly Calcs
                 const lowStock = productsRes.data?.filter(p => p.stock < 5).length || 0;
                 const riskySuppliers = suppliersRes.data?.filter(s => s.rating < 80).length || 0;
 
                 setData({
-                    growth: 0,
-                    ordersUp: 0,
-                    marginChange: 0,
+                    growth: Number(growth.toFixed(1)),
+                    ordersUp: Number(ordersUp.toFixed(1)),
+                    marginChange: Number(marginChange.toFixed(1)),
                     inventoryRisk: lowStock,
                     supplierRisk: riskySuppliers,
-                    atRiskCustomers: 0
+                    atRiskCustomers: intelRes.data?.length || 0
                 });
             } catch (err) {
                 console.error(err);

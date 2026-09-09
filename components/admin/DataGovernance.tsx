@@ -24,8 +24,25 @@ export default function DataGovernance() {
 
     const fetchGovernance = React.useCallback(async () => {
         if (!supabase) return;
-        const { data } = await supabase.from('data_quality_alerts').select('*').eq('status', 'OPEN');
-        setStats(prev => ({ ...prev, alerts: data || [] }));
+        try {
+            const [alertsRes, consentRes, usersRes] = await Promise.all([
+                supabase.from('data_quality_alerts').select('*').eq('status', 'OPEN'),
+                supabase.from('user_consent').select('id'),
+                supabase.from('profiles').select('id')
+            ]);
+
+            const totalUsers = usersRes.data?.length || 1;
+            const consentCount = consentRes.data?.length || 0;
+            const health = Math.round((consentCount / totalUsers) * 100);
+
+            setStats({
+                consentHealth: health,
+                retentionCompliance: 'Active',
+                alerts: alertsRes.data || []
+            });
+        } catch (err) {
+            console.error("Governance Link Failed:", err);
+        }
     }, []);
 
     React.useEffect(() => {
