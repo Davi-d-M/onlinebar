@@ -105,9 +105,9 @@ export default function OperatingBrainHUD() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 lg:gap-10">
                 {nodes.map((node) => (
-                    <Card key={node.label} className="aspect-[4/5] rounded-[4rem] bg-white border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-xl transition-all flex flex-col items-center justify-center gap-4 text-center p-4">
+                    <Card key={node.label} className="aspect-[4/5] rounded-[4rem] bg-white border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-xl transition-all flex flex-col items-center justify-center gap-4 text-center p-4 min-w-[140px]">
                         <div className={cn(
                             "h-12 w-12 rounded-full flex items-center justify-center transition-transform group-hover:scale-110 shadow-inner",
                             node.color === 'primary' ? 'bg-primary/10 text-primary' :

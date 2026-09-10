@@ -57,6 +57,7 @@ import JsonLd from "@/components/seo/JsonLd";
 import AnalyticsTracker from "@/components/layout/AnalyticsTracker";
 import MobileBottomNav from "@/components/layout/MobileBottomNav";
 import LevelUpCelebration from "@/components/engagement/LevelUpCelebration";
+import InstallAppWidget from "@/components/layout/InstallAppWidget";
 import { type StoreSettings, DEFAULT_SETTINGS } from "@/lib/useSettings";
 import { getCachedSettings } from "@/lib/cachedData";
 import { Suspense } from "react";
@@ -123,7 +124,21 @@ export default async function RootLayout({
                 <LevelUpCelebration />
                 {children}
             </PublicLayoutShield>
+            <InstallAppWidget />
             <MobileBottomNav />
+            <Script id="register-sw">
+                {`
+                if ('serviceWorker' in navigator) {
+                    window.addEventListener('load', function() {
+                    navigator.serviceWorker.register('/sw.js').then(function(registration) {
+                        console.log('OB-OS ServiceWorker registration successful');
+                    }, function(err) {
+                        console.log('OB-OS ServiceWorker registration failed: ', err);
+                    });
+                    });
+                }
+                `}
+            </Script>
           </WishlistProvider>
         </CartProvider>
       </body>

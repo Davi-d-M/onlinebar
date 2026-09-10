@@ -16,6 +16,7 @@ const TrendingWidget = dynamic(() => import('@/components/home/ProductList'), { 
 const BuzzWidget = dynamic(() => import('@/components/buzz/BuzzHUD'), { loading: () => <div className="h-64 bg-slate-50 animate-pulse" /> });
 const ConciergeWidget = dynamic(() => import('@/components/widgets/concierge/BuildMyNightWidget'), { loading: () => <div className="h-96 bg-slate-50 animate-pulse" /> });
 const PersonalizedWidget = dynamic(() => import('@/components/home/PersonalizedFeed'), { loading: () => <div className="h-96 bg-slate-50 animate-pulse" /> });
+const PerfectServeWidget = dynamic(() => import('@/components/product/PerfectServeWidget'), { loading: () => <div className="h-64 bg-slate-50 animate-pulse" /> });
 
 interface WidgetNode {
     id: string;
@@ -78,6 +79,8 @@ function renderWidget(key: string, _config: Record<string, unknown>) {
             return <ConciergeWidget />;
         case 'PERSONALIZED_WIDGET':
             return <PersonalizedWidget />;
+        case 'PERFECT_SERVE_WIDGET':
+            return <section className="max-w-7xl mx-auto px-6 sm:px-12 lg:px-20"><PerfectServeWidget /></section>;
         default:
             return (
                 <div className="p-10 border-2 border-dashed border-slate-100 rounded-[3rem] text-center opacity-20">

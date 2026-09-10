@@ -19,6 +19,10 @@ import { OB_OS } from '@/lib/onlineBarOS';
 import { v4 as uuidv4 } from 'uuid';
 import { useInteractionTracking } from '@/lib/utils/useInteractionTracking';
 
+import ProductDNAWidget from '@/components/widgets/commerce/ProductDNAWidget';
+import PerfectServeWidget from './PerfectServeWidget';
+import AuthenticitySentinel from './AuthenticitySentinel';
+
 import dynamic from 'next/dynamic';
 
 const BottleViewer3D = dynamic(() => import('./BottleViewer3D'), {
@@ -455,6 +459,20 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
                 </button>
             </div>
           </div>
+        </div>
+
+        {/* 🧬 ELITE DIFFERENTIATORS SECTION */}
+        <div className="grid lg:grid-cols-12 gap-10 mb-24 items-stretch">
+            <div className="lg:col-span-4 h-full flex">
+                <ProductDNAWidget dna={product.beverage_specs?.sensory_dna as any} />
+            </div>
+            <div className="lg:col-span-8 space-y-10 flex flex-col justify-between">
+                <PerfectServeWidget specs={product.beverage_specs?.perfect_serve as any} />
+                <AuthenticitySentinel
+                    batchNo={product.beverage_specs?.batch_no as string}
+                    origin={product.beverage_specs?.origin as string}
+                />
+            </div>
         </div>
 
         {/* LIGHTBOX / FULLSCREEN ZOOM */}

@@ -4,7 +4,6 @@ import * as React from 'react';
 import { Card } from '@/components/ui/card';
 import {
     User,
-    Zap,
     MapPin,
     Wine
 } from 'lucide-react';
@@ -19,7 +18,7 @@ interface LifecycleEvent {
     metadata?: Record<string, unknown>;
 }
 
-export default function Customer360Widget({ patronId }: { patronId?: string }) {
+export default function Customer360Widget() {
     const events: LifecycleEvent[] = [
         { id: '1', type: 'DISCOVERY', label: 'First Contact', description: 'Arrived via Google Search (Organic)', timestamp: '2026-09-01T14:20:00Z' },
         { id: '2', type: 'ENGAGEMENT', label: 'High Intent', description: 'Viewed 12 Vintages in 15 minutes', timestamp: '2026-09-01T14:35:00Z' },

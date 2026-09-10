@@ -1,24 +1,20 @@
-# Tasks - Widget-Based Architecture & Manager 🛡️🧱🚀
+# Tasks - Differentiators & Retention Protocol 🛡️🍷📱
 
-## Phase 1: Database Foundation
-- [ ] Create `supabase/migrations/20260910_widget_orchestration.sql` (Registry table)
-- [ ] Seed initial widgets (Hero, Trending, Buzz, Concierge)
-- [ ] Add RLS for Admin management of widgets
+## Phase 1: Data & Schema
+- [ ] Create `supabase/migrations/20260910_product_enrichment.sql`
+- [ ] Populate sample sensory DNA and Perfect Serve specs for top inventory
 
-## Phase 2: Core Refactoring (Modularization)
-- [ ] Implement `components/widgets/WidgetRegistry.tsx`
-- [ ] Create `components/widgets/commerce/ProductDNAWidget.tsx`
-- [ ] Evolve `AIConcierge.tsx` logic into `BuildMyNightWidget.tsx`
+## Phase 2: Product Differentiators
+- [ ] Create `components/product/PerfectServeWidget.tsx`
+- [ ] Create `components/product/AuthenticitySentinel.tsx`
+- [ ] Integrate widgets into `ProductDetailClient.tsx`
 
-## Phase 3: Admin Experience
-- [ ] Create `app/admin/(dashboard)/experience/widgets/page.tsx` (The Manager HUD)
-- [ ] Implement toggle/edit logic for widget status and ranking
+## Phase 3: PWA & Retention
+- [ ] Create `components/layout/InstallAppWidget.tsx`
+- [ ] Update `layout.tsx` with PWA event listeners
+- [ ] Create `public/sw.js` (Basic service worker for PWA)
 
-## Phase 4: Intelligence & Growth
-- [ ] Implement `components/admin/Customer360Widget.tsx`
-- [ ] Refine Admin Intelligence widgets with the new vertical oval layout (Hardened spacing)
-
-## Phase 5: Verification & Launch
-- [ ] Run `npm run lint` and `npm run build`
-- [ ] Verify global spacing consistency across all new widgets
+## Phase 4: Orchestration
+- [ ] Register new nodes in `WidgetRegistry.tsx`
+- [ ] Final Build & Verification
 - [ ] Push to GitHub

@@ -94,26 +94,26 @@ export default function MarketingCommandCenter() {
     return (
         <div className="space-y-10 text-left selection:bg-primary/20 animate-in fade-in duration-1000">
 
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16">
                 {[
                     { label: 'Attributed Rev (Est.)', val: formatPrice(marketingStats.attributed_revenue), icon: Target, color: 'primary' },
                     { label: 'Active Campaigns', val: campaigns.length, icon: Rocket, color: 'indigo' },
                     { label: 'Avg. Conversion', val: `${marketingStats.conversion_rate.toFixed(1)}%`, icon: Activity, color: 'emerald' },
                     { label: 'Audience Reach', val: marketingStats.audience_reach.toLocaleString(), icon: Users, color: 'rose' },
                 ].map((item) => (
-                    <Card key={item.label} className="aspect-[4/5] rounded-[4rem] bg-white border border-slate-100 shadow-sm flex flex-col items-center justify-center gap-6 group hover:shadow-2xl transition-all relative overflow-hidden text-center p-6">
+                    <Card key={item.label} className="aspect-[4/5] rounded-[4rem] bg-white border border-slate-100 shadow-sm flex flex-col items-center justify-center gap-6 group hover:shadow-2xl transition-all relative overflow-hidden text-center p-6 min-w-[180px]">
                         <div className={cn(
                             "h-14 w-14 rounded-full flex items-center justify-center transition-transform group-hover:scale-110 shadow-inner",
                             item.color === 'primary' ? "bg-primary/10 text-primary" :
                             item.color === 'indigo' ? "bg-indigo-50 text-indigo-500" :
-                            item.color === 'emerald' ? "bg-emerald-50 text-emerald-500" :
+                            item.color === 'emerald' ? "bg-emerald-50 text-emerald-600" :
                             "bg-rose-50 text-rose-500"
                         )}>
                             <item.icon size={28} />
                         </div>
-                        <div className="space-y-2">
+                        <div className="space-y-2 w-full">
                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">{item.label}</p>
-                            <h3 className="text-2xl font-black text-foreground tracking-tighter uppercase leading-none">{item.val}</h3>
+                            <h3 className="text-2xl font-black text-foreground tracking-tighter uppercase leading-none whitespace-nowrap">{item.val}</h3>
                         </div>
                     </Card>
                 ))}

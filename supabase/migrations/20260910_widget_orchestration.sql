@@ -37,7 +37,25 @@ FOR SELECT USING (status = 'ACTIVE' OR (status = 'SCHEDULED' AND now() BETWEEN s
 CREATE POLICY "Admins full control widgets" ON public.system_widgets
 FOR ALL TO authenticated USING (true);
 
--- 4. Audit Link
+-- 4. Audit Link Function
+CREATE OR REPLACE FUNCTION public.log_audit_trigger()
+RETURNS TRIGGER AS $$
+BEGIN
+    INSERT INTO public.audit_logs (actor_id, action, details)
+    VALUES (
+        auth.uid(),
+        'UPDATE_' || TG_TABLE_NAME,
+        jsonb_build_object(
+            'id', NEW.id,
+            'old_status', OLD.status,
+            'new_status', NEW.status,
+            'label', NEW.label
+        )
+    );
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
 CREATE TRIGGER tr_audit_widget_changes
 AFTER UPDATE ON public.system_widgets
-FOR EACH ROW EXECUTE FUNCTION public.log_audit_trigger(); -- Assumes existing audit function
+FOR EACH ROW EXECUTE FUNCTION public.log_audit_trigger();

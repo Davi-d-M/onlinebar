@@ -1,58 +1,58 @@
-# Implementation Plan - Widget-Based Architecture & Manager 🛡️🧱🚀
+# Implementation Plan - Differentiators & Retention Protocol 🛡️🍷📱
 
-This plan transforms "Online Bar" into a modular, widget-based ecosystem. Every critical feature (Hero, City Pulse, Concierge, Intelligence) will be refactored into a manageable "Widget" node that can be controlled from a new Admin **Widget Manager**.
+This plan establishes the "Elite Digital Cellar" signature features: **Perfect Serve**, **Product DNA**, **Authenticity Verification**, and a **PWA Install Protocol** to ensure patrons never lose access to the grid.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> **Dynamic Orchestration**: I will introduce a `system_widgets` table in Supabase. This will allow you to enable/disable or schedule parts of the homepage (e.g., "Trending Tonight") without code changes.
-> **Sensory DNA**: I will expand the `products` logic to utilize sensory tags (Smoke, Oak, Sweetness) for the new **Product DNA** widget.
+> **Data Enrichment**: I will populate the `beverage_specs` JSONB for your top products with sensory DNA and serving suggestions.
+> **PWA Installation**: I will implement a custom "Download Web App" prompt. This relies on modern browser support (Chrome/Edge/Safari) to add Online Bar to the home screen.
 
 ## Proposed Changes
 
-### 🗄️ 1. Database: Widget Orchestration Layer
+### 🍷 1. High-Fidelity Product Differentiators
 
-#### [NEW] `supabase/migrations/20260910_widget_orchestration.sql`
-- **`system_widgets`**: Registry for all UI widgets (ID, Label, Page, Status, Config JSON, Rank, Visibility Rules).
-- **`product_sensory_dna`**: (Implicitly using `beverage_specs` JSONB) Logic to map sensory scores to products.
+#### [NEW] `components/product/PerfectServeWidget.tsx`
+- **Visuals**: Icon-based ingredients (Ice, Mixer, Garnish).
+- **Commerce**: "Add Entire Serve to Bag" button to bundle the mixer and garnish with the bottle.
 
----
+#### [NEW] `components/product/AuthenticitySentinel.tsx`
+- **Visuals**: A premium "Verified Authentic" card with batch/lot placeholder logic.
+- **Goal**: Build high-trust perception for premium spirits.
 
-### 🧱 2. Core Widget Refactoring
-
-#### [NEW] `components/widgets/WidgetRegistry.tsx`
-- A master component that fetches the active widget manifest and renders the appropriate components (Hero, Buzz, Trending, etc.).
-
-#### [NEW] `components/widgets/commerce/ProductDNAWidget.tsx`
-- High-fidelity visual representing the beverage profile (Body, Sweetness, Oak, Smoke).
-
-#### [NEW] `components/widgets/concierge/BuildMyNightWidget.tsx`
-- Occasion-based bundler (Celebration, Date Night, etc.) with budget-aware selection.
+#### [MODIFY] [ProductDetailClient.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/components/product/ProductDetailClient.tsx)
+- Integrate the **Product DNA Radar**, **Perfect Serve**, and **Authenticity Sentinel** into the detail view.
 
 ---
 
-### 🏛️ 3. Admin: Widget Manager Control Center
+### 📱 2. App Retention (Download Web App)
 
-#### [NEW] `app/admin/(dashboard)/experience/widgets/page.tsx`
-- The management HUD to "Create, Edit, Move, Enable/Disable" all platform widgets.
-- Includes scheduling logic (e.g., "Feature this event only on Friday nights").
+#### [NEW] `components/layout/InstallAppWidget.tsx`
+- A premium, non-intrusive floating banner or modal that appears for mobile/desktop users who haven't installed the PWA yet.
+- **Logic**: Captures the `beforeinstallprompt` event and provides a one-tap "Install Online Bar" button.
+
+#### [MODIFY] [layout.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/layout.tsx)
+- Register the global PWA service worker and event listeners for the install protocol.
 
 ---
 
-### 🧠 4. Intelligence & Customer 360
+### 🏛️ 3. Admin & Orchestration
 
-#### [NEW] `components/admin/Customer360Widget.tsx`
-- A timeline-based visualization of a patron's life-cycle (First Visit &rarr; Purchase &rarr; Review).
+#### [MODIFY] [WidgetRegistry.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/components/widgets/WidgetRegistry.tsx)
+- Register the new widgets so they can be ranked/toggled from the **Widget Manager**.
+
+#### [NEW] `supabase/migrations/20260910_product_enrichment.sql`
+- Add sensory fields to the `beverage_specs` schema.
 
 ---
 
 ## Verification Plan
 
 ### Automated Tests
-- `npm run build`: Verify 100% success for the new modular layout.
-- SQL integrity: Ensure widgets with `status = 'INACTIVE'` are not returned to the client.
+- `npm run build`: Verify 100% route success.
+- PWA Check: Use Lighthouse or browser tools to verify manifest and service worker registration.
 
 ### Manual Verification
-1. **Widget Toggle**: Disable the "City Pulse" widget in Admin and verify it disappears from the homepage instantly.
-2. **Concierge Flow**: Test the "Build My Night" widget with a KSh 5,000 budget and verify it generates a valid bundle.
-3. **Product DNA**: Open a premium Whiskey and confirm the sensory radar/DNA is displayed.
+1. **Product Page**: Open a premium bottle and verify the "Perfect Serve" ingredients are displayed.
+2. **Install Protocol**: Visit the site on a mobile device and confirm the "Download App" prompt appears.
+3. **Bundling**: Tap "Add Entire Serve" and verify the bottle + mixer are both in the cart.
