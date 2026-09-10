@@ -17,7 +17,7 @@ export default function CustomerFunnel({ events }: { events: FunnelEvent[] }) {
             { id: 'HOME', label: 'Discovery', icon: Home, active: has('PAGE_VIEW'), color: 'bg-blue-50 text-blue-600' },
             { id: 'PRODUCT', label: 'Engagement', icon: ShoppingBag, active: has('PRODUCT_VIEW'), color: 'bg-indigo-50 text-indigo-600' },
             { id: 'CART', label: 'Commerce', icon: ShoppingCart, active: has('ADD_TO_CART') || has('CART_VIEWED'), color: 'bg-purple-50 text-purple-600' },
-            { id: 'CHECKOUT', label: 'Checkout', icon: CreditCard, active: has('CHECKOUT_STARTED'), color: 'bg-amber-50 text-amber-600' },
+            { id: 'CHECKOUT', label: 'Checkout', icon: CreditCard, active: has('CHECKOUT_START'), color: 'bg-amber-50 text-amber-600' },
             { id: 'PURCHASE', label: 'Conversion', icon: CheckCircle2, active: has('PURCHASE_COMPLETED'), color: 'bg-emerald-50 text-emerald-600' },
         ];
     }, [events]);

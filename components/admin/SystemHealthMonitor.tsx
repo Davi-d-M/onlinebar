@@ -39,9 +39,9 @@ export default function SystemHealthMonitor() {
 
     const nodes = [
         { id: 'api', label: 'Primary API', icon: Globe, status: health?.status === 'HEALTHY' ? 'OK' : 'DEGRADED', latency: health?.total_latency },
-        { id: 'db', label: 'Database', icon: Database, status: health?.database?.status || 'ERROR', latency: health?.database?.latency },
-        { id: 'storage', label: 'Cloud Storage', icon: HardDrive, status: health?.storage?.status || 'ERROR', latency: health?.storage?.latency },
-        { id: 'network', label: 'Edge Network', icon: Activity, status: 'OK', latency: '24ms' }
+        { id: 'db', label: 'Database Node', icon: Database, status: health?.database?.status || 'ERROR', latency: health?.database?.latency },
+        { id: 'storage', label: 'Asset Storage', icon: HardDrive, status: health?.storage?.status || 'ERROR', latency: health?.storage?.latency },
+        { id: 'network', label: 'Uplink Latency', icon: Activity, status: 'OK', latency: health?.total_latency || '---' }
     ];
 
     return (

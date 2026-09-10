@@ -215,13 +215,13 @@ export default function CityBuzzPage() {
                                         </div>
                                     </div>
 
-                                    <div className="p-6 bg-white/5 rounded-3xl border border-white/10 space-y-4">
-                                        <p className="text-[10px] font-black uppercase text-primary">Sector Top Selection</p>
+                                    <div className="p-6 bg-white/5 rounded-3xl border border-white/10 space-y-4 text-left">
+                                        <p className="text-[10px] font-black uppercase text-primary tracking-widest">Sector Top Selection</p>
                                         <div className="flex items-center gap-4 text-left opacity-30">
                                             <div className="h-12 w-12 rounded-xl bg-white flex items-center justify-center text-slate-900"><Wine size={24} /></div>
                                             <div className="min-w-0 flex-1 text-left">
                                                 <p className="text-xs font-black uppercase truncate italic">Awaiting Sector Sales</p>
-                                                <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest mt-1">Uplink Stable</p>
+                                                <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest mt-1">{selectedArea.active_visitors} active sessions in sector</p>
                                             </div>
                                         </div>
                                     </div>

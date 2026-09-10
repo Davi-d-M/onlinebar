@@ -27,16 +27,23 @@ export default function WorkforceHub() {
         // 1. Fetch Staff and their Tasks via parallel query or join
         const [staffRes, tasksRes] = await Promise.all([
             supabase.from('staff').select('*').order('last_activity_at', { ascending: false }),
-            supabase.from('admin_tasks').select('assigned_to, status')
+            supabase.from('admin_tasks').select('assigned_to, status, due_date')
         ]);
 
         if (staffRes.data) {
+            const now = new Date();
             const processed = staffRes.data.map(s => {
                 const staffTasks = (tasksRes.data || []).filter(t => t.assigned_to === s.email || t.assigned_to === 'Staff');
+                const overdue = (tasksRes.data || []).filter(t =>
+                    (t.assigned_to === s.email) &&
+                    t.status !== 'Done' &&
+                    t.due_date && new Date(t.due_date) < now
+                ).length;
+
                 return {
                     ...s,
                     completed_tasks: staffTasks.filter(t => t.status === 'Done').length,
-                    overdue_tasks: staffTasks.filter(t => t.status === 'InProgress' || t.status === 'Todo').length, // Simple logic for overdue
+                    overdue_tasks: overdue,
                 };
             });
             setStaff(processed as StaffRecord[]);

@@ -20,7 +20,7 @@ export default function AICommanderBrief() {
             }
         } catch (err) {
             console.error("Brief generation failure:", err);
-            setBrief("Unable to synthesize telemetry at this time.");
+            setBrief("Intelligence Uplink Interrupted. Awaiting shift telemetry synchronization.");
         } finally {
             setLoading(false);
         }

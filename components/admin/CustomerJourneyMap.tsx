@@ -1,12 +1,10 @@
 'use client';
 
 import * as React from 'react';
-import { supabase } from '@/lib/supabaseClient';
 import { Card } from '@/components/ui/card';
 import {
     Users,
     Eye,
-    ShoppingCart,
     Zap,
     CheckCircle2,
     ArrowDown,
@@ -15,11 +13,9 @@ import {
 import { cn } from '@/lib/utils';
 
 interface FunnelStats {
-    total_visitors: number;
-    awareness: number;
-    consideration: number;
-    desire: number;
-    intent: number;
+    discovery: number;
+    browse: number;
+    cart: number;
     conversion: number;
 }
 
@@ -28,13 +24,13 @@ export default function CustomerJourneyMap() {
     const [loading, setLoading] = React.useState(true);
 
     const fetchFunnel = React.useCallback(async () => {
-        if (!supabase) return;
         setLoading(true);
         try {
-            const { data } = await supabase.from('behavioral_funnel_stats').select('*').single();
+            const res = await fetch('/api/admin/intelligence/funnel');
+            const data = await res.json();
             if (data) setStats(data as FunnelStats);
         } catch (e) {
-            console.error(e);
+            console.error("Funnel Link Failure:", e);
         } finally {
             setLoading(false);
         }
@@ -48,11 +44,10 @@ export default function CustomerJourneyMap() {
     if (!stats) return null;
 
     const stages = [
-        { label: 'Awareness', val: stats.awareness, icon: Users, desc: 'Visitors on Grid', color: 'slate' },
-        { label: 'Consideration', val: stats.consideration, icon: Eye, desc: 'Product Viewers', color: 'indigo' },
-        { label: 'Desire', val: stats.desire, icon: ShoppingCart, desc: 'Add to Cart', color: 'primary' },
-        { label: 'Intent', val: stats.intent, icon: Zap, desc: 'Checkout Started', color: 'amber' },
-        { label: 'Conversion', val: stats.conversion, icon: CheckCircle2, desc: 'Mission Paid', color: 'emerald' },
+        { label: 'Awareness', val: stats.discovery, icon: Users, desc: 'Grid Entrants', color: 'slate' },
+        { label: 'Consideration', val: stats.browse, icon: Eye, desc: 'Bottle Detail Views', color: 'indigo' },
+        { label: 'Intent', val: stats.cart, icon: Zap, desc: 'Checkout Initialized', color: 'amber' },
+        { label: 'Conversion', val: stats.conversion, icon: CheckCircle2, desc: 'Orders Established', color: 'emerald' },
     ];
 
     return (
@@ -64,7 +59,7 @@ export default function CustomerJourneyMap() {
                 </div>
                 <div className="text-right">
                     <p className="text-[2rem] font-black text-primary leading-none tracking-tighter">
-                        {((stats.conversion / (stats.awareness || 1)) * 100).toFixed(1)}%
+                        {((stats.conversion / (stats.discovery || 1)) * 100).toFixed(1)}%
                     </p>
                     <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest">Global conversion rate</p>
                 </div>
@@ -122,7 +117,7 @@ export default function CustomerJourneyMap() {
                                         stage.color === 'amber' ? "bg-amber-100/50" :
                                         "bg-emerald-100/50"
                                     )}
-                                    style={{ width: `${(stage.val / (stats.awareness || 1)) * 100}%` }}
+                                    style={{ width: `${(stage.val / (stats.discovery || 1)) * 100}%` }}
                                 />
                             </div>
                         </div>
@@ -135,7 +130,7 @@ export default function CustomerJourneyMap() {
                 <div className="space-y-1">
                     <p className="text-xs font-black uppercase text-foreground">Actionable Bottleneck</p>
                     <p className="text-[10px] text-slate-500 font-medium leading-relaxed italic">
-                        &quot;The largest drop-off is occurring between **Consideration** and **Desire**. 72% of patrons who view bottles do not add to cart. Recommend activating &apos;Dynamic Pairing&apos; suggestions to increase cart intent.&quot;
+                        &quot;The largest drop-off is occurring between **Consideration** and **Intent**. Recommend activating &apos;Dynamic Pairing&apos; suggestions to increase cart intent.&quot;
                     </p>
                 </div>
             </div>

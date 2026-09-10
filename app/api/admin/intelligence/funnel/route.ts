@@ -19,14 +19,14 @@ export async function GET() {
         const { count: browse } = await supabase
             .from('analytics_events')
             .select('*', { count: 'exact', head: true })
-            .eq('event_name', 'PRODUCT_VIEWED')
+            .eq('event_name', 'PRODUCT_VIEW')
             .gte('timestamp', since);
 
         // 3. Cart (Checkout Started)
         const { count: cart } = await supabase
             .from('analytics_events')
             .select('*', { count: 'exact', head: true })
-            .eq('event_name', 'CHECKOUT_STARTED')
+            .eq('event_name', 'CHECKOUT_START')
             .gte('timestamp', since);
 
         // 4. Conversion (Delivered Orders)

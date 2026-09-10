@@ -33,7 +33,7 @@ export type OSEventType =
     | 'ADD_TO_CART'
     | 'REMOVE_FROM_CART'
     | 'CART_VIEWED'
-    | 'CHECKOUT_STARTED'
+    | 'CHECKOUT_START'
     | 'PAYMENT_STARTED'
     | 'PURCHASE_COMPLETED'
     | 'REFUND'
@@ -107,6 +107,11 @@ class OnlineBarOS {
         const reqId = generateRequestId();
         const sessId = this.sessionId || undefined;
 
+        // 0. Ensure Session Record Exists
+        if (sessId) {
+            await this.ensureSessionRecord(sessId, payload.userId, payload.anonymousId);
+        }
+
         // 1. Emit System Event (Logic + Automation)
         if (this.isSystemEvent(eventType)) {
             await emitEvent(eventType as SystemEventType, payload, { corrId, reqId, sessId });
@@ -163,6 +168,30 @@ class OnlineBarOS {
             }]);
         } catch {
             // Silently fail forensics if DB is busy
+        }
+    }
+
+    private async ensureSessionRecord(sessionId: string, userId?: string, anonymousId?: string) {
+        if (!supabase || typeof window === 'undefined') return;
+
+        // Simple local cache to avoid redundant session inserts per page load
+        const key = `ob_sess_sync_${sessionId}`;
+        if (sessionStorage.getItem(key)) return;
+
+        try {
+            const userAgent = navigator.userAgent;
+            const { error } = await supabase.from('customer_sessions').upsert({
+                id: sessionId,
+                user_id: userId,
+                anonymous_id: anonymousId,
+                source_channel: document.referrer.includes('google') ? 'Search' : 'Direct',
+                entry_page: window.location.pathname,
+                device_info: { ua: userAgent }
+            }, { onConflict: 'id' });
+
+            if (!error) sessionStorage.setItem(key, 'true');
+        } catch (err) {
+            console.warn("Session sync failed:", err);
         }
     }
 

@@ -27,7 +27,8 @@ export default function SentimentSentinel() {
                 ...(reviews || []).map((r: { id: number; comment: string }) => ({ id: r.id, type: 'Review', body: r.comment }))
             ].filter(item => {
                 const lower = item.body.toLowerCase();
-                return lower.includes('bad') || lower.includes('delay') || lower.includes('angry') || lower.includes('worst');
+                const keywords = ['bad', 'delay', 'angry', 'worst', 'fake', 'warm', 'unprofessional', 'slow', 'rude', 'missing', 'broke'];
+                return keywords.some(k => lower.includes(k));
             });
 
             setHotIssues(negative.slice(0, 2));

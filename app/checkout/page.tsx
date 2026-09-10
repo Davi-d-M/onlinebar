@@ -141,7 +141,7 @@ function CheckoutContent() {
         }
 
         // 🚀 [MASTER_OS] Track Checkout Initiation
-        await OB_OS.track('CHECKOUT_STARTED', {
+        await OB_OS.track('CHECKOUT_START', {
             userId: session?.user?.id,
             anonymousId,
             amount: total,
