@@ -1,17 +1,24 @@
-# Tasks - "To the Teeth" Accuracy Audit 🛡️🍷📐
+# Tasks - Widget-Based Architecture & Manager 🛡️🧱🚀
 
-- [x] Harmonize Analytics Schema
-    - [x] `supabase/MASTER_ESTABLISHMENT_V3.sql`: Merge `analytics_events`, `user_consent`, etc.
-    - [x] Add `device_info` column to `customer_sessions`.
-- [x] Standardize Event Intelligence
-    - [x] `lib/onlineBarOS.ts`: Standardize on `CHECKOUT_START` and `PRODUCT_VIEW`.
-    - [x] Update APIs (Funnel, Brief) to use the correct table names and event types.
-- [x] Harden HUD Accuracy
-    - [x] `components/admin/CustomerJourneyMap.tsx`: Link to real Funnel API.
-    - [x] `components/admin/WorkforceHub.tsx`: Fix overdue logic by fetching `due_date`.
-    - [x] `components/admin/SystemHealthMonitor.tsx`: Real round-trip latency reporting.
-    - [x] `app/buzz/page.tsx`: Real active session counts for sector deep-dives.
-- [x] Establish Session Persistence
-    - [x] `lib/onlineBarOS.ts`: Ensure every session creates a record in `customer_sessions` for forensics.
-- [x] Final Build & Verification
-- [x] Git commit and push to GitHub
+## Phase 1: Database Foundation
+- [ ] Create `supabase/migrations/20260910_widget_orchestration.sql` (Registry table)
+- [ ] Seed initial widgets (Hero, Trending, Buzz, Concierge)
+- [ ] Add RLS for Admin management of widgets
+
+## Phase 2: Core Refactoring (Modularization)
+- [ ] Implement `components/widgets/WidgetRegistry.tsx`
+- [ ] Create `components/widgets/commerce/ProductDNAWidget.tsx`
+- [ ] Evolve `AIConcierge.tsx` logic into `BuildMyNightWidget.tsx`
+
+## Phase 3: Admin Experience
+- [ ] Create `app/admin/(dashboard)/experience/widgets/page.tsx` (The Manager HUD)
+- [ ] Implement toggle/edit logic for widget status and ranking
+
+## Phase 4: Intelligence & Growth
+- [ ] Implement `components/admin/Customer360Widget.tsx`
+- [ ] Refine Admin Intelligence widgets with the new vertical oval layout (Hardened spacing)
+
+## Phase 5: Verification & Launch
+- [ ] Run `npm run lint` and `npm run build`
+- [ ] Verify global spacing consistency across all new widgets
+- [ ] Push to GitHub

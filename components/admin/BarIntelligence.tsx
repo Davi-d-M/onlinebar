@@ -3,16 +3,16 @@
 import * as React from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import {
-    ArrowUpRight,
-    ArrowDownRight,
     TrendingUp,
     AlertTriangle,
     Loader2,
     Target,
     Users,
-    Wine
+    Wine,
+    Zap
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
 
 interface IntelligenceData {
     growth: number;
@@ -123,33 +123,39 @@ export default function BarIntelligence() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div className="space-y-2">
-                        <div className="flex justify-between items-end">
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Revenue</p>
-                            <span className="flex items-center text-emerald-500 text-xs font-black"><ArrowUpRight className="h-3 w-3 mr-1" /> {data.growth}%</span>
+                    {[
+                        { label: 'Revenue', val: `${data.growth}%`, icon: TrendingUp, color: 'emerald' },
+                        { label: 'Volume', val: `${data.ordersUp}%`, icon: Zap, color: 'primary' },
+                        { label: 'Margin', val: `${data.marginChange}%`, icon: Target, color: 'rose' }
+                    ].map(node => (
+                        <div key={node.label} className="aspect-[3/1] rounded-[2.5rem] bg-slate-50 border border-slate-100 flex items-center justify-between px-8 py-6 group hover:bg-white hover:shadow-xl transition-all">
+                            <div className="flex items-center gap-4">
+                                <div className={cn(
+                                    "h-10 w-10 rounded-xl flex items-center justify-center shadow-sm transition-transform group-hover:scale-110",
+                                    node.color === 'emerald' ? "bg-emerald-50 text-emerald-500" :
+                                    node.color === 'primary' ? "bg-primary/5 text-primary" :
+                                    "bg-rose-50 text-rose-500"
+                                )}>
+                                    <node.icon size={18} />
+                                </div>
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">{node.label}</p>
+                            </div>
+                            <div className="text-right">
+                                <span className={cn(
+                                    "text-lg font-black tracking-tighter uppercase tabular-nums",
+                                    node.color === 'emerald' ? "text-emerald-600" :
+                                    node.color === 'primary' ? "text-primary" :
+                                    "text-rose-600"
+                                )}>{node.val}</span>
+                                <div className={cn(
+                                    "h-1 w-8 rounded-full ml-auto mt-1",
+                                    node.color === 'emerald' ? "bg-emerald-500" :
+                                    node.color === 'primary' ? "bg-primary" :
+                                    "bg-rose-500"
+                                )} />
+                            </div>
                         </div>
-                        <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                            <div className="h-full bg-emerald-500 w-3/4 shadow-[0_0_15px_rgba(16,185,129,0.3)]"></div>
-                        </div>
-                    </div>
-                    <div className="space-y-2">
-                        <div className="flex justify-between items-end">
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Beverage Volume</p>
-                            <span className="flex items-center text-emerald-500 text-xs font-black"><ArrowUpRight className="h-3 w-3 mr-1" /> {data.ordersUp}%</span>
-                        </div>
-                        <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                            <div className="h-full bg-primary w-1/2 shadow-[0_0_15px_rgba(255,107,0,0.3)]"></div>
-                        </div>
-                    </div>
-                    <div className="space-y-2">
-                        <div className="flex justify-between items-end">
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Pour Margin</p>
-                            <span className="flex items-center text-rose-500 text-xs font-black"><ArrowDownRight className="h-3 w-3 mr-1" /> {Math.abs(data.marginChange)}%</span>
-                        </div>
-                        <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                            <div className="h-full bg-rose-500 w-1/3 shadow-[0_0_15px_rgba(244,63,94,0.3)]"></div>
-                        </div>
-                    </div>
+                    ))}
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 pt-10 border-t border-slate-100">
