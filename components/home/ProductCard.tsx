@@ -262,17 +262,17 @@ export default function ProductCard({ product }: { product: Product }) {
         </Link>
       </div>
 
-      <CardContent className="p-3 sm:p-6 flex flex-col flex-1 text-left">
-        <Link href={`/shop/${product.id}`} className="mb-2 block min-h-[2.5rem] sm:min-h-[3rem]">
-          <h2 className="font-black text-foreground text-[10px] sm:text-sm uppercase tracking-tight line-clamp-2 group-hover:text-primary transition-colors leading-tight">
+      <CardContent className="p-3.5 sm:p-6 flex flex-col flex-1 text-left">
+        <Link href={`/shop/${product.id}`} className="mb-2 block min-h-[2.4rem] sm:min-h-[3rem]">
+          <h2 className="font-black text-foreground text-[11px] sm:text-sm uppercase tracking-tight line-clamp-2 group-hover:text-primary transition-colors leading-[1.2] text-balance">
             {product.name}
           </h2>
         </Link>
 
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-slate-50 pb-3 sm:pb-4 min-h-[2.5rem] sm:min-h-[3rem]">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-1.5 sm:gap-2 border-b border-slate-50 pb-3 sm:pb-4 min-h-[2.8rem] sm:min-h-[3.5rem]">
           <div className="flex flex-col justify-end">
-              {isSale && <span className="text-[8px] sm:text-[10px] font-bold text-slate-400 line-through leading-none mb-1">{formatPrice(Number(product.old_price))}</span>}
-              <span className="text-sm sm:text-xl font-black text-foreground leading-none">
+              {isSale && <span className="text-[9px] sm:text-[10px] font-bold text-slate-400 line-through leading-none mb-1">{formatPrice(Number(product.old_price))}</span>}
+              <span className="text-[15px] sm:text-xl font-black text-primary leading-none tracking-tighter">
                 {formatPrice(product.price)}
               </span>
           </div>
@@ -280,11 +280,11 @@ export default function ProductCard({ product }: { product: Product }) {
             {product.stock !== undefined && (
                 <span
                 className={cn(
-                    "text-[7px] sm:text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg w-fit",
-                    product.stock > 0 ? 'bg-primary/10 text-primary' : 'bg-rose-50 text-rose-600'
+                    "text-[8px] sm:text-[9px] font-black uppercase tracking-widest px-2 py-0.5 sm:px-2 sm:py-1 rounded-lg w-fit border shadow-sm transition-colors",
+                    product.stock > 0 ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-rose-50 text-rose-600 border-rose-100'
                 )}
                 >
-                {product.stock > 0 ? `${product.stock} In Stock` : 'Sold Out'}
+                {product.stock > 0 ? 'Available' : 'Restocking'}
                 </span>
             )}
           </div>
@@ -292,17 +292,17 @@ export default function ProductCard({ product }: { product: Product }) {
 
         <div className="mt-4 flex flex-col gap-2">
             {product.stock !== undefined && product.stock === 0 ? (
-                <div className="h-10 sm:h-14">
+                <div className="h-11 sm:h-14">
                     <RestockNotifyButton productId={product.id} productName={product.name} />
                 </div>
             ) : (
                 <>
                     <Button
                     className={cn(
-                        'w-full h-10 sm:h-14 transition-all duration-300 rounded-xl sm:rounded-2xl font-black uppercase text-[8px] sm:text-[10px] tracking-widest shadow-lg active:scale-95',
+                        'w-full h-11 sm:h-14 transition-all duration-300 rounded-xl sm:rounded-2xl font-black uppercase text-[10px] sm:text-xs tracking-widest shadow-xl active:scale-95',
                         isLocked ? 'bg-slate-50 text-slate-300 cursor-not-allowed border border-slate-100 shadow-none' :
                         justAdded
-                        ? 'bg-primary text-white hover:bg-primary/90'
+                        ? 'bg-emerald-500 text-white hover:bg-emerald-600'
                         : 'bg-primary text-white hover:bg-primary/90 shadow-primary/20'
                     )}
                     onClick={handleAddToCart}
@@ -310,21 +310,21 @@ export default function ProductCard({ product }: { product: Product }) {
                     >
                     {isLocked ? (
                         <div className="flex items-center gap-2">
-                            <Lock className="h-3 w-3 sm:h-4 sm:w-4" /> Locked
+                            <Lock className="h-3 w-3 sm:h-4 sm:w-4" /> VIP Lock
                         </div>
                     ) : isAdding ? (
                         <div className="flex items-center gap-2">
                         <div className="w-3 h-3 sm:w-4 sm:h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                        Sync...
+                        ...
                         </div>
                     ) : justAdded ? (
                         <div className="flex items-center gap-2">
                         <Check className="h-3 w-3 sm:h-4 sm:h-4" />
-                        Added!
+                        Added
                         </div>
                     ) : (
                         <div className="flex items-center gap-2">
-                        <ShoppingCart className="h-3 w-3 sm:h-4 sm:h-4" />
+                        <ShoppingCart className="h-4 w-4" />
                         Add to Bag
                         </div>
                     )}
@@ -332,7 +332,7 @@ export default function ProductCard({ product }: { product: Product }) {
 
                     <Button
                         variant="outline"
-                        className="w-full h-9 sm:h-12 rounded-xl sm:rounded-2xl border-primary/10 text-primary hover:bg-primary/5 font-black uppercase text-[7px] sm:text-[9px] tracking-widest"
+                        className="w-full h-10 sm:h-12 rounded-xl sm:rounded-2xl border-slate-100 text-slate-500 hover:bg-slate-50 hover:text-primary font-black uppercase text-[8px] sm:text-[10px] tracking-widest transition-all"
                         onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
@@ -341,7 +341,7 @@ export default function ProductCard({ product }: { product: Product }) {
                             window.open(`https://wa.me/${settings.contact.whatsapp}?text=${encodeURIComponent(message)}`, '_blank');
                         }}
                     >
-                        <MessageSquare className="h-3 w-3 mr-1 sm:mr-2" /> Buy via WhatsApp
+                        <MessageSquare className="h-3 w-3 mr-2" /> WhatsApp Order
                     </Button>
                 </>
             )}

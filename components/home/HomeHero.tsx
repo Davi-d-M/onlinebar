@@ -25,7 +25,7 @@ export default function HomeHero() {
                 <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">The Premium Bar is Open</span>
             </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black tracking-tighter text-foreground uppercase leading-[1.1] sm:leading-[0.9]">
+            <h1 className="text-[2.6rem] sm:text-5xl lg:text-7xl font-black tracking-tighter text-foreground uppercase leading-[0.95] sm:leading-[0.9] text-balance">
               Premium <span className="text-primary italic">Vintages.</span><br />
               Chilled <span className="text-slate-400">Spirits.</span>
             </h1>

@@ -509,11 +509,11 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
                     autoFocus
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-4 text-[10px] font-black uppercase tracking-widest border-none bg-slate-50 rounded-2xl focus:ring-2 focus:ring-primary shadow-inner"
+                    className="w-full pl-10 pr-4 py-3 sm:py-4 text-[11px] font-bold uppercase tracking-widest border-none bg-slate-50 rounded-2xl focus:ring-2 focus:ring-primary shadow-inner"
                 />
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <Search className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
                 </div>
-                <button onClick={() => setIsSearchOpen(false)} className="h-14 w-14 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400">
+                <button onClick={() => setIsSearchOpen(false)} className="h-12 w-12 sm:h-14 sm:w-14 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 active:scale-95 transition-all">
                     <X className="h-5 w-5" />
                 </button>
             </div>
@@ -544,15 +544,15 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
         )}
 
         {isMobileOpen && (
-          <nav className="md:hidden mt-4 bg-slate-50 rounded-3xl p-4 animate-in zoom-in-95 duration-200" role="navigation">
-            <div className="flex flex-col space-y-2">
+          <nav className="md:hidden mt-4 bg-slate-50 rounded-3xl p-4 sm:p-6 animate-in zoom-in-95 duration-200 shadow-xl border border-slate-100 pb-safe" role="navigation">
+            <div className="flex flex-col space-y-1.5">
               {navItems.map(({ href, label }) => (
                 <Link
                   key={href}
                   href={href}
                   onClick={() => setIsMobileOpen(false)}
-                  className={`text-[11px] font-black uppercase tracking-widest py-3 px-4 rounded-2xl transition-all ${
-                    pathname === href ? "bg-white shadow-sm text-primary" : "text-slate-500"
+                  className={`text-[11px] font-black uppercase tracking-widest py-3.5 px-5 rounded-2xl transition-all active:scale-[0.98] ${
+                    pathname === href ? "bg-white shadow-sm text-primary" : "text-slate-500 hover:bg-white/50"
                   }`}
                 >
                   {label}

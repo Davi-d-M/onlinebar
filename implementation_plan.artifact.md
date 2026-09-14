@@ -1,65 +1,55 @@
-# Implementation Plan - Experience Notification Engine 🔔🥂🚀
+# Implementation Plan - Responsive Design System (Mobile Optimization) 📐📱🍾
 
-This plan establishes a professional-grade, data-driven notification and toast system. It allows the Admin to control all customer-facing popups and alerts from a central CMS, tied directly to system events like order updates, payment confirmations, and marketing triggers.
+This plan addresses the "chopped/uneven words" and butchered spacing on mobile devices. We will implement a robust responsive engine that standardizes typography, spacing, and component behavior across all screen widths (320px to 1440px+).
 
 ## User Review Required
 
 > [!IMPORTANT]
-> **Transactional vs. Marketing**: The engine strictly separates transactional alerts (Order status) from marketing alerts (Promos). Transactional alerts are deterministic, while marketing alerts can be scheduled and rotated.
-> **Real-time Connectivity**: We will utilize Supabase Realtime to push alerts instantly to active patron sessions.
+> **Typography Clamp**: I will implement fluid typography using CSS `clamp()` or standardized Tailwind classes (e.g., `text-balance`) to prevent single-word orphans and awkward wrapping.
+> **Grid Uniformity**: Product cards will now have strictly enforced minimum heights for the "Information" section to ensure price and action nodes are perfectly aligned horizontally.
 
 ## Proposed Changes
 
-### 🗄️ 1. Database: The Notification Grid
+### 📱 1. Global Typography & Spacing Standard
 
-#### [NEW] `supabase/migrations/20260914_notification_engine.sql`
-- **`notification_templates`**: Registry for all alert types (Title, Message with variables, Icon, Style, CTA, Duration).
-- **`notifications_log`**: Audit trail of every alert sent to a user/order.
-- **`user_notifications`**: Persistent inbox for patrons to see their alert history.
-
----
-
-### ⚙️ 2. Backend: The Notification Router
-
-#### [MODIFY] [notificationService.ts](file:///C:/Users/hp/AndroidStudioProjects/onbar/lib/engines/notificationService.ts)
-- Upgrade to a template-driven approach.
-- Logic to replace variables (e.g., `{{order_id}}`) with real data.
-- Support for priority-based queuing.
-
-#### [MODIFY] [eventEngine.ts](file:///C:/Users/hp/AndroidStudioProjects/onbar/lib/engines/eventEngine.ts)
-- Hook into the `processEvent` router to trigger notifications automatically based on `SystemEventType`.
+#### [MODIFY] [globals.css](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/globals.css)
+- Add utility classes for `.text-mobile-standard` and `.text-mobile-heading`.
+- Standardize `.container` padding to `16px` on mobile and `32px` on desktop.
 
 ---
 
-### 🎨 3. Frontend: Premium Experience Toasts
+### 🍾 2. Product Card "Grid Harmony"
 
-#### [NEW] `components/layout/ExperienceNotificationHost.tsx`
-- Global listener in `RootLayout` that subscribes to the `notifications_log` for the current user.
-- Manages the queue of active toasts.
-
-#### [NEW] `components/layout/ExperienceToast.tsx`
-- High-fidelity "Dark Glass" styled toast with gold accents, progress bars, and Lucide icons.
-- Supports "Success", "Error", "Info", and "Warning" modes.
+#### [MODIFY] [ProductCard.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/components/home/ProductCard.tsx)
+- **Standardize Name Box**: Set a fixed height for the name container on mobile (`h-[2.8rem]`) with `line-clamp-2`.
+- **Align Price & Stock**: Ensure the metadata row stays at the bottom of the info box.
+- **Normalized Buttons**: Force uniform button heights (`h-12` for primary, `h-10` for secondary) on mobile.
 
 ---
 
-### 🏛️ 4. Admin: Popup Manager HUD
+### 🔍 3. Mobile Header & Search Refinement
 
-#### [NEW] `app/admin/(dashboard)/communications/popups/page.tsx`
-- **Template Library**: View and search all existing alert templates.
-- **Popup Studio**: Live previewer for designing new alerts (Title, Message, Icon selection).
-- **Notification Log**: Real-time feed of alerts being dispatched across the grid.
+#### [MODIFY] [Header.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/components/layout/Header.tsx)
+- Improve search input width and padding for small Android devices (320px - 360px).
+- Add `pb-safe` to the mobile menu to respect physical notches/indicators.
+
+---
+
+### 📐 4. Global Container & Grid Stability
+
+#### [MODIFY] [ProductList.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/components/home/ProductList.tsx)
+- Adjust grid gaps to `gap-4` (16px) on mobile to give cards room to breathe.
+- Ensure the filter bar doesn't overflow horizontally on small screens.
 
 ---
 
 ## Verification Plan
 
 ### Automated Tests
+- `npm run lint`: Check for styling regressions.
 - `npm run build`: Verify 100% route success.
-- Variable Replacement Test: Ensure `{{order_id}}` is correctly replaced in the message.
 
 ### Manual Verification
-1.  **Order Flow**: Place an order and verify the "Order Received ✓" toast appears instantly.
-2.  **Admin Update**: Change a template message in Admin and verify the next alert uses the new wording.
-3.  **Inbox**: Check the "My Bar" profile and verify notifications are logged in the history.
-4.  **Priority**: Trigger a "High" and "Normal" alert simultaneously; verify the High priority alert is displayed first.
+1.  **320px Audit**: Use Chrome DevTools to inspect the UI at 320px (iPhone SE / Small Android). Verify no horizontal scroll and clean word wrapping.
+2.  **Product Alignment**: Confirm that in the "Vintages" category, a product with a 1-line name and a product with a 2-line name have identical button positions.
+3.  **Navigation**: Test the mobile menu and search overlay on a real device to ensure touch targets are large enough (min 44px).

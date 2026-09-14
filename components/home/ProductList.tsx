@@ -224,10 +224,10 @@ export default function ProductList({ initialProducts }: { initialProducts?: Pro
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 pb-24 text-left scroll-mt-32" id="catalog-start">
+    <div className="max-w-7xl mx-auto px-4 pb-24 text-left scroll-mt-32 pt-6" id="catalog-start">
 
       {/* 1. Category Tabs */}
-      <div className="flex overflow-x-auto pb-4 mb-8 gap-3 scrollbar-hide no-scrollbar">
+      <div className="flex overflow-x-auto pb-6 mb-8 gap-2.5 sm:gap-4 scrollbar-hide no-scrollbar -mx-4 px-4">
           {CATEGORIES.map((cat) => (
               <button
                 key={cat.id}
@@ -237,13 +237,13 @@ export default function ProductList({ initialProducts }: { initialProducts?: Pro
                     setSelectedBrand('all'); // Reset brand
                 }}
                 className={cn(
-                    "flex items-center gap-3 px-6 py-4 rounded-2xl text-xs font-black uppercase tracking-widest transition-all duration-300 shrink-0 border",
+                    "flex items-center gap-2.5 px-5 py-3.5 sm:px-6 sm:py-4 rounded-2xl text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all duration-300 shrink-0 border whitespace-nowrap",
                     activeCategory === cat.id
                         ? "bg-primary text-white border-primary shadow-xl shadow-primary/20 scale-105"
-                        : "bg-white text-slate-500 border-slate-100 hover:border-slate-200"
+                        : "bg-white text-slate-400 border-slate-100 hover:border-slate-200"
                 )}
               >
-                  <cat.icon className={cn("h-4 w-4", activeCategory === cat.id ? "text-primary" : "text-slate-300")} />
+                  <cat.icon className={cn("h-3.5 w-3.5 sm:h-4 sm:w-4", activeCategory === cat.id ? "text-white" : "text-slate-300")} />
                   {cat.label}
               </button>
           ))}
@@ -343,7 +343,7 @@ export default function ProductList({ initialProducts }: { initialProducts?: Pro
       </div>
 
       {filteredProducts.length > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-8">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6 lg:gap-8">
           {filteredProducts.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
