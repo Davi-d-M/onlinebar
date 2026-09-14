@@ -8,11 +8,11 @@ import {
     RefreshCcw,
     ShieldCheck,
     Camera as Instagram,
-    Music,
     Video as Youtube,
     Globe as Linkedin,
     MessageSquare as Twitter,
     MessageCircle,
+    Music,
     CheckCircle2,
     AlertCircle,
     Loader2

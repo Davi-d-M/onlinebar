@@ -9,7 +9,6 @@ import {
     Rocket,
     ShieldAlert,
     Clock,
-    Zap,
     Loader2,
     Camera as Instagram,
     MessageCircle,
@@ -23,27 +22,48 @@ import { Textarea } from '@/components/ui/textarea';
 import { cn, formatPrice } from '@/lib/utils';
 import Image from 'next/image';
 
+interface ProductNode {
+    id: number;
+    name: string;
+    price: number;
+    image_url: string;
+}
 
+interface VariantNode {
+    platform: string;
+    icon: React.ComponentType<{ size?: number }>;
+    color: string;
+    caption: string;
+    cta: string;
+}
 
 export default function ContentCommandStudio() {
     const [step, setStep] = React.useState(1);
     const [title, setTitle] = React.useState('');
     const [desc, setDesc] = React.useState('');
-    const [selectedProducts, setSelectedProducts] = React.useState<Array<{ id: number, name: string, price: number, image_url: string }>>([]);
-    const [products, setProducts] = React.useState<Array<{ id: number, name: string, price: number, image_url: string }>>([]);
+    const [mediaUrls, setMediaUrls] = React.useState<string[]>([]);
+    const [selectedProducts, setSelectedProducts] = React.useState<ProductNode[]>([]);
+    const [products, setProducts] = React.useState<ProductNode[]>([]);
+    const [loading, setLoading] = React.useState(false);
     const [generating, setGenerating] = React.useState(false);
-    const [variants, setVariants] = React.useState<Array<{ platform: string, icon: React.ComponentType<{ size?: number }>, color: string, caption: string, cta: string }>>([]);
+    const [variants, setVariants] = React.useState<VariantNode[]>([]);
+    const [accounts, setAccounts] = React.useState<Array<{ id: string, platform: string, account_name: string }>>([]);
 
     React.useEffect(() => {
-        async function fetchProducts() {
+        async function fetchData() {
             if (!supabase) return;
-            const { data } = await supabase.from('products').select('*').limit(5);
-            if (data) setProducts(data);
+            const [prodRes, accRes] = await Promise.all([
+                supabase.from('products').select('id, name, price, image_url').limit(5),
+                supabase.from('social_accounts').select('*')
+            ]);
+            if (prodRes.data) setProducts(prodRes.data as ProductNode[]);
+            if (accRes.data) setAccounts(accRes.data);
         }
-        fetchProducts();
+        fetchData();
     }, []);
 
     const handleAdapt = () => {
+        if (!title) return;
         setGenerating(true);
         // Simulated AI Adaptation Engine
         setTimeout(() => {
@@ -55,6 +75,51 @@ export default function ContentCommandStudio() {
             setGenerating(false);
             setStep(2);
         }, 2000);
+    };
+
+    const handleFinalLaunch = async () => {
+        if (!supabase) return;
+        setLoading(true);
+        try {
+            // 1. Save Master Content
+            const { data: master, error: masterErr } = await supabase.from('content_master').insert([{
+                title,
+                base_description: desc,
+                media_urls: mediaUrls,
+                product_ids: selectedProducts.map(p => p.id),
+                status: 'PENDING_REVIEW'
+            }]).select().single();
+
+            if (masterErr) throw masterErr;
+
+            // 2. Save Variants
+            const variantPayload = variants.map(v => ({
+                master_id: master.id,
+                platform: v.platform.toUpperCase(),
+                caption: v.caption,
+                cta_url: `https://onlinebar.co.ke/shop?utm_source=${v.platform.toLowerCase()}&utm_medium=social&utm_campaign=${title.replace(/\s+/g, '_')}`
+            }));
+            await supabase.from('content_variants').insert(variantPayload);
+
+            // 3. Queue for Publishing
+            if (accounts.length > 0) {
+                const queuePayload = accounts.map(acc => ({
+                    master_id: master.id,
+                    account_id: acc.id,
+                    scheduled_at: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
+                    status: 'SCHEDULED'
+                }));
+                await supabase.from('publishing_queue').insert(queuePayload);
+            }
+
+            alert("Master Campaign established and queued for review. 🚀");
+            window.location.href = '/admin/growth/calendar';
+        } catch (err) {
+            console.error(err);
+            alert("Launch failed. Check console.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -71,17 +136,15 @@ export default function ContentCommandStudio() {
                 <div className="flex gap-4">
                     <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-xl border border-slate-100 shadow-sm">
                         <Clock size={14} className="text-primary" />
-                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Scheduled: 12</span>
+                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Scheduled Actions active</span>
                     </div>
-                    <Button className="rounded-xl h-12 px-8 bg-slate-900 text-white font-black uppercase text-[10px] tracking-widest shadow-xl hover:scale-105 active:scale-95 transition-all">
+                    <Button onClick={() => { setStep(1); setTitle(''); setDesc(''); }} className="rounded-xl h-12 px-8 bg-slate-900 text-white font-black uppercase text-[10px] tracking-widest shadow-xl hover:scale-105 active:scale-95 transition-all">
                         <Plus className="h-4 w-4 mr-2" /> New Master Campaign
                     </Button>
                 </div>
             </header>
 
             <div className="grid lg:grid-cols-12 gap-10">
-
-                {/* 1. CREATION HUB */}
                 <div className="lg:col-span-8 space-y-8">
                     {step === 1 && (
                         <Card className="p-10 rounded-[3.5rem] bg-white border border-slate-100 shadow-sm space-y-10 animate-in fade-in slide-in-from-left-4 duration-700">
@@ -104,6 +167,15 @@ export default function ContentCommandStudio() {
                                         className="min-h-[150px] rounded-3xl bg-slate-50 border-slate-100 p-8 text-sm font-medium leading-relaxed resize-none"
                                     />
                                 </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase text-slate-400 ml-1 tracking-widest">Media URLs (Comma separated)</label>
+                                    <Input
+                                        value={mediaUrls.join(', ')}
+                                        onChange={e => setMediaUrls(e.target.value.split(',').map(s => s.trim()))}
+                                        placeholder="https://image1.jpg, https://video1.mp4"
+                                        className="h-12 rounded-xl bg-slate-50 border-slate-100 text-xs"
+                                    />
+                                </div>
                             </div>
 
                             <div className="space-y-6">
@@ -112,10 +184,10 @@ export default function ContentCommandStudio() {
                                     {products.map(p => (
                                         <button
                                             key={p.id}
-                                            onClick={() => setSelectedProducts(prev => prev.includes(p) ? prev.filter(x => x !== p) : [...prev, p])}
+                                            onClick={() => setSelectedProducts(prev => prev.some(x => x.id === p.id) ? prev.filter(x => x.id !== p.id) : [...prev, p])}
                                             className={cn(
                                                 "p-4 rounded-2xl border-2 transition-all text-left flex items-center gap-4 group",
-                                                selectedProducts.includes(p) ? "border-primary bg-primary/5" : "border-slate-50 bg-slate-50 hover:border-slate-100"
+                                                selectedProducts.some(x => x.id === p.id) ? "border-primary bg-primary/5" : "border-slate-50 bg-slate-50 hover:border-slate-100"
                                             )}
                                         >
                                             <div className="h-10 w-10 rounded-xl bg-white border border-slate-100 relative overflow-hidden shrink-0">
@@ -174,15 +246,18 @@ export default function ContentCommandStudio() {
                             </div>
 
                             <div className="pt-10 flex justify-end">
-                                <Button className="h-20 px-20 rounded-[2rem] bg-slate-900 text-white font-black uppercase text-xs tracking-[0.3em] shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center gap-4">
-                                    <Rocket size={24} /> Initiate Launch Sequence
+                                <Button
+                                    onClick={handleFinalLaunch}
+                                    disabled={loading}
+                                    className="h-20 px-20 rounded-[2rem] bg-slate-900 text-white font-black uppercase text-xs tracking-[0.3em] shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center gap-4"
+                                >
+                                    {loading ? <Loader2 className="animate-spin" /> : <><Rocket size={24} /> Initiate Launch Sequence</>}
                                 </Button>
                             </div>
                         </div>
                     )}
                 </div>
 
-                {/* 2. COMPLIANCE & INTELLIGENCE */}
                 <div className="lg:col-span-4 space-y-8">
                     <Card className="p-10 rounded-[3rem] bg-slate-900 text-white space-y-8 relative overflow-hidden shadow-2xl">
                         <div className="relative z-10 space-y-8 text-left">
@@ -204,12 +279,7 @@ export default function ContentCommandStudio() {
                                     </div>
                                 ))}
                             </div>
-
-                            <p className="text-[9px] font-medium italic text-slate-500 leading-relaxed">
-                                &quot;NACADA 2025 Protocol: Automated publishing held until manual validation of promotional mechanics.&quot;
-                            </p>
                         </div>
-                        <Zap size={64} className="absolute -bottom-6 -right-6 text-white/5 rotate-12" />
                     </Card>
 
                     <div className="p-8 rounded-[3rem] bg-white border border-slate-100 shadow-sm space-y-6 text-left group">

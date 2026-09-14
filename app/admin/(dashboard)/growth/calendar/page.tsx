@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { supabase } from '@/lib/supabaseClient';
 import {
     Calendar as CalendarIcon,
     ChevronLeft,
@@ -20,20 +21,54 @@ import { cn } from '@/lib/utils';
 export default function GrowthCalendar() {
     const [loading, setLoading] = React.useState(true);
     const [view, setView] = React.useState<'grid' | 'list'>('grid');
-    const [scheduledItems, setScheduledItems] = React.useState<Array<{ id: number, title: string, time: string, day: number, platform: string, status: string }>>([]);
+    const [scheduledItems, setScheduledItems] = React.useState<Array<{ id: string, title: string, time: string, day: number, platform: string, status: string }>>([]);
+
+    const fetchCalendar = React.useCallback(async () => {
+        if (!supabase) return;
+        setLoading(true);
+        try {
+            const { data } = await supabase
+                .from('publishing_queue')
+                .select(`
+                    *,
+                    content_master!inner(title)
+                `)
+                .order('scheduled_at', { ascending: true });
+
+            if (data) {
+                const formatted = data.map(item => ({
+                    id: item.id,
+                    title: item.content_master.title,
+                    time: new Date(item.scheduled_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    day: new Date(item.scheduled_at).getDate(),
+                    platform: item.platform || 'Social',
+                    status: item.status
+                }));
+                setScheduledItems(formatted);
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    const handleManualPublish = async (id: string) => {
+        if (!supabase) return;
+        setLoading(true);
+        try {
+            const { error } = await supabase.from('publishing_queue').update({ status: 'SCHEDULED', scheduled_at: new Date().toISOString() }).eq('id', id);
+            if (!error) {
+                alert("Publication override initiated.");
+                fetchCalendar();
+            }
+        } catch (err) { console.error(err); }
+        finally { setLoading(false); }
+    };
 
     React.useEffect(() => {
-        // Simulated fetch for growth events
-        setTimeout(() => {
-            setScheduledItems([
-                { id: 1, title: 'Weekend Drop #12', time: '10:00 AM', day: 15, platform: 'Instagram', status: 'SCHEDULED' },
-                { id: 2, title: 'Wine Wednesday Story', time: '12:00 PM', day: 16, platform: 'WhatsApp', status: 'PENDING_REVIEW' },
-                { id: 3, title: 'Gin Spotlight Reel', time: '6:00 PM', day: 15, platform: 'TikTok', status: 'SCHEDULED' },
-                { id: 4, title: 'Friday Night Pulse', time: '9:00 PM', day: 18, platform: 'Instagram', status: 'APPROVED' },
-            ]);
-            setLoading(false);
-        }, 1500);
-    }, []);
+        fetchCalendar();
+    }, [fetchCalendar]);
 
     const days = Array.from({ length: 30 }, (_, i) => i + 1);
 
@@ -56,9 +91,8 @@ export default function GrowthCalendar() {
 
             <div className="grid lg:grid-cols-12 gap-10">
 
-                {/* CALENDAR ENGINE */}
                 <div className="lg:col-span-9 space-y-8">
-                    {loading ? (
+                    {loading && scheduledItems.length === 0 ? (
                         <div className="h-[600px] flex flex-col items-center justify-center gap-4 bg-white rounded-[3rem] border border-slate-100 shadow-sm animate-pulse">
                             <Loader2 className="h-10 w-10 text-primary animate-spin" />
                             <p className="text-[10px] font-black uppercase tracking-widest text-slate-300">Synchronizing Timeline...</p>
@@ -89,12 +123,17 @@ export default function GrowthCalendar() {
                                             <span className="text-[10px] font-black text-slate-400">{d}</span>
                                             <div className="space-y-1.5 overflow-y-auto max-h-[80px] no-scrollbar">
                                                 {items.map(i => (
-                                                    <div key={i.id} className={cn(
-                                                        "px-2 py-1.5 rounded-lg text-[7px] font-black uppercase truncate border",
-                                                        i.status === 'SCHEDULED' ? "bg-primary/5 text-primary border-primary/20" :
-                                                        i.status === 'PENDING_REVIEW' ? "bg-amber-50 text-amber-600 border-amber-200" :
-                                                        "bg-emerald-50 text-emerald-600 border-emerald-200"
-                                                    )}>
+                                                    <div
+                                                        key={i.id}
+                                                        onClick={() => handleManualPublish(i.id)}
+                                                        className={cn(
+                                                            "px-2 py-1.5 rounded-lg text-[7px] font-black uppercase truncate border cursor-pointer hover:scale-105 transition-transform",
+                                                            i.status === 'SCHEDULED' ? "bg-primary/5 text-primary border-primary/20" :
+                                                            i.status === 'PENDING_REVIEW' ? "bg-amber-50 text-amber-600 border-amber-200" :
+                                                            i.status === 'SUCCESS' ? "bg-emerald-50 text-emerald-600 border-emerald-200" :
+                                                            "bg-rose-50 text-rose-600 border-rose-200"
+                                                        )}
+                                                    >
                                                         {i.title}
                                                     </div>
                                                 ))}
@@ -110,16 +149,15 @@ export default function GrowthCalendar() {
                     )}
                 </div>
 
-                {/* SIDEBAR: STATUS HUD */}
                 <div className="lg:col-span-3 space-y-8">
                     <Card className="p-8 rounded-[3rem] bg-slate-900 text-white space-y-8 relative overflow-hidden shadow-2xl">
                         <div className="relative z-10 space-y-6 text-left">
                             <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Queue Performance</h3>
                             <div className="space-y-6">
                                 {[
-                                    { label: 'Pending Review', val: 3, icon: Clock, color: 'text-amber-500' },
-                                    { label: 'Scheduled', val: 24, icon: CalendarIcon, color: 'text-primary' },
-                                    { label: 'Deploying', val: 1, icon: Zap, color: 'text-emerald-500' },
+                                    { label: 'Pending Review', val: scheduledItems.filter(i => i.status === 'PENDING_REVIEW').length, icon: Clock, color: 'text-amber-500' },
+                                    { label: 'Scheduled', val: scheduledItems.filter(i => i.status === 'SCHEDULED').length, icon: CalendarIcon, color: 'text-primary' },
+                                    { label: 'Deployed', val: scheduledItems.filter(i => i.status === 'SUCCESS').length, icon: Zap, color: 'text-emerald-500' },
                                 ].map(s => (
                                     <div key={s.label} className="flex justify-between items-center">
                                         <div className="flex items-center gap-3">

@@ -49,7 +49,7 @@ class SocialPublisherEngine {
         attempt_count: number,
         master_id: string,
         content_master: { media_urls: string[] },
-        social_accounts: { platform: string, account_name: string }
+        social_accounts: { platform: string, account_name: string, id: string }
     }) {
         if (!supabase) return;
 

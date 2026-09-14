@@ -1,55 +1,56 @@
-# Implementation Plan - Responsive Design System (Mobile Optimization) 📐📱🍾
+# Implementation Plan - Omni-Channel Publishing Engine (Content Command) 🚀📲🍸
 
-This plan addresses the "chopped/uneven words" and butchered spacing on mobile devices. We will implement a robust responsive engine that standardizes typography, spacing, and component behavior across all screen widths (320px to 1440px+).
+This plan establishes a professional-grade, multi-platform content orchestration system. It allows the Online Bar to create content once and publish/schedule it across Facebook, Instagram, TikTok, YouTube, LinkedIn, X, and WhatsApp, while maintaining a strict **Compliance Gate** for Kenyan alcohol advertising regulations.
 
 ## User Review Required
 
-> [!IMPORTANT]
-> **Typography Clamp**: I will implement fluid typography using CSS `clamp()` or standardized Tailwind classes (e.g., `text-balance`) to prevent single-word orphans and awkward wrapping.
-> **Grid Uniformity**: Product cards will now have strictly enforced minimum heights for the "Information" section to ensure price and action nodes are perfectly aligned horizontally.
+> [!CAUTION]
+> **Compliance Protocol**: All scheduled and automated posts will enter a `PENDING_REVIEW` state by default. You must manually verify them in the Admin panel to comply with Kenyan (NACADA) alcohol advertising rules.
+> **API Permissions**: Direct publishing to platforms like TikTok and YouTube requires your developer accounts to pass an official audit for public visibility.
 
 ## Proposed Changes
 
-### 📱 1. Global Typography & Spacing Standard
+### 🧱 1. Content Command Studio (Refinement)
 
-#### [MODIFY] [globals.css](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/globals.css)
-- Add utility classes for `.text-mobile-standard` and `.text-mobile-heading`.
-- Standardize `.container` padding to `16px` on mobile and `32px` on desktop.
-
----
-
-### 🍾 2. Product Card "Grid Harmony"
-
-#### [MODIFY] [ProductCard.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/components/home/ProductCard.tsx)
-- **Standardize Name Box**: Set a fixed height for the name container on mobile (`h-[2.8rem]`) with `line-clamp-2`.
-- **Align Price & Stock**: Ensure the metadata row stays at the bottom of the info box.
-- **Normalized Buttons**: Force uniform button heights (`h-12` for primary, `h-10` for secondary) on mobile.
+#### [MODIFY] [content/page.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/admin/(dashboard)/growth/content/page.tsx)
+- **Multimedia Uploader**: Add support for multiple image/video URLs.
+- **AI Adaptation Engine**: Integrate actual prompt generation logic for platform-specific captions (IG Reels vs. WhatsApp Status).
+- **Persistence**: Save the `master_content` and its `content_variants` to Supabase upon creation.
 
 ---
 
-### 🔍 3. Mobile Header & Search Refinement
+### 📅 2. Tactical Content Calendar
 
-#### [MODIFY] [Header.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/components/layout/Header.tsx)
-- Improve search input width and padding for small Android devices (320px - 360px).
-- Add `pb-safe` to the mobile menu to respect physical notches/indicators.
+#### [MODIFY] [calendar/page.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/admin/(dashboard)/growth/calendar/page.tsx)
+- **Real-time Sync**: Fetch actual scheduled items from the `publishing_queue` table.
+- **Interactive Nodes**: Allow clicking on a calendar day to see/edit/publish posts for that specific date.
 
 ---
 
-### 📐 4. Global Container & Grid Stability
+### ⚙️ 3. Backend: The Publishing Orchestrator
 
-#### [MODIFY] [ProductList.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/components/home/ProductList.tsx)
-- Adjust grid gaps to `gap-4` (16px) on mobile to give cards room to breathe.
-- Ensure the filter bar doesn't overflow horizontally on small screens.
+#### [MODIFY] [socialPublisher.ts](file:///C:/Users/hp/AndroidStudioProjects/onbar/lib/engines/socialPublisher.ts)
+- **Meta Adapter**: Detailed logic for Instagram Container and Media Publish endpoints.
+- **TikTok/X Adapters**: Placeholder structure for these specialized APIs.
+- **Status Reconciliation**: Logic to update the `social_metrics` table after a post goes live.
+
+---
+
+### 🏛️ 4. Connected Channels & Accounts
+
+#### [MODIFY] [accounts/page.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/admin/(dashboard)/growth/accounts/page.tsx)
+- **Token Management**: UI to view token expiration and trigger re-authorization.
+- **Link Status**: Real-time "Health Check" for social API connections.
 
 ---
 
 ## Verification Plan
 
 ### Automated Tests
-- `npm run lint`: Check for styling regressions.
 - `npm run build`: Verify 100% route success.
+- Schema Integrity: Ensure all variants are correctly linked to their master content record.
 
 ### Manual Verification
-1.  **320px Audit**: Use Chrome DevTools to inspect the UI at 320px (iPhone SE / Small Android). Verify no horizontal scroll and clean word wrapping.
-2.  **Product Alignment**: Confirm that in the "Vintages" category, a product with a 1-line name and a product with a 2-line name have identical button positions.
-3.  **Navigation**: Test the mobile menu and search overlay on a real device to ensure touch targets are large enough (min 44px).
+1.  **Campaign Creation**: Create a "Weekend Drop" master post and verify 3 platform-specific variants are generated.
+2.  **Scheduling**: Set a post for tomorrow and verify it appears in the **Content Calendar**.
+3.  **Account Link**: Connect a test Meta account and verify the "Active Link" status appears with an expiration date.
