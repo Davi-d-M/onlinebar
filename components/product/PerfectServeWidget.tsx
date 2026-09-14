@@ -23,9 +23,17 @@ interface ServeSpecs {
     glassware: string;
 }
 
+interface MixerProduct {
+    id: number;
+    name: string;
+    price: number;
+    image_url: string;
+    category?: string;
+}
+
 export default function PerfectServeWidget({ specs }: { specs?: ServeSpecs }) {
     const { addBundleToCart } = useCart();
-    const [mixerProduct, setMixerProduct] = React.useState<any | null>(null);
+    const [mixerProduct, setMixerProduct] = React.useState<MixerProduct | null>(null);
 
     const defaultSpecs: ServeSpecs = {
         mixer: 'Premium Tonic',
@@ -39,8 +47,8 @@ export default function PerfectServeWidget({ specs }: { specs?: ServeSpecs }) {
     React.useEffect(() => {
         async function fetchMixer() {
             if (!activeSpecs.mixer_id || !supabase) return;
-            const { data } = await supabase.from('products').select('*').eq('id', activeSpecs.mixer_id).single();
-            if (data) setMixerProduct(data);
+            const { data } = await supabase.from('products').select('id, name, price, image_url, category').eq('id', activeSpecs.mixer_id).single();
+            if (data) setMixerProduct(data as MixerProduct);
         }
         fetchMixer();
     }, [activeSpecs]);
@@ -52,9 +60,17 @@ export default function PerfectServeWidget({ specs }: { specs?: ServeSpecs }) {
         }
         // Simplified bundling logic
         addBundleToCart([
-            { ...mixerProduct, quantity: 1, base_price: mixerProduct.price, image: mixerProduct.image_url }
+            {
+                id: mixerProduct.id,
+                name: mixerProduct.name,
+                price: mixerProduct.price,
+                base_price: mixerProduct.price,
+                image: mixerProduct.image_url,
+                quantity: 1,
+                category: mixerProduct.category || 'Mixers'
+            }
         ]);
-        alert("Mixer added to bag. Don&apos;t forget the ice! 🧊");
+        alert("Mixer added to bag. Don't forget the ice! 🧊");
     };
 
     return (

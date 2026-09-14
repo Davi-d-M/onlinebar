@@ -23,7 +23,7 @@ export default function OperatingBrainHUD() {
         users: 0,
         riders: 0,
         shops: 0,
-        automation: 94.7,
+        automation: 0,
         demand_hotspot: 'Neutral'
     });
 

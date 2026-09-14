@@ -58,6 +58,7 @@ import AnalyticsTracker from "@/components/layout/AnalyticsTracker";
 import MobileBottomNav from "@/components/layout/MobileBottomNav";
 import LevelUpCelebration from "@/components/engagement/LevelUpCelebration";
 import InstallAppWidget from "@/components/layout/InstallAppWidget";
+import ExperienceNotificationHost from "@/components/layout/ExperienceNotificationHost";
 import { type StoreSettings, DEFAULT_SETTINGS } from "@/lib/useSettings";
 import { getCachedSettings } from "@/lib/cachedData";
 import { Suspense } from "react";
@@ -125,6 +126,7 @@ export default async function RootLayout({
                 {children}
             </PublicLayoutShield>
             <InstallAppWidget />
+            <ExperienceNotificationHost />
             <MobileBottomNav />
             <Script id="register-sw">
                 {`

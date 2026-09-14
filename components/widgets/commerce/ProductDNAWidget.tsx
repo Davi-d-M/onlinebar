@@ -10,7 +10,6 @@ import {
     RadarChart,
     ResponsiveContainer
 } from 'recharts';
-import { cn } from '@/lib/utils';
 
 interface DNAData {
     body: number;

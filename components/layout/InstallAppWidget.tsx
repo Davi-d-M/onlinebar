@@ -10,8 +10,17 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
+interface BeforeInstallPromptEvent extends Event {
+    readonly platforms: Array<string>;
+    readonly userChoice: Promise<{
+        outcome: 'accepted' | 'dismissed',
+        platform: string
+    }>;
+    prompt(): Promise<void>;
+}
+
 export default function InstallAppWidget() {
-    const [deferredPrompt, setDeferredPrompt] = React.useState<any>(null);
+    const [deferredPrompt, setDeferredPrompt] = React.useState<BeforeInstallPromptEvent | null>(null);
     const [isVisible, setIsVisible] = React.useState(false);
     const [isInstalled, setIsInstalled] = React.useState(false);
 
@@ -23,9 +32,9 @@ export default function InstallAppWidget() {
         }
 
         // 2. Listen for beforeinstallprompt
-        const handler = (e: any) => {
+        const handler = (e: Event) => {
             e.preventDefault();
-            setDeferredPrompt(e);
+            setDeferredPrompt(e as BeforeInstallPromptEvent);
 
             // Check if user dismissed it recently
             const dismissed = localStorage.getItem('ob_install_prompt_dismissed');
@@ -49,6 +58,10 @@ export default function InstallAppWidget() {
         setDeferredPrompt(null);
     };
 
+    const handleInstallClick = () => {
+        handleInstall();
+    };
+
     const handleDismiss = () => {
         setIsVisible(false);
         localStorage.setItem('ob_install_prompt_dismissed', 'true');
@@ -58,7 +71,7 @@ export default function InstallAppWidget() {
 
     return (
         <div className="fixed bottom-24 left-6 right-6 lg:left-10 lg:right-auto lg:w-96 z-[150] animate-in slide-in-from-left-10 duration-700">
-            <Card className="p-8 rounded-[2.5rem] bg-slate-900 text-white border-none shadow-2xl relative overflow-hidden group">
+            <Card className="p-8 rounded-[2.5rem] bg-slate-900 text-white border-none shadow-2xl relative overflow-hidden group text-left">
                 <div className="relative z-10 space-y-6">
                     <header className="flex justify-between items-start">
                         <div className="flex items-center gap-4">
@@ -81,7 +94,7 @@ export default function InstallAppWidget() {
 
                     <div className="flex flex-col gap-3">
                         <Button
-                            onClick={handleInstall}
+                            onClick={handleInstallClick}
                             className="w-full h-14 rounded-2xl bg-primary text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3"
                         >
                             <Download size={16} /> Install Web App

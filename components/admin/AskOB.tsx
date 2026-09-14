@@ -74,7 +74,7 @@ export default function AskOB() {
             const response = await processQueryLocally(userQuery);
             setMessages(prev => [...prev, { role: 'assistant', text: response }]);
         } catch {
-            setMessages(prev => [...prev, { role: 'assistant', text: "Data link interrupted. Please retry, bro." }]);
+            setMessages(prev => [...prev, { role: 'assistant', text: "Data link interrupted. Please retry." }]);
         } finally {
             setIsLoading(false);
         }

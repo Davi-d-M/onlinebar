@@ -343,7 +343,7 @@ export default function RiderOnboarding() {
                                         if (rules.min_age && birthDate) {
                                             const age = Math.floor((new Date().getTime() - new Date(birthDate).getTime()) / 3.15576e+10);
                                             if (age < rules.min_age) {
-                                                setError(`Minimum age for registration is ${rules.min_age}, bro.`);
+                                                setError(`Minimum age for registration is ${rules.min_age}.`);
                                                 return;
                                             }
                                         }
@@ -496,7 +496,7 @@ export default function RiderOnboarding() {
                                                 localStorage.setItem('rider_name', data.rider_name);
                                                 setStep('success');
                                             } else {
-                                                setError("Verification still pending. Check back soon, bro.");
+                                                setError("Verification still pending. Check back soon.");
                                                 setTimeout(() => setError(null), 3000);
                                             }
                                             setLoading(false);

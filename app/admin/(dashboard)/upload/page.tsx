@@ -240,7 +240,7 @@ function UploadContent() {
     if ((window as Window & { BarNode?: { triggerScanner: () => void } }).BarNode?.triggerScanner) {
         (window as Window & { BarNode?: { triggerScanner: () => void } }).BarNode?.triggerScanner();
     } else {
-        alert("Native Scanner Node not detected. Use the Online Bar Mobile App, bro.");
+        alert("Native Scanner Node not detected. Use the Online Bar Mobile App.");
     }
   };
 

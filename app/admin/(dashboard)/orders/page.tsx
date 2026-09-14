@@ -465,7 +465,7 @@ export default function AdminOrdersPage() {
           <div className="p-24 flex flex-col items-center justify-center text-center">
               <ShieldAlert className="h-16 w-16 text-primary mb-6" />
               <h2 className="text-2xl font-black uppercase text-foreground">Access Denied</h2>
-              <p className="text-slate-500 mt-2">You don&apos;t have permission to manage orders, bro.</p>
+              <p className="text-slate-500 mt-2">You don&apos;t have permission to manage orders.</p>
           </div>
       );
   }

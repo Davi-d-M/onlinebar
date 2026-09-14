@@ -121,10 +121,10 @@ export default function AIAdAgency() {
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-stretch">
                 {[
-                    { label: 'Neural ROI', val: '4.8x', icon: Zap, color: 'primary' },
-                    { label: 'Avg CPC', val: 'KSh 8.2', icon: Target, color: 'indigo' },
-                    { label: 'Total Managed Spend', val: formatPrice(12400), icon: DollarSign, color: 'emerald' },
-                    { label: 'Conversion Lift', val: '+24%', icon: BarChart3, color: 'primary' },
+                    { label: 'Neural ROI', val: '0.0x', icon: Zap, color: 'primary' },
+                    { label: 'Avg CPC', val: 'KSh 0.0', icon: Target, color: 'indigo' },
+                    { label: 'Total Managed Spend', val: formatPrice(0), icon: DollarSign, color: 'emerald' },
+                    { label: 'Conversion Lift', val: '+0%', icon: BarChart3, color: 'primary' },
                 ].map(item => (
                     <Card key={item.label} className="p-8 rounded-[3rem] bg-white border border-slate-100 shadow-sm group hover:shadow-xl transition-all">
                         <div className={cn(

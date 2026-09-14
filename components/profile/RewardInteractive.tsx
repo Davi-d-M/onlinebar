@@ -45,7 +45,7 @@ export default function RewardInteractive({ userId }: { userId: string }) {
                 throw new Error(data.error);
             }
         } catch {
-            setError("Tactical link offline. Try again later, bro!");
+            setError("Tactical link offline. Try again later.");
             setStatus('idle');
         }
     };
@@ -83,7 +83,7 @@ export default function RewardInteractive({ userId }: { userId: string }) {
                         <div className="space-y-2">
                             <h4 className="text-4xl font-black uppercase tracking-tighter">Mission Accomplished</h4>
                             <p className="text-primary font-black text-2xl italic tracking-widest">{prize.label} Received</p>
-                            <p className="text-slate-400 text-xs font-medium italic mt-4">&quot;Your reward has been added to your account ledger, bro!&quot;</p>
+                            <p className="text-slate-400 text-xs font-medium italic mt-4">&quot;Your reward has been added to your account ledger.&quot;</p>
                         </div>
                         <Button onClick={() => setStatus('idle')} className="h-14 px-12 rounded-2xl bg-primary text-white font-black uppercase tracking-widest text-[10px] hover:bg-primary/90 transition-all active:scale-95 mt-4">
                             Dismiss

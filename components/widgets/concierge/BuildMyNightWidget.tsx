@@ -34,27 +34,34 @@ const BUDGETS = [
     { id: '20K', label: '10K - 20K+', val: 20000 },
 ];
 
+interface BuildResult {
+    id: number;
+    name: string;
+    price: number;
+    image_url: string;
+    category: string;
+}
+
 export default function BuildMyNightWidget() {
     const [step, setStep] = React.useState(1);
     const [occasion, setOccasion] = React.useState<string | null>(null);
     const [budget, setBudget] = React.useState<number | null>(null);
     const [loading, setLoading] = React.useState(false);
-    const [results, setResults] = React.useState<{ id: number, name: string, price: number, image_url: string, category: string }[]>([]);
+    const [results, setResults] = React.useState<BuildResult[]>([]);
     const { addBundleToCart } = useCart();
 
     const handleGenerate = async () => {
         if (!occasion || !budget || !supabase) return;
         setLoading(true);
         try {
-            // High-fidelity bundling logic
             const { data } = await supabase
                 .from('products')
-                .select('*')
+                .select('id, name, price, image_url, category')
                 .lte('price', budget)
                 .order('rating', { ascending: false })
                 .limit(4);
 
-            if (data) setResults(data as { id: number, name: string, price: number, image_url: string, category: string }[]);
+            if (data) setResults(data as BuildResult[]);
             setStep(3);
         } catch (err) {
             console.error(err);
@@ -65,13 +72,21 @@ export default function BuildMyNightWidget() {
 
     const handleAddAll = () => {
         const items = results.map(r => ({
-            ...r,
+            id: r.id,
+            name: r.name,
+            price: r.price,
+            base_price: r.price,
             image: r.image_url,
             quantity: 1,
-            base_price: r.price
+            category: r.category
         }));
-        addBundleToCart(items as any);
+        addBundleToCart(items);
         alert("Your night has been established in the bag! 🥂");
+    };
+
+    const handleOccasionSelect = (id: string) => {
+        setOccasion(id);
+        setStep(2);
     };
 
     return (
@@ -115,13 +130,13 @@ export default function BuildMyNightWidget() {
                                     {OCCASIONS.map(occ => (
                                         <button
                                             key={occ.id}
-                                            onClick={() => { setOccasion(occ.id); setStep(2); }}
+                                            onClick={() => handleOccasionSelect(occ.id)}
                                             className={cn(
                                                 "p-6 rounded-[2rem] border-2 transition-all flex flex-col items-center gap-4 group/occ",
                                                 occasion === occ.id ? "border-primary bg-primary/5" : "border-slate-50 bg-slate-50/50 hover:border-slate-100 hover:bg-white"
                                             )}
                                         >
-                                            <div className={cn("h-12 w-12 rounded-2xl flex items-center justify-center transition-transform group-hover/occ:scale-110 shadow-sm", occ.color)}>
+                                            <div className={cn("h-12 w-12 rounded-2xl flex items-center justify-center transition-transform group/occ:scale-110 shadow-sm", occ.color)}>
                                                 <occ.icon size={24} />
                                             </div>
                                             <span className="text-[10px] font-black uppercase tracking-widest">{occ.label}</span>

@@ -67,7 +67,7 @@ export default function WidgetRegistry({ pageRoute = '/' }: { pageRoute?: string
     );
 }
 
-function renderWidget(key: string, _config: Record<string, unknown>) {
+function renderWidget(key: string, _config: Record<string, unknown>) { // eslint-disable-line @typescript-eslint/no-unused-vars
     switch (key) {
         case 'HERO_WIDGET':
             return <HeroWidget />;

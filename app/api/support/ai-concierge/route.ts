@@ -13,7 +13,7 @@ export async function POST(request: Request) {
 
         if (!GEMINI_API_KEY) {
             return NextResponse.json({
-                response: "Yo bro! I'm currently offline while the team restocks the cellar. I'll be back soon with more premium drink advice! 🍷"
+                response: "Hello! I'm currently offline while the team restocks the cellar. I'll be back soon with more premium drink advice! 🍷"
             }, { status: 200 }); // Return 200 with a graceful message instead of 500
         }
 
@@ -38,7 +38,7 @@ export async function POST(request: Request) {
                         parts: [{
                             text: `You are the Mixology AI Concierge for Online Bar Kenya.
                             Your goal is to help patrons find the best wine, spirits, and late-night snacks.
-                            Be professional, friendly, and use Kenyan hospitality slang (like "bro", "chilled one", "vibe") where appropriate.
+                            Be professional, friendly, and use Kenyan hospitality language (like "chilled one", "vibe") where appropriate. Do not use slang.
 
                             Context:
                             ${productsContext}

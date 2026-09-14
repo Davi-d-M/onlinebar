@@ -262,84 +262,90 @@ export default function ProductCard({ product }: { product: Product }) {
         </Link>
       </div>
 
-      <CardContent className="p-3 sm:p-6 space-y-3 sm:space-y-4 text-left">
-        <Link href={`/shop/${product.id}`}>
-          <h2 className="font-black text-foreground text-[10px] sm:text-sm uppercase tracking-tight line-clamp-1 group-hover:text-primary transition-colors">
+      <CardContent className="p-3 sm:p-6 flex flex-col flex-1 text-left">
+        <Link href={`/shop/${product.id}`} className="mb-2 block min-h-[2.5rem] sm:min-h-[3rem]">
+          <h2 className="font-black text-foreground text-[10px] sm:text-sm uppercase tracking-tight line-clamp-2 group-hover:text-primary transition-colors leading-tight">
             {product.name}
           </h2>
         </Link>
 
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-slate-50 pb-3 sm:pb-4">
-          <div className="flex flex-col">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-slate-50 pb-3 sm:pb-4 min-h-[2.5rem] sm:min-h-[3rem]">
+          <div className="flex flex-col justify-end">
               {isSale && <span className="text-[8px] sm:text-[10px] font-bold text-slate-400 line-through leading-none mb-1">{formatPrice(Number(product.old_price))}</span>}
               <span className="text-sm sm:text-xl font-black text-foreground leading-none">
                 {formatPrice(product.price)}
               </span>
           </div>
-          {product.stock !== undefined && (
-            <span
-              className={cn(
-                "text-[7px] sm:text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg w-fit",
-                product.stock > 0 ? 'bg-primary/10 text-primary' : 'bg-rose-50 text-rose-600'
-              )}
-            >
-              {product.stock > 0 ? `${product.stock} In Stock` : 'Sold Out'}
-            </span>
-          )}
+          <div className="flex items-end">
+            {product.stock !== undefined && (
+                <span
+                className={cn(
+                    "text-[7px] sm:text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg w-fit",
+                    product.stock > 0 ? 'bg-primary/10 text-primary' : 'bg-rose-50 text-rose-600'
+                )}
+                >
+                {product.stock > 0 ? `${product.stock} In Stock` : 'Sold Out'}
+                </span>
+            )}
+          </div>
         </div>
 
-        {product.stock !== undefined && product.stock === 0 ? (
-            <RestockNotifyButton productId={product.id} productName={product.name} />
-        ) : (
-            <div className="flex flex-col gap-2">
-                <Button
-                  className={cn(
-                    'w-full h-10 sm:h-14 transition-all duration-300 rounded-xl sm:rounded-2xl font-black uppercase text-[8px] sm:text-[10px] tracking-widest shadow-lg active:scale-95',
-                    isLocked ? 'bg-slate-50 text-slate-300 cursor-not-allowed border border-slate-100 shadow-none' :
-                    justAdded
-                      ? 'bg-primary text-white hover:bg-primary/90'
-                      : 'bg-primary text-white hover:bg-primary/90 shadow-primary/20'
-                  )}
-                  onClick={handleAddToCart}
-                  disabled={isAdding || isLocked}
-                >
-                  {isLocked ? (
-                      <div className="flex items-center gap-2">
-                        <Lock className="h-3 w-3 sm:h-4 sm:w-4" /> Locked
-                      </div>
-                  ) : isAdding ? (
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 sm:w-4 sm:h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                      Sync...
-                    </div>
-                  ) : justAdded ? (
-                    <div className="flex items-center gap-2">
-                      <Check className="h-3 w-3 sm:h-4 sm:h-4" />
-                      Added!
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-2">
-                      <ShoppingCart className="h-3 w-3 sm:h-4 sm:h-4" />
-                      Add to Bag
-                    </div>
-                  )}
-                </Button>
+        <div className="mt-4 flex flex-col gap-2">
+            {product.stock !== undefined && product.stock === 0 ? (
+                <div className="h-10 sm:h-14">
+                    <RestockNotifyButton productId={product.id} productName={product.name} />
+                </div>
+            ) : (
+                <>
+                    <Button
+                    className={cn(
+                        'w-full h-10 sm:h-14 transition-all duration-300 rounded-xl sm:rounded-2xl font-black uppercase text-[8px] sm:text-[10px] tracking-widest shadow-lg active:scale-95',
+                        isLocked ? 'bg-slate-50 text-slate-300 cursor-not-allowed border border-slate-100 shadow-none' :
+                        justAdded
+                        ? 'bg-primary text-white hover:bg-primary/90'
+                        : 'bg-primary text-white hover:bg-primary/90 shadow-primary/20'
+                    )}
+                    onClick={handleAddToCart}
+                    disabled={isAdding || isLocked}
+                    >
+                    {isLocked ? (
+                        <div className="flex items-center gap-2">
+                            <Lock className="h-3 w-3 sm:h-4 sm:w-4" /> Locked
+                        </div>
+                    ) : isAdding ? (
+                        <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 sm:w-4 sm:h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                        Sync...
+                        </div>
+                    ) : justAdded ? (
+                        <div className="flex items-center gap-2">
+                        <Check className="h-3 w-3 sm:h-4 sm:h-4" />
+                        Added!
+                        </div>
+                    ) : (
+                        <div className="flex items-center gap-2">
+                        <ShoppingCart className="h-3 w-3 sm:h-4 sm:h-4" />
+                        Add to Bag
+                        </div>
+                    )}
+                    </Button>
 
-                <Button
-                    variant="outline"
-                    className="w-full h-9 sm:h-12 rounded-xl sm:rounded-2xl border-primary/10 text-primary hover:bg-primary/5 font-black uppercase text-[7px] sm:text-[9px] tracking-widest"
-                    onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        trackClick('whatsapp-buy-btn', 'WhatsApp Buy', { productId: product.id });
-                        const message = `Hello Online Bar! I want to order:\n\n*Product:* ${product.name}\n*Price:* ${formatPrice(product.price)}\n\nIs this available for dispatch?`;
-                        window.open(`https://wa.me/${settings.contact.whatsapp}?text=${encodeURIComponent(message)}`, '_blank');
-                    }}
-                >
-                    <MessageSquare className="h-3 w-3 mr-1 sm:mr-2" /> Buy via WhatsApp
-                </Button>
-            </div>
-        )}
+                    <Button
+                        variant="outline"
+                        className="w-full h-9 sm:h-12 rounded-xl sm:rounded-2xl border-primary/10 text-primary hover:bg-primary/5 font-black uppercase text-[7px] sm:text-[9px] tracking-widest"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            trackClick('whatsapp-buy-btn', 'WhatsApp Buy', { productId: product.id });
+                            const message = `Hello Online Bar! I want to order:\n\n*Product:* ${product.name}\n*Price:* ${formatPrice(product.price)}\n\nIs this available for dispatch?`;
+                            window.open(`https://wa.me/${settings.contact.whatsapp}?text=${encodeURIComponent(message)}`, '_blank');
+                        }}
+                    >
+                        <MessageSquare className="h-3 w-3 mr-1 sm:mr-2" /> Buy via WhatsApp
+                    </Button>
+                </>
+            )}
+        </div>
       </CardContent>
     </Card>
 

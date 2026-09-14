@@ -46,7 +46,7 @@ export default class AdminErrorBoundary extends Component<Props, State> {
                 Admin Hub Encountered an Error
             </h1>
             <p className="text-slate-500 font-medium text-lg mb-8 italic leading-relaxed">
-                &quot;The Titan system detected a client-side exception. Your current session might be corrupted, bro.&quot;
+                &quot;The system detected a client-side exception. Your current session might be corrupted.&quot;
             </p>
 
             <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 mb-10 overflow-hidden">

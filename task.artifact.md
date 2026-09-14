@@ -1,20 +1,27 @@
-# Tasks - Differentiators & Retention Protocol 🛡️🍷📱
+# Tasks - Experience Notification Engine 🔔🥂🚀
 
-## Phase 1: Data & Schema
-- [ ] Create `supabase/migrations/20260910_product_enrichment.sql`
-- [ ] Populate sample sensory DNA and Perfect Serve specs for top inventory
+## Phase 1: Database Foundation
+- [x] Create `supabase/migrations/20260914_notification_engine.sql`
+- [x] Seed default templates (Placed, Paid, Dispatched, Delivered)
+- [x] Establish RLS policies for user data privacy
 
-## Phase 2: Product Differentiators
-- [ ] Create `components/product/PerfectServeWidget.tsx`
-- [ ] Create `components/product/AuthenticitySentinel.tsx`
-- [ ] Integrate widgets into `ProductDetailClient.tsx`
+## Phase 2: Core Logic (Backend)
+- [x] Upgrade `lib/engines/notificationService.ts` with template logic
+- [x] Implement `triggerNotificationByEvent` function
+- [x] Integrate into `lib/engines/eventEngine.ts`
 
-## Phase 3: PWA & Retention
-- [ ] Create `components/layout/InstallAppWidget.tsx`
-- [ ] Update `layout.tsx` with PWA event listeners
-- [ ] Create `public/sw.js` (Basic service worker for PWA)
+## Phase 3: Visual Identity (Frontend)
+- [x] Create `components/layout/ExperienceToast.tsx` (Premium visuals)
+- [x] Implement `components/layout/ExperienceNotificationHost.tsx` (Real-time listener)
+- [x] Inject Host into `app/layout.tsx`
 
-## Phase 4: Orchestration
-- [ ] Register new nodes in `WidgetRegistry.tsx`
-- [ ] Final Build & Verification
-- [ ] Push to GitHub
+## Phase 4: Admin Experience
+- [x] Create `app/admin/(dashboard)/communications/popups/page.tsx` (The Hub)
+- [x] Implement Template Editor and Live Preview
+- [x] Add Notification Audit Log feed
+
+## Phase 5: Verification & Hardening
+- [x] Fix ESLint warnings in all new components
+- [x] Run `npm run lint` and `npm run build`
+- [x] Verify real-time toast delivery
+- [x] Push to GitHub

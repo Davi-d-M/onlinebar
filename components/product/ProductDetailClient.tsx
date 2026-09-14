@@ -25,10 +25,30 @@ import AuthenticitySentinel from './AuthenticitySentinel';
 
 import dynamic from 'next/dynamic';
 
-const BottleViewer3D = dynamic(() => import('./BottleViewer3D'), {
+const Product3DViewer = dynamic(() => import('./Product3DViewer'), {
     ssr: false,
-    loading: () => <div className="w-full h-[400px] bg-slate-50 rounded-[3rem] border border-slate-100 flex items-center justify-center animate-pulse"><Loader2 className="h-8 w-8 text-primary animate-spin" /></div>
+    loading: () => <div className="w-full h-[600px] bg-[#080808] rounded-[3rem] border border-primary/20 flex items-center justify-center animate-pulse"><Loader2 className="h-10 w-10 text-primary animate-spin" /></div>
 });
+
+interface BeverageSpecs {
+    sensory_dna?: {
+        body: number;
+        sweetness: number;
+        oak: number;
+        smoke: number;
+        intensity: number;
+    };
+    perfect_serve?: {
+        mixer: string | null;
+        mixer_id?: number;
+        ice: string;
+        garnish: string;
+        glassware: string;
+    };
+    batch_no?: string;
+    origin?: string;
+    model_3d_url?: string;
+}
 
 interface Product {
   id: number;
@@ -38,12 +58,12 @@ interface Product {
   sizes?: string[];
   description?: string;
   image_url?: string;
-  video_url?: string; // New field
+  video_url?: string;
   images?: string[];
   category?: string;
   stock?: number;
   variant_stock?: Record<string, number>;
-  beverage_specs?: Record<string, string>;
+  beverage_specs?: BeverageSpecs;
   bundle_product_id?: number;
   bundle_discount_percent?: number;
   wholesale_price?: number;
@@ -57,7 +77,8 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
   );
   const [isAdding, setIsAdding] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
-  const [isLightboxOpen, setIsLightboxOpen] = useState(false); // NEW
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [is3DMode, setIs3DMode] = useState(false);
 
   const [justAdded, setJustAdded] = useState(false);
   const [referralCode, setReferralCode] = useState<string | null>(null);
@@ -209,13 +230,29 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
 
           {/* Gallery */}
           <div className="space-y-6 sticky top-8">
-            {/* 3D Bottle Viewer (Conditional) */}
-            {(product.category === 'wine' || product.category === 'spirits' || product.category === 'whiskey') && (
-                <BottleViewer3D />
-            )}
 
-            <div className="bg-slate-50 rounded-[3rem] p-10 flex items-center justify-center aspect-square border border-slate-100 overflow-hidden relative group">
-                {hasVideo && activeImageIndex === 0 ? (
+            {is3DMode && product.beverage_specs?.model_3d_url ? (
+                <div className="animate-in zoom-in-95 duration-500">
+                    <Product3DViewer
+                        modelUrl={product.beverage_specs.model_3d_url}
+                        productName={product.name}
+                        onClose={() => setIs3DMode(false)}
+                    />
+                </div>
+            ) : (
+                <div className="bg-slate-50 rounded-[3rem] p-10 flex items-center justify-center aspect-square border border-slate-100 overflow-hidden relative group">
+                    {product.beverage_specs?.model_3d_url && (
+                        <div className="absolute top-6 right-6 z-20">
+                            <Button
+                                onClick={() => setIs3DMode(true)}
+                                className="rounded-full h-14 w-14 bg-primary text-white shadow-xl shadow-primary/20 hover:scale-110 active:scale-95 transition-all p-0 flex items-center justify-center"
+                                title="Enter 3D View"
+                            >
+                                <Zap size={24} className="fill-current" />
+                            </Button>
+                        </div>
+                    )}
+                    {hasVideo && activeImageIndex === 0 ? (
                     <video
                         src={product.video_url}
                         autoPlay
@@ -271,6 +308,7 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
                     </>
                 )}
             </div>
+            )}
 
             {/* Thumbnail Selector */}
             {(allImages.length + (hasVideo ? 1 : 0)) > 1 && (
@@ -464,13 +502,13 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
         {/* 🧬 ELITE DIFFERENTIATORS SECTION */}
         <div className="grid lg:grid-cols-12 gap-10 mb-24 items-stretch">
             <div className="lg:col-span-4 h-full flex">
-                <ProductDNAWidget dna={product.beverage_specs?.sensory_dna as any} />
+                <ProductDNAWidget dna={product.beverage_specs?.sensory_dna} />
             </div>
             <div className="lg:col-span-8 space-y-10 flex flex-col justify-between">
-                <PerfectServeWidget specs={product.beverage_specs?.perfect_serve as any} />
+                <PerfectServeWidget specs={product.beverage_specs?.perfect_serve} />
                 <AuthenticitySentinel
-                    batchNo={product.beverage_specs?.batch_no as string}
-                    origin={product.beverage_specs?.origin as string}
+                    batchNo={product.beverage_specs?.batch_no}
+                    origin={product.beverage_specs?.origin}
                 />
             </div>
         </div>

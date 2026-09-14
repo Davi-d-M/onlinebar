@@ -1,6 +1,7 @@
 import { supabase } from '../supabaseClient';
 import { trackEngagementEvent } from '../gamificationEngine';
 import { processAutomationRules } from './automationEngine';
+import { triggerNotificationByEvent } from './notificationService';
 
 export type SystemEventType =
     | 'ORDER_CREATED'
@@ -83,6 +84,14 @@ async function processEvent(event: { id: string, event_type: SystemEventType, pa
         await updateDeliveryStats(event_type, payload);
     }
 
+    // 0.2 Trigger Automated Notifications
+    if (user_id && (event_type.startsWith('ORDER_') || event_type === 'PAYMENT_SUCCESS')) {
+        await triggerNotificationByEvent(event_type, {
+            userId: user_id,
+            orderId: payload.orderId ? Number(payload.orderId) : undefined
+        });
+    }
+
     switch (event_type) {
         case 'ORDER_DELIVERED':
             // 🏅 Trigger Gamification (XP, Badges)
@@ -94,6 +103,9 @@ async function processEvent(event: { id: string, event_type: SystemEventType, pa
             }
             // 💰 Trigger Ledger (Payouts, Settlements) - Pillar 3
             // 🔔 Trigger Notifications - Pillar 5
+            if (user_id) {
+                await triggerNotificationByEvent('ORDER_DELIVERED', { userId: user_id, orderId: Number(payload.orderId) });
+            }
             break;
 
         case 'REVIEW_CREATED':
