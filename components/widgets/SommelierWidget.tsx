@@ -99,7 +99,7 @@ export default function SommelierWidget() {
 
                         <div className="w-full pt-4 border-t border-slate-50">
                             <Link href={`/shop/${r.id}`}>
-                                <Button className="w-full h-16 rounded-2xl bg-slate-900 text-white font-black uppercase text-xs tracking-widest shadow-xl hover:bg-primary transition-all active:scale-95">
+                                <Button className="w-full h-16 rounded-2xl bg-primary text-white font-black uppercase text-xs tracking-widest shadow-xl shadow-primary/20 hover:scale-105 transition-all active:scale-95">
                                     <ShoppingBag size={18} className="mr-3" /> Establish Order
                                 </Button>
                             </Link>

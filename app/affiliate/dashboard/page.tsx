@@ -277,32 +277,32 @@ export default function AffiliateCommandCenter() {
                         </div>
 
                         {/* 3. MAIN ROCKET LINK */}
-                        <section className="bg-slate-900 rounded-[3.5rem] p-10 sm:p-20 text-white relative overflow-hidden shadow-2xl">
-                            <div className="relative z-10 grid lg:grid-cols-2 gap-16 items-center">
+                        <section className="bg-primary/5 rounded-[3.5rem] p-10 sm:p-20 text-foreground relative overflow-hidden border border-primary/10 shadow-sm">
+                            <div className="relative z-10 grid lg:grid-cols-2 gap-16 items-center text-left">
                                 <div className="space-y-8">
-                                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full text-[10px] font-black uppercase tracking-widest border border-white/10">
-                                        <Zap className="h-3 w-3 text-primary fill-current" /> High-Priority Node
+                                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 rounded-full text-[10px] font-black uppercase tracking-widest border border-primary/20 text-primary">
+                                        <Zap className="h-3 w-3 fill-current animate-bounce" /> High-Priority Node
                                     </div>
                                     <h2 className="text-4xl lg:text-6xl font-black uppercase tracking-tighter leading-[0.85]">
                                         Your Unique <br /><span className="text-primary italic">Rocket Link.</span>
                                     </h2>
-                                    <p className="text-slate-400 font-medium text-lg leading-relaxed italic max-w-md">
+                                    <p className="text-slate-500 font-medium text-lg leading-relaxed italic max-w-md">
                                         &quot;Deploy this link across your network. Every purchase established through this node earns you an instant 5% commission.&quot;
                                     </p>
                                     <div className="flex flex-col sm:flex-row gap-3">
-                                        <div className="flex-1 bg-white/5 border border-white/10 rounded-2xl px-6 py-5 font-mono text-sm text-primary truncate select-all shadow-inner">
+                                        <div className="flex-1 bg-white border border-slate-100 rounded-2xl px-6 py-5 font-mono text-sm text-primary truncate select-all shadow-inner">
                                             {referralUrl}
                                         </div>
                                         <Button
                                             onClick={handleCopyLink}
-                                            className="h-16 px-10 rounded-2xl bg-primary text-white font-black uppercase text-[10px] tracking-widest shadow-xl hover:bg-white hover:text-slate-900 transition-all shrink-0 active:scale-95"
+                                            className="h-16 px-10 rounded-2xl bg-primary text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-primary/20 hover:scale-105 transition-all shrink-0 active:scale-95"
                                         >
                                             {copied ? <><CheckCircle2 className="h-4 w-4 mr-2" /> Copied!</> : <><Copy className="h-4 w-4 mr-2" /> Copy Link</>}
                                         </Button>
                                     </div>
                                 </div>
                                 <div className="hidden lg:flex justify-center">
-                                    <div className="h-80 w-80 rounded-[4rem] bg-primary/10 flex items-center justify-center border border-white/5 relative group">
+                                    <div className="h-80 w-80 rounded-[4rem] bg-primary/5 flex items-center justify-center border border-primary/10 relative group">
                                         <Rocket size={120} className="text-primary fill-current transition-transform duration-700 group-hover:scale-110 group-hover:-translate-y-4" />
                                         <div className="absolute inset-0 rounded-[4rem] border-2 border-primary/20 animate-ping opacity-20" />
                                     </div>
@@ -344,7 +344,7 @@ export default function AffiliateCommandCenter() {
                                                     navigator.clipboard.writeText(url);
                                                     alert("Deep Link Established! 🛰️");
                                                 }}
-                                                className="w-full h-12 rounded-xl bg-slate-900 text-white font-black uppercase text-[9px] tracking-widest shadow-xl active:scale-95"
+                                                className="w-full h-12 rounded-xl bg-primary text-white font-black uppercase text-[9px] tracking-widest shadow-xl shadow-primary/20 active:scale-95"
                                             >
                                                 Generate Deep Link
                                             </Button>
@@ -394,24 +394,24 @@ export default function AffiliateCommandCenter() {
                             </Card>
 
                             <div className="space-y-8">
-                                <Card className="p-10 rounded-[3rem] bg-slate-900 text-white space-y-10 relative overflow-hidden shadow-2xl">
+                                <Card className="p-10 rounded-[3rem] bg-slate-50 border border-slate-100 shadow-sm space-y-10 relative overflow-hidden group hover:border-primary/20 transition-all">
                                     <div className="relative z-10 space-y-8">
                                         <div className="flex items-center gap-3">
-                                            <div className="h-10 w-10 rounded-xl bg-white/10 flex items-center justify-center text-primary shadow-inner"><Wallet size={24} /></div>
-                                            <h3 className="text-xl font-black uppercase tracking-tighter">Instant Payout</h3>
+                                            <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shadow-sm"><Wallet size={24} /></div>
+                                            <h3 className="text-xl font-black uppercase tracking-tighter text-foreground leading-none">Instant Payout</h3>
                                         </div>
                                         <div className="space-y-2">
                                             <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Available to withdraw</p>
-                                            <h2 className="text-5xl font-black text-white tracking-tighter leading-none">{formatPrice(stats.available_earnings)}</h2>
+                                            <h2 className="text-5xl font-black text-foreground tracking-tighter leading-none">{formatPrice(stats.available_earnings)}</h2>
                                         </div>
                                         <Button className="w-full h-16 rounded-2xl bg-primary text-white font-black uppercase text-xs tracking-widest shadow-xl shadow-primary/20 hover:scale-105 transition-all">
                                             Initialize M-Pesa Payout
                                         </Button>
-                                        <p className="text-[8px] text-center text-slate-500 font-bold uppercase tracking-widest italic leading-relaxed">
+                                        <p className="text-[8px] text-center text-slate-400 font-bold uppercase tracking-widest italic leading-relaxed">
                                             &quot;Transfers to verified M-Pesa nodes are processed within 60 minutes. Minimum: KSh 1,000.&quot;
                                         </p>
                                     </div>
-                                    <DollarSign className="absolute -bottom-10 -left-10 h-64 w-64 text-white/5 rotate-12" />
+                                    <DollarSign className="absolute -bottom-10 -left-10 h-64 w-64 text-primary/5 rotate-12" />
                                 </Card>
 
                                 <Card className="p-8 rounded-[3rem] bg-white border border-slate-100 shadow-sm space-y-6 text-left">
@@ -445,7 +445,7 @@ export default function AffiliateCommandCenter() {
 
             {/* WITHDRAWAL MODAL */}
             {isWithdrawing && (
-                <div className="fixed inset-0 z-[500] flex items-center justify-center bg-slate-900/40 backdrop-blur-md p-4">
+        <div className="fixed inset-0 z-[500] flex items-center justify-center bg-slate-900/10 backdrop-blur-md p-4 animate-in fade-in duration-300">
                     <Card className="max-w-md w-full bg-white rounded-[3rem] border-none shadow-2xl p-10 space-y-8 animate-in zoom-in-95 duration-300 text-left">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-4">

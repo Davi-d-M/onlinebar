@@ -55,7 +55,7 @@ export default function PerfectPairingNode({ productId, category }: { productId:
                                     <Button
                                         size="sm"
                                         onClick={() => addToCart({ id: p.id, name: p.name, price: p.price, base_price: p.price, image: p.image_url, quantity: 1 })}
-                                        className="h-10 px-6 rounded-xl bg-slate-900 text-white font-black uppercase text-[8px] tracking-widest active:scale-95 transition-all"
+                                        className="h-10 px-6 rounded-xl bg-primary text-white font-black uppercase text-[8px] tracking-widest active:scale-95 transition-all shadow-lg shadow-primary/20"
                                     >
                                         <ShoppingBag size={12} className="mr-2" /> Add
                                     </Button>

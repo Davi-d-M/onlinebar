@@ -72,7 +72,7 @@ export default function WidgetEditor({ widget, dashboardId, onClose, onSave }: E
     };
 
     return (
-        <div className="fixed inset-0 z-[1000] flex items-center justify-end bg-slate-900/40 backdrop-blur-md">
+        <div className="fixed inset-0 z-[1000] flex items-center justify-end bg-slate-900/10 backdrop-blur-md animate-in fade-in duration-300">
             <Card className="h-full w-full max-w-xl bg-white rounded-l-[4rem] border-none shadow-2xl flex flex-col animate-in slide-in-from-right-full duration-500 overflow-hidden text-left">
 
                 <div className="p-10 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
@@ -167,7 +167,7 @@ export default function WidgetEditor({ widget, dashboardId, onClose, onSave }: E
                     <Button
                         onClick={handleSave}
                         disabled={loading}
-                        className="flex-[2] h-16 rounded-2xl bg-slate-900 text-white font-black uppercase text-xs tracking-[0.2em] shadow-2xl hover:scale-[1.02] active:scale-95 transition-all"
+                        className="flex-[2] h-16 rounded-2xl bg-primary text-white font-black uppercase text-xs tracking-[0.2em] shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
                     >
                         {loading ? <Loader2 className="animate-spin mr-2" /> : <><Save size={20} className="mr-2" /> Establish Node</>}
                     </Button>

@@ -65,7 +65,7 @@ export default function ReconciliationEngine() {
                 <Button
                     onClick={handleAutoReconcile}
                     disabled={isReconciling || stats.unmatched_count === 0}
-                    className="h-12 rounded-xl bg-slate-900 text-white font-black uppercase text-[10px] tracking-widest shadow-xl active:scale-95 transition-all"
+                    className="h-12 rounded-xl bg-primary text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-primary/20 active:scale-95 transition-all"
                 >
                     {isReconciling ? <Loader2 className="animate-spin mr-2" /> : <RefreshCcw className="mr-2 h-4 w-4" />}
                     Auto-Match

@@ -101,7 +101,7 @@ export default function ExperimentLab() {
 
                             <div className="flex gap-2">
                                 <Button variant="outline" className="flex-1 h-12 rounded-xl border-slate-100 text-[9px] font-black uppercase tracking-widest"><Pause size={14} className="mr-2" /> Halt Test</Button>
-                                <Button className="flex-1 h-12 rounded-xl bg-slate-900 text-white text-[9px] font-black uppercase tracking-widest">Select Winner <ArrowRight size={14} className="ml-2" /></Button>
+                                <Button className="flex-1 h-12 rounded-xl bg-primary text-white text-[9px] font-black uppercase tracking-widest shadow-lg shadow-primary/20">Select Winner <ArrowRight size={14} className="ml-2" /></Button>
                             </div>
                         </div>
                     ))

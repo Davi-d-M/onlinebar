@@ -49,7 +49,7 @@ function Bottle({
 function LoadingBottle() {
   return (
     <Html center>
-      <div className="flex flex-col items-center gap-3 whitespace-nowrap rounded-full border border-primary/30 bg-black/80 px-6 py-3 text-[10px] font-black uppercase tracking-widest text-primary backdrop-blur-xl shadow-2xl">
+      <div className="flex flex-col items-center gap-3 whitespace-nowrap rounded-full border border-primary/30 bg-white px-6 py-3 text-[10px] font-black uppercase tracking-widest text-primary backdrop-blur-xl shadow-2xl">
         <Loader2 className="h-4 w-4 animate-spin" />
         Syncing 3D Model...
       </div>
@@ -78,9 +78,9 @@ export default function Product3DViewer({
   };
 
   return (
-    <div className="relative h-[600px] w-full overflow-hidden rounded-[3rem] border border-primary/20 bg-[#080808] shadow-2xl group selection:bg-primary/20">
+    <div className="relative h-[600px] w-full overflow-hidden rounded-[3rem] border border-slate-100 bg-slate-50 shadow-2xl group selection:bg-primary/20">
 
-      {/* 🌑 CINEMATIC AMBIENT GLOW */}
+      {/* 🏙️ CINEMATIC AMBIENT GLOW */}
       <div className="pointer-events-none absolute inset-0 z-0">
         <div className="absolute left-1/2 top-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/5 blur-[120px]" />
       </div>
@@ -88,15 +88,15 @@ export default function Product3DViewer({
       {/* HEADER NODES */}
       <div className="absolute left-10 top-10 z-20 flex justify-between items-start w-[calc(100%-80px)]">
         <div>
-            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-black/60 px-4 py-1.5 text-[9px] font-black uppercase tracking-[0.3em] text-primary backdrop-blur-xl">
+            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-white/60 px-4 py-1.5 text-[9px] font-black uppercase tracking-[0.3em] text-primary backdrop-blur-xl shadow-sm">
                 <Zap size={10} fill="currentColor" /> High-Fidelity 3D
             </div>
-            <h2 className="text-3xl font-black text-white uppercase tracking-tighter leading-none">
+            <h2 className="text-3xl font-black text-foreground uppercase tracking-tighter leading-none">
             {productName}
             </h2>
         </div>
         {onClose && (
-            <button onClick={onClose} className="h-12 w-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-white hover:text-black transition-all">
+            <button onClick={onClose} className="h-12 w-12 rounded-full bg-white border border-slate-100 flex items-center justify-center text-foreground hover:text-primary transition-all z-20 shadow-sm">
                 <X size={24} />
             </button>
         )}
@@ -104,7 +104,7 @@ export default function Product3DViewer({
 
       {/* TACTICAL INSTRUCTIONS */}
       <div className="absolute bottom-10 left-10 z-20 hidden md:block">
-        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 italic">
+        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 italic">
           ← Drag to explore • Pinch to zoom →
         </p>
       </div>
@@ -114,7 +114,7 @@ export default function Product3DViewer({
         <Button
           onClick={() => setAutoRotate((v) => !v)}
           variant="outline"
-          className="rounded-2xl border-white/10 bg-black/70 px-6 h-14 text-[10px] font-black uppercase tracking-widest text-white backdrop-blur-xl hover:bg-primary hover:text-black transition-all active:scale-95"
+          className="rounded-2xl border-slate-200 bg-white/70 px-6 h-14 text-[10px] font-black uppercase tracking-widest text-foreground backdrop-blur-xl hover:bg-primary hover:text-white transition-all active:scale-95 shadow-sm"
         >
           {autoRotate ? <><Pause size={14} className="mr-2" /> Pause</> : <><Play size={14} className="mr-2" /> Auto Spin</>}
         </Button>
@@ -122,7 +122,7 @@ export default function Product3DViewer({
         <Button
           onClick={handleReset}
           variant="outline"
-          className="h-14 w-14 rounded-2xl border-white/10 bg-black/70 flex items-center justify-center text-white backdrop-blur-xl hover:bg-white hover:text-black transition-all active:scale-95"
+          className="h-14 w-14 rounded-2xl border-slate-200 bg-white/70 flex items-center justify-center text-foreground backdrop-blur-xl hover:bg-white hover:text-primary transition-all active:scale-95 shadow-sm"
           title="Reset View"
         >
           <RotateCcw size={18} />
@@ -173,7 +173,7 @@ export default function Product3DViewer({
       </Canvas>
 
       {/* Bottom Gradient Overlays */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black via-black/40 to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-slate-100/40 via-transparent to-transparent" />
     </div>
   );
 }

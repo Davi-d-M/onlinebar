@@ -78,7 +78,7 @@ export default function PremiumOnboarding() {
             <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-1000">
                 <div className="max-w-md w-full space-y-12">
                     <div className="space-y-4">
-                        <div className="h-20 w-20 rounded-[2rem] bg-slate-900 mx-auto flex items-center justify-center text-primary shadow-2xl animate-pulse">
+                        <div className="h-20 w-20 rounded-[2rem] bg-slate-50 border border-slate-100 mx-auto flex items-center justify-center text-primary shadow-sm animate-pulse">
                             <Wine size={40} />
                         </div>
                         <h1 className="text-5xl font-black text-foreground tracking-tighter uppercase leading-none">
@@ -101,7 +101,7 @@ export default function PremiumOnboarding() {
                     <div className="space-y-4">
                         <Button
                             onClick={() => { setStep('AUTH'); setAuthMode('signup'); }}
-                            className="w-full h-20 rounded-[1.8rem] bg-slate-900 text-white font-black uppercase text-xs tracking-widest shadow-2xl hover:scale-[1.02] active:scale-95 transition-all"
+                            className="w-full h-20 rounded-[1.8rem] bg-primary text-white font-black uppercase text-xs tracking-widest shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
                         >
                             Get Started <ChevronRight className="ml-2 h-5 w-5" />
                         </Button>
@@ -194,7 +194,7 @@ export default function PremiumOnboarding() {
                                     onClick={() => setPreferredVibe(v.id)}
                                     className={cn(
                                         "py-4 rounded-2xl border-2 font-black uppercase text-[8px] tracking-widest transition-all",
-                                        preferredVibe === v.id ? "bg-slate-900 text-white border-slate-900" : "bg-white border-slate-100 text-slate-400"
+                                        preferredVibe === v.id ? "bg-primary text-white border-primary shadow-lg shadow-primary/10" : "bg-white border-slate-100 text-slate-400"
                                     )}
                                 >
                                     {v.label}
@@ -218,25 +218,25 @@ export default function PremiumOnboarding() {
     // 4. COMPLETE
     if (step === 'COMPLETE') {
         return (
-            <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-1000">
+            <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-1000">
                 <div className="max-w-md w-full space-y-10">
-                    <div className="h-24 w-24 rounded-[3rem] bg-primary mx-auto flex items-center justify-center text-white shadow-2xl animate-bounce">
+                    <div className="h-24 w-24 rounded-[3rem] bg-emerald-50 border border-emerald-100 mx-auto flex items-center justify-center text-emerald-500 shadow-sm animate-bounce">
                         <CheckCircle2 size={48} />
                     </div>
                     <div className="space-y-4">
-                        <h2 className="text-4xl font-black text-white uppercase tracking-tighter leading-none">Identity <br /> Established.</h2>
-                        <p className="text-slate-400 font-medium italic text-lg leading-relaxed">
+                        <h2 className="text-4xl font-black text-foreground uppercase tracking-tighter leading-none">Identity <br /> Established.</h2>
+                        <p className="text-slate-500 font-medium italic text-lg leading-relaxed">
                             &quot;The cellar is now open for your tactical discovery. Welcome to the elite grid.&quot;
                         </p>
                     </div>
                     <Button
                         onClick={() => router.push('/')}
-                        className="w-full h-16 rounded-2xl bg-white text-slate-900 font-black uppercase text-xs tracking-widest shadow-2xl hover:bg-primary hover:text-white transition-all"
+                        className="w-full h-16 rounded-2xl bg-primary text-white font-black uppercase text-xs tracking-widest shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
                     >
                         Enter The Bar
                     </Button>
                 </div>
-                <Zap size={200} className="absolute -bottom-20 -right-20 text-white/5 rotate-12" />
+                <Zap size={200} className="absolute -bottom-20 -right-20 text-slate-50 rotate-12" />
             </div>
         );
     }

@@ -71,24 +71,24 @@ export default function InstallAppWidget() {
 
     return (
         <div className="fixed bottom-24 left-6 right-6 lg:left-10 lg:right-auto lg:w-96 z-[150] animate-in slide-in-from-left-10 duration-700">
-            <Card className="p-8 rounded-[2.5rem] bg-slate-900 text-white border-none shadow-2xl relative overflow-hidden group text-left">
+            <Card className="p-8 rounded-[2.5rem] bg-white border border-slate-100 shadow-2xl relative overflow-hidden group text-left">
                 <div className="relative z-10 space-y-6">
                     <header className="flex justify-between items-start">
                         <div className="flex items-center gap-4">
-                            <div className="h-12 w-12 rounded-2xl bg-primary/20 flex items-center justify-center text-primary shadow-inner">
+                            <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-inner">
                                 <Smartphone size={24} />
                             </div>
                             <div>
-                                <h3 className="text-xl font-black uppercase tracking-tighter text-white leading-none font-serif">Online Bar App</h3>
-                                <p className="text-[9px] font-black text-primary/60 uppercase tracking-widest mt-1">Mobile Access Protocol</p>
+                                <h3 className="text-xl font-black uppercase tracking-tighter text-foreground leading-none font-serif">Online Bar App</h3>
+                                <p className="text-[9px] font-black text-primary uppercase tracking-widest mt-1">Mobile Access Protocol</p>
                             </div>
                         </div>
-                        <button onClick={handleDismiss} className="text-white/20 hover:text-white transition-colors">
+                        <button onClick={handleDismiss} className="text-slate-300 hover:text-rose-500 transition-colors">
                             <X size={20} />
                         </button>
                     </header>
 
-                    <p className="text-sm font-medium italic text-white/60 leading-relaxed">
+                    <p className="text-sm font-medium italic text-slate-500 leading-relaxed">
                         &quot;Install the Online Bar App to your home screen for instant access to the cellar and real-time social buzz.&quot;
                     </p>
 
@@ -100,9 +100,9 @@ export default function InstallAppWidget() {
                             <Download size={16} /> Install Web App
                         </Button>
                         <div className="flex items-center justify-center gap-4 py-2 opacity-30">
-                            <div className="h-px flex-1 bg-white/20" />
-                            <span className="text-[7px] font-black uppercase tracking-widest">PWA Secure</span>
-                            <div className="h-px flex-1 bg-white/20" />
+                            <div className="h-px flex-1 bg-slate-200" />
+                            <span className="text-[7px] font-black uppercase tracking-widest text-slate-400">PWA Secure</span>
+                            <div className="h-px flex-1 bg-slate-200" />
                         </div>
                     </div>
                 </div>

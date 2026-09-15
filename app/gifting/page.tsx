@@ -200,7 +200,7 @@ export default function GiftingHub() {
                                     <Button
                                         disabled={!selectedBottle}
                                         onClick={() => setStep(3)}
-                                        className="h-16 px-12 rounded-2xl bg-slate-900 text-white font-black uppercase text-xs tracking-widest shadow-2xl active:scale-95 transition-all"
+                                        className="h-16 px-12 rounded-2xl bg-primary text-white font-black uppercase text-xs tracking-widest shadow-2xl shadow-primary/20 active:scale-95 transition-all"
                                     >
                                         Add Pairing & Note <ChevronRight className="ml-2 h-5 w-5" />
                                     </Button>
@@ -270,42 +270,41 @@ export default function GiftingHub() {
 
                     </div>
 
-                    {/* RIGHT: GIFT VISUALIZER */}
                     <div className="lg:col-span-4 space-y-8">
-                        <Card className="p-10 rounded-[3.5rem] bg-slate-900 text-white space-y-10 relative overflow-hidden shadow-2xl">
+                        <Card className="p-10 rounded-[3.5rem] bg-white border border-slate-100 shadow-sm space-y-10 relative overflow-hidden group hover:border-primary/20 transition-all">
                             <div className="relative z-10 space-y-8 text-left">
                                 <div className="flex items-center gap-4">
-                                    <div className="h-12 w-12 rounded-2xl bg-white/10 flex items-center justify-center backdrop-blur-md border border-white/20"><ShoppingBag size={24} className="text-primary" /></div>
+                                    <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/10"><ShoppingBag size={24} className="text-primary" /></div>
                                     <div>
-                                        <h3 className="text-2xl font-black uppercase tracking-tighter leading-none">Your Package</h3>
+                                        <h3 className="text-2xl font-black uppercase tracking-tighter leading-none text-foreground">Your Package</h3>
                                         <p className="text-[9px] font-black uppercase text-slate-400 tracking-widest mt-1">Live Manifest</p>
                                     </div>
                                 </div>
 
                                 <div className="space-y-4">
                                     {selectedBottle ? (
-                                        <div className="p-4 bg-white/5 rounded-2xl border border-white/10 flex items-center gap-4 animate-in zoom-in-95">
-                                            <div className="h-12 w-12 rounded-xl bg-white p-2 relative overflow-hidden shadow-lg">
+                                        <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex items-center gap-4 animate-in zoom-in-95">
+                                            <div className="h-12 w-12 rounded-xl bg-white p-2 relative overflow-hidden shadow-sm">
                                                 <Image src={selectedBottle.image_url || '/placeholder.jpg'} alt="" fill className="object-contain p-1" />
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <p className="text-[10px] font-black uppercase text-primary leading-none mb-1">Elite Node</p>
-                                                <p className="text-xs font-black uppercase truncate">{selectedBottle.name}</p>
+                                                <p className="text-xs font-black uppercase truncate text-foreground">{selectedBottle.name}</p>
                                             </div>
                                         </div>
                                     ) : (
-                                        <div className="p-8 border-2 border-dashed border-white/10 rounded-2xl text-center opacity-30">
-                                            <Wine size={32} className="mx-auto mb-2" />
-                                            <p className="text-[9px] font-black uppercase tracking-widest">Awaiting Bottle Node</p>
+                                        <div className="p-8 border-2 border-dashed border-slate-100 rounded-2xl text-center opacity-30">
+                                            <Wine size={32} className="mx-auto mb-2 text-slate-300" />
+                                            <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">Awaiting Bottle Node</p>
                                         </div>
                                     )}
 
                                     {selectedSnacks.length > 0 && (
-                                        <div className="p-4 bg-white/5 rounded-2xl border border-white/10 space-y-3">
-                                            <p className="text-[9px] font-black uppercase text-slate-500 tracking-widest px-1">Pairings Added</p>
+                                        <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 space-y-3">
+                                            <p className="text-[9px] font-black uppercase text-slate-400 tracking-widest px-1">Pairings Added</p>
                                             {selectedSnacks.map(s => (
                                                 <div key={s.id} className="flex justify-between items-center text-[10px] font-black uppercase">
-                                                    <span className="text-white/60 truncate max-w-[150px]">{s.name}</span>
+                                                    <span className="text-slate-600 truncate max-w-[150px]">{s.name}</span>
                                                     <span className="text-primary">{formatPrice(s.price)}</span>
                                                 </div>
                                             ))}
@@ -313,22 +312,22 @@ export default function GiftingHub() {
                                     )}
 
                                     {personalNote && (
-                                        <div className="p-5 bg-white/5 rounded-2xl border border-white/10 relative">
-                                            <p className="text-[8px] font-black uppercase text-slate-500 mb-2">Message Payload</p>
+                                        <div className="p-5 bg-primary/5 rounded-2xl border border-primary/10 relative">
+                                            <p className="text-[8px] font-black uppercase text-primary/60 mb-2">Message Payload</p>
                                             <p className="text-[11px] font-medium italic text-primary leading-relaxed">&quot;{personalNote}&quot;</p>
-                                            <Zap size={24} className="absolute -bottom-2 -right-2 text-white/5 rotate-12" />
+                                            <Zap size={24} className="absolute -bottom-2 -right-2 text-primary/5 rotate-12" />
                                         </div>
                                     )}
                                 </div>
 
-                                <div className="pt-8 border-t border-white/10 flex justify-between items-end">
+                                <div className="pt-8 border-t border-slate-100 flex justify-between items-end">
                                     <div>
-                                        <p className="text-[8px] font-black uppercase text-slate-500 tracking-widest mb-1">Package Total</p>
-                                        <p className="text-3xl font-black">
+                                        <p className="text-[8px] font-black uppercase text-slate-400 tracking-widest mb-1">Package Total</p>
+                                        <p className="text-3xl font-black text-foreground">
                                             {formatPrice((selectedBottle?.price || 0) + selectedSnacks.reduce((s, x) => s + x.price, 0))}
                                         </p>
                                     </div>
-                                    <CheckCircle2 size={32} className={cn("transition-all duration-500", selectedBottle ? "text-emerald-500 scale-110" : "text-white/10")} />
+                                    <CheckCircle2 size={32} className={cn("transition-all duration-500", selectedBottle ? "text-emerald-500 scale-110" : "text-slate-200")} />
                                 </div>
                             </div>
                             <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-br from-primary/5 via-transparent to-transparent pointer-events-none opacity-50"></div>

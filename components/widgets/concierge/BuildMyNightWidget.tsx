@@ -175,7 +175,7 @@ export default function BuildMyNightWidget() {
                                 <Button
                                     onClick={handleGenerate}
                                     disabled={loading || !budget}
-                                    className="w-full h-18 rounded-[2rem] bg-slate-900 text-white font-black uppercase text-xs tracking-[0.3em] shadow-xl active:scale-95 transition-all"
+                                    className="w-full h-18 rounded-[2rem] bg-primary text-white font-black uppercase text-xs tracking-[0.3em] shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
                                 >
                                     {loading ? <Loader2 className="animate-spin" /> : "Establish Experience Protocol"}
                                 </Button>

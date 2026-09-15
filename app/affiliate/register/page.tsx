@@ -188,15 +188,15 @@ export default function AffiliateRegistration() {
                             </Button>
                         </div>
 
-                        <div className="p-8 bg-slate-900 rounded-[2.5rem] text-white space-y-6 relative overflow-hidden shadow-2xl">
+                        <div className="p-8 bg-slate-50 border border-slate-100 rounded-[2.5rem] text-foreground space-y-6 relative overflow-hidden shadow-sm">
                             <div className="relative z-10 flex items-center gap-4">
-                                <div className="h-10 w-10 rounded-xl bg-white/10 flex items-center justify-center backdrop-blur-md border border-white/20 shadow-sm"><ShieldCheck size={20} className="text-primary" /></div>
+                                <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shadow-sm border border-primary/20"><ShieldCheck size={20} /></div>
                                 <h3 className="text-lg font-black uppercase tracking-tight">Partner Integrity</h3>
                             </div>
-                            <p className="relative z-10 text-[10px] text-slate-400 font-medium leading-relaxed italic">
+                            <p className="relative z-10 text-[10px] text-slate-500 font-medium leading-relaxed italic">
                                 &quot;All applications undergo manual compliance review to ensure alignment with premium beverage marketing standards.&quot;
                             </p>
-                            <Rocket className="absolute -bottom-6 -right-6 h-32 w-32 text-white/5 -rotate-12" />
+                            <Rocket className="absolute -bottom-6 -right-6 h-32 w-32 text-primary/5 -rotate-12" />
                         </div>
                     </div>
                 </form>

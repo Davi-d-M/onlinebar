@@ -88,7 +88,7 @@ export default function NeuralHero() {
     return (
         <section className={cn(
             "relative min-h-[85vh] flex items-center overflow-hidden px-6 sm:px-12 lg:px-20 py-20 transition-colors duration-1000",
-            persona?.vibe === 'ELITE' ? "bg-slate-900 text-white" : "bg-white text-foreground"
+            persona?.vibe === 'ELITE' ? "bg-slate-50 text-foreground" : "bg-white text-foreground"
         )}>
             {/* Neural Background Noise */}
             <div className="absolute inset-0 bg-[url('/grid-noise.png')] opacity-[0.03] pointer-events-none" />
@@ -102,7 +102,7 @@ export default function NeuralHero() {
                 <div className="space-y-10 animate-in fade-in slide-in-from-left-10 duration-1000">
                     <div className={cn(
                         "inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full border shadow-2xl",
-                        persona?.vibe === 'ELITE' ? "bg-white/5 text-primary border-white/10" : "bg-slate-900 text-primary border-white/5"
+                        persona?.vibe === 'ELITE' ? "bg-white text-primary border-slate-100" : "bg-primary/10 text-primary border-primary/20"
                     )}>
                         <Zap className="h-4 w-4 fill-current animate-bounce" />
                         <span className="text-[10px] font-black uppercase tracking-[0.3em]">{config.badge}</span>
@@ -121,7 +121,7 @@ export default function NeuralHero() {
 
                     <p className={cn(
                         "text-xl font-medium max-w-lg leading-relaxed italic",
-                        persona?.vibe === 'ELITE' ? "text-slate-400" : "text-slate-500"
+                        persona?.vibe === 'ELITE' ? "text-slate-500" : "text-slate-500"
                     )}>
                         &quot;{config.subtitle}&quot;
                     </p>
@@ -135,7 +135,7 @@ export default function NeuralHero() {
                         <Link href="/gifting">
                             <Button variant="outline" className={cn(
                                 "h-20 px-10 rounded-[2rem] border-2 font-black uppercase tracking-widest text-[10px] transition-all active:scale-95",
-                                persona?.vibe === 'ELITE' ? "border-white/10 bg-white/5 text-white hover:bg-white/10" : "border-slate-100 bg-white text-slate-400 hover:bg-slate-50"
+                                persona?.vibe === 'ELITE' ? "border-slate-200 bg-white text-slate-400 hover:bg-slate-50" : "border-slate-100 bg-white text-slate-400 hover:bg-slate-50"
                             )}>
                                 <ShoppingBag className="mr-2 h-4 w-4" /> Send as Gift
                             </Button>
@@ -146,7 +146,7 @@ export default function NeuralHero() {
                 <div className="relative animate-in zoom-in-95 duration-1000 delay-300">
                     <div className={cn(
                         "aspect-square rounded-[5rem] border flex items-center justify-center p-16 shadow-inner relative group overflow-hidden",
-                        persona?.vibe === 'ELITE' ? "bg-white/5 border-white/5" : "bg-slate-50 border-slate-100"
+                        persona?.vibe === 'ELITE' ? "bg-white border-slate-100" : "bg-slate-50 border-slate-100"
                     )}>
                         <div className="relative z-10 w-full h-full flex items-center justify-center opacity-10">
                              <config.icon size={200} className="text-primary animate-pulse" />
@@ -155,7 +155,7 @@ export default function NeuralHero() {
                         {/* Floating Interaction Node */}
                         <Card className={cn(
                             "absolute bottom-12 right-12 p-8 rounded-[2.5rem] shadow-2xl border-none animate-in slide-in-from-bottom-4 duration-700 delay-1000",
-                            persona?.vibe === 'ELITE' ? "bg-slate-800 text-white" : "bg-white text-foreground"
+                            persona?.vibe === 'ELITE' ? "bg-white text-foreground" : "bg-white text-foreground"
                         )}>
                             <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-1 text-left">Sector Status</p>
                             <h4 className="text-xl font-black text-foreground uppercase tracking-tight text-left">Trending Tonight</h4>

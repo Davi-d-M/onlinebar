@@ -197,7 +197,7 @@ export default function SupplierScorecards() {
                                 </div>
 
                                 <div className="flex gap-2">
-                                    <Button className="flex-1 h-14 rounded-2xl bg-slate-900 text-white font-black uppercase text-[10px] tracking-widest shadow-xl active:scale-95 transition-all">Order Stock</Button>
+                                    <Button className="flex-1 h-14 rounded-2xl bg-primary text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-primary/20 active:scale-95 transition-all">Order Stock</Button>
                                     <Button variant="outline" className="flex-1 h-14 rounded-2xl border-slate-100 font-black uppercase text-[10px] hover:bg-slate-50">Analytics</Button>
                                 </div>
                             </div>

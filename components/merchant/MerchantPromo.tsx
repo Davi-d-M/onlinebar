@@ -104,7 +104,7 @@ export default function MerchantPromo() {
                 <Button
                     onClick={handleLaunch}
                     disabled={loading || !selectedProduct}
-                    className="w-full h-18 rounded-[2rem] bg-slate-900 text-white font-black uppercase text-xs tracking-[0.2em] shadow-2xl active:scale-95 transition-all flex items-center justify-center gap-4 group/btn"
+                    className="w-full h-18 rounded-[2rem] bg-primary text-white font-black uppercase text-xs tracking-[0.2em] shadow-xl shadow-primary/20 active:scale-95 transition-all flex items-center justify-center gap-4 group/btn"
                 >
                     {loading ? <Loader2 className="animate-spin" /> : success ? <><CheckCircle2 /> Campaign Live</> : <><Zap /> Ignite Growth Sequence</>}
                 </Button>

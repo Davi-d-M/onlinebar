@@ -311,7 +311,7 @@ export default function StaffProfilePage() {
                                  <h3 className="text-xl font-black uppercase tracking-tighter">Security Node</h3>
                              </div>
                              <div className="space-y-4">
-                                 <Button className="w-full h-14 rounded-2xl bg-slate-900 text-white font-black uppercase text-[10px] tracking-widest active:scale-95 transition-all shadow-xl shadow-primary/20">Reset Security PIN</Button>
+                                 <Button className="w-full h-14 rounded-2xl bg-primary text-white font-black uppercase text-[10px] tracking-widest active:scale-95 transition-all shadow-xl shadow-primary/20">Reset Security PIN</Button>
                                  <Button variant="outline" className="w-full h-14 rounded-2xl border-rose-100 text-rose-500 font-black uppercase text-[10px] tracking-widest hover:bg-rose-50">Revoke Session</Button>
                              </div>
                          </Card>

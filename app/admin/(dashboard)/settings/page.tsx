@@ -990,11 +990,11 @@ export default function AdminSettingsPage() {
 
                                             <div className="pt-4 border-t border-slate-50 flex gap-2">
                                                 {node.type === 'OAuth' ? (
-                                                    <Button className="flex-1 h-12 rounded-xl bg-slate-900 text-white font-black uppercase text-[9px] tracking-widest shadow-xl active:scale-95 transition-all">
+                                                    <Button className="flex-1 h-12 rounded-xl bg-primary text-white font-black uppercase text-[9px] tracking-widest shadow-lg shadow-primary/20 active:scale-95 transition-all">
                                                         Connect Account
                                                     </Button>
                                                 ) : (
-                                                    <Button onClick={() => setActiveTab('advanced')} className="flex-1 h-12 rounded-xl bg-slate-900 text-white font-black uppercase text-[9px] tracking-widest shadow-xl active:scale-95 transition-all">
+                                                    <Button onClick={() => setActiveTab('advanced')} className="flex-1 h-12 rounded-xl bg-primary text-white font-black uppercase text-[9px] tracking-widest shadow-lg shadow-primary/20 active:scale-95 transition-all">
                                                         Configure Keys
                                                     </Button>
                                                 )}

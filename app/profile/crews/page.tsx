@@ -64,7 +64,7 @@ export default function CrewsPage() {
                             Join forces with other patrons. Contribute XP, climb the rankings, and unlock team-only rewards.
                         </p>
                     </div>
-                    <Button className="h-14 px-8 rounded-2xl bg-slate-900 text-white font-black uppercase text-xs tracking-widest shadow-xl active:scale-95 transition-all">
+                    <Button className="h-14 px-8 rounded-2xl bg-primary text-white font-black uppercase text-xs tracking-widest shadow-xl shadow-primary/20 active:scale-95 transition-all">
                         <Plus size={18} className="mr-2" /> Start My Crew
                     </Button>
                 </header>
@@ -73,7 +73,7 @@ export default function CrewsPage() {
                 {myCrew ? (
                     <section className="space-y-6">
                         <h2 className="text-xl font-black uppercase tracking-tighter text-foreground">Your Active Crew</h2>
-                        <Card className="p-10 rounded-[3.5rem] bg-gradient-to-br from-indigo-600 to-slate-900 text-white border-none shadow-2xl relative overflow-hidden group">
+                        <Card className="p-10 rounded-[3.5rem] bg-indigo-600 text-white border-none shadow-2xl relative overflow-hidden group">
                             <div className="relative z-10 grid md:grid-cols-2 gap-10 items-center">
                                 <div className="flex items-center gap-8">
                                     <div className="h-24 w-24 rounded-[2rem] bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-4xl font-black shadow-inner">
@@ -99,7 +99,7 @@ export default function CrewsPage() {
                                         </div>
                                     </div>
                                     <Link href={`/profile/crews/${myCrew.id}`}>
-                                        <Button className="w-full h-14 rounded-2xl bg-white text-slate-900 font-black uppercase text-[10px] tracking-widest hover:bg-primary hover:text-white transition-all">
+                                        <Button className="w-full h-14 rounded-2xl bg-white text-indigo-600 font-black uppercase text-[10px] tracking-widest hover:bg-primary hover:text-white transition-all shadow-lg">
                                             Enter Crew Command
                                         </Button>
                                     </Link>
@@ -117,7 +117,7 @@ export default function CrewsPage() {
                         </div>
                         <div className="flex justify-center gap-4">
                             <Button variant="outline" className="h-12 rounded-xl border-slate-200 font-black uppercase text-[10px]">Browse Discovery</Button>
-                            <Button className="h-12 rounded-xl bg-slate-900 text-white font-black uppercase text-[10px]">Create New</Button>
+                            <Button className="h-12 rounded-xl bg-primary text-white font-black uppercase text-[10px] shadow-lg shadow-primary/20">Create New</Button>
                         </div>
                     </Card>
                 )}

@@ -170,7 +170,7 @@ export default function GrowthCalendar() {
                 </div>
 
                 <div className="lg:col-span-3 space-y-8">
-                    <Card className="p-8 rounded-[3rem] bg-slate-900 text-white space-y-8 relative overflow-hidden shadow-2xl">
+                    <Card className="p-8 rounded-[3rem] bg-white border border-slate-100 shadow-sm space-y-8 relative overflow-hidden group hover:border-primary/20 transition-all">
                         <div className="relative z-10 space-y-6 text-left">
                             <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Queue Performance</h3>
                             <div className="space-y-6">
@@ -184,11 +184,12 @@ export default function GrowthCalendar() {
                                             <s.icon size={14} className={s.color} />
                                             <span className="text-[10px] font-black uppercase text-slate-400">{s.label}</span>
                                         </div>
-                                        <span className="text-xl font-black">{s.val}</span>
+                                        <span className="text-xl font-black text-foreground">{s.val}</span>
                                     </div>
                                 ))}
                             </div>
                         </div>
+                        <Zap className="absolute -bottom-10 -left-10 h-48 w-48 text-primary/5 rotate-12" />
                     </Card>
 
                     <div className="p-8 rounded-[3rem] bg-white border border-slate-100 shadow-sm space-y-6 text-left">

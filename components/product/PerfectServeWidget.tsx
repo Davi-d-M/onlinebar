@@ -74,16 +74,16 @@ export default function PerfectServeWidget({ specs }: { specs?: ServeSpecs }) {
     };
 
     return (
-        <Card className="p-10 rounded-[3.5rem] bg-slate-900 text-white border-none shadow-2xl relative overflow-hidden group text-left">
+        <Card className="p-10 rounded-[3.5rem] bg-white border border-slate-100 shadow-sm relative overflow-hidden group text-left">
             <div className="relative z-10 space-y-10">
                 <header className="flex justify-between items-center px-2">
                     <div className="flex items-center gap-4">
-                        <div className="h-12 w-12 rounded-2xl bg-primary/20 flex items-center justify-center text-primary shadow-inner">
+                        <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-inner">
                             <Zap size={24} fill="currentColor" />
                         </div>
                         <div>
-                            <h3 className="text-xl font-black uppercase tracking-tighter text-white font-serif">The Perfect Serve</h3>
-                            <p className="text-[9px] font-black text-primary/60 uppercase tracking-widest mt-1">Mixology Protocol Active</p>
+                            <h3 className="text-xl font-black uppercase tracking-tighter text-foreground font-serif">The Perfect Serve</h3>
+                            <p className="text-[9px] font-black text-primary uppercase tracking-widest mt-1">Mixology Protocol Active</p>
                         </div>
                     </div>
                 </header>
@@ -96,21 +96,21 @@ export default function PerfectServeWidget({ specs }: { specs?: ServeSpecs }) {
                         { label: 'Mixer Hub', val: activeSpecs.mixer || 'Neat / Rocks', icon: GlassWater },
                     ].map((node) => (
                         <div key={node.label} className="space-y-4 text-center sm:text-left">
-                            <div className="h-14 w-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white/40 mx-auto sm:mx-0 group-hover:text-primary transition-colors">
+                            <div className="h-14 w-14 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-300 mx-auto sm:mx-0 group-hover:text-primary transition-colors">
                                 <node.icon size={28} />
                             </div>
                             <div>
-                                <p className="text-[8px] font-black text-white/30 uppercase tracking-widest mb-1">{node.label}</p>
-                                <p className="text-[11px] font-black uppercase text-white truncate">{node.val}</p>
+                                <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">{node.label}</p>
+                                <p className="text-[11px] font-black uppercase text-foreground truncate">{node.val}</p>
                             </div>
                         </div>
                     ))}
                 </div>
 
-                <div className="pt-8 border-t border-white/10 space-y-6">
+                <div className="pt-8 border-t border-slate-100 space-y-6">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                            <span className="text-[10px] font-black uppercase tracking-widest text-white/40">Complete the night</span>
+                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Complete the night</span>
                         </div>
                         {mixerProduct && (
                             <span className="text-[10px] font-black text-primary uppercase">{formatPrice(mixerProduct.price)}</span>
@@ -120,7 +120,7 @@ export default function PerfectServeWidget({ specs }: { specs?: ServeSpecs }) {
                     <Button
                         onClick={handleAddEntireServe}
                         disabled={!activeSpecs.mixer}
-                        className="w-full h-18 rounded-[2rem] bg-white text-black font-black uppercase text-xs tracking-[0.2em] shadow-xl hover:bg-primary hover:text-white transition-all active:scale-95 flex items-center justify-center gap-4 group/btn"
+                        className="w-full h-18 rounded-[2rem] bg-primary text-white font-black uppercase text-xs tracking-[0.2em] shadow-xl shadow-primary/20 hover:scale-105 transition-all active:scale-95 flex items-center justify-center gap-4 group/btn"
                     >
                         <Plus size={20} /> Add Perfect Mixer
                     </Button>
@@ -128,7 +128,7 @@ export default function PerfectServeWidget({ specs }: { specs?: ServeSpecs }) {
             </div>
 
             {/* Background Graphic */}
-            <GlassWater className="absolute -bottom-10 -right-10 h-64 w-64 text-white/5 rotate-12 -z-0" />
+            <GlassWater className="absolute -bottom-10 -right-10 h-64 w-64 text-slate-50 rotate-12 -z-0" />
         </Card>
     );
 }

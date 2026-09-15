@@ -223,11 +223,11 @@ export default function PopupManager() {
                         </Card>
                     ) : (
                         <div className="space-y-8">
-                            <Card className="p-10 rounded-[3rem] bg-slate-900 text-white space-y-6 relative overflow-hidden shadow-2xl">
+                            <Card className="p-10 rounded-[3rem] bg-white border border-slate-100 shadow-sm space-y-6 relative overflow-hidden group hover:border-primary/20 transition-all">
                                 <div className="relative z-10 space-y-4 text-left">
                                     <Zap className="h-10 w-10 text-primary" />
-                                    <h3 className="text-2xl font-black uppercase tracking-tighter leading-none">Intelligence Rule</h3>
-                                    <p className="text-sm font-medium text-slate-400 italic leading-relaxed">
+                                    <h3 className="text-2xl font-black uppercase tracking-tighter leading-none text-foreground">Intelligence Rule</h3>
+                                    <p className="text-sm font-medium text-slate-500 italic leading-relaxed">
                                         &quot;Transactional alerts are deterministic. Marketing popups should be limited to 1 per session to maintain peak hospitality UX.&quot;
                                     </p>
                                 </div>
@@ -260,7 +260,7 @@ export default function PopupManager() {
 
             {/* PREVIEW OVERLAY */}
             {preview && editing && (
-                <div className="fixed inset-0 z-[3000] flex items-center justify-center p-6 bg-slate-900/40 backdrop-blur-md animate-in fade-in duration-300">
+                <div className="fixed inset-0 z-[3000] flex items-center justify-center p-6 bg-slate-900/10 backdrop-blur-md animate-in fade-in duration-300">
                     <div className="relative w-full max-w-lg">
                         <ExperienceToast
                             id="preview"
@@ -271,7 +271,7 @@ export default function PopupManager() {
                             duration={editing.duration}
                             onClose={() => setPreview(false)}
                         />
-                        <p className="mt-8 text-[10px] font-black uppercase tracking-[0.4em] text-white text-center animate-pulse">Live Visual Inspection Node</p>
+                        <p className="mt-8 text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 text-center animate-pulse">Live Visual Inspection Node</p>
                     </div>
                 </div>
             )}

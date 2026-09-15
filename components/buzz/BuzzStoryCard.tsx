@@ -32,7 +32,7 @@ export default function BuzzStoryCard({ story }: { story: BuzzStory }) {
     const cover = story.media[0];
 
     return (
-        <div className="relative aspect-[9/16] w-full max-w-sm rounded-[3rem] bg-slate-900 overflow-hidden group shadow-2xl animate-in zoom-in-95 duration-500">
+        <div className="relative aspect-[9/16] w-full max-w-sm rounded-[3rem] bg-white border border-slate-100 overflow-hidden group shadow-2xl animate-in zoom-in-95 duration-500">
 
             {/* Background Media */}
             <div className="absolute inset-0">

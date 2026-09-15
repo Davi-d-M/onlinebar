@@ -393,19 +393,19 @@ export default function AdminStaffPage() {
               </Card>
 
               {/* SECURITY AUDIT SNAPSHOT */}
-              <Card className="rounded-[3rem] border border-slate-100 p-10 bg-indigo-600 text-white relative overflow-hidden shadow-2xl">
-                  <div className="relative z-10 space-y-6">
-                      <div className="flex items-center gap-4">
-                          <div className="h-12 w-12 rounded-2xl bg-white/20 flex items-center justify-center backdrop-blur-md border border-white/20 shadow-sm"><ShieldAlert size={28} /></div>
+              <Card className="rounded-[3rem] border border-slate-100 p-10 bg-slate-50 text-foreground relative overflow-hidden shadow-sm">
+                  <div className="relative z-10 space-y-6 text-left">
+                      <div className="flex items-center gap-4 text-left">
+                          <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-sm border border-primary/10"><ShieldAlert size={28} /></div>
                           <h3 className="text-xl font-black uppercase tracking-tighter">Security Protocol 12-A</h3>
                       </div>
-                      <p className="text-sm font-medium opacity-80 leading-relaxed italic">&quot;All administrative actions are recorded in an immutable ledger. Multi-factor authentication is enforced for all Level 4 (VIP) operations and above.&quot;</p>
-                      <div className="pt-4 flex justify-between items-center border-t border-white/10">
-                          <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Status: Active Monitor</span>
-                          <Button variant="ghost" className="text-[10px] font-black uppercase text-white hover:bg-white/10 p-0 h-auto">View Audit Timeline &rarr;</Button>
+                      <p className="text-sm font-medium text-slate-500 leading-relaxed italic">&quot;All administrative actions are recorded in an immutable ledger. Multi-factor authentication is enforced for all Level 4 (VIP) operations and above.&quot;</p>
+                      <div className="pt-4 flex justify-between items-center border-t border-slate-200 text-left">
+                          <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Status: Active Monitor</span>
+                          <Button variant="ghost" className="text-[10px] font-black uppercase text-primary hover:bg-primary/5 p-0 h-auto">View Audit Timeline &rarr;</Button>
                       </div>
                   </div>
-                  <Database className="absolute -bottom-10 -right-10 h-64 w-64 text-white/5 rotate-12 -z-0" />
+                  <Database className="absolute -bottom-10 -right-10 h-64 w-64 text-primary/5 rotate-12 -z-0" />
               </Card>
           </div>
       </div>

@@ -88,14 +88,14 @@ export default function ProductDNAWidget({ dna }: { dna?: DNAData }) {
                     ))}
                 </div>
 
-                <div className="p-6 bg-slate-900 text-white rounded-3xl relative overflow-hidden">
+                <div className="p-6 bg-slate-50 border border-slate-100 rounded-3xl relative overflow-hidden">
                     <div className="relative z-10 space-y-2">
                         <p className="text-[9px] font-black uppercase tracking-[0.3em] text-primary">Master Blender Note</p>
-                        <p className="text-xs font-medium italic opacity-70 leading-relaxed">
+                        <p className="text-xs font-medium italic text-slate-500 leading-relaxed">
                             &quot;A sophisticated profile with a heavy body and lingering smoke finish. Recommend neat or with a single clear ice block.&quot;
                         </p>
                     </div>
-                    <Zap size={48} className="absolute -bottom-4 -right-4 text-white/5 rotate-12" />
+                    <Zap size={48} className="absolute -bottom-4 -right-4 text-primary/5 rotate-12" />
                 </div>
             </div>
             {/* Subtle background glow */}

@@ -13,7 +13,8 @@ import {
     Camera as Instagram,
     MessageCircle,
     Music,
-    ArrowRight
+    ArrowRight,
+    Zap
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -138,7 +139,7 @@ export default function ContentCommandStudio() {
                         <Clock size={14} className="text-primary" />
                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Scheduled Actions active</span>
                     </div>
-                    <Button onClick={() => { setStep(1); setTitle(''); setDesc(''); }} className="rounded-xl h-12 px-8 bg-slate-900 text-white font-black uppercase text-[10px] tracking-widest shadow-xl hover:scale-105 active:scale-95 transition-all">
+                    <Button onClick={() => { setStep(1); setTitle(''); setDesc(''); }} className="rounded-xl h-12 px-8 bg-primary text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all">
                         <Plus className="h-4 w-4 mr-2" /> New Master Campaign
                     </Button>
                 </div>
@@ -249,7 +250,7 @@ export default function ContentCommandStudio() {
                                 <Button
                                     onClick={handleFinalLaunch}
                                     disabled={loading}
-                                    className="h-20 px-20 rounded-[2rem] bg-slate-900 text-white font-black uppercase text-xs tracking-[0.3em] shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center gap-4"
+                                    className="h-20 px-20 rounded-[2rem] bg-primary text-white font-black uppercase text-xs tracking-[0.3em] shadow-2xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-4"
                                 >
                                     {loading ? <Loader2 className="animate-spin" /> : <><Rocket size={24} /> Initiate Launch Sequence</>}
                                 </Button>
@@ -259,11 +260,11 @@ export default function ContentCommandStudio() {
                 </div>
 
                 <div className="lg:col-span-4 space-y-8">
-                    <Card className="p-10 rounded-[3rem] bg-slate-900 text-white space-y-8 relative overflow-hidden shadow-2xl">
+                    <Card className="p-10 rounded-[3rem] bg-white border border-slate-100 shadow-sm space-y-8 relative overflow-hidden group hover:border-primary/20 transition-all">
                         <div className="relative z-10 space-y-8 text-left">
                             <div className="flex items-center gap-4">
-                                <div className="h-12 w-12 rounded-2xl bg-white/10 flex items-center justify-center backdrop-blur-md border border-white/20"><ShieldAlert size={24} className="text-primary" /></div>
-                                <h3 className="text-xl font-black uppercase tracking-tighter">Compliance Engine</h3>
+                                <div className="h-12 w-12 rounded-2xl bg-rose-50 flex items-center justify-center border border-rose-100"><ShieldAlert size={24} className="text-rose-500" /></div>
+                                <h3 className="text-xl font-black uppercase tracking-tighter text-foreground">Compliance Engine</h3>
                             </div>
 
                             <div className="space-y-4">
@@ -273,13 +274,14 @@ export default function ContentCommandStudio() {
                                     { label: 'Misleading Quality Claims', status: 'PASS', color: 'text-emerald-500' },
                                     { label: 'Platform Policy Review', status: 'PENDING', color: 'text-amber-500' },
                                 ].map(rule => (
-                                    <div key={rule.label} className="flex justify-between items-center py-3 border-b border-white/5">
+                                    <div key={rule.label} className="flex justify-between items-center py-3 border-b border-slate-50">
                                         <span className="text-[10px] font-black uppercase text-slate-400">{rule.label}</span>
                                         <span className={cn("text-[9px] font-black uppercase", rule.color)}>{rule.status}</span>
                                     </div>
                                 ))}
                             </div>
                         </div>
+                        <Zap size={64} className="absolute -bottom-6 -left-6 text-primary/5 rotate-12" />
                     </Card>
 
                     <div className="p-8 rounded-[3rem] bg-white border border-slate-100 shadow-sm space-y-6 text-left group">

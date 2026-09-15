@@ -157,7 +157,7 @@ export default function IntelligenceCommand() {
 
                         <div className="pt-6 mt-6 border-t border-slate-50">
                             <Link href={insight.href}>
-                                <Button className="w-full h-12 rounded-xl bg-slate-900 text-white font-black uppercase text-[9px] tracking-widest group-hover:bg-primary transition-colors active:scale-95">
+                                <Button className="w-full h-12 rounded-xl bg-primary text-white font-black uppercase text-[9px] tracking-widest transition-all active:scale-95 shadow-lg shadow-primary/20">
                                     {insight.action_label} <ChevronRight className="ml-2 h-3 w-3" />
                                 </Button>
                             </Link>

@@ -168,12 +168,12 @@ export default function MobileWidgetCommand() {
                 <div className="lg:col-span-4">
                     {/* WIDGET PREVIEW (PHONE FRAME) */}
                     <div className="sticky top-10 space-y-8">
-                        <div className="relative mx-auto w-[280px] h-[580px] bg-slate-900 rounded-[3rem] border-[8px] border-slate-800 shadow-2xl overflow-hidden p-4">
-                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-slate-800 rounded-b-2xl z-20"></div>
+                        <div className="relative mx-auto w-[280px] h-[580px] bg-slate-50 rounded-[3rem] border-[8px] border-slate-200 shadow-2xl overflow-hidden p-4">
+                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-slate-200 rounded-b-2xl z-20"></div>
 
                             {/* App Icon Mockup */}
                             <div className="mt-20 flex flex-wrap gap-6 justify-center opacity-40">
-                                {[1,2,3,4,5,6].map(i => <div key={i} className="h-12 w-12 rounded-xl bg-slate-700" />)}
+                                {[1,2,3,4,5,6].map(i => <div key={i} className="h-12 w-12 rounded-xl bg-slate-200" />)}
                             </div>
 
                             {/* THE REAL WIDGET PREVIEW */}
@@ -215,7 +215,7 @@ export default function MobileWidgetCommand() {
 
             {/* EDITOR SLIDE-OVER */}
             {editing && (
-                <div className="fixed inset-0 z-[1000] flex items-center justify-end bg-slate-900/40 backdrop-blur-md">
+        <div className="fixed inset-0 z-[1000] flex items-center justify-end bg-slate-900/10 backdrop-blur-md animate-in fade-in duration-300">
                     <Card className="h-full w-full max-w-xl bg-white rounded-l-[4rem] border-none shadow-2xl flex flex-col animate-in slide-in-from-right-full duration-500 overflow-hidden text-left">
                         <div className="p-10 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
                             <div className="flex items-center gap-4">
@@ -358,7 +358,7 @@ export default function MobileWidgetCommand() {
                             <Button
                                 onClick={handleSave}
                                 disabled={loading}
-                                className="flex-[2] h-16 rounded-2xl bg-slate-900 text-white font-black uppercase text-xs tracking-[0.2em] shadow-2xl hover:scale-[1.02] active:scale-95 transition-all"
+                                className="flex-[2] h-16 rounded-2xl bg-primary text-white font-black uppercase text-xs tracking-[0.2em] shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
                             >
                                 {loading ? <Loader2 className="animate-spin mr-2" /> : <><Save size={20} className="mr-2" /> Commit to Terminal</>}
                             </Button>

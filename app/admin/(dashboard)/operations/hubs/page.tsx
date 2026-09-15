@@ -89,6 +89,15 @@ export default function HubsManagement() {
         }
     };
 
+    const handleDeleteHub = async (id: string, name: string) => {
+        if (!supabase || !confirm(`Permanently expel hub "${name}"? This action is absolute.`)) return;
+        try {
+            const { error } = await supabase.from('hubs').delete().eq('id', id);
+            if (error) throw error;
+            fetchData();
+        } catch (err) { console.error(err); }
+    };
+
     const toggleHubStatus = async (id: string, current: boolean) => {
         if (!supabase) return;
         try {
@@ -206,14 +215,14 @@ export default function HubsManagement() {
                 </div>
 
                 <div className="lg:col-span-4 space-y-8">
-                    <Card className="p-10 rounded-[3.5rem] bg-slate-900 text-white space-y-10 relative overflow-hidden shadow-2xl">
+                    <Card className="p-10 rounded-[3.5rem] bg-white border border-slate-100 shadow-sm space-y-10 relative overflow-hidden group">
                         <div className="relative z-10 space-y-8 text-left">
                             <div className="flex items-center gap-4">
-                                <div className="h-12 w-12 rounded-2xl bg-white/10 flex items-center justify-center backdrop-blur-md border border-white/20"><Package size={24} className="text-primary" /></div>
-                                <h3 className="text-2xl font-black uppercase tracking-tighter leading-none">Grid Distribution</h3>
+                                <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-sm border border-primary/20"><Package size={24} className="fill-current" /></div>
+                                <h3 className="text-2xl font-black uppercase tracking-tighter leading-none text-foreground">Grid Distribution</h3>
                             </div>
 
-                            <p className="text-sm font-medium text-slate-400 italic leading-relaxed">
+                            <p className="text-sm font-medium text-slate-500 italic leading-relaxed">
                                 &quot;Online Bar OS automatically routes missions to the nearest operational hub based on the patron&apos;s tactical drop point.&quot;
                             </p>
 
@@ -223,11 +232,11 @@ export default function HubsManagement() {
                                     { label: 'Dispatch Precision', val: '98.2%', color: 'emerald' },
                                     { label: 'Global Inventory', val: '12.4k', color: 'indigo' },
                                 ].map(stat => (
-                                    <div key={stat.label} className="flex justify-between items-center py-3 border-b border-white/5 last:border-0">
+                                    <div key={stat.label} className="flex justify-between items-center py-3 border-b border-slate-50 last:border-0">
                                         <span className="text-[10px] font-black uppercase text-slate-500">{stat.label}</span>
                                         <span className={cn("text-xs font-black",
-                                            stat.color === 'rose' ? 'text-rose-400' :
-                                            stat.color === 'emerald' ? 'text-emerald-400' : 'text-indigo-400'
+                                            stat.color === 'rose' ? 'text-rose-500' :
+                                            stat.color === 'emerald' ? 'text-emerald-500' : 'text-indigo-500'
                                         )}>{stat.val}</span>
                                     </div>
                                 ))}
@@ -243,7 +252,7 @@ export default function HubsManagement() {
 
             {/* EDIT MODAL */}
             {isEditing && editHub && (
-                <div className="fixed inset-0 z-[1000] flex items-center justify-end bg-slate-900/40 backdrop-blur-md">
+        <div className="fixed inset-0 z-[1000] flex items-center justify-end bg-slate-900/10 backdrop-blur-md animate-in fade-in duration-300">
                     <Card className="h-full w-full max-w-xl bg-white rounded-l-[4rem] border-none shadow-2xl flex flex-col animate-in slide-in-from-right-full duration-500 overflow-hidden text-left">
                         <div className="p-10 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
                             <div className="flex items-center gap-4">

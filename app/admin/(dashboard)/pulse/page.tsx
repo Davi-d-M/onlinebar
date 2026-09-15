@@ -229,15 +229,15 @@ export default function PulseControlCenter() {
                         ))}
                     </div>
 
-                    <Card className="p-8 rounded-[3rem] bg-slate-900 text-white space-y-6 relative overflow-hidden shadow-2xl">
-                        <div className="relative z-10 space-y-4">
-                            <ShieldAlert className="h-8 w-8 text-primary" />
-                            <h3 className="text-lg font-black uppercase tracking-tighter leading-none">Content Guard</h3>
+                    <Card className="p-8 rounded-[3rem] bg-white border border-slate-100 shadow-sm space-y-6 relative overflow-hidden group hover:border-primary/20 transition-all">
+                        <div className="relative z-10 space-y-4 text-left">
+                            <ShieldAlert className="h-8 w-8 text-rose-500" />
+                            <h3 className="text-lg font-black uppercase tracking-tighter leading-none text-foreground">Content Guard</h3>
                             <p className="text-[10px] text-slate-400 font-medium italic leading-relaxed">
                                 &quot;All City Pulse moments require Admin authorization before deployment to the grid. Ensure media artifacts are optimized for mobile delivery.&quot;
                             </p>
                         </div>
-                        <Flame className="absolute -bottom-10 -left-10 h-32 w-32 text-primary/10 rotate-12" />
+                        <Flame className="absolute -bottom-10 -left-10 h-32 w-32 text-primary/5 rotate-12" />
                     </Card>
                 </div>
 

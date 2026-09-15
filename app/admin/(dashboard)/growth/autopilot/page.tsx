@@ -140,18 +140,19 @@ export default function AutopilotManagement() {
                 </div>
 
                 <div className="lg:col-span-4 space-y-8">
-                    <Card className="p-10 rounded-[3rem] bg-slate-900 text-white space-y-8 relative overflow-hidden shadow-2xl">
+                    <Card className="p-10 rounded-[3rem] bg-white border border-slate-100 shadow-sm space-y-8 relative overflow-hidden group hover:border-primary/20 transition-all">
                         <div className="relative z-10 space-y-6 text-left">
                             <Zap className="h-10 w-10 text-primary animate-pulse" />
-                            <h3 className="text-2xl font-black uppercase tracking-tighter leading-none">Autopilot Status</h3>
-                            <p className="text-sm font-medium text-slate-400 italic leading-relaxed">
+                            <h3 className="text-2xl font-black uppercase tracking-tighter leading-none text-foreground">Autopilot Status</h3>
+                            <p className="text-sm font-medium text-slate-500 italic leading-relaxed">
                                 &quot;The engine automatically populates the Growth Calendar with drafts every Sunday night. All drafts must be approved by an Admin before final deployment.&quot;
                             </p>
-                            <div className="pt-6 border-t border-white/10 flex justify-between items-center">
+                            <div className="pt-6 border-t border-slate-50 flex justify-between items-center">
                                 <span className="text-[9px] font-black uppercase tracking-widest text-primary">Neural Health</span>
-                                <span className="text-xs font-black uppercase text-emerald-500">Optimal</span>
+                                <span className="text-xs font-black uppercase text-emerald-600">Optimal</span>
                             </div>
                         </div>
+                        <Zap className="absolute -bottom-10 -left-10 h-48 w-48 text-primary/5 rotate-12" />
                     </Card>
 
                     <div className="p-8 rounded-[3rem] bg-white border border-slate-100 shadow-sm space-y-6 text-left group">

@@ -670,7 +670,7 @@ export default function ProfilePage() {
                             <div className="flex gap-2 mt-4 overflow-x-auto no-scrollbar pb-2">
                                 <div className={cn(
                                     "flex items-center gap-2 px-3 py-2 rounded-2xl border-2 transition-all cursor-default shrink-0",
-                                    profile?.membership_tier === 'Black' ? "bg-slate-900 border-slate-800 text-white shadow-xl" : "bg-white border-slate-100 text-slate-400"
+                                    profile?.membership_tier === 'Black' ? "bg-slate-50 border-primary/20 text-foreground shadow-sm" : "bg-white border-slate-100 text-slate-400"
                                 )}>
                                     <Crown className={cn("h-4 w-4", profile?.membership_tier === 'Black' ? "text-primary" : "text-slate-200")} />
                                     <span className="text-[9px] font-black uppercase tracking-widest">

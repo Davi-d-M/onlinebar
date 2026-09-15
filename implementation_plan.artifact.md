@@ -1,49 +1,57 @@
-# Implementation Plan - Global Expansion & ROI Hardening (Phases 13-15) 🏰💰🍷
+# Implementation Plan - Content Command Center 📣🔌👀
 
-This plan activates the "Enterprise Grid" of the Online Bar OS, establishing multi-hub scalability, automated affiliate payouts, and a deeper AI personalization layer.
+This plan establishes a unified "Content Command Center" for the Online Bar OS, allowing for professional multi-channel publishing, live previews, and automated scheduling while completing the "Gold on White" aesthetic overhaul.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> **Multi-Hub Logic**: We will migrate the current `warehouse_location` text fields to a structured `hubs` table. This allows for city-level inventory management (Nairobi vs. Mombasa).
-> **Payout Automation**: Affiliates will now be able to request withdrawals once they hit a KSh 1,000 threshold. Admin approval will log a mock M-Pesa receipt to prepare for API integration.
-> **AI Sommelier**: The home screen and product pages will now suggest "Perfect Pairings" based on a patron's historic **Taste DNA**.
+> **Unified Adapters**: All social platforms (Meta, TikTok, X, etc.) will be managed through a single server-side `SocialPublisher` engine. Credentials will be encrypted at rest and never exposed to the client.
+> **External Deletion**: The system will attempt to delete posts from external platforms where the API supports it. If unsupported, the UI will provide manual instructions.
+> **Aesthetic Purge**: I am completing the removal of all `bg-slate-900` and dark background nodes. The system will pivot to a clean, light-filled layout.
 
 ## Proposed Changes
 
-### 🏰 1. Phase 13: Enterprise Multi-Hub (Infrastructure)
+### 🗄️ 1. Database: Social Grid Schema
 
-#### [NEW] `supabase/migrations/20260921_multi_hub_grid.sql`
-- **`hubs`**: Table for different cellars/branches (Name, City, GPS, Manager).
-- **`hub_inventory`**: Tracks stock levels per product per hub.
-- Update `orders` to include `hub_id` for source tracking.
-
-#### [NEW] `app/admin/(dashboard)/operations/hubs/page.tsx`
-- Dashboard to manage branch cellars, active hubs, and regional stock.
-
----
-
-### 💰 2. Phase 14: Automated Affiliate ROI (The Payout Hub)
-
-#### [MODIFY] [affiliate/dashboard/page.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/affiliate/dashboard/page.tsx)
-- Add "Claim Earnings" button with a threshold check.
-- Implement withdrawal request form (M-Pesa Number validation).
-
-#### [MODIFY] [admin/(dashboard)/payouts/page.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/admin/(dashboard)/payouts/page.tsx)
-- Upgraded "Payout Terminal" with one-tap approval and receipt logging.
+#### [NEW] `supabase/migrations/20260922_content_command_core.sql`
+- **`social_accounts`**: Tracks connected profiles (platform, status, account metadata).
+- **`content_master`**: The source of truth for a post (Title, Base Narrative, Master Assets).
+- **`content_platform_variants`**: Platform-specific adaptations (IG Caption, TikTok Hook, X Thread).
+- **`publishing_queue`**: Job queue for the server-side worker.
+- **`content_audit_log`**: Traceability for all create/edit/delete actions.
 
 ---
 
-### 🍷 3. Phase 15: The AI Sommelier (Neural Personalization)
+### 🏛️ 2. Core: Universal Social Adapter
 
-#### [NEW] `components/product/PerfectPairingNode.tsx`
-- Intelligent UI node for product pages that suggests mixers/snacks based on the main spirit's category.
+#### [NEW] `lib/engines/contentCommandEngine.ts`
+- Orchestrates the creation of Master Content and its platform-specific variants.
+- Handles soft-deletes and external sync protocols.
 
-#### [MODIFY] [NeuralHero.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/components/home/hero/NeuralHero.tsx)
-- Enhance the hero selection logic to include "Vibe-based" backgrounds and CTA variants.
+#### [NEW] `lib/adapters/social/`
+- Modular adapters for **TikTok**, **YouTube**, **X**, **Snapchat**, **LinkedIn**, and **Pinterest**.
+- Each adapter implements the `BaseSocialAdapter` interface (connect, publish, delete, getMetrics).
 
-#### [NEW] `lib/engines/sommelierEngine.ts`
-- Logic to generate pairing recommendations using the patron's Taste DNA (e.g., if they like heavy Whiskey, suggest smoky snacks).
+---
+
+### 📱 3. UI/UX: Content Command Hub
+
+#### [NEW] `app/admin/(dashboard)/content/page.tsx`
+- The central dashboard for creating and managing all platform content.
+
+#### [NEW] `components/admin/content/PreviewStudio.tsx`
+- Real-time "Look & Feel" simulation for every connected channel.
+
+#### [NEW] `components/admin/content/ChannelConnector.tsx`
+- A single hub to manage OAuth connections and integration health.
+
+---
+
+### 🎨 4. Aesthetic Finalization (Gold on White)
+
+#### [MODIFY] Global Sweep
+- Replace remaining `bg-slate-900` instances in Admin Pulse, Operations, and Affiliate dashboards.
+- Ensure 100% border consistency (`border-slate-100`) for cards on light backgrounds.
 
 ---
 
@@ -51,9 +59,9 @@ This plan activates the "Enterprise Grid" of the Online Bar OS, establishing mul
 
 ### Automated Tests
 - `npm run build`: Verify 100% route success.
-- Multi-Hub Test: Verify that a product can have 50 units in Nairobi and 20 units in Mombasa.
+- Adapter Test: Verify that a `POST` to the TikTok adapter correctly initializes the state machine.
 
 ### Manual Verification
-1.  **Hub Management**: Create a "Mombasa Coast Hub" in Admin and assign 10 bottles to it.
-2.  **Affiliate Claim**: Request a KSh 1,200 withdrawal from the affiliate dashboard and verify it appears in the Admin Payout queue.
-3.  **Sommelier Pick**: Log in as a "Whiskey Legend" and verify that the homepage hero and pairing nodes suggest whiskey-related items.
+1.  **Creation Flow**: Create a "Master Post," adapt it for IG and X, and verify both variants appear in the "Preview Studio."
+2.  **Deletion Sync**: Delete a post and verify it is removed from the local grid and queued for external deletion.
+3.  **Aesthetic Audit**: Confirm zero dark-background nodes across the entire Admin Control Tower.

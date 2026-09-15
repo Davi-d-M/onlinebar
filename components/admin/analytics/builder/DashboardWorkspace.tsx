@@ -104,7 +104,7 @@ export default function DashboardWorkspace({ slug }: { slug: string }) {
                         {editMode ? <><Save className="mr-2 h-4 w-4" /> Exit Edit Mode</> : <><Edit3 className="mr-2 h-4 w-4" /> Customize Dashboard</>}
                     </Button>
                     {editMode && (
-                        <Button onClick={addWidget} className="h-12 px-8 rounded-xl bg-slate-900 text-white font-black uppercase text-[10px] tracking-widest shadow-xl hover:scale-105 active:scale-95 transition-all">
+                        <Button onClick={addWidget} className="h-12 px-8 rounded-xl bg-primary text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all">
                             <Plus className="h-4 w-4 mr-2" /> Add Widget
                         </Button>
                     )}

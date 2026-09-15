@@ -97,7 +97,7 @@ export default function CookieConsentBanner() {
                         <div className="sm:col-span-3 pt-4">
                             <Button
                                 onClick={handleSaveSelection}
-                                className="w-full h-14 rounded-2xl bg-slate-900 text-white font-black uppercase text-[10px] tracking-widest hover:bg-primary transition-all"
+                                className="w-full h-14 rounded-2xl bg-primary text-white font-black uppercase text-[10px] tracking-widest hover:scale-105 active:scale-95 transition-all shadow-lg shadow-primary/20"
                             >
                                 Confirm Selection
                             </Button>

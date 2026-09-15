@@ -73,22 +73,22 @@ export default function PulseDetailModal({ areaName, postId, onClose }: PulseDet
     }, [areaName, postId]);
 
     return (
-        <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/40 backdrop-blur-md p-4 animate-in fade-in duration-300">
+        <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-slate-900/10 backdrop-blur-md p-4 animate-in fade-in duration-300">
             <Card className="max-w-lg w-full bg-white rounded-[3.5rem] shadow-2xl overflow-hidden border-none animate-in zoom-in-95 duration-500 flex flex-col max-h-[90vh]">
 
                 {/* HERO AREA */}
-                <div className="relative h-72 shrink-0 bg-slate-900">
+                <div className="relative h-72 shrink-0 bg-slate-50">
                     {post?.hero_image_url ? (
-                        <Image src={post.hero_image_url} alt="" fill className="object-cover opacity-60" />
+                        <Image src={post.hero_image_url} alt="" fill className="object-cover opacity-80" />
                     ) : (
-                        <div className="h-full w-full flex items-center justify-center text-white opacity-20">
+                        <div className="h-full w-full flex items-center justify-center text-primary opacity-10">
                             <Flame size={80} />
                         </div>
                     )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent" />
                     <button
                         onClick={onClose}
-                        className="absolute top-6 right-6 h-12 w-12 rounded-full bg-black/20 backdrop-blur-md text-white flex items-center justify-center hover:bg-white hover:text-black transition-all z-20"
+                        className="absolute top-6 right-6 h-12 w-12 rounded-full bg-white/20 backdrop-blur-md text-foreground flex items-center justify-center hover:bg-white transition-all z-20 shadow-sm border border-white/20"
                     >
                         <X size={24} />
                     </button>
@@ -161,7 +161,7 @@ export default function PulseDetailModal({ areaName, postId, onClose }: PulseDet
                 <div className="p-8 bg-slate-50 border-t border-slate-100 shrink-0">
                     <Button
                         onClick={onClose}
-                        className="w-full h-16 rounded-[1.8rem] bg-slate-900 text-white font-black uppercase text-[10px] tracking-[0.3em] shadow-2xl active:scale-95 transition-all"
+                        className="w-full h-16 rounded-[1.8rem] bg-primary text-white font-black uppercase text-[10px] tracking-[0.3em] shadow-xl shadow-primary/20 active:scale-95 transition-all"
                     >
                         {post?.cta_label || 'EXPLORE SECTOR'}
                     </Button>

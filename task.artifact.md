@@ -1,23 +1,27 @@
-# Tasks - Global Expansion & ROI Hardening (Phases 13-15) 🏰💰🍷
+# Tasks - Content Command Center 📣🔌👀
 
-## Phase 13: Enterprise Multi-Hub
-- [x] Create `20260921_multi_hub_grid.sql`
-- [x] Implement `hubs/page.tsx` management dashboard
-- [x] Update `Upload` logic to support multi-hub inventory allocation
-- [x] Refactor `dispatchEngine.ts` to route missions to the nearest hub
+## Phase 1: Grid Infrastructure
+- [x] Create `20260922_content_command_core.sql`
+- [x] Establish `content_master` and `content_platform_variants` tables
+- [x] Build the `content_audit_log` node
 
-## Phase 14: Automated Affiliate ROI
-- [x] Update `affiliate/dashboard/page.tsx` with "Withdrawal" node
-- [x] Build the Payout Request Form (M-Pesa validation)
-- [x] Enhance Admin Payouts UI with "Batch Approval" protocol
+## Phase 2: The Universal Adapter
+- [x] Define `BaseSocialAdapter` interface
+- [x] Implement `contentCommandEngine.ts`
+- [x] Build stubs for TikTok, X, and YouTube adapters
 
-## Phase 15: The AI Sommelier
-- [x] Implement `sommelierEngine.ts` (Pairing logic)
-- [x] Build `PerfectPairingNode.tsx` for product screens
-- [x] Enhance `NeuralHero.tsx` with vibe-aware layouts
-- [x] Add "Sommelier Pick" widget to the homepage
+## Phase 3: Content Command UI
+- [x] Implement `admin/content/page.tsx`
+- [x] Build `PreviewStudio.tsx` (Multi-platform simulation)
+- [x] Build `ChannelConnector.tsx` (Integration Hub)
 
-## Verification & Hardening
-- [ ] Run `npm run lint` and `npm run build`
-- [ ] Perform a full City-to-City dispatch simulation
-- [ ] Push to GitHub
+## Phase 4: Aesthetic Finalization
+- [x] Purge remaining `bg-slate-900` in Admin Pulse
+- [x] Purge remaining `bg-slate-900` in Operations dashboards
+- [x] Purge remaining `bg-slate-900` in Affiliate Hub
+- [x] Harden 320px mobile reflow for all new light cards
+
+## Phase 5: Verification & Deployment
+- [x] Run `npm run lint` and `npm run build`
+- [x] Perform "Delete Sync" audit
+- [x] Push to GitHub

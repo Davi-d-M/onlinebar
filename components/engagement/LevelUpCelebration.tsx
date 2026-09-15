@@ -45,7 +45,7 @@ export default function LevelUpCelebration() {
     if (!show || !levelData) return null;
 
     return (
-        <div className="fixed inset-0 z-[2000] bg-slate-900/80 backdrop-blur-xl flex items-center justify-center p-6 animate-in fade-in duration-500">
+        <div className="fixed inset-0 z-[2000] bg-slate-900/10 backdrop-blur-md flex items-center justify-center p-6 animate-in fade-in duration-500">
             <div className="max-w-md w-full bg-white rounded-[3.5rem] p-12 text-center space-y-10 relative overflow-hidden shadow-2xl animate-in zoom-in-95 duration-700">
 
                 <div className="relative z-10 space-y-8">
@@ -68,7 +68,7 @@ export default function LevelUpCelebration() {
                     <div className="pt-6">
                         <Button
                             onClick={() => setShow(false)}
-                            className="w-full h-16 rounded-2xl bg-slate-900 text-white font-black uppercase text-xs tracking-widest hover:bg-primary transition-all shadow-xl active:scale-95"
+                            className="w-full h-16 rounded-2xl bg-primary text-white font-black uppercase text-xs tracking-widest shadow-xl shadow-primary/20 hover:scale-105 transition-all active:scale-95"
                         >
                             Continue My Journey
                         </Button>

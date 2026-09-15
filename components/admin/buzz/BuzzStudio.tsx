@@ -62,7 +62,7 @@ export default function BuzzStudio({ postId, onClose, onSave }: BuzzStudioProps)
                         end_at: post.end_at.substring(0, 16),
                         is_featured: post.is_featured
                     });
-                    setMedia((post.buzz_media as Array<{ media_type: 'IMAGE' | 'VIDEO', url: string, sort_order: number }>).map((m) => ({ type: m.media_type, url: m.url, sort_order: m.sort_order })));
+                    setMedia((post.buzz_media as any[]).map((m) => ({ type: m.media_type, url: m.url, sort_order: m.sort_order })));
                 }
             }
         }
@@ -92,7 +92,6 @@ export default function BuzzStudio({ postId, onClose, onSave }: BuzzStudioProps)
 
             if (res.error) throw res.error;
 
-            // Handle Media
             if (res.data) {
                 await supabase.from('buzz_media').delete().eq('buzz_id', res.data.id);
                 if (media.length > 0) {
@@ -105,7 +104,6 @@ export default function BuzzStudio({ postId, onClose, onSave }: BuzzStudioProps)
                 }
             }
 
-            alert("Buzz node established. 🚀");
             onSave();
             onClose();
         } catch (err) { console.error(err); }
@@ -113,10 +111,8 @@ export default function BuzzStudio({ postId, onClose, onSave }: BuzzStudioProps)
     };
 
     return (
-        <div className="fixed inset-0 z-[1000] flex items-center justify-end bg-slate-900/40 backdrop-blur-md">
+        <div className="fixed inset-0 z-[1000] flex items-center justify-end bg-slate-900/10 backdrop-blur-md animate-in fade-in duration-300">
             <Card className="h-full w-full max-w-4xl bg-white rounded-l-[4rem] border-none shadow-2xl flex flex-col animate-in slide-in-from-right-full duration-500 overflow-hidden text-left">
-
-                {/* Header */}
                 <div className="p-10 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
                     <div className="flex items-center gap-4">
                         <div className="h-12 w-12 rounded-2xl bg-rose-500 text-white flex items-center justify-center shadow-lg shadow-rose-500/20"><Zap size={24} /></div>
@@ -129,50 +125,30 @@ export default function BuzzStudio({ postId, onClose, onSave }: BuzzStudioProps)
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-10 space-y-12 no-scrollbar">
-
-                    {/* 1. CORE NARRATIVE */}
                     <section className="space-y-8">
                         <div className="flex items-center gap-3 border-l-4 border-rose-500 pl-4">
-                            <h3 className="text-xl font-black uppercase tracking-tight">1. Core Narrative</h3>
+                            <h3 className="text-xl font-black uppercase tracking-tight text-foreground">1. Core Narrative</h3>
                         </div>
                         <div className="grid gap-6">
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Event/Place Title</label>
-                                <Input
-                                    value={form.title}
-                                    onChange={e => setForm({...form, title: e.target.value})}
-                                    className="h-14 rounded-2xl bg-slate-50 border-slate-100 font-bold"
-                                    placeholder="e.g. Nairobi Night Market"
-                                />
+                                <Input value={form.title} onChange={e => setForm({...form, title: e.target.value})} className="h-14 rounded-2xl bg-slate-50 border-slate-100 font-bold" placeholder="e.g. Nairobi Night Market" />
                             </div>
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Live Description</label>
-                                <Textarea
-                                    value={form.description}
-                                    onChange={e => setForm({...form, description: e.target.value})}
-                                    className="min-h-[120px] rounded-3xl bg-slate-50 border-slate-100 p-6 font-medium italic resize-none"
-                                    placeholder="Tell the city what's happening..."
-                                />
+                                <Textarea value={form.description} onChange={e => setForm({...form, description: e.target.value})} className="min-h-[120px] rounded-3xl bg-slate-50 border-slate-100 p-6 font-medium italic resize-none" placeholder="Tell the city what's happening..." />
                             </div>
                             <div className="grid sm:grid-cols-2 gap-6">
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Category</label>
-                                    <select
-                                        value={form.category_id}
-                                        onChange={e => setForm({...form, category_id: e.target.value})}
-                                        className="w-full h-14 rounded-2xl bg-slate-50 border border-slate-100 px-6 font-black text-xs uppercase outline-none focus:ring-4 focus:ring-rose-500/5 transition-all"
-                                    >
+                                    <select value={form.category_id} onChange={e => setForm({...form, category_id: e.target.value})} className="w-full h-14 rounded-2xl bg-slate-50 border border-slate-100 px-6 font-black text-xs uppercase outline-none focus:ring-4 focus:ring-rose-500/5 transition-all">
                                         <option value="">Select Category</option>
                                         {categories.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
                                     </select>
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Initial Status</label>
-                                    <select
-                                        value={form.status}
-                                        onChange={e => setForm({...form, status: e.target.value})}
-                                        className="w-full h-14 rounded-2xl bg-slate-50 border border-slate-100 px-6 font-black text-xs uppercase outline-none"
-                                    >
+                                    <select value={form.status} onChange={e => setForm({...form, status: e.target.value})} className="w-full h-14 rounded-2xl bg-slate-50 border border-slate-100 px-6 font-black text-xs uppercase outline-none">
                                         <option value="DRAFT">Draft Protocol</option>
                                         <option value="LIVE">Live Deployment</option>
                                         <option value="TRENDING">High-Traction (Trending)</option>
@@ -182,38 +158,22 @@ export default function BuzzStudio({ postId, onClose, onSave }: BuzzStudioProps)
                         </div>
                     </section>
 
-                    {/* 2. GEOGRAPHICAL NODE */}
                     <section className="space-y-8">
                         <div className="flex items-center gap-3 border-l-4 border-rose-500 pl-4">
-                            <h3 className="text-xl font-black uppercase tracking-tight">2. Geographical Node</h3>
+                            <h3 className="text-xl font-black uppercase tracking-tight text-foreground">2. Geographical Node</h3>
                         </div>
                         <div className="grid sm:grid-cols-3 gap-6">
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Sector (Area)</label>
-                                <Input
-                                    value={form.area_zone}
-                                    onChange={e => setForm({...form, area_zone: e.target.value})}
-                                    className="h-14 rounded-2xl bg-slate-50 border-slate-100 font-bold"
-                                    placeholder="e.g. Westlands"
-                                />
+                                <Input value={form.area_zone} onChange={e => setForm({...form, area_zone: e.target.value})} className="h-14 rounded-2xl bg-slate-50 border-slate-100 font-bold" placeholder="e.g. Westlands" />
                             </div>
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Latitude</label>
-                                <Input
-                                    value={form.latitude}
-                                    onChange={e => setForm({...form, latitude: e.target.value})}
-                                    className="h-14 rounded-2xl bg-slate-50 border-slate-100 font-mono font-bold"
-                                    placeholder="-1.26..."
-                                />
+                                <Input value={form.latitude} onChange={e => setForm({...form, latitude: e.target.value})} className="h-14 rounded-2xl bg-slate-50 border-slate-100 font-mono font-bold" placeholder="-1.26..." />
                             </div>
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Longitude</label>
-                                <Input
-                                    value={form.longitude}
-                                    onChange={e => setForm({...form, longitude: e.target.value})}
-                                    className="h-14 rounded-2xl bg-slate-50 border-slate-100 font-mono font-bold"
-                                    placeholder="36.81..."
-                                />
+                                <Input value={form.longitude} onChange={e => setForm({...form, longitude: e.target.value})} className="h-14 rounded-2xl bg-slate-50 border-slate-100 font-mono font-bold" placeholder="36.81..." />
                             </div>
                         </div>
                         <Button variant="outline" className="w-full h-14 rounded-2xl border-dashed border-2 border-slate-200 text-slate-400 font-black uppercase text-[10px] tracking-widest hover:border-rose-500 hover:text-rose-500 transition-all flex items-center justify-center gap-2">
@@ -221,26 +181,20 @@ export default function BuzzStudio({ postId, onClose, onSave }: BuzzStudioProps)
                         </Button>
                     </section>
 
-                    {/* 3. CINEMATIC ASSETS */}
                     <section className="space-y-8">
                         <div className="flex items-center gap-3 border-l-4 border-rose-500 pl-4">
-                            <h3 className="text-xl font-black uppercase tracking-tight">3. Cinematic Assets</h3>
+                            <h3 className="text-xl font-black uppercase tracking-tight text-foreground">3. Cinematic Assets</h3>
                         </div>
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                             {media.map((m, i) => (
-                                <div key={i} className="aspect-[9/16] rounded-3xl bg-slate-100 relative overflow-hidden group/media border border-slate-200">
+                                <div key={i} className="aspect-[9/16] rounded-3xl bg-slate-50 relative overflow-hidden group/media border border-slate-100 shadow-sm">
                                     {m.type === 'VIDEO' ? (
-                                        <div className="h-full w-full flex items-center justify-center bg-slate-900"><Video className="text-white" /></div>
+                                        <div className="h-full w-full flex items-center justify-center bg-slate-100"><Video className="text-primary opacity-20" /></div>
                                     ) : (
                                         <Image src={m.url} alt="" fill className="object-cover" />
                                     )}
-                                    <button
-                                        onClick={() => setMedia(media.filter((_, idx) => idx !== i))}
-                                        className="absolute top-2 right-2 h-8 w-8 rounded-full bg-rose-500 text-white flex items-center justify-center opacity-0 group-hover/media:opacity-100 transition-opacity shadow-lg"
-                                    >
-                                        <Trash2 size={14} />
-                                    </button>
-                                    <div className="absolute bottom-2 left-2 bg-black/40 backdrop-blur-md px-3 py-1 rounded-lg text-[8px] font-black text-white uppercase">{m.type}</div>
+                                    <button onClick={() => setMedia(media.filter((_, idx) => idx !== i))} className="absolute top-2 right-2 h-8 w-8 rounded-full bg-rose-500 text-white flex items-center justify-center opacity-0 group-hover/media:opacity-100 transition-opacity shadow-lg"><Trash2 size={14} /></button>
+                                    <div className="absolute bottom-2 left-2 bg-white/40 backdrop-blur-md px-3 py-1 rounded-lg text-[8px] font-black text-foreground uppercase border border-white/20">{m.type}</div>
                                 </div>
                             ))}
                             <button className="aspect-[9/16] rounded-3xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center gap-3 text-slate-300 hover:border-rose-500 hover:text-rose-500 transition-all group">
@@ -250,52 +204,34 @@ export default function BuzzStudio({ postId, onClose, onSave }: BuzzStudioProps)
                         </div>
                     </section>
 
-                    {/* 4. TEMPORAL NODE */}
                     <section className="space-y-8 pb-10">
                         <div className="flex items-center gap-3 border-l-4 border-rose-500 pl-4">
-                            <h3 className="text-xl font-black uppercase tracking-tight">4. Temporal Node</h3>
+                            <h3 className="text-xl font-black uppercase tracking-tight text-foreground">4. Temporal Node</h3>
                         </div>
                         <div className="grid sm:grid-cols-2 gap-6">
-                            <div className="space-y-2">
+                            <div className="space-y-2 text-left">
                                 <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Start Protocol (Time)</label>
-                                <Input
-                                    type="datetime-local"
-                                    value={form.start_at}
-                                    onChange={e => setForm({...form, start_at: e.target.value})}
-                                    className="h-14 rounded-2xl bg-slate-50 border-slate-100 font-bold"
-                                />
+                                <Input type="datetime-local" value={form.start_at} onChange={e => setForm({...form, start_at: e.target.value})} className="h-14 rounded-2xl bg-slate-50 border-slate-100 font-bold" />
                             </div>
-                            <div className="space-y-2">
+                            <div className="space-y-2 text-left">
                                 <label className="text-[10px] font-black uppercase text-slate-400 ml-1">End Protocol (Expiry)</label>
-                                <Input
-                                    type="datetime-local"
-                                    value={form.end_at}
-                                    onChange={e => setForm({...form, end_at: e.target.value})}
-                                    className="h-14 rounded-2xl bg-slate-50 border-slate-100 font-bold"
-                                />
+                                <Input type="datetime-local" value={form.end_at} onChange={e => setForm({...form, end_at: e.target.value})} className="h-14 rounded-2xl bg-slate-50 border-slate-100 font-bold" />
                             </div>
                         </div>
                     </section>
                 </div>
 
-                {/* Footer Actions */}
                 <div className="p-10 border-t border-slate-100 bg-slate-50/50 flex gap-4">
-                    <Button
-                        onClick={onClose}
-                        variant="outline"
-                        className="flex-1 h-16 rounded-2xl border-slate-200 text-slate-400 font-black uppercase text-xs tracking-[0.2em]"
-                    >
-                        Abort Mission
-                    </Button>
-                    <Button
-                        onClick={handleSave}
-                        disabled={loading}
-                        className="flex-[2] h-16 rounded-2xl bg-rose-500 text-white font-black uppercase text-xs tracking-[0.2em] shadow-2xl shadow-rose-500/20 hover:scale-[1.02] active:scale-95 transition-all"
-                    >
+                    {postId && (
+                        <Button onClick={async () => { if(!supabase || !confirm("Expel this buzz node?")) return; await supabase.from('buzz_posts').delete().eq('id', postId); onSave(); onClose(); }} variant="ghost" className="h-16 px-8 rounded-2xl text-rose-500 hover:bg-rose-50 font-black uppercase text-xs">
+                            <Trash2 size={20} />
+                        </Button>
+                    )}
+                    <Button onClick={onClose} variant="outline" className="flex-1 h-16 rounded-2xl border-slate-200 text-slate-400 font-black uppercase text-xs tracking-[0.2em]">Abort Mission</Button>
+                    <Button onClick={handleSave} disabled={loading} className="flex-[2] h-16 rounded-2xl bg-rose-500 text-white font-black uppercase text-xs tracking-[0.2em] shadow-2xl shadow-rose-500/20 hover:scale-[1.02] active:scale-95 transition-all">
                         {loading ? <Loader2 className="animate-spin mr-2" /> : <><Save size={20} className="mr-2" /> Deploy Buzz Node</>}
                     </Button>
                 </div>
-
             </Card>
         </div>
     );

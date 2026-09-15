@@ -60,7 +60,7 @@ export default function VIPVideoRelay() {
                         </div>
 
                         <div className="absolute top-8 right-8 flex gap-3">
-                            <div className="px-4 py-2 rounded-xl bg-slate-900/5 backdrop-blur-md border border-white/20 flex items-center gap-2">
+                            <div className="px-4 py-2 rounded-xl bg-slate-50 backdrop-blur-md border border-slate-100 flex items-center gap-2 shadow-sm">
                                 <Users size={12} className="text-indigo-500" />
                                 <span className="text-[10px] font-black uppercase text-foreground">VIP: David M.</span>
                             </div>

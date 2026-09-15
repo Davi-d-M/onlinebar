@@ -196,19 +196,19 @@ export default function WidgetManager() {
                 </div>
 
                 <div className="lg:col-span-4 space-y-8">
-                    <Card className="p-10 rounded-[3rem] bg-slate-900 text-white space-y-8 relative overflow-hidden shadow-2xl">
+                    <Card className="p-10 rounded-[3rem] bg-white border border-slate-100 shadow-sm space-y-8 relative overflow-hidden group">
                         <div className="relative z-10 space-y-6 text-left">
                             <ShieldAlert className="h-10 w-10 text-primary" />
-                            <h3 className="text-2xl font-black uppercase tracking-tighter leading-none">Orchestration Safety</h3>
-                            <p className="text-sm font-medium text-slate-400 italic leading-relaxed">
+                            <h3 className="text-2xl font-black uppercase tracking-tighter leading-none text-foreground">Orchestration Safety</h3>
+                            <p className="text-sm font-medium text-slate-500 italic leading-relaxed">
                                 &quot;Disabling core commerce nodes (e.g. Hero, Trending) may result in acquisition drop-off. Ensure you have alternative discovery paths active before expelling a node.&quot;
                             </p>
-                            <div className="pt-6 border-t border-white/10 flex justify-between items-center">
+                            <div className="pt-6 border-t border-slate-50 flex justify-between items-center">
                                 <span className="text-[9px] font-black uppercase tracking-widest text-primary">System Integrity</span>
-                                <span className="text-xs font-black uppercase">Optimal</span>
+                                <span className="text-xs font-black uppercase text-emerald-600">Optimal</span>
                             </div>
                         </div>
-                        <Zap className="absolute -bottom-10 -left-10 h-48 w-48 text-primary/10 rotate-12" />
+                        <Zap className="absolute -bottom-10 -left-10 h-48 w-48 text-primary/5 rotate-12" />
                     </Card>
 
                     <div className="p-8 rounded-[3rem] bg-white border border-slate-100 shadow-sm space-y-4 text-left group">

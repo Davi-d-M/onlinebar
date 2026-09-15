@@ -44,7 +44,7 @@ export default function CorporatePortal() {
                 <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-10 border-b border-slate-200 pb-10">
                     <div className="space-y-4">
                         <div className="flex items-center gap-3">
-                            <div className="h-10 w-10 rounded-xl bg-slate-900 flex items-center justify-center text-primary shadow-xl"><Building2 size={20} /></div>
+                            <div className="h-10 w-10 rounded-xl bg-slate-100 flex items-center justify-center text-primary shadow-sm border border-slate-200"><Building2 size={20} /></div>
                             <span className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400">Executive B2B Terminal</span>
                         </div>
                         <h1 className="text-4xl lg:text-7xl font-black text-foreground uppercase tracking-tighter leading-none">
@@ -136,7 +136,7 @@ export default function CorporatePortal() {
                             <div className="pt-8 border-t border-slate-50 flex justify-end">
                                 <Button
                                     onClick={() => window.open(`https://wa.me/${settings.contact.whatsapp}?text=Hello! I want to request a quote for an institutional event with ${guestCount} guests.`, '_blank')}
-                                    className="h-16 px-12 rounded-2xl bg-slate-900 text-white font-black uppercase text-xs tracking-[0.2em] shadow-2xl active:scale-95 transition-all flex items-center gap-3"
+                                    className="h-16 px-12 rounded-2xl bg-primary text-white font-black uppercase text-xs tracking-[0.2em] shadow-2xl shadow-primary/20 active:scale-95 transition-all flex items-center gap-3"
                                 >
                                     Generate Executive Quote <ArrowRight size={18} />
                                 </Button>
@@ -163,11 +163,11 @@ export default function CorporatePortal() {
 
                     {/* RIGHT: BENEFITS */}
                     <div className="lg:col-span-4 space-y-8">
-                        <Card className="p-10 rounded-[3.5rem] bg-slate-900 text-white space-y-10 relative overflow-hidden shadow-2xl">
+                        <Card className="p-10 rounded-[3.5rem] bg-white border border-slate-100 shadow-sm space-y-10 relative overflow-hidden group hover:border-primary/20 transition-all">
                             <div className="relative z-10 space-y-8 text-left">
                                 <div className="flex items-center gap-4">
-                                    <div className="h-12 w-12 rounded-2xl bg-white/10 flex items-center justify-center backdrop-blur-md border border-white/20"><Briefcase size={24} className="text-primary" /></div>
-                                    <h3 className="text-2xl font-black uppercase tracking-tighter leading-none">B2B Perks</h3>
+                                    <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/10"><Briefcase size={24} className="text-primary" /></div>
+                                    <h3 className="text-2xl font-black uppercase tracking-tighter leading-none text-foreground">B2B Perks</h3>
                                 </div>
 
                                 <div className="space-y-4">

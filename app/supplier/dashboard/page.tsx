@@ -167,7 +167,7 @@ export default function SupplierDashboard() {
                                         <Button
                                             onClick={() => updateStock(p.id, p.stock)}
                                             disabled={isUpdating === p.id}
-                                            className="h-12 px-6 rounded-xl bg-slate-900 text-white font-black uppercase text-[10px] tracking-widest active:scale-95 transition-all"
+                                            className="h-12 px-6 rounded-xl bg-primary text-white font-black uppercase text-[10px] tracking-widest active:scale-95 transition-all shadow-lg shadow-primary/20"
                                         >
                                             {isUpdating === p.id ? <RefreshCcw className="animate-spin" /> : 'Sync Stock'}
                                         </Button>
