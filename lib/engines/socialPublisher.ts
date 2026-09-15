@@ -48,8 +48,9 @@ class SocialPublisherEngine {
         id: string,
         attempt_count: number,
         master_id: string,
-        content_master: { media_urls: string[] },
-        social_accounts: { platform: string, account_name: string, id: string }
+        content_master: { title: string, media_urls: string[] },
+        social_accounts: { platform: string, account_name: string, id: string },
+        attribution_id: string
     }) {
         if (!supabase) return;
 
@@ -67,8 +68,13 @@ class SocialPublisherEngine {
 
             if (!variant) throw new Error(`No adaptation found for platform ${job.social_accounts.platform}`);
 
+            // 3.5 Compliance Check
+            await this.performComplianceCheck(variant);
+
             // 4. Route to Adapter
             let externalId: string | null = null;
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const attributionLink = `https://onlinebar.co.ke/shop?utm_id=${job.attribution_id}&utm_source=${job.social_accounts.platform.toLowerCase()}&utm_campaign=${job.content_master.title.replace(/\s+/g, '_')}`;
             switch (job.social_accounts.platform as SocialPlatform) {
                 case 'META':
                     externalId = await this.publishToMeta(variant, job.content_master.media_urls, job.social_accounts);
@@ -116,6 +122,21 @@ class SocialPublisherEngine {
         // POST /v20.0/{phone-number-id}/messages
         console.log(`[WHATSAPP] Deploying status/broadcast to ${account.account_name}: ${variant.caption}`);
         return `WA-MSG-${Date.now()}`;
+    }
+
+    private async performComplianceCheck(variant: { caption: string }) {
+        if (!supabase) return;
+
+        const { data: rules } = await supabase.from('compliance_rules').select('*');
+        if (!rules) return;
+
+        const lowerCaption = variant.caption.toLowerCase();
+
+        for (const rule of rules) {
+            if (rule.rule_type === 'BLACKLIST_WORD' && lowerCaption.includes(rule.pattern.toLowerCase())) {
+                throw new Error(`COMPLIANCE_BLOCK: Prohibited term "${rule.pattern}" detected.`);
+            }
+        }
     }
 }
 

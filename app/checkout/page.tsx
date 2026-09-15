@@ -407,6 +407,7 @@ function CheckoutContent() {
           payment_method: paymentMethod === 'M-Pesa' ? 'Paystack' : paymentMethod,
           checkout_request_id: requestId,
           referred_by_code: referralCode,
+          attribution_id: typeof window !== 'undefined' ? sessionStorage.getItem('ob_attribution_id') : null,
           captured_by: 'system',
           latitude: coords.lat || profile?.latitude || null,
           longitude: coords.lng || profile?.longitude || null,

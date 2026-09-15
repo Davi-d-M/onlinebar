@@ -75,6 +75,7 @@ CREATE TABLE IF NOT EXISTS public.orders (
   rider_phone TEXT,
   note TEXT,
   referred_by_code TEXT,
+  attribution_id TEXT,
   captured_by TEXT DEFAULT 'system',
   warehouse_location TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
@@ -203,6 +204,9 @@ CREATE TABLE IF NOT EXISTS public.customer_sessions (
     user_id UUID,
     anonymous_id TEXT,
     source_channel TEXT,
+    campaign_id TEXT,
+    attribution_id TEXT,
+    content_variant TEXT,
     entry_page TEXT,
     exit_page TEXT,
     device_info JSONB DEFAULT '{}'::JSONB,

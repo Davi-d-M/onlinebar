@@ -5,7 +5,9 @@ import { Card } from '@/components/ui/card';
 import {
     User,
     MapPin,
-    Wine
+    Wine,
+    MessageCircle,
+    Check
 } from 'lucide-react';
 import { cn, formatPrice } from '@/lib/utils';
 
@@ -82,6 +84,32 @@ export default function Customer360Widget() {
                         <MapPin size={16} className="text-primary" />
                         <span className="text-xs font-black uppercase text-foreground truncate">Westlands Sector</span>
                     </div>
+                </div>
+            </div>
+
+            <div className="pt-8 border-t border-slate-50 space-y-6">
+                <h3 className="text-xs font-black uppercase text-slate-400 tracking-[0.3em] px-2">Message History</h3>
+                <div className="grid gap-3">
+                    {[
+                        { label: 'Weekend Drop #12', type: 'WhatsApp', status: 'Opened', time: '2h ago' },
+                        { label: 'Cart Recovery Node', type: 'In-App', status: 'Clicked', time: 'Yesterday' }
+                    ].map((msg, i) => (
+                        <div key={i} className="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex justify-between items-center group hover:bg-white hover:shadow-lg transition-all">
+                            <div className="flex items-center gap-4">
+                                <div className="h-10 w-10 rounded-xl bg-white flex items-center justify-center text-primary shadow-sm group-hover:scale-110 transition-transform">
+                                    <MessageCircle size={18} />
+                                </div>
+                                <div>
+                                    <p className="text-[11px] font-black uppercase text-foreground leading-none">{msg.label}</p>
+                                    <p className="text-[8px] font-bold text-slate-400 uppercase mt-1.5 tracking-widest">{msg.type} Node &bull; {msg.time}</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-1.5 bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full border border-emerald-100">
+                                <Check size={10} />
+                                <span className="text-[8px] font-black uppercase">{msg.status}</span>
+                            </div>
+                        </div>
+                    ))}
                 </div>
             </div>
         </Card>

@@ -20,7 +20,8 @@ import {
     Trophy,
     Globe,
     Clock,
-    PieChart
+    PieChart,
+    MessageCircle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -152,6 +153,29 @@ export default function AffiliateCommandCenter() {
                         <Button className="h-10 px-6 rounded-xl bg-primary text-white font-black uppercase text-[9px] tracking-widest shadow-lg shadow-primary/20">Withdraw</Button>
                     </div>
                 </div>
+            </div>
+
+            {/* 🚀 QUICK SHARE TRAY (STAMP SIZE) */}
+            <div className="bg-primary p-2 flex justify-center gap-6 animate-in slide-in-from-top-2">
+                <button
+                    onClick={() => {
+                        const text = `Check out Online Bar for premium drinks! Use my link to get a member discount: ${referralUrl}`;
+                        window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+                    }}
+                    className="flex items-center gap-2 text-[8px] font-black uppercase text-white hover:scale-105 transition-all"
+                >
+                    <MessageCircle size={14} className="fill-current" /> Share to WhatsApp
+                </button>
+                <div className="w-px h-3 bg-white/20 my-auto" />
+                <button
+                    onClick={() => {
+                        handleCopyLink();
+                        alert("Link copied! Paste it in your Instagram Bio or Stories. 📸");
+                    }}
+                    className="flex items-center gap-2 text-[8px] font-black uppercase text-white hover:scale-105 transition-all"
+                >
+                    <Camera size={14} /> Share to Instagram
+                </button>
             </div>
 
             <div className="max-w-7xl mx-auto px-8 pt-12 space-y-12">

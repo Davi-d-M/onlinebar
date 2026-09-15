@@ -15,6 +15,18 @@ interface NotificationPayload {
     templateName?: string;
     actionUrl?: string;
     metadata?: Record<string, unknown>;
+    attributionId?: string;
+}
+
+/**
+ * MASTER MESSAGE OBJECT: For multi-channel orchestration
+ */
+export interface MasterMessage {
+    title: string;
+    body: string;
+    channels: Channel[];
+    audience_id?: string;
+    metadata?: Record<string, string | number | boolean | undefined>;
 }
 
 /**
@@ -96,12 +108,48 @@ export async function sendNotification(channels: Channel[], payload: Notificatio
     await Promise.all(promises);
 }
 
+/**
+ * High-fidelity message routing for campaigns.
+ */
+export async function routeMasterMessage(msg: MasterMessage, userId: string) {
+    if (!supabase) return;
+
+    // 1. Compliance Scan
+    const isClean = await performComplianceScan(msg.body);
+    if (!isClean) {
+        console.warn(`🛑 [NOTIFICATION_SERVICE] Compliance block triggered for message.`);
+        return;
+    }
+
+    // 2. Attribution Wrap
+    const attributionId = Math.random().toString(36).substring(7);
+    const hydratedBody = msg.body + `\n\nEnjoy Responsibly. 18+ only.`;
+
+    // 3. Dispatch to Channels
+    await sendNotification(msg.channels, {
+        userId,
+        title: msg.title,
+        body: hydratedBody,
+        attributionId,
+        metadata: msg.metadata
+    });
+}
+
+async function performComplianceScan(text: string): Promise<boolean> {
+    if (!supabase) return true;
+    const { data: rules } = await supabase.from('compliance_rules').select('pattern, severity').eq('severity', 'BLOCK');
+    if (!rules) return true;
+
+    const lower = text.toLowerCase();
+    return !rules.some(r => lower.includes(r.pattern.toLowerCase()));
+}
+
 async function handleInApp(payload: NotificationPayload) {
     if (!supabase) return;
     await supabase.from('user_notifications').insert([{
         user_id: payload.userId,
         title: payload.title || 'System Alert',
         message: payload.body || '',
-        status: 'New'
+        action_url: payload.attributionId ? `/shop?utm_id=${payload.attributionId}` : undefined
     }]);
 }

@@ -50,7 +50,8 @@ import {
   Headphones,
   Cpu,
   BarChart3 as StatsIcon,
-  Download
+  Download,
+  LucideIcon
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -74,7 +75,7 @@ const LocationPicker = dynamic(() => import('@/components/profile/LocationPicker
     loading: () => <div className="fixed inset-0 z-[400] bg-white/70 backdrop-blur-xl flex items-center justify-center"><Loader2 className="h-10 w-10 text-primary animate-spin" /></div>
 });
 
-const IconMap: Record<string, React.ElementType> = {
+const IconMap: Record<string, LucideIcon> = {
     Star, ShieldCheck, Crown, Gem, Trophy, ShoppingBag, Smartphone, MessageSquare, Users, Rocket
 };
 
@@ -112,9 +113,15 @@ interface Coupon {
   discount: string;
 }
 
-interface Notification {
+interface NotificationNode {
+  id: string;
   title: string;
-  text: string;
+  message: string;
+  icon: string;
+  style: string;
+  action_url: string;
+  is_read: boolean;
+  created_at: string;
 }
 
 interface Warranty {
@@ -162,7 +169,8 @@ export default function ProfilePage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [achievements, setAchievements] = useState<Record<string, unknown>[]>([]);
   const [coupons, setCoupons] = useState<Coupon[]>([]);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [notifications, setNotifications] = useState<NotificationNode[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
   const [warranties, setWarranties] = useState<Warranty[]>([]);
   const [serviceRequests, setServiceRequests] = useState<ServiceRequest[]>([]);
   const [isSupportFormOpen, setIsSupportFormOpen] = useState(false);
@@ -265,9 +273,20 @@ export default function ProfilePage() {
           setWarranties(warrantiesRes.data || []);
           setServiceRequests(serviceRes.data || []);
 
-          // Real data only
-          setCoupons([]);
-          setNotifications([]);
+      // Fetch Notifications
+      const { data: notifData } = await supabase
+        .from('user_notifications')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .order('created_at', { ascending: false });
+
+      if (notifData) {
+          setNotifications(notifData as NotificationNode[]);
+          setUnreadCount(notifData.filter(n => !n.is_read).length);
+      }
+
+      // Real data only
+      setCoupons([]);
 
           // Recently Purchased Logic
           const { data: pItems } = await supabase
@@ -299,9 +318,21 @@ export default function ProfilePage() {
           console.warn("Streak update failed", err);
       }
 
+      // 2. Real-time Notifications Update
+      const notifChannel = supabase.channel(`profile-notifs-${session.user.id}`)
+          .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'user_notifications', filter: `user_id=eq.${session.user.id}` }, (payload) => {
+              setNotifications(prev => [payload.new as NotificationNode, ...prev]);
+              setUnreadCount(c => c + 1);
+          })
+          .subscribe();
+
       // Fetch Gamification Config
       const { data: gameData } = await supabase.from('settings').select('*').eq('key', 'gamification').maybeSingle();
       if (gameData) setGamification(gameData.value);
+
+      return () => {
+          if (supabase) supabase.removeChannel(notifChannel);
+      };
       }
 
       setLoading(false);
@@ -1153,24 +1184,65 @@ export default function ProfilePage() {
                 </section>
 
                 {/* 🔔 NOTIFICATION CENTER */}
-                <Card className="p-8 rounded-[3rem] border border-slate-100 bg-white shadow-sm space-y-6 text-left">
-                    <div className="flex items-center justify-between">
-                        <h3 className="text-lg font-black uppercase tracking-tighter text-foreground flex items-center gap-3">
-                            <Bell className="h-5 w-5 text-primary" /> Notifications
-                        </h3>
-                        <span className="h-2 w-2 rounded-full bg-primary animate-ping"></span>
+                <Card className="p-8 rounded-[3rem] border border-slate-100 bg-white shadow-sm space-y-6 text-left relative overflow-hidden">
+                    <div className="flex items-center justify-between relative z-10">
+                        <div className="flex items-center gap-3">
+                            <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shadow-sm"><Bell className="h-5 w-5" /></div>
+                            <h3 className="text-xl font-black uppercase tracking-tighter text-foreground">Inbox</h3>
+                        </div>
+                        {unreadCount > 0 && <span className="h-2 w-2 rounded-full bg-primary animate-ping"></span>}
                     </div>
-                    <div className="space-y-4">
-                        {notifications.map((n, i) => (
-                            <div key={i} className="flex gap-4 items-start p-4 bg-slate-50 rounded-2xl group hover:bg-white hover:shadow-xl transition-all">
-                                <div className="h-8 w-8 rounded-xl bg-white flex items-center justify-center text-primary shadow-inner shrink-0 group-hover:scale-110 transition-transform"><Check className="h-4 w-4" /></div>
-                                <div>
-                                    <p className="text-[10px] font-black uppercase text-foreground">{n.title}</p>
-                                    <p className="text-[9px] font-medium text-slate-500 mt-1 leading-snug">{n.text}</p>
-                                </div>
+
+                    <div className="space-y-4 max-h-[400px] overflow-y-auto no-scrollbar relative z-10">
+                        {notifications.length === 0 ? (
+                            <div className="py-12 text-center opacity-30">
+                                <Bell className="h-10 w-10 mx-auto mb-4" />
+                                <p className="text-[10px] font-black uppercase tracking-widest italic">Signal Clear. No new alerts.</p>
                             </div>
-                        ))}
+                        ) : notifications.map((n) => {
+                            const IconNode = IconMap[n.icon] || CheckCircle;
+                            return (
+                                <div
+                                    key={n.id}
+                                    className={cn(
+                                        "flex gap-4 items-start p-5 rounded-2xl group transition-all relative overflow-hidden border",
+                                        n.is_read ? "bg-slate-50 border-transparent opacity-60" : "bg-white border-primary/10 shadow-lg shadow-primary/5 ring-1 ring-primary/5"
+                                    )}
+                                >
+                                    <div className={cn(
+                                        "h-10 w-10 rounded-xl flex items-center justify-center shadow-inner shrink-0 transition-transform group-hover:scale-110",
+                                        n.style === 'success' ? "bg-emerald-50 text-emerald-600" :
+                                        n.style === 'error' ? "bg-rose-50 text-rose-600" :
+                                        "bg-primary/10 text-primary"
+                                    )}>
+                                        {IconNode && <IconNode size={20} />}
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex justify-between items-start mb-1">
+                                            <p className={cn("text-xs font-black uppercase tracking-tight truncate", n.is_read ? "text-slate-500" : "text-foreground")}>{n.title}</p>
+                                            <span className="text-[7px] font-bold text-slate-400 uppercase">{new Date(n.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                        </div>
+                                        <p className="text-[10px] font-medium text-slate-500 leading-relaxed italic line-clamp-2">&quot;{n.message}&quot;</p>
+
+                                        {!n.is_read && (
+                                            <button
+                                                onClick={async () => {
+                                                    if (!supabase) return;
+                                                    await supabase.from('user_notifications').update({ is_read: true }).eq('id', n.id);
+                                                    setNotifications(prev => prev.map(notif => notif.id === n.id ? { ...notif, is_read: true } : notif));
+                                                    setUnreadCount(prev => Math.max(0, prev - 1));
+                                                }}
+                                                className="mt-3 text-[8px] font-black uppercase text-primary hover:underline underline-offset-2"
+                                            >
+                                                Mark as read
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                            );
+                        })}
                     </div>
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -z-0"></div>
                 </Card>
 
                 {/* 🎂 BIRTHDAY REWARDS */}

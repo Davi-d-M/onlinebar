@@ -28,6 +28,12 @@ export default function AnalyticsTracker() {
             const anonId = localStorage.getItem('ob_anonymous_id');
             const activeSessId = OB_OS.getSessionId();
             const source = searchParams.get('utm_source') || (document.referrer.includes('instagram.com') ? 'Instagram' : document.referrer.includes('google.com') ? 'Google' : 'Direct');
+            const campaign = searchParams.get('utm_campaign') || 'Direct';
+            const utmId = searchParams.get('utm_id') || undefined;
+            const utmContent = searchParams.get('utm_content') || undefined;
+
+            if (utmId) sessionStorage.setItem('ob_attribution_id', utmId);
+            if (utmContent) sessionStorage.setItem('ob_content_variant', utmContent);
 
             const commonProps = {
                 userId: session?.user?.id,
@@ -43,6 +49,9 @@ export default function AnalyticsTracker() {
                     anonymous_id: anonId,
                     entry_page: pathname,
                     source_channel: source,
+                    campaign_id: campaign,
+                    attribution_id: utmId,
+                    content_variant: utmContent,
                     device_info: {
                         ua: navigator.userAgent,
                         res: `${window.screen.width}x${window.screen.height}`,

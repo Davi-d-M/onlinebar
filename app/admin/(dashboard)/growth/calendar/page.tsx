@@ -13,8 +13,10 @@ import {
     Camera as Instagram,
     MessageCircle,
     Music,
-    Plus
+    Plus,
+    Bot
 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
@@ -22,6 +24,7 @@ export default function GrowthCalendar() {
     const [loading, setLoading] = React.useState(true);
     const [view, setView] = React.useState<'grid' | 'list'>('grid');
     const [scheduledItems, setScheduledItems] = React.useState<Array<{ id: string, title: string, time: string, day: number, platform: string, status: string }>>([]);
+    const [syncing, setSyncing] = React.useState(false);
 
     const fetchCalendar = React.useCallback(async () => {
         if (!supabase) return;
@@ -83,9 +86,26 @@ export default function GrowthCalendar() {
                     <h1 className="text-4xl font-black text-foreground uppercase tracking-tighter leading-none">Content Calendar</h1>
                     <p className="text-muted-foreground text-sm font-medium mt-1">Global visualization of scheduled brand deployments.</p>
                 </div>
-                <div className="flex gap-2 p-1 bg-white rounded-xl border border-slate-100 shadow-sm">
-                    <button onClick={() => setView('grid')} className={cn("px-4 py-2 rounded-lg text-[9px] font-black uppercase transition-all", view === 'grid' ? "bg-primary text-white" : "text-slate-400 hover:text-slate-600")}>Grid View</button>
-                    <button onClick={() => setView('list')} className={cn("px-4 py-2 rounded-lg text-[9px] font-black uppercase transition-all", view === 'list' ? "bg-primary text-white" : "text-slate-400 hover:text-slate-600")}>List Flow</button>
+                <div className="flex gap-4">
+                    <Button
+                        onClick={async () => {
+                            setSyncing(true);
+                            // Simulated server call to Autopilot.generateUpcomingDrafts()
+                            setTimeout(() => {
+                                setSyncing(false);
+                                alert("Neural Autopilot finished slot generation. Check timeline.");
+                                fetchCalendar();
+                            }, 2000);
+                        }}
+                        variant="outline"
+                        className="h-10 px-4 rounded-xl border-primary/20 bg-primary/5 text-primary font-black uppercase text-[8px] tracking-widest"
+                    >
+                        {syncing ? <Loader2 className="animate-spin" /> : <><Bot size={14} className="mr-2" /> Run Autopilot</>}
+                    </Button>
+                    <div className="flex gap-2 p-1 bg-white rounded-xl border border-slate-100 shadow-sm">
+                        <button onClick={() => setView('grid')} className={cn("px-4 py-2 rounded-lg text-[9px] font-black uppercase transition-all", view === 'grid' ? "bg-primary text-white" : "text-slate-400 hover:text-slate-600")}>Grid View</button>
+                        <button onClick={() => setView('list')} className={cn("px-4 py-2 rounded-lg text-[9px] font-black uppercase transition-all", view === 'list' ? "bg-primary text-white" : "text-slate-400 hover:text-slate-600")}>List Flow</button>
+                    </div>
                 </div>
             </header>
 

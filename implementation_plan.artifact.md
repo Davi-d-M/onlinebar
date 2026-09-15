@@ -1,46 +1,48 @@
-# Implementation Plan - Omni-Channel Publishing Engine (Content Command) 🚀📲🍸
+# Implementation Plan - Patron Experience & Gifting Suite 🛡️🎁✨
 
-This plan establishes a professional-grade, multi-platform content orchestration system. It allows the Online Bar to create content once and publish/schedule it across Facebook, Instagram, TikTok, YouTube, LinkedIn, X, and WhatsApp, while maintaining a strict **Compliance Gate** for Kenyan alcohol advertising regulations.
+This plan establishes the next level of patron engagement: a persistent **Notification Inbox**, a **Gifting Intelligence** suite (Finder & Box Builder), and professional **Corporate/B2B** entry points.
 
 ## User Review Required
 
-> [!CAUTION]
-> **Compliance Protocol**: All scheduled and automated posts will enter a `PENDING_REVIEW` state by default. You must manually verify them in the Admin panel to comply with Kenyan (NACADA) alcohol advertising rules.
-> **API Permissions**: Direct publishing to platforms like TikTok and YouTube requires your developer accounts to pass an official audit for public visibility.
+> [!IMPORTANT]
+> **Persistent Inbox**: Patrons will now see a history of all their order updates and personalized offers in their profile, synchronized across devices.
+> **Gifting Logic**: The "Gift Box Builder" will utilize our new bundling logic to allow patrons to create a custom "package" (Bottle + Snacks + Personal Note) for one-tap gifting.
 
 ## Proposed Changes
 
-### 🧱 1. Content Command Studio (Refinement)
+### 🔔 1. Patron Notification Inbox
 
-#### [MODIFY] [content/page.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/admin/(dashboard)/growth/content/page.tsx)
-- **Multimedia Uploader**: Add support for multiple image/video URLs.
-- **AI Adaptation Engine**: Integrate actual prompt generation logic for platform-specific captions (IG Reels vs. WhatsApp Status).
-- **Persistence**: Save the `master_content` and its `content_variants` to Supabase upon creation.
-
----
-
-### 📅 2. Tactical Content Calendar
-
-#### [MODIFY] [calendar/page.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/admin/(dashboard)/growth/calendar/page.tsx)
-- **Real-time Sync**: Fetch actual scheduled items from the `publishing_queue` table.
-- **Interactive Nodes**: Allow clicking on a calendar day to see/edit/publish posts for that specific date.
+#### [MODIFY] [profile/page.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/profile/page.tsx)
+- Implement `fetchNotifications` to pull from the `user_notifications` table.
+- Replace the empty state with a real, scrollable list of historical alerts.
+- Add "Mark as Read" functionality.
 
 ---
 
-### ⚙️ 3. Backend: The Publishing Orchestrator
+### 🎁 2. Gifting Intelligence Suite
 
-#### [MODIFY] [socialPublisher.ts](file:///C:/Users/hp/AndroidStudioProjects/onbar/lib/engines/socialPublisher.ts)
-- **Meta Adapter**: Detailed logic for Instagram Container and Media Publish endpoints.
-- **TikTok/X Adapters**: Placeholder structure for these specialized APIs.
-- **Status Reconciliation**: Logic to update the `social_metrics` table after a post goes live.
+#### [NEW] `app/gifting/page.tsx`
+- **Gift Finder**: UI to select "Who is it for?" and "Occasion" to get AI-powered recommendations.
+- **Gift Box Builder**: Interactive bundler to pick a main bottle, add "Chilled Snacks," and a personal message.
+
+#### [NEW] `components/gifting/GiftBoxVisualizer.tsx`
+- A premium visual representation of the final gift bundle.
 
 ---
 
-### 🏛️ 4. Connected Channels & Accounts
+### 💼 3. Corporate & Event Builder
 
-#### [MODIFY] [accounts/page.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/admin/(dashboard)/growth/accounts/page.tsx)
-- **Token Management**: UI to view token expiration and trigger re-authorization.
-- **Link Status**: Real-time "Health Check" for social API connections.
+#### [NEW] `app/corporate/page.tsx`
+- Entry point for B2B clients (Offices, Weddings, Events).
+- **Event Planner Tool**: Simple calculator to estimate required beverage volume based on guest count and duration.
+
+---
+
+### 🤝 4. Affiliate Social Nodes
+
+#### [MODIFY] [affiliate/dashboard/page.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/affiliate/dashboard/page.tsx)
+- Add "Share to WhatsApp" and "Share to Instagram" buttons that automatically include the affiliate's `ref` link.
+- Implement an "Asset Hub" tab with branded graphics for affiliates to download.
 
 ---
 
@@ -48,9 +50,9 @@ This plan establishes a professional-grade, multi-platform content orchestration
 
 ### Automated Tests
 - `npm run build`: Verify 100% route success.
-- Schema Integrity: Ensure all variants are correctly linked to their master content record.
+- Bundling Integrity: Ensure the "Gift Box" correctly adds all items to the cart with the personal note in the order metadata.
 
 ### Manual Verification
-1.  **Campaign Creation**: Create a "Weekend Drop" master post and verify 3 platform-specific variants are generated.
-2.  **Scheduling**: Set a post for tomorrow and verify it appears in the **Content Calendar**.
-3.  **Account Link**: Connect a test Meta account and verify the "Active Link" status appears with an expiration date.
+1.  **Notification Flow**: Trigger a test notification via Admin and verify it appears in the patron's `/profile` inbox.
+2.  **Gifting Flow**: Use the "Gift Box Builder" to add 3 items + a message, then verify the cart contains the full bundle.
+3.  **Affiliate Link**: Tap "Share on WhatsApp" from the affiliate dashboard and verify the link is correctly formatted.
