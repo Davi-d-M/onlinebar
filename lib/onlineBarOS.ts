@@ -44,6 +44,10 @@ export type OSEventType =
     | 'CONSENT_UPDATED'
     | 'EXPERIMENT_REACH'
     | 'EXPERIMENT_CONVERSION'
+    | 'ONBOARDING_STARTED'
+    | 'ONBOARDING_STEP_COMPLETED'
+    | 'ONBOARDING_ABANDONED'
+    | 'PREFERENCES_UPDATED'
     | 'UI_INTERACTION'
     | 'SECTION_VISIBLE'
     | 'PAGE_DWELL'
@@ -308,6 +312,38 @@ class OnlineBarOS {
         if (name === 'EXPERIMENT_CONVERSION' && payload.variantId) {
             await supabase?.rpc('increment_experiment_conversion', { var_id: payload.variantId });
         }
+
+        // 3. Handle Onboarding Funnel (Pillar 12)
+        if (name.startsWith('ONBOARDING_')) {
+            await supabase.from('onboarding_funnel_log').insert([{
+                anonymous_id: payload.anonymousId,
+                user_id: payload.userId,
+                step_name: name === 'ONBOARDING_STARTED' ? 'START' : (payload.details?.step || name),
+                metadata: payload.details || {}
+            }]);
+        }
+    }
+
+    /**
+     * Captures high-resolution performance signals.
+     */
+    public async trackPerformance(type: 'API_LATENCY' | 'RENDER_TIME' | 'ERROR', duration?: number, msg?: string) {
+        if (!supabase) return;
+
+        try {
+            await supabase.from('performance_telemetry').insert([{
+                session_id: this.sessionId,
+                event_type: type,
+                duration_ms: duration,
+                error_message: msg,
+                path: typeof window !== 'undefined' ? window.location.pathname : undefined,
+                device_info: typeof window !== 'undefined' ? {
+                    ua: navigator.userAgent,
+                    w: window.innerWidth,
+                    h: window.innerHeight
+                } : {}
+            }]);
+        } catch { /* Silent */ }
     }
 }
 

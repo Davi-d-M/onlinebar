@@ -1,24 +1,18 @@
-# Tasks - Apex OS: Intelligence & Optimization Grid (Phases 10-12) 💎🏍️🧠
+# Tasks - Premium Onboarding & Intelligence OS 🍾📊🛡️
 
-## Phase 10: The Loyalty Loop
-- [ ] Update `affiliate_payouts` schema for M-Pesa automation
-- [ ] Implement `loyaltyEngine.ts` tiering logic
-- [ ] Build `RewardMilestoneTracker.tsx` component
-- [ ] Add "Claim Payout" workflow for affiliates
+## Phase 1: Infrastructure & Engine
+- [x] Create `supabase/migrations/20260920_onboarding_intelligence.sql`
+- [x] Update `onlineBarOS.ts` with new Onboarding & Performance events
+- [x] Update `AuthForm.tsx` with `onSuccess` callback and event tracking
 
-## Phase 11: Multi-Order Batching
-- [ ] Implement `identifyBatchOpportunities()` in `dispatchEngine.ts`
-- [ ] Update `orders` schema to support `batch_id`
-- [ ] Enhance `LiveDispatchMap.tsx` for multi-stop visualization
-- [ ] Add "Suggest Batch" HUD to Admin Dispatch Feed
+## Phase 2: Onboarding UI
+- [x] Build `components/auth/PremiumOnboarding.tsx` (State Controller)
+- [ ] Implement Cinematic Intro screen
+- [ ] Implement Personalization (Interests) screen
+- [ ] Implement Success/Elite feedback screen
 
-## Phase 12: Customer 360 - The Memory Loop
-- [ ] Create `20260919_memory_loop.sql` (Frequency Views)
-- [ ] Implement `predictiveEngine.ts` (Buy Again logic)
-- [ ] Hook predictions into `notificationService.ts`
-- [ ] Add "Personalized Replenishment" node to customer home
-
-## Verification & Hardening
+## Phase 3: Deployment & Hardening
+- [x] Refactor `app/auth/page.tsx` to use the new journey
 - [ ] Run `npm run lint` and `npm run build`
-- [ ] Calibrate prediction sensitivity
+- [ ] Verify SQL view `vw_onboarding_efficiency`
 - [ ] Push to GitHub

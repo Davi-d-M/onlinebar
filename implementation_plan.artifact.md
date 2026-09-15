@@ -1,51 +1,46 @@
-# Implementation Plan - Apex OS: Intelligence & Optimization Grid (Phases 10-12) 💎🏍️🧠
+# Implementation Plan - Premium Onboarding & Intelligence OS 🍾📊🛡️
 
-This comprehensive plan activates the final tactical layers of the "Online Bar OS," focusing on **Loyalty ROI**, **Fleet Multi-Dispatch**, and **Predictive Customer 360**.
+This plan establishes a high-fidelity, multi-step onboarding experience for the Online Bar, seamlessly integrated with a project-wide Behavioral Intelligence system. We will transform registration from a static form into a premium brand journey that captures critical first-party data (Interests, Taste DNA) while establishing a full "Customer 360" profile.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> **M-Pesa Payouts**: Automation requires a valid M-Pesa B2C (Business to Customer) API integration. For now, we will build the "Approval Protocol" that prepares the payout payload.
-> **Batching Logic**: Orders will only be suggested for batching if they share the same **Sector** (e.g., Westlands) and are placed within a 15-minute window.
-> **Predictions**: "Buy Again" alerts depend on having at least 3 historical orders for a specific category to establish a pattern.
+> **Onboarding Flow**: The new `/auth` page will use a state-machine based journey (Intro &rarr; Identity &rarr; Personalize &rarr; Complete).
+> **Analytics Hardening**: I am expanding the `onlineBarOS.ts` and `onboarding_funnel_log` to track every micro-step of the user journey, allowing us to identify exact drop-off points (e.g., at OTP verification).
 
 ## Proposed Changes
 
-### 💎 1. Phase 10: The Loyalty Loop (Referral & Payouts)
+### 🗄️ 1. Database: Onboarding & Identity Hardening
 
-#### [MODIFY] [affiliate_os_core.sql](file:///C:/Users/hp/AndroidStudioProjects/onbar/supabase/migrations/20260904_affiliate_os_core.sql) (or new migration)
-- Update `affiliate_payouts` with `mpesa_receipt_number` and `batch_id`.
-- Add `loyalty_tiers` table: `Explorer` &rarr; `Silver` &rarr; `Gold` &rarr; `Diamond` &rarr; `Legend`.
-
-#### [NEW] `lib/engines/loyaltyEngine.ts`
-- Logic to calculate XP/Points required for the next tier.
-- Automated "Milestone Reached" event emitter.
-
-#### [NEW] `components/rewards/RewardMilestoneTracker.tsx`
-- A cinematic UI node showing progress bars toward the next elite rank.
+#### [NEW] `supabase/migrations/20260920_onboarding_intelligence.sql`
+- **`profiles` Enrichment**: Adds `interests`, `onboarding_step`, and `preferred_vibe`.
+- **`onboarding_funnel_log`**: Tracks the progression through each stage of initialization.
+- **`performance_telemetry`**: Captures high-resolution mobile signals (API latency, render time) to identify UX gaps on specific devices.
 
 ---
 
-### 🏍️ 2. Phase 11: Multi-Order Batching (Fleet Optimization)
+### 🏛️ 2. Core: Intelligence Engine Expansion
 
-#### [MODIFY] [dispatchEngine.ts](file:///C:/Users/hp/AndroidStudioProjects/onbar/lib/engines/dispatchEngine.ts)
-- Implement `findBatchingOpportunities()`: Scans pending orders for GPS proximity (< 1.5km).
-- Update `calculateApexScore()` to reward riders who can pick up a second order en route.
-
-#### [MODIFY] [LiveDispatchMap.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/components/admin/dispatch/LiveDispatchMap.tsx)
-- Visualize "Batched Missions" with multi-stop polylines.
+#### [MODIFY] [onlineBarOS.ts](file:///C:/Users/hp/AndroidStudioProjects/onbar/lib/onlineBarOS.ts)
+- Add `ONBOARDING_STARTED`, `ONBOARDING_STEP_COMPLETED`, and `PREFERENCES_UPDATED` to the event registry.
+- Implement `trackPerformance()` to capture device-specific signals.
+- Hook onboarding events into the `onboarding_funnel_log`.
 
 ---
 
-### 🧠 3. Phase 12: Customer 360 - The Memory Loop
+### 📱 3. UI/UX: Premium Onboarding Journey
 
-#### [NEW] `supabase/migrations/20260919_memory_loop.sql`
-- **`purchase_frequency_audit`**: Aggregated view calculating average days between purchases per user per category.
-- **`predictive_alerts`**: Log for scheduled "Buy Again" reminders.
+#### [NEW] `components/auth/PremiumOnboarding.tsx`
+- **Intro Node**: Cinematic brand introduction with Zap/Sparkle nodes.
+- **Personalize Node**: High-fidelity interest selector (Whiskey, Wine, Gin, etc.) to seed the recommendation engine.
+- **Success Node**: Elite verification feedback.
 
-#### [NEW] `lib/engines/predictiveEngine.ts`
-- Analyzes "Taste DNA" and purchase history to predict the next "Out of Stock" moment for a patron.
-- Side-effect: Triggers personalized notifications (e.g., "Your Gin shelf is likely low. Restock now?").
+#### [MODIFY] [AuthForm.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/components/auth/AuthForm.tsx)
+- Add `onSuccess` callback to bridge the auth state into the Personalization step.
+- Track registration success events.
+
+#### [MODIFY] [auth/page.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/auth/page.tsx)
+- Pivot from static layout to the `PremiumOnboarding` experience controller.
 
 ---
 
@@ -53,10 +48,9 @@ This comprehensive plan activates the final tactical layers of the "Online Bar O
 
 ### Automated Tests
 - `npm run build`: Verify 100% route success.
-- Batching Test: Verify that two orders in Westlands are grouped into a single proposed mission.
-- Prediction Test: Verify that a user buying every 7 days gets a notification on Day 6.
+- Onboarding Funnel: Verify that `ONBOARDING_STARTED` logs a `START` step in the database.
 
 ### Manual Verification
-1.  **Affiliate Payout**: Approve a payout in Admin and verify the status changes to `Paid` with a mock M-Pesa receipt.
-2.  **Milestone HUD**: Visit `/profile` as a user and verify the "Progress to Legend" bar is accurate.
-3.  **Memory Loop**: Simulate 3 orders for the same user and verify the `purchase_frequency_audit` calculates the correct interval.
+1.  **Onboarding Journey**: Start as an anonymous visitor, sign up, pick "Whiskey" and "Gifts," and verify the `interests` are saved to the Supabase profile.
+2.  **Customer 360**: Check the `session_forensics` and `onboarding_funnel_log` tables to ensure the user's "Identity Establishment" is fully traceable.
+3.  **Mobile Reflow**: Test the personalization screen on a 320px mobile viewport to ensure the grid items are perfectly spaced.

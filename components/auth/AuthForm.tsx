@@ -20,7 +20,12 @@ import { Input } from '@/components/ui/input';
 
 type AuthMethod = 'email' | 'phone';
 
-export default function AuthForm({ initialMode = 'signin' }: { initialMode?: 'signin' | 'signup' }) {
+interface AuthFormProps {
+    initialMode?: 'signin' | 'signup';
+    onSuccess?: (userId: string) => void;
+}
+
+export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthFormProps) {
   const router = useRouter();
   const [method, setAuthMethod] = useState<AuthMethod>('email');
   const [isSignUp, setIsSignUp] = useState(initialMode === 'signup');
@@ -72,8 +77,9 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: 'si
         if (error) throw error;
         if (data.user) {
             await handleIdentityStitching(data.user.id);
-            await OB_OS.track('USER_REGISTERED', { userId: data.user.id });
+            await OB_OS.track('USER_REGISTERED', { userId: data.user.id, anonymousId: localStorage.getItem('ob_anonymous_id') || undefined });
             setMessage({ type: 'success', text: 'Verification link transmitted to your inbox. 🛰️' });
+            if (onSuccess) onSuccess(data.user.id);
         }
       } else {
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
@@ -81,7 +87,8 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: 'si
         if (data.user) {
             await handleIdentityStitching(data.user.id);
             await OB_OS.track('USER_LOGIN', { userId: data.user.id });
-            router.push('/');
+            if (onSuccess) onSuccess(data.user.id);
+            else router.push('/');
         }
       }
     } catch (error: unknown) {
@@ -118,7 +125,8 @@ export default function AuthForm({ initialMode = 'signin' }: { initialMode?: 'si
             if (data.user) {
                 await handleIdentityStitching(data.user.id);
                 await OB_OS.track('USER_LOGIN', { userId: data.user.id });
-                router.push('/');
+                if (onSuccess) onSuccess(data.user.id);
+                else router.push('/');
             }
         }
     } catch (error: unknown) {
