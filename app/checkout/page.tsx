@@ -609,8 +609,8 @@ function CheckoutContent() {
       <div className="container mx-auto px-4 py-24 text-center">
         <h1 className="text-4xl font-black uppercase tracking-tighter">Your Cart is Empty</h1>
         <p className="mt-4 text-slate-500 font-medium text-left mx-auto max-w-sm italic">Add some beverages to your bag before checking out.</p>
-        <Button className="mt-8 rounded-2xl px-12 h-16 font-black uppercase tracking-widest text-[10px] shadow-2xl shadow-primary/20" asChild>
-          <Link href="/">Browse Menu</Link>
+        <Button className="mt-8 rounded-2xl px-12 h-16 font-black uppercase tracking-widest text-[10px] shadow-2xl shadow-primary/20 transition-all active:scale-95" asChild>
+          <Link href="/shop">Browse Menu</Link>
         </Button>
       </div>
     );

@@ -13,12 +13,14 @@ import {
     Smartphone,
     Globe,
     Clock,
-    Loader2
+    Loader2,
+    ArrowRight
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 import PulseDetailModal from '@/components/buzz/PulseDetailModal';
 import BuzzStoryCard, { BuzzStory } from '@/components/buzz/BuzzStoryCard';
 
@@ -282,13 +284,14 @@ export default function CityBuzzPage() {
 
                                     <div className="p-6 bg-white/5 rounded-3xl border border-white/10 space-y-4 text-left">
                                         <p className="text-[10px] font-black uppercase text-primary tracking-widest">Sector Top Selection</p>
-                                        <div className="flex items-center gap-4 text-left opacity-30">
-                                            <div className="h-12 w-12 rounded-xl bg-white flex items-center justify-center text-slate-900"><Wine size={24} /></div>
+                                        <Link href="/shop" className="flex items-center gap-4 text-left group/prod">
+                                            <div className="h-12 w-12 rounded-xl bg-white flex items-center justify-center text-slate-900 group-hover/prod:scale-110 transition-transform"><Wine size={24} /></div>
                                             <div className="min-w-0 flex-1 text-left">
-                                                <p className="text-xs font-black uppercase truncate italic">Awaiting Sector Sales</p>
-                                                <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest mt-1">{selectedArea.active_visitors} active sessions in sector</p>
+                                                <p className="text-xs font-black uppercase truncate group-hover/prod:text-primary transition-colors">Premium Cellar Selection</p>
+                                                <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest mt-1">Trending in {selectedArea.zone_name}</p>
                                             </div>
-                                        </div>
+                                            <ArrowRight size={14} className="text-primary opacity-0 group-hover/prod:opacity-100 transition-all" />
+                                        </Link>
                                     </div>
 
                                     <Button

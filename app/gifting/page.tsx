@@ -8,6 +8,7 @@ import {
     Users,
     Sparkles,
     ArrowRight,
+    ArrowLeft,
     CheckCircle2,
     Zap,
     Smartphone,
@@ -22,6 +23,7 @@ import { Card } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { cn, formatPrice } from '@/lib/utils';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
 import { useRouter } from 'next/navigation';
 
@@ -87,6 +89,7 @@ export default function GiftingHub() {
                 <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-slate-200 pb-10">
                     <div className="space-y-4">
                         <div className="flex items-center gap-3">
+                            <Link href="/" className="h-10 w-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-primary transition-all shadow-sm active:scale-90"><ArrowLeft size={20} /></Link>
                             <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shadow-sm"><Gift size={20} /></div>
                             <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Gifting Intelligence</span>
                         </div>

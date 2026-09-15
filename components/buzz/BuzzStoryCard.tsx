@@ -67,9 +67,23 @@ export default function BuzzStoryCard({ story }: { story: BuzzStory }) {
                         <TrendingUp size={10} className="text-primary" /> {story.trend_score} TREND_SCORE
                     </div>
                 </div>
-                <div className="h-10 w-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white">
+                <button
+                    onClick={() => {
+                        if (navigator.share) {
+                            navigator.share({
+                                title: story.title,
+                                text: story.description,
+                                url: window.location.href
+                            });
+                        } else {
+                            navigator.clipboard.writeText(window.location.href);
+                            alert("Link copied to clipboard! 🛰️");
+                        }
+                    }}
+                    className="h-10 w-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-primary transition-all active:scale-95"
+                >
                     <Share2 size={16} />
-                </div>
+                </button>
             </div>
 
             {/* Bottom Content Area */}
@@ -100,10 +114,17 @@ export default function BuzzStoryCard({ story }: { story: BuzzStory }) {
                 )}
 
                 <div className="grid grid-cols-2 gap-3 pt-2">
-                    <Button className="h-14 rounded-2xl bg-white text-slate-900 font-black uppercase text-[9px] tracking-widest shadow-xl hover:bg-primary hover:text-white transition-all">
+                    <Button
+                        onClick={() => window.location.href = `/buzz?id=${story.id}`}
+                        className="h-14 rounded-2xl bg-white text-slate-900 font-black uppercase text-[9px] tracking-widest shadow-xl hover:bg-primary hover:text-white transition-all active:scale-95"
+                    >
                         View Details
                     </Button>
-                    <Button variant="outline" className="h-14 rounded-2xl border-white/10 bg-white/5 text-white font-black uppercase text-[9px] tracking-widest hover:bg-white/10 transition-all flex items-center justify-center gap-2">
+                    <Button
+                        variant="outline"
+                        onClick={() => window.open(`https://www.google.com/maps/dir/?api=1&destination=${story.latitude},${story.longitude}`, '_blank')}
+                        className="h-14 rounded-2xl border-white/10 bg-white/5 text-white font-black uppercase text-[9px] tracking-widest hover:bg-white/10 transition-all flex items-center justify-center gap-2 active:scale-95"
+                    >
                         <Navigation size={14} /> Navigate
                     </Button>
                 </div>
