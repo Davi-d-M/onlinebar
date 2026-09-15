@@ -84,12 +84,12 @@ export default function OperatingBrainHUD() {
     }, []);
 
     const nodes = [
-        { label: 'Revenue', val: `KSh ${(stats.revenue / 1000).toFixed(1)}K`, icon: DollarSign, color: 'primary' },
-        { label: 'Demand Radar', val: stats.demand_hotspot, icon: Zap, color: 'rose' },
-        { label: 'Patrons', val: stats.users, icon: Users, color: 'emerald' },
-        { label: 'Runners', val: stats.riders, icon: Truck, color: 'amber' },
-        { label: 'Active Shops', val: stats.shops, icon: Wine, color: 'rose' },
-        { label: 'Automation', val: `${stats.automation}%`, icon: Bot, color: 'indigo' }
+        { label: 'Revenue', val: `KSh ${(stats.revenue / 1000).toFixed(1)}K`, icon: DollarSign, color: 'primary', href: '/admin/finance' },
+        { label: 'Demand Radar', val: stats.demand_hotspot, icon: Zap, color: 'rose', href: '/admin/analytics' },
+        { label: 'Patrons', val: stats.users, icon: Users, color: 'emerald', href: '/admin/customers' },
+        { label: 'Runners', val: stats.riders, icon: Truck, color: 'amber', href: '/admin/dispatch' },
+        { label: 'Active Shops', val: stats.shops, icon: Wine, color: 'rose', href: '/admin/operations/vendors' },
+        { label: 'Automation', val: `${stats.automation}%`, icon: Bot, color: 'indigo', href: '/admin/marketing/automation' }
     ];
 
     return (
@@ -107,7 +107,11 @@ export default function OperatingBrainHUD() {
 
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 lg:gap-10">
                 {nodes.map((node) => (
-                    <Card key={node.label} className="aspect-[4/5] rounded-[4rem] bg-white border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-xl transition-all flex flex-col items-center justify-center gap-4 text-center p-4 min-w-[140px]">
+                    <Card
+                        key={node.label}
+                        onClick={() => window.location.href = node.href}
+                        className="aspect-[4/5] rounded-[4rem] bg-white border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-xl transition-all flex flex-col items-center justify-center gap-4 text-center p-4 min-w-[140px] cursor-pointer"
+                    >
                         <div className={cn(
                             "h-12 w-12 rounded-full flex items-center justify-center transition-transform group-hover:scale-110 shadow-inner",
                             node.color === 'primary' ? 'bg-primary/10 text-primary' :

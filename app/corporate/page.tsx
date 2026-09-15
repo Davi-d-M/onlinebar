@@ -185,7 +185,10 @@ export default function CorporatePortal() {
                                     ))}
                                 </div>
 
-                                <Button className="w-full h-16 rounded-2xl bg-primary text-white font-black uppercase text-xs tracking-widest shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
+                                <Button
+                                    onClick={() => window.open(`https://wa.me/${settings.contact.whatsapp}?text=Hello! I want to initialize a professional corporate account for my organization.`, '_blank')}
+                                    className="w-full h-16 rounded-2xl bg-primary text-white font-black uppercase text-xs tracking-widest shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
+                                >
                                     Initialize Corporate Account
                                 </Button>
                             </div>

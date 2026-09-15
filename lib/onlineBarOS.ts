@@ -120,6 +120,11 @@ class OnlineBarOS {
         // 2. Log to Behavioral Analytics
         await this.logAnalytics(eventType, { ...payload, sessionId: sessId }, { corrId, reqId });
 
+        // 2.1 Product Intelligence Sync (Pillar 2)
+        if (payload.productId) {
+            await this.syncProductIntel(eventType, payload.productId, payload.amount);
+        }
+
         // 2.5 Update Taste DNA on Discovery
         if (eventType === 'PRODUCT_VIEW' && payload.userId && payload.productId) {
             await this.evolveTasteDNA(payload.userId, payload.productId);
@@ -153,6 +158,24 @@ class OnlineBarOS {
             }
         } catch (err) {
             console.warn("Taste DNA evolution failed:", err);
+        }
+    }
+
+    private async syncProductIntel(type: OSEventType, productId: number, amount?: number) {
+        if (!supabase) return;
+
+        let metric: string | null = null;
+        if (type === 'PRODUCT_VIEW') metric = 'VIEW';
+        else if (type === 'ADD_TO_CART') metric = 'CART';
+        else if (type === 'CHECKOUT_START') metric = 'CHECKOUT';
+        else if (type === 'PURCHASE_COMPLETED') metric = 'SALE';
+
+        if (metric) {
+            await supabase.rpc('track_product_interaction', {
+                p_id: productId,
+                metric_type: metric,
+                p_amount: amount || 0
+            });
         }
     }
 

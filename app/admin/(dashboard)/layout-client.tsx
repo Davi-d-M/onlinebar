@@ -25,7 +25,6 @@ import {
   Target,
   Trophy,
   TrendingUp,
-  Rocket,
   DollarSign,
   Truck,
   CreditCard,
@@ -37,7 +36,8 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   GlassWater,
-  Beer
+  Beer,
+  Calendar
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -155,15 +155,20 @@ export default function AdminLayoutClient({
     ]},
     { group: 'PATRONS', items: [
       { name: 'Directory', href: '/admin/customers', icon: Users, permission: 'can_manage_communications' },
+      { name: 'Message Command', href: '/admin/communications/command', icon: MessageSquare, permission: 'can_manage_communications' },
+      { name: 'Popup Manager', href: '/admin/communications/popups', icon: Bell, permission: 'can_manage_communications' },
       { name: 'Support Inbox', href: '/admin/messages', icon: MessageSquare, permission: 'can_manage_communications' },
       { name: 'Taste Reviews', href: '/admin/reviews', icon: Star, permission: 'can_manage_communications' },
       { name: 'VIP Rewards', href: '/admin/gamification', icon: Trophy, permission: 'can_manage_settings' },
     ]},
     { group: 'GROWTH', items: [
+      { name: 'Content Studio', href: '/admin/growth/content', icon: LayoutIcon, permission: 'can_manage_marketing' },
+      { name: 'Tactical Calendar', href: '/admin/growth/calendar', icon: Calendar, permission: 'can_manage_marketing' },
+      { name: 'Smart Autopilot', href: '/admin/growth/autopilot', icon: Bot, permission: 'can_manage_marketing' },
+      { name: 'Social Nodes', href: '/admin/growth/accounts', icon: Globe, permission: 'can_manage_marketing' },
       { name: 'Marketing Hub', href: '/admin/marketing', icon: TrendingUp, permission: 'can_manage_marketing' },
       { name: 'AI Ad Agency', href: '/admin/marketing/ai-agency', icon: Target, permission: 'can_manage_marketing' },
-      { name: 'Bar Autopilot', href: '/admin/marketing/automation', icon: Rocket, permission: 'can_manage_marketing' },
-      { name: 'Affiliates', href: '/admin/affiliates', icon: Target, permission: 'can_manage_affiliates' },
+      { name: 'Affiliates', href: '/admin/affiliates', icon: Users, permission: 'can_manage_affiliates' },
       { name: 'Drink Deals', href: '/admin/coupons', icon: Tag, permission: 'can_manage_marketing' },
     ]},
     { group: 'FINANCE', items: [

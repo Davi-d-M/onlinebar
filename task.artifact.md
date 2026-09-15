@@ -1,24 +1,20 @@
-# Tasks - Patron Experience & Gifting Suite 🛡️🎁✨
+# Tasks - Global Button & Link Synchronization 🔗✨🚀
 
-## Phase 1: Real-time Patron Inbox
-- [x] Refactor `app/profile/page.tsx` to fetch actual `user_notifications`
-- [x] Add real-time subscription for instant inbox updates
-- [x] Implement "Mark all as read" protocol
+## Phase 1: Admin Navigation Hardening
+- [x] Update `layout-client.tsx` with new Growth & Communication items
+- [x] Group social accounts, calendar, and autopilot logically
+- [x] Add "Popup Manager" to the communications stack
 
-## Phase 2: Gifting Core
-- [x] Create `app/gifting/page.tsx` (Finder & Builder Hub)
-- [x] Implement occasion-based recommendation logic
-- [x] Build the "Gift Box" bundling UI (Bottle + Snacks + Message)
+## Phase 2: Public Header Refinement
+- [x] Add `/gifting` and `/corporate` to the main navigation in `Header.tsx`
+- [x] Ensure consistent active states for sub-pages
 
-## Phase 3: Corporate/B2B Foundation
-- [x] Implement `app/corporate/page.tsx`
-- [x] Create `components/corporate/EventVolumeCalculator.tsx` (Integrated into page)
+## Phase 3: Component Wiring
+- [x] Link HUD nodes in `TodayCommandCenter.tsx` to detail views
+- [x] Wire "Corporate Account" button in `corporate/page.tsx` to WhatsApp
+- [x] Add "Back to Profile" link to the Gifting hub for patrons
 
-## Phase 4: Affiliate Social Hardening
-- [x] Update `app/affiliate/dashboard/page.tsx` with social sharing nodes
-- [x] Implement "Download Asset" logic for branded graphics (Asset Hub tab)
-
-## Phase 5: Verification & Launch
-- [ ] Run `npm run lint` and `npm run build`
-- [ ] Verify 320px mobile responsiveness for new gifting builder
-- [ ] Push to GitHub
+## Phase 4: Final Verification
+- [x] Run `npm run lint` and `npm run build`
+- [x] Perform a full "Click Audit" on mobile and desktop
+- [x] Push to GitHub

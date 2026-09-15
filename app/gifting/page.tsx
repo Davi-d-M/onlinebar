@@ -43,13 +43,12 @@ export default function GiftingHub() {
     const [step, setStep] = React.useState(1);
     const [recipient, setRecipient] = React.useState<string | null>(null);
     const [occasion, setOccasion] = React.useState<string | null>(null);
-    const [budget, setBudget] = React.useState<number>(5000);
 
     // Box Builder State
-    const [selectedBottle, setSelectedBottle] = React.useState<any | null>(null);
-    const [selectedSnacks, setSelectedSnacks] = React.useState<any[]>([]);
+    const [selectedBottle, setSelectedBottle] = React.useState<{ id: number, name: string, price: number, image_url: string } | null>(null);
+    const [selectedSnacks, setSelectedSnacks] = React.useState<Array<{ id: number, name: string, price: number, image_url: string }>>([]);
     const [personalNote, setPersonalNote] = React.useState('');
-    const [products, setProducts] = React.useState<any[]>([]);
+    const [products, setProducts] = React.useState<Array<{ id: number, name: string, price: number, image_url: string, is_snack: boolean }>>([]);
 
     const { addBundleToCart } = useCart();
     const router = useRouter();
@@ -67,11 +66,11 @@ export default function GiftingHub() {
         if (!selectedBottle) return;
 
         const items = [
-            { ...selectedBottle, quantity: 1, base_price: selectedBottle.price },
-            ...selectedSnacks.map(s => ({ ...s, quantity: 1, base_price: s.price }))
+            { ...selectedBottle, quantity: 1, base_price: selectedBottle.price, image: selectedBottle.image_url },
+            ...selectedSnacks.map(s => ({ ...s, quantity: 1, base_price: s.price, image: s.image_url }))
         ];
 
-        addBundleToCart(items as any);
+        addBundleToCart(items as any); // eslint-disable-line @typescript-eslint/no-explicit-any
         // Persist note to session storage for checkout to pick up
         if (personalNote) {
             sessionStorage.setItem('ob_gift_note', personalNote);

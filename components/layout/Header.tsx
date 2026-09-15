@@ -250,10 +250,11 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
     { href: "/shop", label: "Menu" },
     { href: "/shop/category/new-arrivals", label: "New" },
     { href: "/shop/category/sale", label: "Deals" },
+    { href: "/gifting", label: "Gifting" },
+    { href: "/corporate", label: "Corporate" },
     { href: "/blog", label: "Mixology" },
     { href: "/warranty", label: "Quality" },
-    { href: "/track", label: "Track" },
-    { href: "/admin/login", label: "Portal" }
+    { href: "/track", label: "Track" }
   ];
 
   return (

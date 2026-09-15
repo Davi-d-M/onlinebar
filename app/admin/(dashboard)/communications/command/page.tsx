@@ -19,6 +19,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { cn, formatPrice } from '@/lib/utils';
+import Link from 'next/link';
 import AudienceBuilder from '@/components/admin/growth/AudienceBuilder';
 import { logAuditAction } from '@/lib/auditService';
 import { useAdmin } from '@/context/AdminContext';
@@ -87,9 +88,11 @@ export default function MessageCommandCenter() {
                     >
                         <Power size={16} /> {killSwitch ? 'MARKETING: SUSPENDED' : 'Global Kill Switch'}
                     </button>
-                    <Button className="rounded-xl h-12 px-8 bg-slate-900 text-white font-black uppercase text-[10px] tracking-widest shadow-xl hover:scale-105 active:scale-95 transition-all">
-                        <Plus className="h-4 w-4 mr-2" /> New Broadcast
-                    </Button>
+                    <Link href="/admin/broadcast">
+                        <Button className="rounded-xl h-12 px-8 bg-slate-900 text-white font-black uppercase text-[10px] tracking-widest shadow-xl hover:scale-105 active:scale-95 transition-all">
+                            <Plus className="h-4 w-4 mr-2" /> New Broadcast
+                        </Button>
+                    </Link>
                 </div>
             </header>
 
@@ -136,6 +139,12 @@ export default function MessageCommandCenter() {
                                 <span className="text-[9px] font-black uppercase tracking-widest text-primary">NACADA 2025 Sync</span>
                                 <span className="text-xs font-black uppercase text-emerald-500 flex items-center gap-2"><CheckCircle2 size={14} /> Established</span>
                             </div>
+
+                            <Link href="/admin/analytics/intelligence">
+                                <Button className="w-full h-16 rounded-[2rem] bg-primary text-white font-black uppercase text-xs tracking-widest shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
+                                    Open Intelligence Command
+                                </Button>
+                            </Link>
                         </div>
                         <Zap className="absolute -bottom-10 -right-10 h-48 w-48 text-primary/5 rotate-12" />
                     </Card>
