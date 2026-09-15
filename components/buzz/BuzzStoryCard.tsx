@@ -76,7 +76,7 @@ export default function BuzzStoryCard({ story }: { story: BuzzStory }) {
             <div className="absolute bottom-8 left-8 right-8 space-y-6 z-20 text-left">
                 <div className="space-y-2">
                     <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">{story.category}</p>
-                    <h3 className="text-3xl font-black text-white uppercase tracking-tighter leading-none">{story.title}</h3>
+                    <h3 className="text-3xl font-black text-white uppercase tracking-tighter leading-tight text-balance">{story.title}</h3>
                     <div className="flex items-center gap-4 text-[10px] font-black uppercase text-slate-300 tracking-widest pt-2">
                         <span className="flex items-center gap-1.5"><MapPin size={12} className="text-primary" /> {story.area_zone}</span>
                         <div className="h-1 w-1 rounded-full bg-white/20" />
@@ -84,7 +84,7 @@ export default function BuzzStoryCard({ story }: { story: BuzzStory }) {
                     </div>
                 </div>
 
-                <p className="text-xs font-medium text-slate-400 line-clamp-2 italic leading-relaxed">
+                <p className="text-xs font-medium text-slate-400 line-clamp-2 italic leading-relaxed text-pretty">
                     &quot;{story.description}&quot;
                 </p>
 

@@ -95,12 +95,39 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    line-height: 1.5;
+    letter-spacing: -0.01em;
+    word-spacing: 0.05em;
   }
 }
 
 /* 📐 RESPONSIVE ENGINE UTILITIES */
 @utility text-balance {
   text-wrap: balance;
+}
+
+@utility text-pretty {
+  text-wrap: pretty;
+}
+
+@utility tracking-tight-em {
+  letter-spacing: -0.02em;
+}
+
+@utility tracking-wide-em {
+  letter-spacing: 0.05em;
+}
+
+@utility word-spacing-tight {
+  word-spacing: -0.05em;
+}
+
+@utility word-spacing-wide {
+  word-spacing: 0.1em;
+}
+
+@utility leading-relaxed-em {
+  line-height: 1.625;
 }
 
 @utility pb-safe {

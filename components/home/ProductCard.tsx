@@ -264,7 +264,7 @@ export default function ProductCard({ product }: { product: Product }) {
 
       <CardContent className="p-3.5 sm:p-6 flex flex-col flex-1 text-left">
         <Link href={`/shop/${product.id}`} className="mb-2 block min-h-[2.4rem] sm:min-h-[3rem]">
-          <h2 className="font-black text-foreground text-[11px] sm:text-sm uppercase tracking-tight line-clamp-2 group-hover:text-primary transition-colors leading-[1.2] text-balance">
+          <h2 className="font-black text-foreground text-[11px] sm:text-sm uppercase tracking-tight line-clamp-2 group-hover:text-primary transition-colors leading-[1.2] text-balance word-spacing-tight">
             {product.name}
           </h2>
         </Link>
