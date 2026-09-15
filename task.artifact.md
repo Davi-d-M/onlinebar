@@ -7,12 +7,12 @@
 
 ## Phase 2: Onboarding UI
 - [x] Build `components/auth/PremiumOnboarding.tsx` (State Controller)
-- [ ] Implement Cinematic Intro screen
-- [ ] Implement Personalization (Interests) screen
-- [ ] Implement Success/Elite feedback screen
+- [x] Implement Cinematic Intro screen
+- [x] Implement Personalization (Interests) screen
+- [x] Implement Success/Elite feedback screen
 
 ## Phase 3: Deployment & Hardening
 - [x] Refactor `app/auth/page.tsx` to use the new journey
-- [ ] Run `npm run lint` and `npm run build`
-- [ ] Verify SQL view `vw_onboarding_efficiency`
-- [ ] Push to GitHub
+- [x] Run `npm run lint` and `npm run build`
+- [x] Verify SQL view `vw_onboarding_efficiency`
+- [x] Push to GitHub

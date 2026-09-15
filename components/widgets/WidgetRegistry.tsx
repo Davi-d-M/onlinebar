@@ -11,7 +11,7 @@ import { Loader2, ShieldAlert } from 'lucide-react';
  */
 
 // 1. Dynamic Node Imports (High Performance)
-const HeroWidget = dynamic(() => import('@/components/home/DynamicHero'), { loading: () => <div className="h-[60dvh] bg-slate-50 animate-pulse" /> });
+const HeroWidget = dynamic(() => import('@/components/home/hero/NeuralHero'), { loading: () => <div className="h-[60dvh] bg-slate-50 animate-pulse" /> });
 const TrendingWidget = dynamic(() => import('@/components/home/ProductList'), { loading: () => <div className="h-96 bg-slate-50 animate-pulse" /> });
 const BuzzWidget = dynamic(() => import('@/components/buzz/BuzzHUD'), { loading: () => <div className="h-64 bg-slate-50 animate-pulse" /> });
 const ConciergeWidget = dynamic(() => import('@/components/widgets/concierge/BuildMyNightWidget'), { loading: () => <div className="h-96 bg-slate-50 animate-pulse" /> });
