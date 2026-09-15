@@ -43,6 +43,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.work.*
+import java.util.concurrent.TimeUnit
 
 class MainActivity : FragmentActivity() {
     private lateinit var executor: Executor
@@ -108,6 +110,8 @@ class MainActivity : FragmentActivity() {
             .build()
 
         biometricPrompt.authenticate(promptInfo)
+
+        scheduleWidgetUpdates()
 
         val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkRequest = NetworkRequest.Builder().build()
@@ -213,6 +217,22 @@ class MainActivity : FragmentActivity() {
 
     fun setMemberPass(bitmap: Bitmap) {
         memberPassBitmap = bitmap
+    }
+
+    private fun scheduleWidgetUpdates() {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
+        val request = PeriodicWorkRequestBuilder<WidgetUpdateWorker>(1, TimeUnit.HOURS)
+            .setConstraints(constraints)
+            .build()
+
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "ob_widget_sync",
+            ExistingPeriodicWorkPolicy.KEEP,
+            request
+        )
     }
 
     private fun syncOfflineDrops() {

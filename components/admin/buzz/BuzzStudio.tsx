@@ -15,7 +15,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
 import { supabase } from '@/lib/supabaseClient';
 import Image from 'next/image';
 
@@ -27,7 +26,7 @@ interface BuzzStudioProps {
 
 export default function BuzzStudio({ postId, onClose, onSave }: BuzzStudioProps) {
     const [loading, setLoading] = React.useState(false);
-    const [categories, setCategories] = React.useState<any[]>([]);
+    const [categories, setCategories] = React.useState<Array<{ id: string, label: string }>>([]);
     const [form, setForm] = React.useState({
         title: '',
         description: '',
@@ -63,7 +62,7 @@ export default function BuzzStudio({ postId, onClose, onSave }: BuzzStudioProps)
                         end_at: post.end_at.substring(0, 16),
                         is_featured: post.is_featured
                     });
-                    setMedia(post.buzz_media.map((m: any) => ({ type: m.media_type, url: m.url, sort_order: m.sort_order })));
+                    setMedia((post.buzz_media as any[]).map((m) => ({ type: m.media_type, url: m.url, sort_order: m.sort_order })));
                 }
             }
         }

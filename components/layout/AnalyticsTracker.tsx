@@ -27,13 +27,19 @@ export default function AnalyticsTracker() {
             const { data: { session } } = await supabase.auth.getSession();
             const anonId = localStorage.getItem('ob_anonymous_id');
             const activeSessId = OB_OS.getSessionId();
-            const source = searchParams.get('utm_source') || (document.referrer.includes('instagram.com') ? 'Instagram' : document.referrer.includes('google.com') ? 'Google' : 'Direct');
+
+            // 🚀 [WIDGET_INTEL] Capture Mobile Widget Attribution
+            const source = searchParams.get('utm_source') ||
+                           (document.referrer.includes('instagram.com') ? 'Instagram' :
+                            document.referrer.includes('google.com') ? 'Google' : 'Direct');
+
             const campaign = searchParams.get('utm_campaign') || 'Direct';
             const utmId = searchParams.get('utm_id') || undefined;
             const utmContent = searchParams.get('utm_content') || undefined;
 
             if (utmId) sessionStorage.setItem('ob_attribution_id', utmId);
             if (utmContent) sessionStorage.setItem('ob_content_variant', utmContent);
+            if (source === 'mobile_widget') sessionStorage.setItem('ob_widget_engagement', 'true');
 
             const commonProps = {
                 userId: session?.user?.id,

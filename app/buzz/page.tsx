@@ -124,7 +124,7 @@ export default function CityBuzzPage() {
                     ].map(f => (
                         <button
                             key={f.id}
-                            onClick={() => setFilter(f.id as any)}
+                        onClick={() => setFilter(f.id as 'trending' | 'near-me' | 'tonight')}
                             className={cn(
                                 "flex items-center gap-2.5 px-6 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all shrink-0 border shadow-sm",
                                 filter === f.id ? "bg-rose-500 text-white border-rose-500 shadow-rose-500/20 scale-105" : "bg-white text-slate-400 border-slate-100 hover:border-rose-200 hover:text-rose-500"

@@ -45,6 +45,7 @@ dependencies {
     implementation(libs.image.labeling)
     implementation("com.google.firebase:firebase-messaging:24.1.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("androidx.work:work-runtime-ktx:2.10.0")
     
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)

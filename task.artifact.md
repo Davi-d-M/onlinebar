@@ -1,28 +1,25 @@
-# Tasks - "The Buzz" & Dashboard Builder 🏙️📊✨
+# Tasks - Remote-Controlled App Widget 📱🍸🚀
 
 ## Phase 1: Grid Foundation
-- [x] Create `supabase/migrations/20260917_the_buzz_expansion.sql`
-- [x] Create `supabase/migrations/20260916_dashboard_builder.sql`
-- [x] Implement Trend Score function in PL/pgSQL
+- [x] Create `supabase/migrations/20260918_mobile_app_widgets.sql`
+- [ ] Implement `get_active_widget` RPC or API route
 
-## Phase 2: Admin Command centers
-- [x] Create `app/admin/(dashboard)/buzz/page.tsx` (The Buzz HUD)
-- [x] Build `components/admin/buzz/BuzzStudio.tsx` (Creation node)
-- [x] Implement `DashboardWorkspace.tsx` grid engine
-- [x] Create `IntelWidget.tsx` & `WidgetEditor.tsx`
+## Phase 2: Admin Control Tower
+- [x] Create `app/admin/(dashboard)/experience/mobile-widgets/page.tsx`
+- [x] Build Widget Preview Component (Phone Frame)
+- [x] Implement "Publish" and "Rollback" protocol UI
 
-## Phase 3: Customer discovery
-- [x] Refactor `app/buzz/page.tsx` for Story-style discovery
-- [x] Create `components/buzz/BuzzStoryCard.tsx`
-- [x] Implement "Near Me" GPS proximity logic placeholder
-- [x] Build Interactive Map View integration
+## Phase 3: Android Native Implementation
+- [x] Create `res/layout/ob_app_widget.xml` (UI Grid)
+- [x] Implement `OnlineBarWidgetProvider.kt`
+- [x] Create `WidgetUpdateWorker.kt` for remote sync
+- [x] Register Widget in `AndroidManifest.xml`
 
-## Phase 4: Intelligence & Analytics
-- [x] Update `onlineBarOS.ts` with Buzz & Intelligence event types
-- [x] Hook engagement into the Trend Score algorithm
-- [x] Refactor Intelligence Hub to use dynamic Workspace
+## Phase 4: Personalization & Analytics
+- [x] Hook `utm_source=mobile_widget` into the attribution engine
+- [x] Add widget stats to the **Intelligence War Room**
 
 ## Phase 5: Verification & Launch
 - [x] Run `npm run lint` and `npm run build`
-- [x] Verify 320px mobile cinematic layout
+- [x] Verify PWA/Android cross-link success
 - [x] Push to GitHub

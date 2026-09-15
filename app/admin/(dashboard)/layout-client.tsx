@@ -38,7 +38,8 @@ import {
   PanelLeftOpen,
   GlassWater,
   Beer,
-  Calendar
+  Calendar,
+  Smartphone
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -146,6 +147,10 @@ export default function AdminLayoutClient({
       { name: 'Cellar Hub', href: '/admin/upload', icon: Wine, permission: 'can_manage_inventory' },
       { name: 'Munchie Hub', href: '/admin/munchies', icon: Cookie, permission: 'can_manage_inventory' },
       { name: 'Dispatch Queue', href: '/admin/orders', icon: ShoppingCart, permission: 'can_manage_orders' },
+    ]},
+    { group: 'EXPERIENCE', items: [
+      { name: 'Web Widgets', href: '/admin/experience/widgets', icon: LayoutIcon, permission: 'can_manage_settings' },
+      { name: 'App Widgets', href: '/admin/experience/mobile-widgets', icon: Smartphone, permission: 'can_manage_settings' },
     ]},
     { group: 'OPERATIONS', items: [
       { name: 'Live Runners', href: '/admin/dispatch', icon: Truck, permission: 'can_manage_orders' },

@@ -53,7 +53,8 @@ VALUES
 ('UNITS_SOLD', 'Units Sold', 'Total item count dispatched', 'NUMBER'),
 ('CONVERSION_RATE', 'Purchase conversion', 'View to purchase ratio', 'PERCENTAGE'),
 ('CART_ABANDON_RATE', 'Cart Abandonment', 'Users who added but did not buy', 'PERCENTAGE'),
-('ACTIVE_TIME_AVG', 'Avg. Engagement', 'Active time on product pages', 'NUMBER')
+('ACTIVE_TIME_AVG', 'Avg. Engagement', 'Active time on product pages', 'NUMBER'),
+('MOBILE_WIDGET_ROI', 'Widget ROI', 'Home-screen widget click performance', 'PERCENTAGE')
 ON CONFLICT (metric_key) DO NOTHING;
 
 -- 6. Security (RLS)
