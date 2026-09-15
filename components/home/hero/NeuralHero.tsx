@@ -86,20 +86,32 @@ export default function NeuralHero() {
     if (loading) return <div className="h-[70vh] bg-slate-50 animate-pulse rounded-[4rem] m-6" />;
 
     return (
-        <section className="relative min-h-[85vh] flex items-center overflow-hidden bg-white px-6 sm:px-12 lg:px-20 py-20">
+        <section className={cn(
+            "relative min-h-[85vh] flex items-center overflow-hidden px-6 sm:px-12 lg:px-20 py-20 transition-colors duration-1000",
+            persona?.vibe === 'ELITE' ? "bg-slate-900 text-white" : "bg-white text-foreground"
+        )}>
             {/* Neural Background Noise */}
             <div className="absolute inset-0 bg-[url('/grid-noise.png')] opacity-[0.03] pointer-events-none" />
-            <div className="absolute top-0 right-0 w-2/3 h-full bg-primary/5 rounded-l-[20rem] blur-3xl -z-10 animate-pulse" />
+            <div className={cn(
+                "absolute top-0 right-0 w-2/3 h-full rounded-l-[20rem] blur-3xl -z-10 animate-pulse opacity-40",
+                persona?.vibe === 'LIVELY' ? "bg-rose-500/20" : "bg-primary/10"
+            )} />
 
             <div className="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-20 items-center relative z-10">
 
                 <div className="space-y-10 animate-in fade-in slide-in-from-left-10 duration-1000">
-                    <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-slate-900 text-primary border border-white/5 shadow-2xl">
+                    <div className={cn(
+                        "inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full border shadow-2xl",
+                        persona?.vibe === 'ELITE' ? "bg-white/5 text-primary border-white/10" : "bg-slate-900 text-primary border-white/5"
+                    )}>
                         <Zap className="h-4 w-4 fill-current animate-bounce" />
                         <span className="text-[10px] font-black uppercase tracking-[0.3em]">{config.badge}</span>
                     </div>
 
-                    <h1 className="text-6xl lg:text-8xl font-black tracking-tighter text-foreground uppercase leading-[0.85] text-balance">
+                    <h1 className={cn(
+                        "text-6xl lg:text-8xl font-black tracking-tighter uppercase leading-[0.85] text-balance",
+                        persona?.vibe === 'ELITE' ? "text-white" : "text-foreground"
+                    )}>
                         {config.title.split('.').map((part, i) => (
                             <span key={i} className={cn(i === 1 && "text-primary italic block")}>
                                 {part}{i === 0 && '.'}
@@ -107,7 +119,10 @@ export default function NeuralHero() {
                         ))}
                     </h1>
 
-                    <p className="text-xl text-slate-500 font-medium max-w-lg leading-relaxed italic">
+                    <p className={cn(
+                        "text-xl font-medium max-w-lg leading-relaxed italic",
+                        persona?.vibe === 'ELITE' ? "text-slate-400" : "text-slate-500"
+                    )}>
                         &quot;{config.subtitle}&quot;
                     </p>
 
@@ -118,7 +133,10 @@ export default function NeuralHero() {
                             </Button>
                         </Link>
                         <Link href="/gifting">
-                            <Button variant="outline" className="h-20 px-10 rounded-[2rem] border-2 border-slate-100 bg-white font-black uppercase tracking-widest text-[10px] hover:bg-slate-50 transition-all active:scale-95">
+                            <Button variant="outline" className={cn(
+                                "h-20 px-10 rounded-[2rem] border-2 font-black uppercase tracking-widest text-[10px] transition-all active:scale-95",
+                                persona?.vibe === 'ELITE' ? "border-white/10 bg-white/5 text-white hover:bg-white/10" : "border-slate-100 bg-white text-slate-400 hover:bg-slate-50"
+                            )}>
                                 <ShoppingBag className="mr-2 h-4 w-4" /> Send as Gift
                             </Button>
                         </Link>
@@ -126,17 +144,23 @@ export default function NeuralHero() {
                 </div>
 
                 <div className="relative animate-in zoom-in-95 duration-1000 delay-300">
-                    <div className="aspect-square rounded-[5rem] bg-slate-50 border border-slate-100 flex items-center justify-center p-16 shadow-inner relative group overflow-hidden">
+                    <div className={cn(
+                        "aspect-square rounded-[5rem] border flex items-center justify-center p-16 shadow-inner relative group overflow-hidden",
+                        persona?.vibe === 'ELITE' ? "bg-white/5 border-white/5" : "bg-slate-50 border-slate-100"
+                    )}>
                         <div className="relative z-10 w-full h-full flex items-center justify-center opacity-10">
                              <config.icon size={200} className="text-primary animate-pulse" />
                         </div>
 
                         {/* Floating Interaction Node */}
-                        <Card className="absolute bottom-12 right-12 p-8 rounded-[2.5rem] bg-white shadow-2xl border-none animate-in slide-in-from-bottom-4 duration-700 delay-1000">
+                        <Card className={cn(
+                            "absolute bottom-12 right-12 p-8 rounded-[2.5rem] shadow-2xl border-none animate-in slide-in-from-bottom-4 duration-700 delay-1000",
+                            persona?.vibe === 'ELITE' ? "bg-slate-800 text-white" : "bg-white text-foreground"
+                        )}>
                             <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-1 text-left">Sector Status</p>
                             <h4 className="text-xl font-black text-foreground uppercase tracking-tight text-left">Trending Tonight</h4>
                             <div className="mt-4 flex items-center gap-3">
-                                <div className="h-1.5 w-32 bg-slate-100 rounded-full overflow-hidden">
+                                <div className="h-1.5 w-32 bg-slate-100/10 rounded-full overflow-hidden">
                                     <div className="h-full bg-primary w-[84%] animate-in slide-in-from-left duration-1000" />
                                 </div>
                                 <span className="text-[10px] font-black text-primary">84%</span>

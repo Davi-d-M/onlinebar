@@ -3,13 +3,10 @@
 import * as React from 'react';
 import {
     Trophy,
-    Zap,
-    ChevronRight,
     Crown,
     ShieldCheck,
     Star,
-    Sparkles,
-    Loader2
+    Sparkles
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';

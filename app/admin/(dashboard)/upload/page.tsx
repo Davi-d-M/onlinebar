@@ -124,7 +124,10 @@ interface Product {
   wholesale_stock_reserve?: number;
 }
 
-const WAREHOUSE_HUBS = ["Nairobi Central Cellar", "Mombasa Port Depot", "Kisumu Operations", "Eldoret Branch"];
+interface Hub {
+    id: string;
+    name: string;
+}
 
 export default function AdminUploadPage() {
     return (
@@ -147,6 +150,8 @@ function UploadContent() {
   const [videoPreviewUrl, setVideoPreviewUrl] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
+  const [hubs, setHubs] = useState<Hub[]>([]);
+  const [hubStock, setHubStock] = useState<Record<string, string>>({});
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [formSession, setFormSession] = useState(0);
@@ -207,13 +212,14 @@ function UploadContent() {
     if (!supabase) return;
     try {
       setLoadingProducts(true);
-      const { data, error } = await supabase
-        .from('products')
-        .select('*')
-        .order('id', { ascending: false });
+      const [prodRes, hubRes] = await Promise.all([
+        supabase.from('products').select('*').order('id', { ascending: false }),
+        supabase.from('hubs').select('id, name').eq('is_active', true)
+      ]);
 
-      if (error) throw error;
-      setProducts(data || []);
+      if (prodRes.error) throw prodRes.error;
+      setProducts(prodRes.data || []);
+      setHubs(hubRes.data || []);
     } catch (err) {
       console.error(err);
     } finally {
@@ -385,6 +391,18 @@ function UploadContent() {
     setVideoPreviewUrl(product.video_url || null);
     setEditingId(product.id);
     setFormSession(prev => prev + 1);
+
+    // Fetch Hub Stock (Phase 13)
+    async function fetchHubStock() {
+        const { data } = await supabase!.from('hub_inventory').select('*').eq('product_id', product.id);
+        if (data) {
+            const hStock: Record<string, string> = {};
+            data.forEach((hs: any) => hStock[hs.hub_id] = String(hs.stock_level));
+            setHubStock(hStock);
+        }
+    }
+    fetchHubStock();
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -491,12 +509,24 @@ function UploadContent() {
           wholesale_stock_reserve: Number(form.wholesale_stock_reserve)
       };
 
+      let pId = editingId;
       if (editingId) {
           await supabase.from('products').update(productData).eq('id', editingId);
           await logAuditAction(email, 'UPDATE_PRODUCT', { id: editingId, name: productData.name });
       } else {
-          await supabase.from('products').insert([productData]);
+          const { data } = await supabase.from('products').insert([productData]).select('id').single();
+          if (data) pId = data.id;
           await logAuditAction(email, 'CREATE_PRODUCT', { name: productData.name });
+      }
+
+      // 🌐 Distributed Hub Inventory Sync (Phase 13)
+      if (pId && Object.keys(hubStock).length > 0) {
+          const hubRows = Object.entries(hubStock).map(([hId, level]) => ({
+              hub_id: hId,
+              product_id: pId,
+              stock_level: parseInt(level) || 0
+          }));
+          await supabase.from('hub_inventory').upsert(hubRows, { onConflict: 'hub_id, product_id' });
       }
 
       cancelEditing();
@@ -848,13 +878,32 @@ function UploadContent() {
                       <CardContent className="p-10 pt-0 space-y-8">
                           <div className="grid sm:grid-cols-2 gap-6 text-left">
                               <div className="space-y-2"><label className="text-[9px] font-black uppercase text-slate-400">Low Stock Alert</label><Input name="low_stock_alert" type="number" value={form.low_stock_alert} onChange={handleInputChange} className="h-14 rounded-2xl border-slate-100 bg-slate-50" /></div>
-                              <div className="space-y-2"><label className="text-[9px] font-black uppercase text-slate-400">Warehouse Deployment Zone</label>
+                              <div className="space-y-2"><label className="text-[9px] font-black uppercase text-slate-400">Primary Hub (Legacy)</label>
                                   <select name="warehouse_location" value={form.warehouse_location} onChange={handleInputChange} className="w-full h-14 rounded-2xl border-slate-100 bg-slate-50 px-4 text-xs font-black uppercase">
                                       <option value="">Select Hub</option>
-                                      {WAREHOUSE_HUBS.map(h => <option key={h} value={h}>{h}</option>)}
+                                      {hubs.map(h => <option key={h.id} value={h.id}>{h.name}</option>)}
                                   </select>
                               </div>
                           </div>
+
+                          <div className="space-y-4 pt-6 border-t border-slate-50 text-left">
+                                <label className="text-[9px] font-black uppercase text-primary tracking-widest">Distributed Grid Stock</label>
+                                <div className="grid grid-cols-2 gap-3">
+                                    {hubs.map(hub => (
+                                        <div key={hub.id} className="p-4 rounded-2xl bg-white border border-slate-100 shadow-sm flex items-center justify-between group/hub">
+                                            <span className="text-[10px] font-black uppercase text-slate-500">{hub.name.split(' ')[0]}</span>
+                                            <input
+                                                type="number"
+                                                value={hubStock[hub.id] || ''}
+                                                onChange={e => setHubStock({...hubStock, [hub.id]: e.target.value})}
+                                                placeholder="0"
+                                                className="w-20 h-10 rounded-xl bg-slate-50 border-slate-100 text-center font-black text-xs outline-none focus:ring-2 focus:ring-primary/20"
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+                          </div>
+
                           <div className="grid sm:grid-cols-2 gap-6 text-left pt-6 border-t border-slate-50">
                               <div className="space-y-2">
                                   <label className="text-[9px] font-black uppercase text-indigo-500">Wholesale MOQ</label>

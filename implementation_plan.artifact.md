@@ -1,46 +1,49 @@
-# Implementation Plan - Premium Onboarding & Intelligence OS 🍾📊🛡️
+# Implementation Plan - Global Expansion & ROI Hardening (Phases 13-15) 🏰💰🍷
 
-This plan establishes a high-fidelity, multi-step onboarding experience for the Online Bar, seamlessly integrated with a project-wide Behavioral Intelligence system. We will transform registration from a static form into a premium brand journey that captures critical first-party data (Interests, Taste DNA) while establishing a full "Customer 360" profile.
+This plan activates the "Enterprise Grid" of the Online Bar OS, establishing multi-hub scalability, automated affiliate payouts, and a deeper AI personalization layer.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> **Onboarding Flow**: The new `/auth` page will use a state-machine based journey (Intro &rarr; Identity &rarr; Personalize &rarr; Complete).
-> **Analytics Hardening**: I am expanding the `onlineBarOS.ts` and `onboarding_funnel_log` to track every micro-step of the user journey, allowing us to identify exact drop-off points (e.g., at OTP verification).
+> **Multi-Hub Logic**: We will migrate the current `warehouse_location` text fields to a structured `hubs` table. This allows for city-level inventory management (Nairobi vs. Mombasa).
+> **Payout Automation**: Affiliates will now be able to request withdrawals once they hit a KSh 1,000 threshold. Admin approval will log a mock M-Pesa receipt to prepare for API integration.
+> **AI Sommelier**: The home screen and product pages will now suggest "Perfect Pairings" based on a patron's historic **Taste DNA**.
 
 ## Proposed Changes
 
-### 🗄️ 1. Database: Onboarding & Identity Hardening
+### 🏰 1. Phase 13: Enterprise Multi-Hub (Infrastructure)
 
-#### [NEW] `supabase/migrations/20260920_onboarding_intelligence.sql`
-- **`profiles` Enrichment**: Adds `interests`, `onboarding_step`, and `preferred_vibe`.
-- **`onboarding_funnel_log`**: Tracks the progression through each stage of initialization.
-- **`performance_telemetry`**: Captures high-resolution mobile signals (API latency, render time) to identify UX gaps on specific devices.
+#### [NEW] `supabase/migrations/20260921_multi_hub_grid.sql`
+- **`hubs`**: Table for different cellars/branches (Name, City, GPS, Manager).
+- **`hub_inventory`**: Tracks stock levels per product per hub.
+- Update `orders` to include `hub_id` for source tracking.
 
----
-
-### 🏛️ 2. Core: Intelligence Engine Expansion
-
-#### [MODIFY] [onlineBarOS.ts](file:///C:/Users/hp/AndroidStudioProjects/onbar/lib/onlineBarOS.ts)
-- Add `ONBOARDING_STARTED`, `ONBOARDING_STEP_COMPLETED`, and `PREFERENCES_UPDATED` to the event registry.
-- Implement `trackPerformance()` to capture device-specific signals.
-- Hook onboarding events into the `onboarding_funnel_log`.
+#### [NEW] `app/admin/(dashboard)/operations/hubs/page.tsx`
+- Dashboard to manage branch cellars, active hubs, and regional stock.
 
 ---
 
-### 📱 3. UI/UX: Premium Onboarding Journey
+### 💰 2. Phase 14: Automated Affiliate ROI (The Payout Hub)
 
-#### [NEW] `components/auth/PremiumOnboarding.tsx`
-- **Intro Node**: Cinematic brand introduction with Zap/Sparkle nodes.
-- **Personalize Node**: High-fidelity interest selector (Whiskey, Wine, Gin, etc.) to seed the recommendation engine.
-- **Success Node**: Elite verification feedback.
+#### [MODIFY] [affiliate/dashboard/page.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/affiliate/dashboard/page.tsx)
+- Add "Claim Earnings" button with a threshold check.
+- Implement withdrawal request form (M-Pesa Number validation).
 
-#### [MODIFY] [AuthForm.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/components/auth/AuthForm.tsx)
-- Add `onSuccess` callback to bridge the auth state into the Personalization step.
-- Track registration success events.
+#### [MODIFY] [admin/(dashboard)/payouts/page.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/admin/(dashboard)/payouts/page.tsx)
+- Upgraded "Payout Terminal" with one-tap approval and receipt logging.
 
-#### [MODIFY] [auth/page.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/auth/page.tsx)
-- Pivot from static layout to the `PremiumOnboarding` experience controller.
+---
+
+### 🍷 3. Phase 15: The AI Sommelier (Neural Personalization)
+
+#### [NEW] `components/product/PerfectPairingNode.tsx`
+- Intelligent UI node for product pages that suggests mixers/snacks based on the main spirit's category.
+
+#### [MODIFY] [NeuralHero.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/components/home/hero/NeuralHero.tsx)
+- Enhance the hero selection logic to include "Vibe-based" backgrounds and CTA variants.
+
+#### [NEW] `lib/engines/sommelierEngine.ts`
+- Logic to generate pairing recommendations using the patron's Taste DNA (e.g., if they like heavy Whiskey, suggest smoky snacks).
 
 ---
 
@@ -48,9 +51,9 @@ This plan establishes a high-fidelity, multi-step onboarding experience for the 
 
 ### Automated Tests
 - `npm run build`: Verify 100% route success.
-- Onboarding Funnel: Verify that `ONBOARDING_STARTED` logs a `START` step in the database.
+- Multi-Hub Test: Verify that a product can have 50 units in Nairobi and 20 units in Mombasa.
 
 ### Manual Verification
-1.  **Onboarding Journey**: Start as an anonymous visitor, sign up, pick "Whiskey" and "Gifts," and verify the `interests` are saved to the Supabase profile.
-2.  **Customer 360**: Check the `session_forensics` and `onboarding_funnel_log` tables to ensure the user's "Identity Establishment" is fully traceable.
-3.  **Mobile Reflow**: Test the personalization screen on a 320px mobile viewport to ensure the grid items are perfectly spaced.
+1.  **Hub Management**: Create a "Mombasa Coast Hub" in Admin and assign 10 bottles to it.
+2.  **Affiliate Claim**: Request a KSh 1,200 withdrawal from the affiliate dashboard and verify it appears in the Admin Payout queue.
+3.  **Sommelier Pick**: Log in as a "Whiskey Legend" and verify that the homepage hero and pairing nodes suggest whiskey-related items.

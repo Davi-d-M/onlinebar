@@ -21,7 +21,8 @@ import {
     Globe,
     Clock,
     PieChart,
-    MessageCircle
+    MessageCircle,
+    X
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -49,6 +50,7 @@ interface ProductNode {
 interface AffiliateProfile {
     id: string;
     referral_code: string;
+    phone_number: string;
     affiliates: {
         id: string;
         affiliate_tier: string;
@@ -58,6 +60,9 @@ interface AffiliateProfile {
 export default function AffiliateCommandCenter() {
     const router = useRouter();
     const [loading, setLoading] = React.useState(true);
+    const [isWithdrawing, setIsWithdrawing] = React.useState(false);
+    const [withdrawAmount, setWithdrawAmount] = React.useState('');
+    const [withdrawPhone, setWithdrawPhone] = React.useState('');
     const [profile, setProfile] = React.useState<AffiliateProfile | null>(null);
     const [stats, setStats] = React.useState<AffiliateStats>({ clicks: 0, conversions: 0, available_earnings: 0, pending_earnings: 0 });
     const [products, setProducts] = React.useState<ProductNode[]>([]);
@@ -110,6 +115,30 @@ export default function AffiliateCommandCenter() {
         setTimeout(() => setCopied(false), 2000);
     };
 
+    const handleWithdrawRequest = async () => {
+        if (!supabase || !profile) return;
+        const amount = parseFloat(withdrawAmount);
+        if (amount < 1000) { alert("Minimum payout: KSh 1,000"); return; }
+        if (amount > stats.available_earnings) { alert("Insufficient available balance."); return; }
+
+        setLoading(true);
+        try {
+            const { error } = await supabase.from('affiliate_payouts').insert([{
+                profile_id: profile.id,
+                amount: amount,
+                payment_method: 'M-Pesa',
+                payment_details: withdrawPhone || profile.phone_number,
+                status: 'Pending'
+            }]);
+
+            if (error) throw error;
+            alert("Withdrawal protocol initialized! 🛰️ Check Payouts tab for status.");
+            setIsWithdrawing(false);
+            fetchAffiliateData();
+        } catch (err) { console.error(err); }
+        finally { setLoading(false); }
+    };
+
     if (loading) return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-white gap-4">
             <Loader2 className="h-10 w-10 text-primary animate-spin" />
@@ -145,12 +174,22 @@ export default function AffiliateCommandCenter() {
                             ))}
                         </nav>
                     </div>
-                    <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-4">
                         <div className="text-right hidden sm:block">
                             <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Available Balance</p>
                             <p className="text-sm font-black text-emerald-600">{formatPrice(stats.available_earnings)}</p>
                         </div>
-                        <Button className="h-10 px-6 rounded-xl bg-primary text-white font-black uppercase text-[9px] tracking-widest shadow-lg shadow-primary/20">Withdraw</Button>
+                        <Button
+                            onClick={() => {
+                                setWithdrawAmount(stats.available_earnings.toString());
+                                setWithdrawPhone(profile?.phone_number || '');
+                                setIsWithdrawing(true);
+                            }}
+                            disabled={stats.available_earnings < 1000}
+                            className="h-10 px-6 rounded-xl bg-primary text-white font-black uppercase text-[9px] tracking-widest shadow-lg shadow-primary/20 disabled:opacity-30"
+                        >
+                            Withdraw
+                        </Button>
                     </div>
                 </div>
             </div>
@@ -403,6 +442,54 @@ export default function AffiliateCommandCenter() {
                     </div>
                 )}
             </div>
+
+            {/* WITHDRAWAL MODAL */}
+            {isWithdrawing && (
+                <div className="fixed inset-0 z-[500] flex items-center justify-center bg-slate-900/40 backdrop-blur-md p-4">
+                    <Card className="max-w-md w-full bg-white rounded-[3rem] border-none shadow-2xl p-10 space-y-8 animate-in zoom-in-95 duration-300 text-left">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-4">
+                                <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-sm"><Wallet size={24} /></div>
+                                <h3 className="text-2xl font-black uppercase text-foreground tracking-tighter">Claim Earnings</h3>
+                            </div>
+                            <button onClick={() => setIsWithdrawing(false)} className="text-slate-300 hover:text-rose-500 transition-colors"><X size={24} /></button>
+                        </div>
+
+                        <div className="space-y-6">
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black uppercase text-slate-400 ml-1">M-Pesa Number</label>
+                                <Input
+                                    value={withdrawPhone}
+                                    onChange={e => setWithdrawPhone(e.target.value)}
+                                    placeholder="07XXXXXXXX"
+                                    className="h-14 rounded-2xl bg-slate-50 border-slate-100 font-black text-lg"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <div className="flex justify-between items-center px-1">
+                                    <label className="text-[10px] font-black uppercase text-slate-400">Withdraw Amount</label>
+                                    <span className="text-[9px] font-black text-primary uppercase">Available: {formatPrice(stats.available_earnings)}</span>
+                                </div>
+                                <Input
+                                    value={withdrawAmount}
+                                    onChange={e => setWithdrawAmount(e.target.value)}
+                                    type="number"
+                                    className="h-14 rounded-2xl bg-slate-50 border-slate-100 font-black text-xl text-primary"
+                                />
+                                <p className="text-[8px] font-medium text-slate-400 italic mt-1 px-1">&quot;Minimum protocol amount: KSh 1,000.&quot;</p>
+                            </div>
+                        </div>
+
+                        <Button
+                            onClick={handleWithdrawRequest}
+                            disabled={loading || !withdrawAmount || parseFloat(withdrawAmount) < 1000}
+                            className="w-full h-16 rounded-2xl bg-primary text-white font-black uppercase text-xs tracking-widest shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
+                        >
+                            {loading ? <Loader2 className="animate-spin" /> : <><CheckCircle2 className="mr-2 h-5 w-5" /> Initialize Transfer</>}
+                        </Button>
+                    </Card>
+                </div>
+            )}
         </div>
     );
 }

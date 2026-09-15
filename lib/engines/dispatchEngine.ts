@@ -38,7 +38,18 @@ class DispatchEngine {
     public async findOptimalRider(orderId: number, destination: ApexLatLng): Promise<DispatchCandidate | null> {
         if (!supabase) return null;
 
-        // 1. Fetch Candidates (Online Riders)
+        // 0. Fetch Order Context (Hub Source)
+        const { data: order } = await supabase.from('orders').select('hub_id').eq('id', orderId).single();
+        const hubId = order?.hub_id;
+
+        // 1. Fetch Hub Location
+        let hubLoc: ApexLatLng = { latitude: -1.2841, longitude: 36.8155 }; // Default Nairobi
+        if (hubId) {
+            const { data: hub } = await supabase.from('hubs').select('latitude, longitude').eq('id', hubId).single();
+            if (hub) hubLoc = { latitude: Number(hub.latitude), longitude: Number(hub.longitude) };
+        }
+
+        // 1.5 Fetch Candidates (Online Riders)
         const { data: onlineRiders } = await supabase
             .from('rider_status')
             .select(`
@@ -51,8 +62,7 @@ class DispatchEngine {
         if (!onlineRiders || onlineRiders.length === 0) return null;
 
         // 2. Compute Route Matrix (High Speed Comparison)
-        // For now, we simulate or call Google Route Matrix if API KEY present
-        const candidates = await this.rankCandidates(onlineRiders, destination);
+        const candidates = await this.rankCandidates(onlineRiders, destination, hubLoc);
 
         // 3. Log Dispatch Logic for Audit
         const winner = candidates[0];
@@ -135,20 +145,26 @@ class DispatchEngine {
         rating: number,
         acceptance_rate: number,
         rider_vehicles: Array<{ avg_km_per_l: number, traffic_factor: number, load_factor: number, fuel_price_l: number }>
-    }>, destination: ApexLatLng): Promise<DispatchCandidate[]> {
+    }>, destination: ApexLatLng, hubLoc: ApexLatLng): Promise<DispatchCandidate[]> {
         const results: DispatchCandidate[] = [];
 
         for (const rider of riders) {
             try {
-                // Simplified: Fetch direct route for each candidate (Route Matrix API would be more efficient for >5 riders)
-                const route = await ApexRouter.computeFastestRoute(
+                // 1. Calculate Rider -> Hub (Pickup leg)
+                const pickupRoute = await ApexRouter.computeFastestRoute(
                     { latitude: rider.lat || -1.2841, longitude: rider.lng || 36.8155 },
-                    destination
+                    hubLoc
                 );
+
+                // 2. Calculate Hub -> Customer (Delivery leg)
+                const deliveryRoute = await ApexRouter.computeFastestRoute(hubLoc, destination);
+
+                const totalDistKm = pickupRoute.distanceKm + deliveryRoute.distanceKm;
+                const totalDurationMin = pickupRoute.durationMinutes + deliveryRoute.durationMinutes;
 
                 const vehicle = rider.rider_vehicles?.[0] || { avg_km_per_l: 40, traffic_factor: 1.15, load_factor: 1.05, fuel_price_l: 190 };
                 const fuel = ApexFuel.calculateEstimate({
-                    distanceKm: route.distanceKm,
+                    distanceKm: totalDistKm,
                     baseKmPerLitre: vehicle.avg_km_per_l,
                     trafficFactor: vehicle.traffic_factor,
                     loadFactor: vehicle.load_factor,
@@ -158,8 +174,8 @@ class DispatchEngine {
                 const candidate: DispatchCandidate = {
                     riderPhone: rider.rider_phone,
                     riderName: rider.rider_name,
-                    etaMinutes: route.durationMinutes,
-                    distanceKm: route.distanceKm,
+                    etaMinutes: totalDurationMin,
+                    distanceKm: totalDistKm,
                     status: rider.status,
                     activeOrders: 0, // Should be fetched from active missions
                     rating: rider.rating || 5.0,

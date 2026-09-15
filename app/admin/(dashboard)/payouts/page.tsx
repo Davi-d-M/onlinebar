@@ -25,6 +25,7 @@ interface PayoutRequest {
     status: 'Pending' | 'Approved' | 'Paid' | 'Rejected';
     payment_method: string;
     payment_details: string;
+    mpesa_receipt?: string;
     created_at: string;
     profiles: {
         full_name: string;
@@ -65,12 +66,23 @@ export default function AdminPayoutsPage() {
 
     const updateStatus = async (id: number, status: 'Approved' | 'Paid' | 'Rejected') => {
         if (!supabase) return;
+
+        let mpesaReceipt = '';
+        if (status === 'Paid') {
+            mpesaReceipt = prompt("Enter M-Pesa Transaction Receipt:") || '';
+            if (!mpesaReceipt) return;
+        }
+
         try {
-            const { error } = await supabase.from('affiliate_payouts').update({ status }).eq('id', id);
+            const { error } = await supabase.from('affiliate_payouts').update({
+                status,
+                mpesa_receipt: mpesaReceipt || undefined,
+                processed_at: status === 'Paid' ? new Date().toISOString() : null
+            }).eq('id', id);
             if (error) throw error;
 
-            await logAuditAction(adminEmail, 'UPDATE_PAYOUT_STATUS', { id, status });
-            setPayouts(payouts.map(p => p.id === id ? { ...p, status } : p));
+            await logAuditAction(adminEmail, 'UPDATE_PAYOUT_STATUS', { id, status, receipt: mpesaReceipt });
+            setPayouts(payouts.map(p => p.id === id ? { ...p, status, mpesa_receipt: mpesaReceipt } : p));
         } catch (err: unknown) {
             const errorMsg = err instanceof Error ? err.message : String(err);
             console.error("Payout Authorization Failure:", errorMsg);

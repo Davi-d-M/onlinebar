@@ -33,6 +33,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import RestockRadar from "@/components/product/RestockRadar";
 import BundleUpsell from "@/components/product/BundleUpsell";
+import PerfectPairingNode from "@/components/product/PerfectPairingNode";
 import { useSettings } from "@/lib/useSettings";
 
 interface Tutorial {
@@ -423,6 +424,10 @@ export default function Product() {
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="mb-24">
+          <PerfectPairingNode productId={Number(product.id)} category={product.category || 'spirits'} />
       </div>
 
       <ReviewSection productId={product.id} isLive={isProductLive} />

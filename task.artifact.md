@@ -1,18 +1,23 @@
-# Tasks - Premium Onboarding & Intelligence OS 🍾📊🛡️
+# Tasks - Global Expansion & ROI Hardening (Phases 13-15) 🏰💰🍷
 
-## Phase 1: Infrastructure & Engine
-- [x] Create `supabase/migrations/20260920_onboarding_intelligence.sql`
-- [x] Update `onlineBarOS.ts` with new Onboarding & Performance events
-- [x] Update `AuthForm.tsx` with `onSuccess` callback and event tracking
+## Phase 13: Enterprise Multi-Hub
+- [x] Create `20260921_multi_hub_grid.sql`
+- [x] Implement `hubs/page.tsx` management dashboard
+- [x] Update `Upload` logic to support multi-hub inventory allocation
+- [x] Refactor `dispatchEngine.ts` to route missions to the nearest hub
 
-## Phase 2: Onboarding UI
-- [x] Build `components/auth/PremiumOnboarding.tsx` (State Controller)
-- [x] Implement Cinematic Intro screen
-- [x] Implement Personalization (Interests) screen
-- [x] Implement Success/Elite feedback screen
+## Phase 14: Automated Affiliate ROI
+- [x] Update `affiliate/dashboard/page.tsx` with "Withdrawal" node
+- [x] Build the Payout Request Form (M-Pesa validation)
+- [x] Enhance Admin Payouts UI with "Batch Approval" protocol
 
-## Phase 3: Deployment & Hardening
-- [x] Refactor `app/auth/page.tsx` to use the new journey
-- [x] Run `npm run lint` and `npm run build`
-- [x] Verify SQL view `vw_onboarding_efficiency`
-- [x] Push to GitHub
+## Phase 15: The AI Sommelier
+- [x] Implement `sommelierEngine.ts` (Pairing logic)
+- [x] Build `PerfectPairingNode.tsx` for product screens
+- [x] Enhance `NeuralHero.tsx` with vibe-aware layouts
+- [x] Add "Sommelier Pick" widget to the homepage
+
+## Verification & Hardening
+- [ ] Run `npm run lint` and `npm run build`
+- [ ] Perform a full City-to-City dispatch simulation
+- [ ] Push to GitHub
