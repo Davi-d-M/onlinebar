@@ -62,7 +62,7 @@ export default function BuzzStudio({ postId, onClose, onSave }: BuzzStudioProps)
                         end_at: post.end_at.substring(0, 16),
                         is_featured: post.is_featured
                     });
-                    setMedia((post.buzz_media as any[]).map((m) => ({ type: m.media_type, url: m.url, sort_order: m.sort_order })));
+                    setMedia((post.buzz_media as Array<{ media_type: 'IMAGE' | 'VIDEO', url: string, sort_order: number }>).map((m) => ({ type: m.media_type, url: m.url, sort_order: m.sort_order })));
                 }
             }
         }
