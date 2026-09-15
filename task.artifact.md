@@ -1,20 +1,28 @@
-# Tasks - Global Button & Link Synchronization 🔗✨🚀
+# Tasks - "The Buzz" & Dashboard Builder 🏙️📊✨
 
-## Phase 1: Admin Navigation Hardening
-- [x] Update `layout-client.tsx` with new Growth & Communication items
-- [x] Group social accounts, calendar, and autopilot logically
-- [x] Add "Popup Manager" to the communications stack
+## Phase 1: Grid Foundation
+- [x] Create `supabase/migrations/20260917_the_buzz_expansion.sql`
+- [x] Create `supabase/migrations/20260916_dashboard_builder.sql`
+- [x] Implement Trend Score function in PL/pgSQL
 
-## Phase 2: Public Header Refinement
-- [x] Add `/gifting` and `/corporate` to the main navigation in `Header.tsx`
-- [x] Ensure consistent active states for sub-pages
+## Phase 2: Admin Command centers
+- [x] Create `app/admin/(dashboard)/buzz/page.tsx` (The Buzz HUD)
+- [x] Build `components/admin/buzz/BuzzStudio.tsx` (Creation node)
+- [x] Implement `DashboardWorkspace.tsx` grid engine
+- [x] Create `IntelWidget.tsx` & `WidgetEditor.tsx`
 
-## Phase 3: Component Wiring
-- [x] Link HUD nodes in `TodayCommandCenter.tsx` to detail views
-- [x] Wire "Corporate Account" button in `corporate/page.tsx` to WhatsApp
-- [x] Add "Back to Profile" link to the Gifting hub for patrons
+## Phase 3: Customer discovery
+- [x] Refactor `app/buzz/page.tsx` for Story-style discovery
+- [x] Create `components/buzz/BuzzStoryCard.tsx`
+- [x] Implement "Near Me" GPS proximity logic placeholder
+- [x] Build Interactive Map View integration
 
-## Phase 4: Final Verification
+## Phase 4: Intelligence & Analytics
+- [x] Update `onlineBarOS.ts` with Buzz & Intelligence event types
+- [x] Hook engagement into the Trend Score algorithm
+- [x] Refactor Intelligence Hub to use dynamic Workspace
+
+## Phase 5: Verification & Launch
 - [x] Run `npm run lint` and `npm run build`
-- [x] Perform a full "Click Audit" on mobile and desktop
+- [x] Verify 320px mobile cinematic layout
 - [x] Push to GitHub

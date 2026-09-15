@@ -11,13 +11,16 @@ import {
     ChevronRight,
     MapPin,
     Smartphone,
-    Globe
+    Globe,
+    Clock,
+    Loader2
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import dynamic from 'next/dynamic';
 import PulseDetailModal from '@/components/buzz/PulseDetailModal';
+import BuzzStoryCard, { BuzzStory } from '@/components/buzz/BuzzStoryCard';
 
 const LiveBuzzMap = dynamic(() => import('@/components/admin/dispatch/LiveDispatchMap'), {
     ssr: false,
@@ -34,25 +37,56 @@ interface BuzzArea {
 
 export default function CityBuzzPage() {
     const [hotspots, setHotspots] = React.useState<BuzzArea[]>([]);
+    const [stories, setStories] = React.useState<BuzzStory[]>([]);
     const [selectedArea, setSelectedArea] = React.useState<BuzzArea | null>(null);
     const [isDetailOpen, setIsDetailOpen] = React.useState(false);
+    const [filter, setFilter] = React.useState<'trending' | 'near-me' | 'tonight'>('trending');
+    const [loading, setLoading] = React.useState(true);
 
-    const fetchBuzz = React.useCallback(async () => {
+    const fetchBuzzData = React.useCallback(async () => {
         if (!supabase) return;
+        setLoading(true);
         try {
-            const { data } = await supabase.from('buzz_metrics').select('*').order('buzz_score', { ascending: false });
-            if (data) {
-                setHotspots(data as BuzzArea[]);
-                if (!selectedArea) setSelectedArea(data[0]);
+            const [hotspotsRes, storiesRes] = await Promise.all([
+                supabase.from('buzz_metrics').select('*').order('buzz_score', { ascending: false }),
+                supabase.from('buzz_posts').select('*, buzz_categories(label), buzz_media(*)').eq('status', 'LIVE').order('trend_score', { ascending: false })
+            ]);
+
+            if (hotspotsRes.data) {
+                setHotspots(hotspotsRes.data as BuzzArea[]);
+                setSelectedArea(hotspotsRes.data[0]);
             }
-        } catch (err) {
-            console.error(err);
-        }
-    }, [selectedArea]);
+
+            if (storiesRes.data) {
+                setStories((storiesRes.data as Array<{ id: string, title: string, description: string, area_zone: string, status: string, trend_score: number, latitude: number, longitude: number, start_at: string, buzz_categories: { label: string } | null, buzz_media: Array<{ media_type: 'IMAGE' | 'VIDEO', url: string }> }>).map((s) => ({
+                    id: s.id,
+                    title: s.title,
+                    description: s.description || '',
+                    area_zone: s.area_zone || 'Nairobi',
+                    category: s.buzz_categories?.label || 'General',
+                    status: s.status,
+                    trend_score: s.trend_score,
+                    latitude: Number(s.latitude),
+                    longitude: Number(s.longitude),
+                    starts_at: s.start_at,
+                    media: s.buzz_media.map((m) => ({ type: m.media_type, url: m.url })),
+                    distance: '1.2 km'
+                })));
+            }
+        } catch (err) { console.error(err); }
+        finally { setLoading(false); }
+    }, []);
 
     React.useEffect(() => {
-        fetchBuzz();
-    }, [fetchBuzz]);
+        fetchBuzzData();
+    }, [fetchBuzzData]);
+
+    if (loading) return (
+        <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-slate-50">
+            <Loader2 className="h-10 w-10 text-primary animate-spin" />
+            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-300">Calibrating City Pulse...</p>
+        </div>
+    );
 
     return (
         <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8 text-left selection:bg-primary/20 pb-40">
@@ -81,6 +115,37 @@ export default function CityBuzzPage() {
                         </div>
                     </div>
                 </header>
+
+                <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
+                    {[
+                        { id: 'trending', label: 'Trending Now', icon: Flame },
+                        { id: 'near-me', label: 'Happening Near Me', icon: MapPin },
+                        { id: 'tonight', label: 'Tonight', icon: Clock }
+                    ].map(f => (
+                        <button
+                            key={f.id}
+                            onClick={() => setFilter(f.id as any)}
+                            className={cn(
+                                "flex items-center gap-2.5 px-6 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all shrink-0 border shadow-sm",
+                                filter === f.id ? "bg-rose-500 text-white border-rose-500 shadow-rose-500/20 scale-105" : "bg-white text-slate-400 border-slate-100 hover:border-rose-200 hover:text-rose-500"
+                            )}
+                        >
+                            <f.icon size={14} className={cn(filter === f.id ? "text-white" : "text-rose-500")} />
+                            {f.label}
+                        </button>
+                    ))}
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                    {stories.length === 0 ? (
+                        <div className="col-span-full py-40 text-center opacity-20">
+                            <Flame size={64} className="mx-auto mb-6" />
+                            <p className="text-xl font-black uppercase tracking-widest">Awaiting the next Buzz...</p>
+                        </div>
+                    ) : stories.map(story => (
+                        <BuzzStoryCard key={story.id} story={story} />
+                    ))}
+                </div>
 
                 <div className="grid lg:grid-cols-12 gap-10">
 

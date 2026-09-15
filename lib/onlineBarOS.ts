@@ -54,6 +54,10 @@ export type OSEventType =
     | 'ZERO_RESULTS'
     | 'PRODUCT_INTENT'
     | 'TIME_ON_PAGE'
+    | 'BUZZ_VIEW'
+    | 'BUZZ_OPEN'
+    | 'MAP_SIGNAL_OPEN'
+    | 'DIRECTIONS_INIT'
     | 'HEARTBEAT';
 
 interface OSEventPayload {

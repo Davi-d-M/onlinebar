@@ -85,7 +85,7 @@ export default function OperatingBrainHUD() {
 
     const nodes = [
         { label: 'Revenue', val: `KSh ${(stats.revenue / 1000).toFixed(1)}K`, icon: DollarSign, color: 'primary', href: '/admin/finance' },
-        { label: 'Demand Radar', val: stats.demand_hotspot, icon: Zap, color: 'rose', href: '/admin/analytics' },
+        { label: 'Demand Radar', val: stats.demand_hotspot, icon: Zap, color: 'rose', href: '/admin/buzz' },
         { label: 'Patrons', val: stats.users, icon: Users, color: 'emerald', href: '/admin/customers' },
         { label: 'Runners', val: stats.riders, icon: Truck, color: 'amber', href: '/admin/dispatch' },
         { label: 'Active Shops', val: stats.shops, icon: Wine, color: 'rose', href: '/admin/operations/vendors' },

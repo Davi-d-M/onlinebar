@@ -55,7 +55,7 @@ export default function BuzzHUD() {
                     </div>
                 </div>
                 <Link href="/buzz">
-                    <Button variant="ghost" size="sm" className="h-8 rounded-lg text-[8px] font-black uppercase text-primary hover:bg-primary/5">Full Map &rarr;</Button>
+                    <Button variant="ghost" size="sm" className="h-8 rounded-lg text-[8px] font-black uppercase text-primary hover:bg-primary/5">Explore The Buzz &rarr;</Button>
                 </Link>
             </header>
 

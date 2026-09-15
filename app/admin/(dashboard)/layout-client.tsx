@@ -20,6 +20,7 @@ import {
   Wine,
   Cookie,
   Bot,
+  Flame,
   History as HistoryIcon,
   Settings,
   Target,
@@ -148,6 +149,7 @@ export default function AdminLayoutClient({
     ]},
     { group: 'OPERATIONS', items: [
       { name: 'Live Runners', href: '/admin/dispatch', icon: Truck, permission: 'can_manage_orders' },
+      { name: 'The Buzz Hub', href: '/admin/buzz', icon: Flame, permission: 'can_manage_marketing' },
       { name: 'Tasks Board', href: '/admin/operations/tasks', icon: LayoutIcon, permission: 'can_manage_orders' },
       { name: 'Partner Bars', href: '/admin/operations/vendors', icon: Store, permission: 'can_manage_settings' },
       { name: 'Global Supply', href: '/admin/operations/sourcing', icon: Globe, permission: 'can_manage_inventory' },
