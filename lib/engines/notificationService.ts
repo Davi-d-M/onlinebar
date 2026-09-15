@@ -14,7 +14,7 @@ interface NotificationPayload {
     body?: string;
     templateName?: string;
     actionUrl?: string;
-    metadata?: Record<string, unknown>;
+    metadata?: Record<string, string | number | boolean | undefined>;
     attributionId?: string;
 }
 

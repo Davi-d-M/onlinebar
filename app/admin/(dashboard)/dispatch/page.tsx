@@ -92,6 +92,7 @@ export default function AdminDispatchPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedRider, setSelectedRider] = useState<Rider | null>(null);
     const [demandZones, setDemandZones] = useState<{ lat: number, lng: number, intensity: number }[]>([]);
+    const [batches, setBatches] = useState<Array<{ ids: number[], area: string }>>([]);
     const [assigning, setAssigning] = useState<number | null>(null);
     const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
@@ -136,6 +137,11 @@ export default function AdminDispatchPage() {
             setRiders(processedRiders as Rider[]);
             setOrders(ordersData || []);
             setDemandZones(Object.values(zones));
+
+            // Fetch Neural Batches (Phase 11)
+            const { DispatchControl } = await import('@/lib/engines/dispatchEngine');
+            const batchOpts = await DispatchControl.identifyBatchOpportunities();
+            setBatches(batchOpts);
         } catch {
             console.error("Pipeline link unstable.");
         } finally {
@@ -371,6 +377,39 @@ export default function AdminDispatchPage() {
                             onSelectRider={(r) => setSelectedRider(r as Rider)}
                         />
                     </div>
+
+                    <section className="space-y-6">
+                        <div className="flex items-center justify-between px-2 text-left">
+                            <div className="flex items-center gap-3">
+                                <Bot className="h-6 w-6 text-indigo-500 animate-pulse" />
+                                <h2 className="text-2xl font-black uppercase tracking-tighter text-foreground">Neural Batch Suggestions</h2>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            {batches.length === 0 ? (
+                                <div className="p-10 text-center bg-card rounded-[3rem] border-2 border-dashed border-border opacity-30">
+                                    <p className="text-[10px] font-black uppercase italic">Scanning for proximity clusters...</p>
+                                </div>
+                            ) : batches.map((batch, idx) => (
+                                <Card key={idx} className="p-6 rounded-[2.5rem] border-2 border-indigo-100 bg-indigo-50/30 flex flex-col gap-4 group hover:shadow-xl transition-all">
+                                    <div className="flex justify-between items-start">
+                                        <div className="space-y-1">
+                                            <span className="px-3 py-1 bg-indigo-500 text-white text-[8px] font-black rounded-full uppercase">Proximity Cluster</span>
+                                            <h4 className="text-sm font-black uppercase text-indigo-900 mt-2">{batch.area} Sector</h4>
+                                        </div>
+                                        <div className="h-10 w-10 rounded-xl bg-indigo-500 text-white flex items-center justify-center font-black">
+                                            {batch.ids.length}
+                                        </div>
+                                    </div>
+                                    <p className="text-[9px] font-medium text-indigo-600">Orders: {batch.ids.map(id => `#${id}`).join(', ')}</p>
+                                    <Button size="sm" className="w-full h-10 rounded-xl bg-indigo-500 text-white font-black uppercase text-[8px] tracking-widest shadow-lg shadow-indigo-200">
+                                        Authorize Batch Dispatch
+                                    </Button>
+                                </Card>
+                            ))}
+                        </div>
+                    </section>
 
                     <section className="space-y-6">
                         <div className="flex items-center justify-between px-2 text-left">

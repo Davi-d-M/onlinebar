@@ -2,6 +2,8 @@ import { supabase } from '../supabaseClient';
 import { trackEngagementEvent } from '../gamificationEngine';
 import { processAutomationRules } from './automationEngine';
 import { triggerNotificationByEvent } from './notificationService';
+import { ApexMind } from './predictiveEngine';
+import { ApexLoyalty } from './loyaltyEngine';
 
 export type SystemEventType =
     | 'ORDER_CREATED'
@@ -101,6 +103,10 @@ async function processEvent(event: { id: string, event_type: SystemEventType, pa
                     zoneName: payload.zoneName
                 });
             }
+
+            // 🧠 Trigger Predictive Engine (Phase 12)
+            await ApexMind.scanForReplenishment();
+
             // 💰 Trigger Ledger (Payouts, Settlements) - Pillar 3
             // 🔔 Trigger Notifications - Pillar 5
             if (user_id) {

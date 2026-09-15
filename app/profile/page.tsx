@@ -65,6 +65,7 @@ import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import PointsLedger from '@/components/profile/PointsLedger';
 import DailyMissions from '@/components/profile/DailyMissions';
+import RewardMilestoneTracker from '@/components/rewards/RewardMilestoneTracker';
 import RewardInteractive from '@/components/profile/RewardInteractive';
 import AchievementBadges from '@/components/profile/AchievementBadges';
 import SecurityDashboard from '@/components/profile/SecurityDashboard';
@@ -728,7 +729,10 @@ export default function ProfilePage() {
             <div id="taste-dna-section" className="scroll-mt-24">
                 <TasteDNA dna={profile?.taste_dna || {}} />
             </div>
-            <RewardInteractive userId={user?.id || ''} />
+            <div className="space-y-10">
+                <RewardMilestoneTracker />
+                <RewardInteractive userId={user?.id || ''} />
+            </div>
         </div>
 
         {/* 2. REWARD CENTER & MISSIONS */}

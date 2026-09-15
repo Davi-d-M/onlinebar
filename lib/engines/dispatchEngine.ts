@@ -66,6 +66,66 @@ class DispatchEngine {
         return winner;
     }
 
+    /**
+     * Identifies pending orders that can be batched for a single rider node.
+     */
+    public async identifyBatchOpportunities() {
+        if (!supabase) return [];
+
+        const { data: pending } = await supabase
+            .from('orders')
+            .select('id, customer_lat, customer_lng, area_zone, created_at')
+            .eq('status', 'Pending')
+            .is('batch_id', null)
+            .order('created_at', { ascending: true });
+
+        if (!pending || pending.length < 2) return [];
+
+        const batches: Array<{ ids: number[], area: string }> = [];
+        const processed = new Set<number>();
+
+        for (let i = 0; i < pending.length; i++) {
+            if (processed.has(pending[i].id)) continue;
+
+            const cluster = [pending[i].id];
+            const area = pending[i].area_zone;
+
+            for (let j = i + 1; j < pending.length; j++) {
+                if (processed.has(pending[j].id)) continue;
+
+                // Neural Distance Check (< 1.5km proximity)
+                const dist = this.calculateStraightDistance(
+                    { lat: Number(pending[i].customer_lat), lng: Number(pending[i].customer_lng) },
+                    { lat: Number(pending[j].customer_lat), lng: Number(pending[j].customer_lng) }
+                );
+
+                if (dist < 1.5) {
+                    cluster.push(pending[j].id);
+                    processed.add(pending[j].id);
+                    if (cluster.length >= 3) break; // Cap at 3 per batch
+                }
+            }
+
+            if (cluster.length > 1) {
+                batches.push({ ids: cluster, area });
+                processed.add(pending[i].id);
+            }
+        }
+
+        return batches;
+    }
+
+    private calculateStraightDistance(p1: { lat: number, lng: number }, p2: { lat: number, lng: number }): number {
+        const R = 6371; // Earth radius in km
+        const dLat = (p2.lat - p1.lat) * Math.PI / 180;
+        const dLng = (p2.lng - p1.lng) * Math.PI / 180;
+        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                  Math.cos(p1.lat * Math.PI / 180) * Math.cos(p2.lat * Math.PI / 180) *
+                  Math.sin(dLng / 2) * Math.sin(dLng / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+    }
+
     private async rankCandidates(riders: Array<{
         rider_phone: string,
         rider_name: string,

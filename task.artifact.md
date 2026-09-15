@@ -1,26 +1,24 @@
-# Tasks - Apex OS Delivery & Dispatch Intelligence 🏍️📦🚀
+# Tasks - Apex OS: Intelligence & Optimization Grid (Phases 10-12) 💎🏍️🧠
 
-## Phase 1: Fleet Infrastructure
-- [x] Create `supabase/migrations/20260918_apex_dispatch_core.sql`
-- [x] Add coordinate columns to `orders` and `profiles`
-- [x] Establish `rider_vehicles` and `fuel_logs` tables
+## Phase 10: The Loyalty Loop
+- [ ] Update `affiliate_payouts` schema for M-Pesa automation
+- [ ] Implement `loyaltyEngine.ts` tiering logic
+- [ ] Build `RewardMilestoneTracker.tsx` component
+- [ ] Add "Claim Payout" workflow for affiliates
 
-## Phase 2: Routing Engine (Google Nodes)
-- [x] Implement `lib/engines/routingEngine.ts` (Google Routes API)
-- [x] Build `lib/utils/geocoding.ts` for address-to-coordinate conversion
-- [x] Implement `ApexRoute` standard normalization
+## Phase 11: Multi-Order Batching
+- [ ] Implement `identifyBatchOpportunities()` in `dispatchEngine.ts`
+- [ ] Update `orders` schema to support `batch_id`
+- [ ] Enhance `LiveDispatchMap.tsx` for multi-stop visualization
+- [ ] Add "Suggest Batch" HUD to Admin Dispatch Feed
 
-## Phase 3: Dispatch & Scorer
-- [x] Implement `lib/engines/dispatchEngine.ts` (Weighted Scorer)
-- [x] Implement `computeRouteMatrix` integration (Rank candidates)
-- [x] Build `lib/engines/fuelEngine.ts` (Efficiency Model)
+## Phase 12: Customer 360 - The Memory Loop
+- [ ] Create `20260919_memory_loop.sql` (Frequency Views)
+- [ ] Implement `predictiveEngine.ts` (Buy Again logic)
+- [ ] Hook predictions into `notificationService.ts`
+- [ ] Add "Personalized Replenishment" node to customer home
 
-## Phase 4: Admin Visuals
-- [x] Update `LiveDispatchMap.tsx` with Polyline rendering support
-- [x] Add Route Confidence HUD to the Dispatch dashboard
-- [x] Create `/api/dispatch/calculate` endpoint
-
-## Phase 5: Verification & Calibration
-- [x] Run `npm run lint` and `npm run build`
-- [x] Calibrate dispatch weights (ETA vs. Workload)
-- [x] Push to GitHub
+## Verification & Hardening
+- [ ] Run `npm run lint` and `npm run build`
+- [ ] Calibrate prediction sensitivity
+- [ ] Push to GitHub

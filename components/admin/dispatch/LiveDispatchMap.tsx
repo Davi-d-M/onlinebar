@@ -16,6 +16,7 @@ interface Rider {
     rider_name: string;
     battery_level: number;
     current_speed?: number;
+    active_batch_id?: string | null;
 }
 
 interface DemandZone {

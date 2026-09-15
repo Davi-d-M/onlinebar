@@ -1,47 +1,51 @@
-# Implementation Plan - Apex OS Delivery & Dispatch Intelligence 🏍️📦🚀
+# Implementation Plan - Apex OS: Intelligence & Optimization Grid (Phases 10-12) 💎🏍️🧠
 
-This plan establishes "Apex OS," a professional-grade dispatch brain that optimizes motorcycle fleet operations using real-time routing, traffic-aware ETAs, and smart fuel models.
+This comprehensive plan activates the final tactical layers of the "Online Bar OS," focusing on **Loyalty ROI**, **Fleet Multi-Dispatch**, and **Predictive Customer 360**.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> **Google Routes API**: This system requires a `GOOGLE_MAPS_API_KEY` with the "Routes API" and "Distance Matrix API" enabled. The `TWO_WHEELER` travel mode is used for motorcycle-specific routing.
-> **Coordinates**: Orders must capture precision GPS coordinates for both the pickup (cellar) and the customer terminal for the routing engine to function.
+> **M-Pesa Payouts**: Automation requires a valid M-Pesa B2C (Business to Customer) API integration. For now, we will build the "Approval Protocol" that prepares the payout payload.
+> **Batching Logic**: Orders will only be suggested for batching if they share the same **Sector** (e.g., Westlands) and are placed within a 15-minute window.
+> **Predictions**: "Buy Again" alerts depend on having at least 3 historical orders for a specific category to establish a pattern.
 
 ## Proposed Changes
 
-### 🗄️ 1. Database: Dispatch & Fleet Schema
+### 💎 1. Phase 10: The Loyalty Loop (Referral & Payouts)
 
-#### [NEW] `supabase/migrations/20260918_apex_dispatch_core.sql`
-- **`rider_vehicles`**: Detailed motorcycle profiles (Make, Model, Tank Capacity, Average Km/L).
-- **`delivery_routes`**: Persistent storage for road geometry (encoded polylines) and traffic-aware performance data.
-- **`dispatch_intelligence_logs`**: Audit trail of the dispatch scoring algorithm's decisions.
+#### [MODIFY] [affiliate_os_core.sql](file:///C:/Users/hp/AndroidStudioProjects/onbar/supabase/migrations/20260904_affiliate_os_core.sql) (or new migration)
+- Update `affiliate_payouts` with `mpesa_receipt_number` and `batch_id`.
+- Add `loyalty_tiers` table: `Explorer` &rarr; `Silver` &rarr; `Gold` &rarr; `Diamond` &rarr; `Legend`.
 
----
+#### [NEW] `lib/engines/loyaltyEngine.ts`
+- Logic to calculate XP/Points required for the next tier.
+- Automated "Milestone Reached" event emitter.
 
-### ⚙️ 2. The Apex Dispatch Engine
-
-#### [NEW] `lib/engines/routingEngine.ts`
-- **Google Routes Node**: Server-side wrapper for `computeRoutes` with `TRAFFIC_AWARE_OPTIMAL` support.
-- **Route Normalization**: Converts provider-specific responses into the standardized `ApexRoute` object.
-
-#### [NEW] `lib/engines/dispatchEngine.ts`
-- **Route Matrix Node**: Compares multiple riders against a destination using Google's `computeRouteMatrix`.
-- **Dynamic Dispatch Scorer**: Implements a weighted scoring algorithm (ETA, Distance, Workload, Reliability).
-
-#### [NEW] `lib/engines/fuelEngine.ts`
-- **Consumption Model**: Estimates fuel usage (Litres & KSh) based on distance, traffic factor, and vehicle efficiency.
+#### [NEW] `components/rewards/RewardMilestoneTracker.tsx`
+- A cinematic UI node showing progress bars toward the next elite rank.
 
 ---
 
-### 📱 3. Terminal & Admin Integration
+### 🏍️ 2. Phase 11: Multi-Order Batching (Fleet Optimization)
+
+#### [MODIFY] [dispatchEngine.ts](file:///C:/Users/hp/AndroidStudioProjects/onbar/lib/engines/dispatchEngine.ts)
+- Implement `findBatchingOpportunities()`: Scans pending orders for GPS proximity (< 1.5km).
+- Update `calculateApexScore()` to reward riders who can pick up a second order en route.
 
 #### [MODIFY] [LiveDispatchMap.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/components/admin/dispatch/LiveDispatchMap.tsx)
-- Add support for rendering **Encoded Polylines** on the map to visualize the rider's planned path.
-- Display "Route Confidence" and "Traffic Density" overlays.
+- Visualize "Batched Missions" with multi-stop polylines.
 
-#### [NEW] `app/api/dispatch/route-matrix/route.ts`
-- API endpoint for high-speed multi-rider comparison.
+---
+
+### 🧠 3. Phase 12: Customer 360 - The Memory Loop
+
+#### [NEW] `supabase/migrations/20260919_memory_loop.sql`
+- **`purchase_frequency_audit`**: Aggregated view calculating average days between purchases per user per category.
+- **`predictive_alerts`**: Log for scheduled "Buy Again" reminders.
+
+#### [NEW] `lib/engines/predictiveEngine.ts`
+- Analyzes "Taste DNA" and purchase history to predict the next "Out of Stock" moment for a patron.
+- Side-effect: Triggers personalized notifications (e.g., "Your Gin shelf is likely low. Restock now?").
 
 ---
 
@@ -49,9 +53,10 @@ This plan establishes "Apex OS," a professional-grade dispatch brain that optimi
 
 ### Automated Tests
 - `npm run build`: Verify 100% route success.
-- Score Test: Verify that a rider with a 5-minute ETA wins over a rider with a 15-minute ETA (all other factors being equal).
+- Batching Test: Verify that two orders in Westlands are grouped into a single proposed mission.
+- Prediction Test: Verify that a user buying every 7 days gets a notification on Day 6.
 
 ### Manual Verification
-1.  **Route Calculation**: Place a test order and verify that Apex OS generates a road-aware distance (e.g., 8.4km) rather than a straight line.
-2.  **Rider Match**: Simulate 3 active riders and verify that the "Best Rider" is selected based on the dispatch score.
-3.  **Fuel Audit**: Complete a delivery and verify that the estimated fuel cost (e.g., ~KSh 40) is logged in the route analytics.
+1.  **Affiliate Payout**: Approve a payout in Admin and verify the status changes to `Paid` with a mock M-Pesa receipt.
+2.  **Milestone HUD**: Visit `/profile` as a user and verify the "Progress to Legend" bar is accurate.
+3.  **Memory Loop**: Simulate 3 orders for the same user and verify the `purchase_frequency_audit` calculates the correct interval.
