@@ -1,50 +1,47 @@
-# Implementation Plan - Remote-Controlled App Widget 📱🍸🚀
+# Implementation Plan - Apex OS Delivery & Dispatch Intelligence 🏍️📦🚀
 
-This plan establishes a professional-grade, live-controlled Android home-screen widget system. It allows the Online Bar admin to push real-time content, product picks, and trending updates directly to patrons' phone home screens without requiring app store updates.
+This plan establishes "Apex OS," a professional-grade dispatch brain that optimizes motorcycle fleet operations using real-time routing, traffic-aware ETAs, and smart fuel models.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> **Android Native Bridge**: We will implement a native `AppWidgetProvider` in the Android project that communicates with a new Supabase-backed API to fetch the current active configuration.
-> **Scheduling & Personalization**: The widget content can be scheduled in advance and targeted to specific customer segments (e.g., "Whiskey Lovers" vs. "New Patrons").
+> **Google Routes API**: This system requires a `GOOGLE_MAPS_API_KEY` with the "Routes API" and "Distance Matrix API" enabled. The `TWO_WHEELER` travel mode is used for motorcycle-specific routing.
+> **Coordinates**: Orders must capture precision GPS coordinates for both the pickup (cellar) and the customer terminal for the routing engine to function.
 
 ## Proposed Changes
 
-### 🗄️ 1. Database: Widget Command Schema
+### 🗄️ 1. Database: Dispatch & Fleet Schema
 
-#### [NEW] `supabase/migrations/20260918_mobile_app_widgets.sql`
-- **`mobile_app_widgets`**: Registry for remote widget configurations (Title, Description, Image, Deep Link, Schedule).
-- **`mobile_app_widget_stats`**: Behavioral tracking nodes to measure widget impressions and click-through rates.
-
----
-
-### 🏛️ 2. Admin: Widget Command Center
-
-#### [NEW] `app/admin/(dashboard)/experience/widgets/page.tsx`
-- **Widget HUD**: Monitor total active widgets and installed device reach.
-- **Widget Builder**: Cinematic UI to design widget cards with live previews.
-- **Scheduler**: Set start/end protocols for weekend drops or flash sales.
+#### [NEW] `supabase/migrations/20260918_apex_dispatch_core.sql`
+- **`rider_vehicles`**: Detailed motorcycle profiles (Make, Model, Tank Capacity, Average Km/L).
+- **`delivery_routes`**: Persistent storage for road geometry (encoded polylines) and traffic-aware performance data.
+- **`dispatch_intelligence_logs`**: Audit trail of the dispatch scoring algorithm's decisions.
 
 ---
 
-### 📲 3. Android: The Widget Engine
+### ⚙️ 2. The Apex Dispatch Engine
 
-#### [NEW] `app_android/src/main/res/layout/widget_layout.xml`
-- XML layout for the home-screen card (Bottle image, Title, CTA).
+#### [NEW] `lib/engines/routingEngine.ts`
+- **Google Routes Node**: Server-side wrapper for `computeRoutes` with `TRAFFIC_AWARE_OPTIMAL` support.
+- **Route Normalization**: Converts provider-specific responses into the standardized `ApexRoute` object.
 
-#### [NEW] `app_android/src/main/java/com/example/theapp/OnlineBarWidgetProvider.kt`
-- Native provider to handle widget lifecycle and periodic updates.
+#### [NEW] `lib/engines/dispatchEngine.ts`
+- **Route Matrix Node**: Compares multiple riders against a destination using Google's `computeRouteMatrix`.
+- **Dynamic Dispatch Scorer**: Implements a weighted scoring algorithm (ETA, Distance, Workload, Reliability).
 
-#### [NEW] `app_android/src/main/java/com/example/theapp/WidgetUpdateWorker.kt`
-- Background worker to fetch the latest JSON config from the Online Bar API and trigger `AppWidgetManager`.
+#### [NEW] `lib/engines/fuelEngine.ts`
+- **Consumption Model**: Estimates fuel usage (Litres & KSh) based on distance, traffic factor, and vehicle efficiency.
 
 ---
 
-### 🧠 4. Intelligence: Widget ROI
+### 📱 3. Terminal & Admin Integration
 
-#### [MODIFY] [IntelligenceHub.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/admin/(dashboard)/analytics/intelligence/page.tsx)
-- Add "Widget Conversion Rate" to the global intelligence dashboard.
-- Link widget clicks to the **Revenue Attribution** engine.
+#### [MODIFY] [LiveDispatchMap.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/components/admin/dispatch/LiveDispatchMap.tsx)
+- Add support for rendering **Encoded Polylines** on the map to visualize the rider's planned path.
+- Display "Route Confidence" and "Traffic Density" overlays.
+
+#### [NEW] `app/api/dispatch/route-matrix/route.ts`
+- API endpoint for high-speed multi-rider comparison.
 
 ---
 
@@ -52,9 +49,9 @@ This plan establishes a professional-grade, live-controlled Android home-screen 
 
 ### Automated Tests
 - `npm run build`: Verify 100% route success.
-- API Schema: Ensure the widget config endpoint returns valid JSON with a 200 OK status.
+- Score Test: Verify that a rider with a 5-minute ETA wins over a rider with a 15-minute ETA (all other factors being equal).
 
 ### Manual Verification
-1.  **Admin Update**: Change the title of a published widget to "🔥 Saturday Special" and verify the API payload updates instantly.
-2.  **Scheduling**: Set a widget to expire in 5 minutes and verify it is removed from the active payload.
-3.  **Click-through**: Tap the "Shop Now" button on the simulated widget and verify it triggers the correct `onbar://` deep link.
+1.  **Route Calculation**: Place a test order and verify that Apex OS generates a road-aware distance (e.g., 8.4km) rather than a straight line.
+2.  **Rider Match**: Simulate 3 active riders and verify that the "Best Rider" is selected based on the dispatch score.
+3.  **Fuel Audit**: Complete a delivery and verify that the estimated fuel cost (e.g., ~KSh 40) is logged in the route analytics.

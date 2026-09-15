@@ -252,7 +252,12 @@ export default function GiftingHub() {
                                 </div>
 
                                 <div className="pt-8 border-t border-slate-50 flex justify-between items-center">
-                                    <button onClick={() => setStep(2)} className="text-[10px] font-black text-slate-400 uppercase hover:text-primary">Back to bottles</button>
+                                    <button
+                                        onClick={() => setStep(2)}
+                                        className="text-[10px] font-black text-slate-400 uppercase hover:text-primary flex items-center gap-2 transition-all active:scale-95"
+                                    >
+                                        <ArrowLeft size={14} /> Back to bottles
+                                    </button>
                                     <Button
                                         onClick={handleEstablishGift}
                                         className="h-16 px-16 rounded-[1.5rem] bg-primary text-white font-black uppercase text-xs tracking-[0.2em] shadow-2xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all"

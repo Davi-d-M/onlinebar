@@ -1,25 +1,26 @@
-# Tasks - Remote-Controlled App Widget 📱🍸🚀
+# Tasks - Apex OS Delivery & Dispatch Intelligence 🏍️📦🚀
 
-## Phase 1: Grid Foundation
-- [x] Create `supabase/migrations/20260918_mobile_app_widgets.sql`
-- [ ] Implement `get_active_widget` RPC or API route
+## Phase 1: Fleet Infrastructure
+- [x] Create `supabase/migrations/20260918_apex_dispatch_core.sql`
+- [x] Add coordinate columns to `orders` and `profiles`
+- [x] Establish `rider_vehicles` and `fuel_logs` tables
 
-## Phase 2: Admin Control Tower
-- [x] Create `app/admin/(dashboard)/experience/mobile-widgets/page.tsx`
-- [x] Build Widget Preview Component (Phone Frame)
-- [x] Implement "Publish" and "Rollback" protocol UI
+## Phase 2: Routing Engine (Google Nodes)
+- [x] Implement `lib/engines/routingEngine.ts` (Google Routes API)
+- [x] Build `lib/utils/geocoding.ts` for address-to-coordinate conversion
+- [x] Implement `ApexRoute` standard normalization
 
-## Phase 3: Android Native Implementation
-- [x] Create `res/layout/ob_app_widget.xml` (UI Grid)
-- [x] Implement `OnlineBarWidgetProvider.kt`
-- [x] Create `WidgetUpdateWorker.kt` for remote sync
-- [x] Register Widget in `AndroidManifest.xml`
+## Phase 3: Dispatch & Scorer
+- [x] Implement `lib/engines/dispatchEngine.ts` (Weighted Scorer)
+- [x] Implement `computeRouteMatrix` integration (Rank candidates)
+- [x] Build `lib/engines/fuelEngine.ts` (Efficiency Model)
 
-## Phase 4: Personalization & Analytics
-- [x] Hook `utm_source=mobile_widget` into the attribution engine
-- [x] Add widget stats to the **Intelligence War Room**
+## Phase 4: Admin Visuals
+- [x] Update `LiveDispatchMap.tsx` with Polyline rendering support
+- [x] Add Route Confidence HUD to the Dispatch dashboard
+- [x] Create `/api/dispatch/calculate` endpoint
 
-## Phase 5: Verification & Launch
+## Phase 5: Verification & Calibration
 - [x] Run `npm run lint` and `npm run build`
-- [x] Verify PWA/Android cross-link success
+- [x] Calibrate dispatch weights (ETA vs. Workload)
 - [x] Push to GitHub

@@ -284,13 +284,13 @@ export default function CityBuzzPage() {
 
                                     <div className="p-6 bg-white/5 rounded-3xl border border-white/10 space-y-4 text-left">
                                         <p className="text-[10px] font-black uppercase text-primary tracking-widest">Sector Top Selection</p>
-                                        <Link href="/shop" className="flex items-center gap-4 text-left group/prod">
-                                            <div className="h-12 w-12 rounded-xl bg-white flex items-center justify-center text-slate-900 group-hover/prod:scale-110 transition-transform"><Wine size={24} /></div>
+                                        <Link href={`/shop?category=${selectedArea.zone_name}`} className="flex items-center gap-4 text-left group/prod">
+                                            <div className="h-12 w-12 rounded-xl bg-white flex items-center justify-center text-slate-900 group-hover/prod:scale-110 transition-transform shadow-lg"><Wine size={24} /></div>
                                             <div className="min-w-0 flex-1 text-left">
                                                 <p className="text-xs font-black uppercase truncate group-hover/prod:text-primary transition-colors">Premium Cellar Selection</p>
                                                 <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest mt-1">Trending in {selectedArea.zone_name}</p>
                                             </div>
-                                            <ArrowRight size={14} className="text-primary opacity-0 group-hover/prod:opacity-100 transition-all" />
+                                            <ArrowRight size={14} className="text-primary group-hover/prod:translate-x-1 transition-all" />
                                         </Link>
                                     </div>
 

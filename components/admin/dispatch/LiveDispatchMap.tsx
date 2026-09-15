@@ -1,12 +1,12 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Polyline, Circle } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { BatteryMedium, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Circle } from 'react-leaflet';
+import { decodePolyline } from '@/lib/utils/polyline';
 
 interface Rider {
     id: number | string;
@@ -65,9 +65,10 @@ interface LiveDispatchMapProps {
     riders: Rider[];
     demandZones?: DemandZone[];
     onSelectRider?: (rider: Rider) => void;
+    activeRoutes?: { id: string, polyline: string, color?: string }[];
 }
 
-export default function LiveDispatchMap({ riders, demandZones = [], onSelectRider }: LiveDispatchMapProps) {
+export default function LiveDispatchMap({ riders, demandZones = [], onSelectRider, activeRoutes = [] }: LiveDispatchMapProps) {
   useEffect(() => {
     fixLeafletIcons();
   }, []);
@@ -77,7 +78,7 @@ export default function LiveDispatchMap({ riders, demandZones = [], onSelectRide
   const onlineRiders = riders.filter(r => r.status !== 'Offline');
 
   return (
-    <div className="w-full h-full relative rounded-[3rem] overflow-hidden border-8 border-white shadow-2xl z-0 group">
+    <div className="w-full h-full relative rounded-[3rem] overflow-hidden border-8 border-white shadow-2xl z-0 group text-left">
       <MapContainer
         center={center}
         zoom={13}
@@ -102,6 +103,20 @@ export default function LiveDispatchMap({ riders, demandZones = [], onSelectRide
                     weight: 1,
                     opacity: 0.3,
                     fillOpacity: 0.1 + (zone.intensity * 0.05)
+                }}
+            />
+        ))}
+
+        {/* 🛣️ Live Tactical Routes (Apex Nodes) */}
+        {activeRoutes.map((route) => (
+            <Polyline
+                key={route.id}
+                positions={decodePolyline(route.polyline)}
+                pathOptions={{
+                    color: route.color || '#F5A000',
+                    weight: 5,
+                    opacity: 0.8,
+                    lineJoin: 'round'
                 }}
             />
         ))}
@@ -152,7 +167,7 @@ export default function LiveDispatchMap({ riders, demandZones = [], onSelectRide
       </MapContainer>
 
       {/* 📡 Tactical HUD Overlay */}
-      <div className="absolute top-6 right-6 z-[1000] w-64 max-h-[80%] bg-white/80 backdrop-blur-xl rounded-[2.5rem] border border-white/50 shadow-2xl flex flex-col overflow-hidden transition-all duration-700 opacity-0 group-hover:opacity-100 translate-x-10 group-hover:translate-x-0">
+      <div className="absolute top-6 right-6 z-[1000] w-64 max-h-[80%] bg-white/80 backdrop-blur-xl rounded-[2.5rem] border border-white/50 shadow-2xl flex flex-col overflow-hidden transition-all duration-700 opacity-0 group-hover:opacity-100 translate-x-10 group-hover:opacity-100 translate-x-0">
           <div className="p-6 border-b border-slate-100 bg-white/50">
               <p className="text-[8px] font-black uppercase tracking-[0.4em] text-primary mb-1">Live Tactical Stream</p>
               <h3 className="text-sm font-black uppercase text-foreground">Operational Units</h3>
