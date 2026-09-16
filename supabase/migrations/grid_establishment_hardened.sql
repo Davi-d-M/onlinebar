@@ -785,7 +785,7 @@ VALUES
 ('refer-friend', 'Spread the Word', 'Bring a premium patron to the bar grid.', 500, 1)
 ON CONFLICT (id) DO NOTHING;
 
--- 27. AUTH TO PROFILE SYNC TRIGGER
+-- 27. AUTH TO PROFILE SYNC TRIGGER (Idempotent Hardening)
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS trigger AS $$
 BEGIN
@@ -796,7 +796,12 @@ BEGIN
     NULLIF(new.raw_user_meta_data->>'full_name', ''),
     NULLIF(new.raw_user_meta_data->>'phone_number', ''),
     NULLIF(new.raw_user_meta_data->>'address', '')
-  );
+  )
+  ON CONFLICT (id) DO UPDATE SET
+    email = EXCLUDED.email,
+    full_name = COALESCE(public.profiles.full_name, EXCLUDED.full_name),
+    phone_number = COALESCE(public.profiles.phone_number, EXCLUDED.phone_number),
+    address = COALESCE(public.profiles.address, EXCLUDED.address);
   RETURN new;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;

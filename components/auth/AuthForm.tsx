@@ -74,7 +74,11 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
               }
           }
         });
-        if (error) throw error;
+        if (error) {
+            console.error("[OB_OS] Signup Failure Node:", error);
+            throw error;
+        }
+
         if (data.user) {
             await handleIdentityStitching(data.user.id);
             await OB_OS.track('USER_REGISTERED', { userId: data.user.id, anonymousId: localStorage.getItem('ob_anonymous_id') || undefined });
@@ -83,7 +87,11 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
         }
       } else {
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
+        if (error) {
+            console.error("[OB_OS] Signup Failure Node:", error);
+            throw error;
+        }
+
         if (data.user) {
             await handleIdentityStitching(data.user.id);
             await OB_OS.track('USER_LOGIN', { userId: data.user.id });
@@ -111,7 +119,11 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
             const { error } = await supabase.auth.signInWithOtp({
                 phone: phoneNumber.startsWith('+') ? phoneNumber : `+254${phoneNumber.replace(/^0/, '')}`,
             });
-            if (error) throw error;
+            if (error) {
+            console.error("[OB_OS] Signup Failure Node:", error);
+            throw error;
+        }
+
             setShowOtpField(true);
             setMessage({ type: 'success', text: 'Verification code sent via SMS. 📱' });
         } else {
@@ -121,7 +133,11 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
                 token: otp,
                 type: 'sms'
             });
-            if (error) throw error;
+            if (error) {
+            console.error("[OB_OS] Signup Failure Node:", error);
+            throw error;
+        }
+
             if (data.user) {
                 await handleIdentityStitching(data.user.id);
                 await OB_OS.track('USER_LOGIN', { userId: data.user.id });
@@ -172,28 +188,26 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
       {method === 'email' ? (
           <form onSubmit={handleEmailAuth} className="space-y-5">
             {isSignUp && (
-              <div className="space-y-4 animate-in slide-in-from-top-2 duration-300">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Full Identity</label>
-                        <div className="relative">
-                            <Input value={fullName} onChange={e => setFullName(e.target.value)} placeholder="Name" className="h-14 rounded-2xl bg-slate-50 border-slate-100 pl-10 font-bold" />
-                            <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300" />
-                        </div>
+              <div className="space-y-5 animate-in slide-in-from-top-2 duration-300">
+                <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Full Identity</label>
+                    <div className="relative">
+                        <Input value={fullName} onChange={e => setFullName(e.target.value)} placeholder="Full Name" className="h-14 rounded-2xl bg-slate-50 border-slate-100 pl-12 font-bold" />
+                        <Globe className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
                     </div>
-                    <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Mobile Uplink</label>
-                        <div className="relative">
-                            <Input value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} placeholder="07XX..." className="h-14 rounded-2xl bg-slate-50 border-slate-100 pl-10 font-bold" />
-                            <Smartphone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300" />
-                        </div>
+                </div>
+                <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Mobile Uplink</label>
+                    <div className="relative">
+                        <Input value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} placeholder="07XXXXXXXX" className="h-14 rounded-2xl bg-slate-50 border-slate-100 pl-12 font-bold" />
+                        <Smartphone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
                     </div>
                 </div>
                 <div className="space-y-2">
                     <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Delivery Address</label>
                     <div className="relative">
-                        <Input required value={address} onChange={e => setAddress(e.target.value)} placeholder="e.g. Kilimani, Galana Rd" className="h-14 rounded-2xl bg-slate-50 border-slate-100 pl-10 font-bold" />
-                        <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300" />
+                        <Input required value={address} onChange={e => setAddress(e.target.value)} placeholder="e.g. Kilimani, Galana Rd" className="h-14 rounded-2xl bg-slate-50 border-slate-100 pl-12 font-bold" />
+                        <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
                     </div>
                 </div>
               </div>
