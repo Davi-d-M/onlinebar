@@ -20,18 +20,44 @@
   ],
   "shortcuts": [
     {
-      "name": "Bar Menu",
-      "short_name": "Menu",
-      "description": "Browse spirits and snacks",
-      "url": "/shop",
-      "icons": [{ "src": "/images/NoImage.jpg", "sizes": "192x192" }]
+      "name": "Build My Night",
+      "short_name": "Build",
+      "description": "Orchestrate your perfect evening",
+      "url": "/buzz?planner=true",
+      "icons": [{ "src": "/favicon.svg", "sizes": "192x192" }]
     },
     {
-      "name": "Add Product",
-      "short_name": "Stock",
-      "description": "Upload new inventory",
-      "url": "/admin/upload",
-      "icons": [{ "src": "/images/NoImage.jpg", "sizes": "192x192" }]
+      "name": "Live City Buzz",
+      "short_name": "Buzz",
+      "description": "Discover verified hotspots",
+      "url": "/buzz",
+      "icons": [{ "src": "/favicon.svg", "sizes": "192x192" }]
+    },
+    {
+      "name": "Track Mission",
+      "short_name": "Track",
+      "description": "Monitor your delivery in real-time",
+      "url": "/track",
+      "icons": [{ "src": "/favicon.svg", "sizes": "192x192" }]
+    }
+  ],
+  "widgets": [
+    {
+      "name": "Bar Command",
+      "description": "Real-time discovery and mission status",
+      "tag": "ob-command-node",
+      "template": "widgets/mobile-node",
+      "ms_ac_template": "widgets/mobile-node.json",
+      "data": "api/mobile/widget-config",
+      "type": "application/json",
+      "screenshots": [
+        {
+          "src": "/favicon.svg",
+          "sizes": "512x512",
+          "type": "image/svg+xml",
+          "label": "Bar Command Widget"
+        }
+      ]
     }
   ]
 }

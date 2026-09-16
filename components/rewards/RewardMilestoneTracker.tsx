@@ -5,11 +5,9 @@ import {
     Trophy,
     Crown,
     ShieldCheck,
-    Star,
     Sparkles
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
 import { ApexLoyalty, TierInfo } from '@/lib/engines/loyaltyEngine';
 import { supabase } from '@/lib/supabaseClient';
 
@@ -47,7 +45,7 @@ export default function RewardMilestoneTracker() {
                         </div>
                         <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400">Elite Patron Rank</p>
                     </div>
-                    <div className="h-14 w-14 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-primary shadow-sm">
+                    <div className="h-14 w-14 rounded-2xl bg-white flex items-center justify-center border border-slate-100 shadow-sm">
                         <Trophy size={28} className="text-primary" />
                     </div>
                 </header>
@@ -85,7 +83,7 @@ export default function RewardMilestoneTracker() {
                 </div>
             </div>
 
-            <Sparkles className="absolute -bottom-10 -left-10 h-64 w-64 text-white/5 -rotate-12 pointer-events-none" />
+            <Sparkles className="absolute -bottom-10 -left-10 h-64 w-64 text-slate-100/20 -rotate-12 pointer-events-none" />
         </Card>
     );
 }

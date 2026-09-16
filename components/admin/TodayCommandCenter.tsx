@@ -122,9 +122,9 @@ export default function OperatingBrainHUD() {
                         )}>
                             <node.icon size={22} />
                         </div>
-                        <div className="space-y-1">
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">{node.label}</p>
-                            <h3 className="text-xl font-black text-foreground tracking-tighter uppercase leading-none">{node.val}</h3>
+                        <div className="space-y-1.5">
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-tight">{node.label}</p>
+                            <h3 className="text-xl font-black text-foreground tracking-tighter uppercase leading-tight">{node.val}</h3>
                         </div>
                     </Card>
                 ))}

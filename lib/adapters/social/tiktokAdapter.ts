@@ -9,16 +9,19 @@ export class TikTokAdapter implements BaseSocialAdapter {
         return `TT-POST-${Date.now()}`;
     }
 
-    async delete(_externalId: string, _account: SocialAccountMetadata): Promise<boolean> {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async delete(_: string, __: SocialAccountMetadata): Promise<boolean> {
         // Deletion support varies by API version
         return false;
     }
 
-    async testConnection(_account: SocialAccountMetadata): Promise<boolean> {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async testConnection(_: SocialAccountMetadata): Promise<boolean> {
         return true;
     }
 
-    async getMetrics(_externalId: string, _account: SocialAccountMetadata): Promise<Record<string, number>> {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async getMetrics(_: string, __: SocialAccountMetadata): Promise<Record<string, number>> {
         return { views: 0, likes: 0, shares: 0 };
     }
 

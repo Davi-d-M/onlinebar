@@ -1,0 +1,71 @@
+{
+  "type": "AdaptiveCard",
+  "version": "1.5",
+  "body": [
+    {
+      "type": "ColumnSet",
+      "columns": [
+        {
+          "type": "Column",
+          "width": "auto",
+          "items": [
+            {
+              "type": "Image",
+              "url": "https://onlinebar.co.ke/favicon.svg",
+              "size": "Small"
+            }
+          ]
+        },
+        {
+          "type": "Column",
+          "width": "stretch",
+          "verticalContentAlignment": "Center",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "ONLINE BAR",
+              "weight": "Bolder",
+              "size": "Small",
+              "color": "Accent",
+              "wrap": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "TextBlock",
+      "text": "${title}",
+      "size": "Medium",
+      "weight": "Bolder",
+      "wrap": true
+    },
+    {
+      "type": "Image",
+      "url": "${image_url}",
+      "size": "Large",
+      "style": "RoundedCorners"
+    },
+    {
+      "type": "TextBlock",
+      "text": "${description}",
+      "wrap": true,
+      "size": "Small",
+      "isSubtle": true,
+      "fontType": "Monospace"
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Execute",
+      "title": "${cta_label}",
+      "verb": "explore",
+      "data": {
+        "deep_link": "${deep_link}"
+      }
+    }
+  ],
+  "background": {
+    "color": "#ffffff"
+  }
+}

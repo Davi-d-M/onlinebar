@@ -149,7 +149,7 @@ export default function IntelligenceCommand() {
                                 </span>
                             </div>
 
-                            <div className="space-y-2">
+                            <div className="space-y-1.5">
                                 <h3 className="text-lg font-black text-foreground uppercase tracking-tight leading-tight">{insight.title}</h3>
                                 <p className="text-[10px] text-slate-500 font-medium italic leading-relaxed line-clamp-3">&quot;{insight.description}&quot;</p>
                             </div>

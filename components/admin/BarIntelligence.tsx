@@ -138,11 +138,11 @@ export default function BarIntelligence() {
                                 )}>
                                     <node.icon size={18} />
                                 </div>
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">{node.label}</p>
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-tight">{node.label}</p>
                             </div>
                             <div className="text-right">
                                 <span className={cn(
-                                    "text-lg font-black tracking-tighter uppercase tabular-nums",
+                                    "text-lg font-black tracking-tighter uppercase tabular-nums leading-none",
                                     node.color === 'emerald' ? "text-emerald-600" :
                                     node.color === 'primary' ? "text-primary" :
                                     "text-rose-600"

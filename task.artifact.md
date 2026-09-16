@@ -1,27 +1,20 @@
-# Tasks - Content Command Center 📣🔌👀
+# Tasks - PWA Home Screen Command Node 📱🛰️
 
-## Phase 1: Grid Infrastructure
-- [x] Create `20260922_content_command_core.sql`
-- [x] Establish `content_master` and `content_platform_variants` tables
-- [x] Build the `content_audit_log` node
+## Phase 1: Manifest & Configuration
+- [x] Update `manifest.json` with Shortcuts and Widget definitions
+- [x] Create `public/widgets/mobile-node.json` (Adaptive Card Template)
+- [x] Harden `/api/mobile/widget-config` output format
 
-## Phase 2: The Universal Adapter
-- [x] Define `BaseSocialAdapter` interface
-- [x] Implement `contentCommandEngine.ts`
-- [x] Build stubs for TikTok, X, and YouTube adapters
+## Phase 2: Service Worker Logic
+- [x] Implement `widgetinstall` and `widgetuninstall` handlers in `sw.js`
+- [x] Add `widgetresume` and `widgetclick` logic for deep linking
+- [x] Ensure caching for offline widget state
 
-## Phase 3: Content Command UI
-- [x] Implement `admin/content/page.tsx`
-- [x] Build `PreviewStudio.tsx` (Multi-platform simulation)
-- [x] Build `ChannelConnector.tsx` (Integration Hub)
+## Phase 3: UI Enhancement
+- [x] Update `InstallAppWidget.tsx` with "Command Node" marketing
+- [x] Verify "Build My Night" deep link from shortcut
 
-## Phase 4: Aesthetic Finalization
-- [x] Purge remaining `bg-slate-900` in Admin Pulse
-- [x] Purge remaining `bg-slate-900` in Operations dashboards
-- [x] Purge remaining `bg-slate-900` in Affiliate Hub
-- [x] Harden 320px mobile reflow for all new light cards
-
-## Phase 5: Verification & Deployment
-- [x] Run `npm run lint` and `npm run build`
-- [x] Perform "Delete Sync" audit
-- [x] Push to GitHub
+## Phase 4: Verification
+- [x] Test installation and shortcut appearance
+- [x] Verify widget availability in device gallery
+- [x] Final project-wide build check

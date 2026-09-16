@@ -404,7 +404,10 @@ export default function AffiliateCommandCenter() {
                                             <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Available to withdraw</p>
                                             <h2 className="text-5xl font-black text-foreground tracking-tighter leading-none">{formatPrice(stats.available_earnings)}</h2>
                                         </div>
-                                        <Button className="w-full h-16 rounded-2xl bg-primary text-white font-black uppercase text-xs tracking-widest shadow-xl shadow-primary/20 hover:scale-105 transition-all">
+                                        <Button
+                                            onClick={handleWithdrawRequest}
+                                            className="w-full h-16 rounded-2xl bg-primary text-white font-black uppercase text-xs tracking-widest shadow-xl shadow-primary/20 hover:scale-105 transition-all"
+                                        >
                                             Initialize M-Pesa Payout
                                         </Button>
                                         <p className="text-[8px] text-center text-slate-400 font-bold uppercase tracking-widest italic leading-relaxed">

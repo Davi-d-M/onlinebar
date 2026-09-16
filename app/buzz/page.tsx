@@ -15,7 +15,8 @@ import {
     Loader2,
     ArrowRight,
     Sparkles,
-    CheckCircle2
+    CheckCircle2,
+    X
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -23,6 +24,7 @@ import { cn } from '@/lib/utils';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import PulseDetailModal from '@/components/buzz/PulseDetailModal';
+import BuildMyNightWidget from '@/components/widgets/concierge/BuildMyNightWidget';
 import BuzzStoryCard, { BuzzStory } from '@/components/buzz/BuzzStoryCard';
 
 const LiveBuzzMap = dynamic(() => import('@/components/admin/dispatch/LiveDispatchMap'), {
@@ -47,6 +49,16 @@ export default function TheBuzzDiscovery() {
     const [isDetailOpen, setIsDetailOpen] = React.useState(false);
     const [filter, setFilter] = React.useState<'trending' | 'near-me' | 'tonight'>('trending');
     const [loading, setLoading] = React.useState(true);
+    const [nightPlannerOpen, setNightPlannerOpen] = React.useState(false);
+
+    React.useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('planner') === 'true') {
+                setNightPlannerOpen(true);
+            }
+        }
+    }, []);
 
     const fetchBuzzData = React.useCallback(async () => {
         if (!supabase) return;
@@ -128,6 +140,7 @@ export default function TheBuzzDiscovery() {
                             </div>
                         </div>
                         <Button
+                            onClick={() => setNightPlannerOpen(true)}
                             className="h-20 px-10 rounded-[2rem] bg-primary text-white font-black uppercase tracking-widest text-[10px] shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
                         >
                             <Zap className="h-4 w-4 mr-3 fill-current" /> Build My Night
@@ -144,7 +157,7 @@ export default function TheBuzzDiscovery() {
                     ].map(f => (
                         <button
                             key={f.id}
-                            onClick={() => setFilter(f.id as any)}
+                            onClick={() => setFilter(f.id as 'trending' | 'near-me' | 'tonight')}
                             className={cn(
                                 "flex items-center gap-3 px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all shrink-0 border-2 shadow-sm",
                                 filter === f.id ? "bg-primary border-primary text-white shadow-xl shadow-primary/20 scale-105" : "bg-white text-slate-400 border-slate-100 hover:border-primary/20 hover:text-primary"
@@ -158,7 +171,12 @@ export default function TheBuzzDiscovery() {
 
                 {/* 🎞️ CINEMATIC STORY GRID */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
-                    {stories.length === 0 ? (
+                    {stories.filter(s => {
+                        if (filter === 'trending') return s.trend_score > 70;
+                        if (filter === 'near-me') return true; // Simulate proximity
+                        if (filter === 'tonight') return s.starts_at?.startsWith(new Date().toISOString().split('T')[0]);
+                        return true;
+                    }).length === 0 ? (
                         <div className="col-span-full py-40 text-center opacity-20 border-2 border-dashed border-slate-100 rounded-[4rem]">
                             <Flame size={64} className="mx-auto mb-6" />
                             <p className="text-xl font-black uppercase tracking-widest">Awaiting the next Buzz...</p>
@@ -168,7 +186,7 @@ export default function TheBuzzDiscovery() {
                     ))}
                 </div>
 
-                <div className="grid lg:grid-cols-12 gap-12 pt-10">
+                <div className="grid lg:grid-cols-12 gap-12 pt-10 text-left">
 
                     {/* 🗺️ THE PULSE MAP (LIGHT THEME) */}
                     <div className="lg:col-span-8 space-y-10">
@@ -352,6 +370,22 @@ export default function TheBuzzDiscovery() {
                     areaName={selectedArea.zone_name}
                     onClose={() => setIsDetailOpen(false)}
                 />
+            )}
+
+            {nightPlannerOpen && (
+                <div className="fixed inset-0 z-[2000] bg-white flex flex-col animate-in slide-in-from-bottom duration-700 overflow-y-auto no-scrollbar">
+                    <header className="p-8 flex justify-end">
+                        <button
+                            onClick={() => setNightPlannerOpen(false)}
+                            className="h-14 w-14 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 hover:text-primary transition-all active:scale-90"
+                        >
+                            <X size={24} />
+                        </button>
+                    </header>
+                    <div className="flex-1">
+                        <BuildMyNightWidget />
+                    </div>
+                </div>
             )}
         </div>
     );

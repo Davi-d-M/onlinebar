@@ -1,67 +1,59 @@
-# Implementation Plan - Content Command Center 📣🔌👀
+# Implementation Plan - PWA Home Screen Command Node 📱🛰️
 
-This plan establishes a unified "Content Command Center" for the Online Bar OS, allowing for professional multi-channel publishing, live previews, and automated scheduling while completing the "Gold on White" aesthetic overhaul.
+This plan establishes the **Home Screen Widget** and **App Shortcuts** for the Online Bar PWA, ensuring that the "widget comes with the app" upon installation for full mobile control.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> **Unified Adapters**: All social platforms (Meta, TikTok, X, etc.) will be managed through a single server-side `SocialPublisher` engine. Credentials will be encrypted at rest and never exposed to the client.
-> **External Deletion**: The system will attempt to delete posts from external platforms where the API supports it. If unsupported, the UI will provide manual instructions.
-> **Aesthetic Purge**: I am completing the removal of all `bg-slate-900` and dark background nodes. The system will pivot to a clean, light-filled layout.
+> **PWA Widgets Support**: Home screen widgets for PWAs are currently supported on Windows (Edge/Chrome) and increasingly on Android (Chrome). On iOS, we are limited to App Shortcuts (Long-press) and the "Add to Home Screen" bookmark behavior.
+> **Adaptive Cards**: We will use the Microsoft Adaptive Cards standard for the widget UI, which allows for dynamic data injection from our `widget-config` API.
 
 ## Proposed Changes
 
-### 🗄️ 1. Database: Social Grid Schema
+### 📱 1. PWA Manifest Hardening
 
-#### [NEW] `supabase/migrations/20260922_content_command_core.sql`
-- **`social_accounts`**: Tracks connected profiles (platform, status, account metadata).
-- **`content_master`**: The source of truth for a post (Title, Base Narrative, Master Assets).
-- **`content_platform_variants`**: Platform-specific adaptations (IG Caption, TikTok Hook, X Thread).
-- **`publishing_queue`**: Job queue for the server-side worker.
-- **`content_audit_log`**: Traceability for all create/edit/delete actions.
+#### [MODIFY] `public/manifest.json`
+-   **Shortcuts**: Add quick-access nodes for "Build My Night", "Live City Buzz", and "Track Mission".
+-   **Widgets**: Define the "Bar Command" node, pointing to a new Adaptive Card template and the existing data API.
 
 ---
 
-### 🏛️ 2. Core: Universal Social Adapter
+### 🛠️ 2. Service Worker Evolution
 
-#### [NEW] `lib/engines/contentCommandEngine.ts`
-- Orchestrates the creation of Master Content and its platform-specific variants.
-- Handles soft-deletes and external sync protocols.
-
-#### [NEW] `lib/adapters/social/`
-- Modular adapters for **TikTok**, **YouTube**, **X**, **Snapchat**, **LinkedIn**, and **Pinterest**.
-- Each adapter implements the `BaseSocialAdapter` interface (connect, publish, delete, getMetrics).
+#### [MODIFY] `public/sw.js`
+-   Implement `widgetresume`, `widgetinstall`, and `widgetclick` event listeners.
+-   Handle background synchronization for widget data to ensure the "Live Pulse" is accurate on the home screen.
 
 ---
 
-### 📱 3. UI/UX: Content Command Hub
+### 🎨 3. Widget UI & Data
 
-#### [NEW] `app/admin/(dashboard)/content/page.tsx`
-- The central dashboard for creating and managing all platform content.
+#### [NEW] `public/widgets/mobile-node.json`
+-   A high-fidelity Adaptive Card template matching the "Gold on White" aesthetic.
+-   Displays: Title, Description, Image, and a "Sync/Explore" action button.
 
-#### [NEW] `components/admin/content/PreviewStudio.tsx`
-- Real-time "Look & Feel" simulation for every connected channel.
-
-#### [NEW] `components/admin/content/ChannelConnector.tsx`
-- A single hub to manage OAuth connections and integration health.
+#### [MODIFY] `app/api/mobile/widget-config/route.ts`
+-   Ensure the JSON payload is perfectly mapped to the Adaptive Card template.
+-   Add error fallbacks for when no specific widget is published in the admin.
 
 ---
 
-### 🎨 4. Aesthetic Finalization (Gold on White)
+### 🚀 4. Installation Experience
 
-#### [MODIFY] Global Sweep
-- Replace remaining `bg-slate-900` instances in Admin Pulse, Operations, and Affiliate dashboards.
-- Ensure 100% border consistency (`border-slate-100`) for cards on light backgrounds.
+#### [MODIFY] `components/layout/InstallAppWidget.tsx`
+-   Update the narrative to mention: "Unlock the Home Screen Command Node upon installation."
+-   Highlight the "Real-time Buzz & Discovery" benefits of the installed terminal.
 
 ---
 
 ## Verification Plan
 
 ### Automated Tests
-- `npm run build`: Verify 100% route success.
-- Adapter Test: Verify that a `POST` to the TikTok adapter correctly initializes the state machine.
+-   **Manifest Validation**: Use PWA audit tools to ensure the `widgets` and `shortcuts` blocks are syntactically correct.
+-   **API Integrity**: Verify `/api/mobile/widget-config` returns a valid JSON payload.
 
 ### Manual Verification
-1.  **Creation Flow**: Create a "Master Post," adapt it for IG and X, and verify both variants appear in the "Preview Studio."
-2.  **Deletion Sync**: Delete a post and verify it is removed from the local grid and queued for external deletion.
-3.  **Aesthetic Audit**: Confirm zero dark-background nodes across the entire Admin Control Tower.
+1.  **Installation**: Install the app on an Android device or Windows machine.
+2.  **Shortcuts**: Long-press the icon and verify "Build My Night" appears.
+3.  **Widget**: Check the "Widgets" gallery on the device and verify "Bar Command" is available to add to the home screen.
+4.  **Live Sync**: Change a widget in the Admin Dashboard and verify the home screen node updates.

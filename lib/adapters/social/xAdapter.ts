@@ -8,15 +8,18 @@ export class XAdapter implements BaseSocialAdapter {
         return `X-POST-${Date.now()}`;
     }
 
-    async delete(_externalId: string, _account: SocialAccountMetadata): Promise<boolean> {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async delete(_: string, __: SocialAccountMetadata): Promise<boolean> {
         return true;
     }
 
-    async testConnection(_account: SocialAccountMetadata): Promise<boolean> {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async testConnection(_: SocialAccountMetadata): Promise<boolean> {
         return true;
     }
 
-    async getMetrics(_externalId: string, _account: SocialAccountMetadata): Promise<Record<string, number>> {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async getMetrics(_: string, __: SocialAccountMetadata): Promise<Record<string, number>> {
         return { impressions: 0, retweets: 0, replies: 0 };
     }
 

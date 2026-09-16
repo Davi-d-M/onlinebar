@@ -3,8 +3,10 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { MessageSquare, ShoppingCart, Share2, ArrowLeft, Zap, ChevronLeft, ChevronRight, Layers, Check, Loader2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { formatPrice, cn, getReferralLink } from '@/lib/utils';
 import ReviewSection from '@/components/product/ReviewSection';
 import { useCart } from '@/context/CartContext';
@@ -19,11 +21,11 @@ import { OB_OS } from '@/lib/onlineBarOS';
 import { v4 as uuidv4 } from 'uuid';
 import { useInteractionTracking } from '@/lib/utils/useInteractionTracking';
 
-import ProductDNAWidget from '@/components/widgets/commerce/ProductDNAWidget';
-import PerfectServeWidget from './PerfectServeWidget';
+import ProductDNACard from './ProductDNACard';
+import PerfectServeCommerce from './PerfectServeCommerce';
+import DossierEditorialHub from './DossierEditorialHub';
 import AuthenticitySentinel from './AuthenticitySentinel';
-
-import dynamic from 'next/dynamic';
+import { ApexKnowledge, ProductDossier } from '@/lib/engines/productKnowledgeEngine';
 
 const Product3DViewer = dynamic(() => import('./Product3DViewer'), {
     ssr: false,
@@ -47,6 +49,7 @@ interface BeverageSpecs {
     };
     batch_no?: string;
     origin?: string;
+    abv?: string;
     model_3d_url?: string;
 }
 
@@ -71,6 +74,8 @@ interface Product {
 }
 
 export default function ProductDetailClient({ product, relatedProducts }: { product: Product, relatedProducts: Product[] }) {
+  const [dossier, setDossier] = useState<ProductDossier | null>(null);
+  const [loadingDossier, setLoadingDossier] = useState(true);
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedVariant, setSelectedVariant] = useState<string>(
     (product.sizes && Array.isArray(product.sizes) && product.sizes.length > 0) ? product.sizes[0] : 'Standard'
@@ -89,11 +94,16 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
   const { settings } = useSettings();
   const { trackClick } = useInteractionTracking();
 
-  // 1. Browsing History & Referral Fetch Logic
+  // 1. Browsing History & Dossier Fetch Logic
   React.useEffect(() => {
     async function initData() {
         if (!supabase) return;
         try {
+            // Fetch Dossier
+            const knowledge = await ApexKnowledge.getDossier(product.id);
+            if (knowledge) setDossier(knowledge);
+            setLoadingDossier(false);
+
             const { data: { session } } = await supabase.auth.getSession();
 
             // Generate/Get Anonymous ID
@@ -499,19 +509,62 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
           </div>
         </div>
 
-        {/* 🧬 ELITE DIFFERENTIATORS SECTION */}
+        {/* 🧬 ELITE DOSSIER SECTION */}
         <div className="grid lg:grid-cols-12 gap-10 mb-24 items-stretch">
-            <div className="lg:col-span-4 h-full flex">
-                <ProductDNAWidget dna={product.beverage_specs?.sensory_dna} />
-            </div>
-            <div className="lg:col-span-8 space-y-10 flex flex-col justify-between">
-                <PerfectServeWidget specs={product.beverage_specs?.perfect_serve} />
+            <div className="lg:col-span-4 h-full flex flex-col gap-10">
+                {dossier ? (
+                    <ProductDNACard
+                        dna={dossier.sensory_dna}
+                        origin={dossier.country_of_origin}
+                        style={product.category || 'Premium Spirit'}
+                        abv={dossier.abv_actual || product.beverage_specs?.abv || 'N/A'}
+                        verification={dossier.source_verification}
+                    />
+                ) : (
+                    <Card className="p-8 rounded-[3.5rem] bg-slate-50 border border-slate-100 h-full flex flex-col items-center justify-center gap-4 text-center opacity-40">
+                         <div className="h-12 w-12 rounded-full border-2 border-slate-200 border-t-primary animate-spin" />
+                         <p className="text-[10px] font-black uppercase text-slate-400">Loading Sensory DNA...</p>
+                    </Card>
+                )}
                 <AuthenticitySentinel
                     batchNo={product.beverage_specs?.batch_no}
                     origin={product.beverage_specs?.origin}
                 />
             </div>
+            <div className="lg:col-span-8 flex flex-col gap-10">
+                {dossier && (
+                    <DossierEditorialHub
+                        story={dossier.origin_story}
+                        origin={dossier.region_of_origin}
+                        production={dossier.production_method}
+                        brandName={dossier.brand_identity}
+                    />
+                )}
+                {product.beverage_specs?.perfect_serve && (
+                    <PerfectServeCommerce
+                        mainProduct={product as any}
+                        mixerId={product.beverage_specs.perfect_serve.mixer_id}
+                        glassware={product.beverage_specs.perfect_serve.glassware}
+                    />
+                )}
+            </div>
         </div>
+
+        {/* 🇰🇪 KENYA COMPLIANCE BAR */}
+        <section className="mb-24 p-8 bg-slate-50 rounded-[3rem] border border-slate-100 flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="flex items-center gap-6 text-left">
+                <div className="h-14 w-14 rounded-2xl bg-white flex items-center justify-center text-primary shadow-sm border border-slate-100 font-black text-xl">18+</div>
+                <div>
+                    <h4 className="text-[11px] font-black uppercase text-foreground tracking-widest">Kenya Statutory Warning</h4>
+                    <p className="text-[13px] font-bold text-slate-500 uppercase tracking-tight italic mt-1 leading-none">&quot;EXCESSIVE ALCOHOL CONSUMPTION IS HARMFUL TO YOUR HEALTH. NOT FOR SALE TO PERSONS UNDER THE AGE OF 18 YEARS.&quot;</p>
+                </div>
+            </div>
+            <div className="h-10 w-px bg-slate-200 hidden md:block" />
+            <div className="text-left md:text-right">
+                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Constituent Statement</p>
+                <p className="text-[10px] font-bold text-foreground mt-1">{dossier?.constituents_statement || "Contains: Ethanol, Water, Natural Flavours."}</p>
+            </div>
+        </section>
 
         {/* LIGHTBOX / FULLSCREEN ZOOM */}
         {isLightboxOpen && (

@@ -161,9 +161,9 @@ export default function LiveActivitySidebar({ isOpen, setIsOpen }: { isOpen: boo
                                                 <Icon className="h-5 w-5" />
                                             </div>
                                             <div className="flex-1 min-w-0 text-left">
-                                                <div className="flex justify-between items-start">
-                                                    <p className="text-[11px] font-black uppercase text-foreground leading-tight">{event.label}</p>
-                                                    <span className="text-[8px] font-black text-muted-foreground uppercase shrink-0 ml-2">{event.time}</span>
+                                                <div className="flex justify-between items-start gap-2">
+                                                    <p className="text-[11px] font-black uppercase text-foreground leading-tight flex-1 min-w-0 truncate">{event.label}</p>
+                                                    <span className="text-[8px] font-black text-muted-foreground uppercase shrink-0">{event.time}</span>
                                                 </div>
                                                 {event.amount && <p className="text-sm font-black text-primary mt-1">{formatPrice(event.amount)}</p>}
                                                 <div className="flex items-center gap-2 mt-3 opacity-0 group-hover:opacity-100 transition-opacity">

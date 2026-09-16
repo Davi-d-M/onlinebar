@@ -252,12 +252,12 @@ export default function AdminLayoutClient({
                     </div>
                     {!isSidebarCollapsed && (
                         <div className="animate-in fade-in duration-500 text-left">
-                          <select className="font-black text-foreground leading-none uppercase tracking-tighter text-sm bg-transparent border-none outline-none appearance-none cursor-pointer">
+                          <select className="font-black text-foreground uppercase tracking-tight text-sm bg-transparent border-none outline-none appearance-none cursor-pointer">
                               <option>Online Bar Master</option>
                               <option>Nairobi Branch</option>
                               <option>VVIP Cellar</option>
                           </select>
-                          <p className="text-[9px] font-black text-primary uppercase tracking-[0.2em] mt-1">Bar Command</p>
+                          <p className="text-[9px] font-black text-primary uppercase tracking-[0.2em] mt-1.5">Bar Command</p>
                         </div>
                     )}
                 </div>
@@ -273,7 +273,7 @@ export default function AdminLayoutClient({
                 {visibleNavGroups.map((group) => (
                   <div key={group.group} className="space-y-3">
                     {!isSidebarCollapsed && (
-                      <p className="px-5 text-[8px] font-black text-slate-400 uppercase tracking-[0.3em]">
+                      <p className="px-5 text-[8px] font-black text-slate-400 uppercase tracking-[0.3em] whitespace-nowrap">
                         {group.group}
                       </p>
                     )}
@@ -348,8 +348,8 @@ export default function AdminLayoutClient({
                         onClick={() => setIsSearchOpen(true)}
                         className="flex items-center gap-4 px-6 h-12 rounded-2xl bg-secondary border border-border text-muted-foreground hover:border-primary/30 transition-all group min-w-[400px]"
                       >
-                          <Search className="h-4 w-4 group-hover:text-primary transition-colors" />
-                          <span className="text-[10px] font-black uppercase tracking-widest">Search Protocol...</span>
+                          <Search className="h-4 w-4 group-hover:text-primary transition-colors shrink-0" />
+                          <span className="text-[10px] font-black uppercase tracking-widest group-hover:text-foreground transition-colors">Search Protocol...</span>
                           <kbd className="ml-auto bg-background px-2 py-1 rounded-lg border border-border text-[8px] font-black text-muted-foreground group-hover:text-primary transition-colors">Ctrl + K</kbd>
                       </button>
                   </div>

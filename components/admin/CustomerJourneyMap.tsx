@@ -54,7 +54,7 @@ export default function CustomerJourneyMap() {
         <Card className="p-10 rounded-[3.5rem] bg-white border border-slate-100 shadow-sm space-y-12 text-left">
             <header className="flex justify-between items-center">
                 <div>
-                    <h2 className="text-3xl font-black uppercase tracking-tighter text-foreground leading-none">Nairobi Bar Funnel</h2>
+                    <h2 className="text-3xl font-black uppercase tracking-tighter text-foreground leading-tight">Nairobi Bar Funnel</h2>
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">Acquisition &rarr; Conversion Architecture</p>
                 </div>
                 <div className="text-right">
@@ -72,9 +72,9 @@ export default function CustomerJourneyMap() {
                     return (
                         <div key={stage.label} className="relative">
                             {i > 0 && (
-                                <div className="absolute -top-6 left-12 flex flex-col items-center gap-1">
-                                    <div className="h-4 w-px bg-slate-100" />
-                                    <span className="text-[8px] font-black text-rose-500 uppercase">-{dropoff}% Loss</span>
+                                <div className="absolute -top-7 left-12 flex flex-col items-center gap-1 z-0">
+                                    <div className="h-6 w-px border-l border-dashed border-slate-200" />
+                                    <span className="text-[7px] font-black text-rose-500 uppercase tracking-widest bg-white px-1 shadow-sm rounded-sm">-{dropoff}% Loss</span>
                                 </div>
                             )}
 
@@ -97,14 +97,14 @@ export default function CustomerJourneyMap() {
                                     )}>
                                         <stage.icon size={24} />
                                     </div>
-                                    <div>
-                                        <h4 className="text-sm font-black uppercase text-foreground">{stage.label}</h4>
+                                    <div className="space-y-1">
+                                        <h4 className="text-sm font-black uppercase text-foreground leading-tight">{stage.label}</h4>
                                         <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{stage.desc}</p>
                                     </div>
                                 </div>
-                                <div className="text-right z-10">
-                                    <p className="text-2xl font-black text-foreground tabular-nums">{stage.val.toLocaleString()}</p>
-                                    <p className="text-[8px] font-black text-slate-300 uppercase">Sessions</p>
+                                <div className="text-right z-10 space-y-1">
+                                    <p className="text-2xl font-black text-foreground tabular-nums leading-none">{stage.val.toLocaleString()}</p>
+                                    <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest">Sessions</p>
                                 </div>
 
                                 {/* Funnel Visual Background */}

@@ -89,7 +89,7 @@ export default function InstallAppWidget() {
                     </header>
 
                     <p className="text-sm font-medium italic text-slate-500 leading-relaxed">
-                        &quot;Install the Online Bar App to your home screen for instant access to the cellar and real-time social buzz.&quot;
+                        &quot;Install the Online Bar App to your home screen for instant access to the cellar and unlock the real-time **Command Node Widget** for full tactical control.&quot;
                     </p>
 
                     <div className="flex flex-col gap-3">
@@ -101,7 +101,7 @@ export default function InstallAppWidget() {
                         </Button>
                         <div className="flex items-center justify-center gap-4 py-2 opacity-30">
                             <div className="h-px flex-1 bg-slate-200" />
-                            <span className="text-[7px] font-black uppercase tracking-widest text-slate-400">PWA Secure</span>
+                            <span className="text-[7px] font-black uppercase tracking-widest text-slate-400">PWA Node + Home Widget</span>
                             <div className="h-px flex-1 bg-slate-200" />
                         </div>
                     </div>

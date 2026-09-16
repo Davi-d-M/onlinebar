@@ -7,7 +7,7 @@ import {
     Zap
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
-import { cn, formatPrice } from '@/lib/utils';
+import { formatPrice } from '@/lib/utils';
 import { NeuralSommelier, PairingNode } from '@/lib/engines/sommelierEngine';
 import Image from 'next/image';
 import { useCart } from '@/context/CartContext';
