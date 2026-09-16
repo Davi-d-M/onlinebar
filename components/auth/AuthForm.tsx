@@ -44,6 +44,16 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    if (message.text) {
+      const timer = setTimeout(() => {
+        setMessage({ type: 'idle', text: '' });
+        setDebugInfo(null);
+      }, 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [message.text]);
+
+  useEffect(() => {
     setIsSignUp(initialMode === 'signup');
   }, [initialMode]);
 
@@ -83,7 +93,7 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
         if (data.user) {
             await handleIdentityStitching(data.user.id);
             await OB_OS.track('USER_REGISTERED', { userId: data.user.id, anonymousId: localStorage.getItem('ob_anonymous_id') || undefined });
-            setMessage({ type: 'success', text: 'Verification link transmitted to your inbox. 🛰️' });
+            setMessage({ type: 'success', text: 'Registration Successful! Verification link transmitted. 🛰️' });
             if (onSuccess) onSuccess(data.user.id);
         }
       } else {
@@ -96,8 +106,12 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
         if (data.user) {
             await handleIdentityStitching(data.user.id);
             await OB_OS.track('USER_LOGIN', { userId: data.user.id });
-            if (onSuccess) onSuccess(data.user.id);
-            else router.push('/');
+            setMessage({ type: 'success', text: 'Access Granted. Entering Vault... 🛡️' });
+            if (onSuccess) {
+                setTimeout(() => onSuccess(data.user!.id), 1500);
+            } else {
+                setTimeout(() => router.push('/'), 1500);
+            }
         }
       }
     } catch (error: unknown) {
@@ -147,8 +161,12 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
             if (data.user) {
                 await handleIdentityStitching(data.user.id);
                 await OB_OS.track('USER_LOGIN', { userId: data.user.id });
-                if (onSuccess) onSuccess(data.user.id);
-                else router.push('/');
+                setMessage({ type: 'success', text: isSignUp ? 'Registration Successful! Entering Vault... 🛡️' : 'Access Granted. Entering Vault... 🛡️' });
+                if (onSuccess) {
+                    setTimeout(() => onSuccess(data.user!.id), 1500);
+                } else {
+                    setTimeout(() => router.push('/'), 1500);
+                }
             }
         }
     } catch (error: unknown) {
