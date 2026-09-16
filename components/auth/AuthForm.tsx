@@ -101,7 +101,9 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
             await handleIdentityStitching(data.user.id);
             await OB_OS.track('USER_REGISTERED', { userId: data.user.id, anonymousId: localStorage.getItem('ob_anonymous_id') || undefined });
             setMessage({ type: 'success', text: 'Registration Successful! Verification link transmitted. 🛰️' });
-            if (onSuccess) onSuccess(data.user.id);
+            if (onSuccess) {
+                setTimeout(() => onSuccess(data.user!.id), 2000);
+            }
         }
       } else {
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
