@@ -40,6 +40,7 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
   const [showOtpField, setShowOtpField] = useState(false);
 
   const [message, setMessage] = useState<{ type: 'success' | 'error' | 'idle', text: string }>({ type: 'idle', text: '' });
+  const [debugInfo, setDebugInfo] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -100,7 +101,12 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
         }
       }
     } catch (error: unknown) {
-      setMessage({ type: 'error', text: (error as Error).message });
+      const err = error as any;
+      console.error("[OB_OS] Auth Failure:", err);
+      setMessage({ type: 'error', text: err.message || "Uplink Failure" });
+      if (err.details || err.code || err.hint) {
+          setDebugInfo(JSON.stringify({ code: err.code, details: err.details, hint: err.hint }));
+      }
     } finally {
       setLoading(false);
     }
@@ -146,7 +152,11 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
             }
         }
     } catch (error: unknown) {
-        setMessage({ type: 'error', text: (error as Error).message });
+        const err = error as any;
+        setMessage({ type: 'error', text: err.message || "Uplink Failure" });
+        if (err.details || err.code || err.hint) {
+            setDebugInfo(JSON.stringify({ code: err.code, details: err.details, hint: err.hint }));
+        }
     } finally {
         setLoading(false);
     }
@@ -256,11 +266,20 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
       )}
 
       {message.text && (
-          <div className={cn(
-              "p-4 rounded-2xl border text-center animate-in fade-in zoom-in-95",
-              message.type === 'success' ? "bg-emerald-50 border-emerald-100 text-emerald-600" : "bg-rose-50 border-rose-100 text-rose-600"
-          )}>
-              <p className="text-[10px] font-black uppercase tracking-widest">{message.text}</p>
+          <div className="space-y-4 animate-in fade-in zoom-in-95">
+              <div className={cn(
+                  "p-4 rounded-2xl border text-center",
+                  message.type === 'success' ? "bg-emerald-50 border-emerald-100 text-emerald-600" : "bg-rose-50 border-rose-100 text-rose-600"
+              )}>
+                  <p className="text-[10px] font-black uppercase tracking-widest">{message.text}</p>
+              </div>
+
+              {debugInfo && (
+                  <div className="p-4 bg-slate-900 rounded-2xl text-left overflow-hidden">
+                      <p className="text-[8px] font-black uppercase text-rose-400 mb-2 tracking-widest">Technical Intel</p>
+                      <code className="text-[9px] text-slate-300 font-mono break-all">{debugInfo}</code>
+                  </div>
+              )}
           </div>
       )}
 

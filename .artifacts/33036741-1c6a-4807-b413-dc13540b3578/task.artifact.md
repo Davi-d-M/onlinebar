@@ -1,3 +1,5 @@
-- [ ] Update `handle_new_user` trigger with `ON CONFLICT` and `NULLIF`
-- [ ] Refactor `AuthForm.tsx` UI for reliable field rendering
-- [ ] Add detailed console logging to `AuthForm.tsx`
+- [x] Update `handle_new_user` trigger with `ON CONFLICT` and `NULLIF`
+- [x] Refactor `AuthForm.tsx` UI for reliable field rendering
+- [x] Add detailed console logging to `AuthForm.tsx`
+- [x] Create emergency recovery script (`supabase/migrations/20260916_emergency_identity_recovery.sql`)
+- [x] Implement "Technical Intel" debug node in `AuthForm.tsx`
