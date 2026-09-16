@@ -328,20 +328,32 @@ class OnlineBarOS {
 
         // 2. Handle Experiment Updates
         if (name === 'EXPERIMENT_REACH' && payload.variantId) {
-            await supabase?.rpc('increment_experiment_reach', { var_id: payload.variantId }).catch(() => {});
+            try {
+                await supabase?.rpc('increment_experiment_reach', { var_id: payload.variantId });
+            } catch (err) {
+                console.warn("[OB_OS] Experiment Reach Sync Failure:", err);
+            }
         }
         if (name === 'EXPERIMENT_CONVERSION' && payload.variantId) {
-            await supabase?.rpc('increment_experiment_conversion', { var_id: payload.variantId }).catch(() => {});
+            try {
+                await supabase?.rpc('increment_experiment_conversion', { var_id: payload.variantId });
+            } catch (err) {
+                console.warn("[OB_OS] Experiment Conversion Sync Failure:", err);
+            }
         }
 
         // 3. Handle Onboarding Funnel (Pillar 12)
         if (name.startsWith('ONBOARDING_')) {
-            await supabase.from('onboarding_funnel_log').insert([{
-                anonymous_id: payload.anonymousId,
-                user_id: payload.userId,
-                step_name: name === 'ONBOARDING_STARTED' ? 'START' : (payload.details?.step || name),
-                metadata: payload.details || {}
-            }]).catch(() => {});
+            try {
+                await supabase.from('onboarding_funnel_log').insert([{
+                    anonymous_id: payload.anonymousId,
+                    user_id: payload.userId,
+                    step_name: name === 'ONBOARDING_STARTED' ? 'START' : (payload.details?.step || name),
+                    metadata: payload.details || {}
+                }]);
+            } catch (err) {
+                console.warn("[OB_OS] Onboarding Log Failure:", err);
+            }
         }
     }
 

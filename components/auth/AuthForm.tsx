@@ -115,7 +115,7 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
         }
       }
     } catch (error: unknown) {
-      const err = error as any;
+      const err = error as { message?: string; details?: string; code?: string; hint?: string };
       console.error("[OB_OS] Auth Failure:", err);
       setMessage({ type: 'error', text: err.message || "Uplink Failure" });
       if (err.details || err.code || err.hint) {
@@ -140,9 +140,9 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
                 phone: phoneNumber.startsWith('+') ? phoneNumber : `+254${phoneNumber.replace(/^0/, '')}`,
             });
             if (error) {
-            console.error("[OB_OS] Signup Failure Node:", error);
-            throw error;
-        }
+                console.error("[OB_OS] Signup Failure Node:", error);
+                throw error;
+            }
 
             setShowOtpField(true);
             setMessage({ type: 'success', text: 'Verification code sent via SMS. 📱' });
@@ -154,9 +154,9 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
                 type: 'sms'
             });
             if (error) {
-            console.error("[OB_OS] Signup Failure Node:", error);
-            throw error;
-        }
+                console.error("[OB_OS] Signup Failure Node:", error);
+                throw error;
+            }
 
             if (data.user) {
                 await handleIdentityStitching(data.user.id);
@@ -170,7 +170,7 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
             }
         }
     } catch (error: unknown) {
-        const err = error as any;
+        const err = error as { message?: string; details?: string; code?: string; hint?: string };
         setMessage({ type: 'error', text: err.message || "Uplink Failure" });
         if (err.details || err.code || err.hint) {
             setDebugInfo(JSON.stringify({ code: err.code, details: err.details, hint: err.hint }));

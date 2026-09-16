@@ -1,5 +1,3 @@
-- [x] Update `handle_new_user` trigger with `ON CONFLICT` and `NULLIF`
-- [x] Refactor `AuthForm.tsx` UI for reliable field rendering
-- [x] Add detailed console logging to `AuthForm.tsx`
-- [x] Create emergency recovery script (`supabase/migrations/20260916_emergency_identity_recovery.sql`)
-- [x] Implement "Technical Intel" debug node in `AuthForm.tsx`
+- [x] Fix `lib/onlineBarOS.ts` Type Error (`.catch` issue)
+- [x] Remove unused `MoreVertical` in `app/admin/(dashboard)/marketing/list/page.tsx`
+- [x] Resolve `any` warnings in `components/auth/AuthForm.tsx`
