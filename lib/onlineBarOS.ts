@@ -111,40 +111,45 @@ class OnlineBarOS {
     public async track(eventType: OSEventType, payload: OSEventPayload = {}) {
         if (!supabase) return;
 
-        const corrId = this.correlationId || generateCorrelationId();
-        const reqId = generateRequestId();
-        const sessId = this.sessionId || undefined;
+        try {
+            const corrId = this.correlationId || generateCorrelationId();
+            const reqId = generateRequestId();
+            const sessId = this.sessionId || undefined;
 
-        // 0. Ensure Session Record Exists
-        if (sessId) {
-            await this.ensureSessionRecord(sessId, payload.userId, payload.anonymousId);
+            // 0. Ensure Session Record Exists (Non-blocking)
+            if (sessId) {
+                this.ensureSessionRecord(sessId, payload.userId, payload.anonymousId).catch(() => {});
+            }
+
+            // 1. Emit System Event (Logic + Automation)
+            if (this.isSystemEvent(eventType)) {
+                await emitEvent(eventType as SystemEventType, payload, { corrId, reqId, sessId });
+            }
+
+            // 2. Log to Behavioral Analytics
+            await this.logAnalytics(eventType, { ...payload, sessionId: sessId }, { corrId, reqId });
+
+            // 2.1 Product Intelligence Sync (Pillar 2)
+            if (payload.productId) {
+                this.syncProductIntel(eventType, payload.productId, payload.amount).catch(() => {});
+            }
+
+            // 2.5 Update Taste DNA on Discovery
+            if (eventType === 'PRODUCT_VIEW' && payload.userId && payload.productId) {
+                this.evolveTasteDNA(payload.userId, payload.productId).catch(() => {});
+            }
+
+            // 3. Heartbeat/Session Management
+            if (eventType === 'HEARTBEAT' && payload.userId) {
+                this.refreshSession(payload.userId).catch(() => {});
+            }
+
+            // 4. Session Forensics (Non-blocking)
+            this.logForensics(eventType, { ...payload, sessionId: sessId }).catch(() => {});
+
+        } catch (err) {
+            console.warn(`[OB_OS] Tracking Exception for ${eventType}:`, err);
         }
-
-        // 1. Emit System Event (Logic + Automation)
-        if (this.isSystemEvent(eventType)) {
-            await emitEvent(eventType as SystemEventType, payload, { corrId, reqId, sessId });
-        }
-
-        // 2. Log to Behavioral Analytics
-        await this.logAnalytics(eventType, { ...payload, sessionId: sessId }, { corrId, reqId });
-
-        // 2.1 Product Intelligence Sync (Pillar 2)
-        if (payload.productId) {
-            await this.syncProductIntel(eventType, payload.productId, payload.amount);
-        }
-
-        // 2.5 Update Taste DNA on Discovery
-        if (eventType === 'PRODUCT_VIEW' && payload.userId && payload.productId) {
-            await this.evolveTasteDNA(payload.userId, payload.productId);
-        }
-
-        // 3. Heartbeat/Session Management
-        if (eventType === 'HEARTBEAT' && payload.userId) {
-            await this.refreshSession(payload.userId);
-        }
-
-        // 4. Session Forensics (The "Line-by-Line" Audit)
-        await this.logForensics(eventType, { ...payload, sessionId: sessId });
     }
 
     private async evolveTasteDNA(userId: string, productId: number) {
@@ -292,25 +297,41 @@ class OnlineBarOS {
             referrer: document.referrer
         } : {};
 
-        // 1. Log Event
-        await supabase.from('analytics_events').insert([{
-            event_name: name,
-            user_id: payload.userId,
-            anonymous_id: payload.anonymousId,
-            payload: {
-                ...context,
-                ...(payload.details || {})
-            },
-            campaign_id: payload.campaignId,
-            correlation_id: meta.corrId
-        }]);
+        try {
+            // 1. Log Event
+            const { error } = await supabase.from('analytics_events').insert([{
+                event_name: name,
+                user_id: payload.userId,
+                anonymous_id: payload.anonymousId,
+                session_id: payload.sessionId,
+                payload: {
+                    ...context,
+                    ...(payload.details || {})
+                },
+                campaign_id: payload.campaignId,
+                correlation_id: meta.corrId,
+                request_id: meta.reqId,
+                page_url: typeof window !== 'undefined' ? window.location.pathname : undefined
+            }]);
+
+            if (error) {
+                console.warn(`[OB_OS] Analytics Log Failure for ${name}:`, error.message);
+            } else {
+                // Internal Debug Node
+                if (process.env.NODE_ENV === 'development') {
+                    console.log(`[OB_OS] Event Record established: ${name}`);
+                }
+            }
+        } catch (err) {
+            console.error(`[OB_OS] Analytics Exception for ${name}:`, err);
+        }
 
         // 2. Handle Experiment Updates
         if (name === 'EXPERIMENT_REACH' && payload.variantId) {
-            await supabase?.rpc('increment_experiment_reach', { var_id: payload.variantId });
+            await supabase?.rpc('increment_experiment_reach', { var_id: payload.variantId }).catch(() => {});
         }
         if (name === 'EXPERIMENT_CONVERSION' && payload.variantId) {
-            await supabase?.rpc('increment_experiment_conversion', { var_id: payload.variantId });
+            await supabase?.rpc('increment_experiment_conversion', { var_id: payload.variantId }).catch(() => {});
         }
 
         // 3. Handle Onboarding Funnel (Pillar 12)
@@ -320,7 +341,7 @@ class OnlineBarOS {
                 user_id: payload.userId,
                 step_name: name === 'ONBOARDING_STARTED' ? 'START' : (payload.details?.step || name),
                 metadata: payload.details || {}
-            }]);
+            }]).catch(() => {});
         }
     }
 

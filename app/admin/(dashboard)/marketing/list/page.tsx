@@ -13,7 +13,8 @@ import {
     AlertCircle,
     MoreVertical,
     Plus,
-    Loader2
+    Loader2,
+    Trash2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -62,6 +63,18 @@ export default function CampaignHistory() {
         c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         c.type.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
+    const handleDeleteCampaign = async (id: string, name: string) => {
+        if (!supabase || !confirm(`Permanently expunge mission log for "${name}"?`)) return;
+        try {
+            const { error } = await supabase.from('marketing_campaigns').delete().eq('id', id);
+            if (error) throw error;
+            setCampaigns(prev => prev.filter(c => c.id !== id));
+        } catch (err) {
+            console.error(err);
+            alert("Uplink Failure: Could not expunge mission log.");
+        }
+    };
 
     return (
         <div className="p-8 space-y-10 bg-background min-h-screen text-left">
@@ -158,8 +171,8 @@ export default function CampaignHistory() {
                                                 <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl hover:bg-secondary">
                                                     <ChevronRight size={18} className="text-muted-foreground" />
                                                 </Button>
-                                                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl hover:bg-secondary">
-                                                    <MoreVertical size={18} className="text-muted-foreground" />
+                                                <Button onClick={() => handleDeleteCampaign(camp.id, camp.name)} variant="ghost" size="icon" className="h-10 w-10 rounded-xl hover:bg-rose-50 text-slate-300 hover:text-rose-500">
+                                                    <Trash2 size={18} />
                                                 </Button>
                                             </div>
                                         </td>

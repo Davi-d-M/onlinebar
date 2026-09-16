@@ -13,13 +13,15 @@ interface Props {
     brandName?: string;
 }
 
+type TabId = 'story' | 'origin' | 'production';
+
 export default function DossierEditorialHub({ story, origin, production, brandName }: Props) {
-    const [activeTab, setActiveTab] = React.useState<'story' | 'origin' | 'production'>('story');
+    const [activeTab, setActiveTab] = React.useState<TabId>('story');
 
     const tabs = [
-        { id: 'story', label: 'The Story', icon: BookOpen, content: story },
-        { id: 'origin', label: 'The Origin', icon: MapPin, content: origin },
-        { id: 'production', label: 'How it\'s Made', icon: Factory, content: production },
+        { id: 'story' as TabId, label: 'The Story', icon: BookOpen, content: story },
+        { id: 'origin' as TabId, label: 'The Origin', icon: MapPin, content: origin },
+        { id: 'production' as TabId, label: 'How it\'s Made', icon: Factory, content: production },
     ];
 
     const currentTab = tabs.find(t => t.id === activeTab);
@@ -37,7 +39,7 @@ export default function DossierEditorialHub({ story, origin, production, brandNa
                         {tabs.map(tab => (
                             <button
                                 key={tab.id}
-                                onClick={() => setActiveTab(tab.id as any)}
+                                onClick={() => setActiveTab(tab.id)}
                                 className={cn(
                                     "flex items-center gap-2 px-6 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap",
                                     activeTab === tab.id ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-slate-400 hover:text-foreground"

@@ -96,7 +96,7 @@ export default function TaskCenter() {
     };
 
     const deleteTask = async (id: string) => {
-        if (!supabase) return;
+        if (!supabase || !confirm("Expunge this operations protocol?")) return;
         try {
             const { error } = await supabase.from('admin_tasks').delete().eq('id', id);
             if (error) throw error;

@@ -17,14 +17,20 @@ import org.json.JSONObject
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
+
 class LocationService : Service() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
     private val client = OkHttpClient()
     private val mediaType = "application/json; charset=utf-8".toMediaType()
+    private var isUpdating = false
 
     override fun onCreate() {
         super.onCreate()
+        createNotificationChannel()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         
         locationCallback = object : LocationCallback() {
@@ -82,11 +88,11 @@ class LocationService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        createNotificationChannel()
         val notification = NotificationCompat.Builder(this, "BAR_LOCATION")
             .setContentTitle("Online Bar Runner")
             .setContentText("Live Delivery Synchronization Active")
             .setSmallIcon(android.R.drawable.ic_menu_mylocation)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
             .build()
 
         startForeground(1, notification)
@@ -96,12 +102,21 @@ class LocationService : Service() {
     }
 
     private fun requestLocationUpdates() {
+        if (isUpdating) return
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Log.e("BAR_GPS", "Location permission missing. Telemetry halted.")
+            stopSelf()
+            return
+        }
+
         val request = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, TimeUnit.SECONDS.toMillis(60))
             .setMinUpdateIntervalMillis(TimeUnit.SECONDS.toMillis(30))
             .build()
 
         try {
             fusedLocationClient.requestLocationUpdates(request, locationCallback, Looper.getMainLooper())
+            isUpdating = true
         } catch (unlikely: SecurityException) {
             Log.e("BAR_GPS", "Lost location permission. Could not request updates.")
         }
@@ -123,6 +138,9 @@ class LocationService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        fusedLocationClient.removeLocationUpdates(locationCallback)
+        if (isUpdating) {
+            fusedLocationClient.removeLocationUpdates(locationCallback)
+            isUpdating = false
+        }
     }
 }

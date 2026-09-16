@@ -150,9 +150,9 @@ BEGIN
   VALUES (
     new.id,
     new.email,
-    new.raw_user_meta_data->>'full_name',
-    new.raw_user_meta_data->>'phone_number',
-    new.raw_user_meta_data->>'address'
+    NULLIF(new.raw_user_meta_data->>'full_name', ''),
+    NULLIF(new.raw_user_meta_data->>'phone_number', ''),
+    NULLIF(new.raw_user_meta_data->>'address', '')
   );
   RETURN new;
 END;

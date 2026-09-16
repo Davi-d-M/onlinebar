@@ -1,0 +1,4 @@
+- [ ] Create `final_system_hardening.sql` with missing columns and trigger cleanup
+- [ ] Stabilize `AuthForm.tsx` UI
+- [ ] Add internal logging to `OnlineBarOS.ts` for tracking verification
+- [ ] Sync with GitHub

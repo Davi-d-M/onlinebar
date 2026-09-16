@@ -24,70 +24,78 @@ export default function AnalyticsTracker() {
         async function trackPage() {
             if (!supabase) return;
 
-            const { data: { session } } = await supabase.auth.getSession();
-            const anonId = localStorage.getItem('ob_anonymous_id');
-            const activeSessId = OB_OS.getSessionId();
+            try {
+                const { data: { session } } = await supabase.auth.getSession();
+                const anonId = typeof window !== 'undefined' ? localStorage.getItem('ob_anonymous_id') : null;
+                const activeSessId = OB_OS.getSessionId();
 
-            // 🚀 [WIDGET_INTEL] Capture Mobile Widget Attribution
-            const source = searchParams.get('utm_source') ||
-                           (document.referrer.includes('instagram.com') ? 'Instagram' :
-                            document.referrer.includes('google.com') ? 'Google' : 'Direct');
+                // 🚀 [WIDGET_INTEL] Capture Mobile Widget Attribution
+                const source = searchParams.get('utm_source') ||
+                               (typeof document !== 'undefined' && document.referrer.includes('instagram.com') ? 'Instagram' :
+                                typeof document !== 'undefined' && document.referrer.includes('google.com') ? 'Google' : 'Direct');
 
-            const campaign = searchParams.get('utm_campaign') || 'Direct';
-            const utmId = searchParams.get('utm_id') || undefined;
-            const utmContent = searchParams.get('utm_content') || undefined;
+                const campaign = searchParams.get('utm_campaign') || 'Direct';
+                const utmId = searchParams.get('utm_id') || undefined;
+                const utmContent = searchParams.get('utm_content') || undefined;
 
-            if (utmId) sessionStorage.setItem('ob_attribution_id', utmId);
-            if (utmContent) sessionStorage.setItem('ob_content_variant', utmContent);
-            if (source === 'mobile_widget') sessionStorage.setItem('ob_widget_engagement', 'true');
-
-            const commonProps = {
-                userId: session?.user?.id,
-                anonymousId: anonId || undefined,
-                sessionId: activeSessId || undefined
-            };
-
-            // 0. Ensure Session Record Exists (Internal Sync)
-            if (activeSessId) {
-                await supabase.from('customer_sessions').upsert({
-                    id: activeSessId,
-                    user_id: session?.user?.id,
-                    anonymous_id: anonId,
-                    entry_page: pathname,
-                    source_channel: source,
-                    campaign_id: campaign,
-                    attribution_id: utmId,
-                    content_variant: utmContent,
-                    device_info: {
-                        ua: navigator.userAgent,
-                        res: `${window.screen.width}x${window.screen.height}`,
-                        lang: navigator.language
-                    }
-                }, { onConflict: 'id' });
-            }
-
-            // 1. Basic Page View
-            await OB_OS.track('PAGE_VIEW', {
-                ...commonProps,
-                details: {
-                    url: pathname,
-                    search: searchParams.toString(),
-                    title: document.title
+                if (typeof sessionStorage !== 'undefined') {
+                    if (utmId) sessionStorage.setItem('ob_attribution_id', utmId);
+                    if (utmContent) sessionStorage.setItem('ob_content_variant', utmContent);
+                    if (source === 'mobile_widget') sessionStorage.setItem('ob_widget_engagement', 'true');
                 }
-            });
 
-            // Standardized Discovery Events
-            if (pathname.startsWith('/shop/category/')) {
-                const category = pathname.split('/').pop();
-                await OB_OS.track('CATEGORY_VIEW', { ...commonProps, details: { category } });
-            } else if (pathname.startsWith('/shop/') && pathname.split('/').length === 3) {
-                const productId = pathname.split('/').pop();
-                await OB_OS.track('PRODUCT_VIEW', { ...commonProps, productId: Number(productId) });
-            }
+                const commonProps = {
+                    userId: session?.user?.id,
+                    anonymousId: anonId || undefined,
+                    sessionId: activeSessId || undefined
+                };
 
-            const query = searchParams.get('q');
-            if (query) {
-                await OB_OS.track('SEARCH', { ...commonProps, details: { query } });
+                // 0. Ensure Session Record Exists (Internal Sync)
+                if (activeSessId) {
+                    await supabase.from('customer_sessions').upsert({
+                        id: activeSessId,
+                        user_id: session?.user?.id,
+                        anonymous_id: anonId,
+                        entry_page: pathname,
+                        source_channel: source,
+                        campaign_id: campaign,
+                        attribution_id: utmId,
+                        content_variant: utmContent,
+                        device_info: {
+                            ua: navigator.userAgent,
+                            res: `${window.screen.width}x${window.screen.height}`,
+                            lang: navigator.language
+                        }
+                    }, { onConflict: 'id' });
+                }
+
+                // 1. Basic Page View
+                await OB_OS.track('PAGE_VIEW', {
+                    ...commonProps,
+                    details: {
+                        url: pathname,
+                        search: searchParams.toString(),
+                        title: typeof document !== 'undefined' ? document.title : ''
+                    }
+                });
+
+                // Standardized Discovery Events
+                if (pathname.startsWith('/shop/category/')) {
+                    const category = pathname.split('/').pop();
+                    await OB_OS.track('CATEGORY_VIEW', { ...commonProps, details: { category } });
+                } else if (pathname.startsWith('/shop/') && pathname.split('/').length === 3) {
+                    const productId = pathname.split('/').pop();
+                    if (productId && !isNaN(Number(productId))) {
+                        await OB_OS.track('PRODUCT_VIEW', { ...commonProps, productId: Number(productId) });
+                    }
+                }
+
+                const query = searchParams.get('q');
+                if (query) {
+                    await OB_OS.track('SEARCH', { ...commonProps, details: { query } });
+                }
+            } catch (err) {
+                console.warn("[Analytics] Tracking sequence interrupted:", err);
             }
         }
 

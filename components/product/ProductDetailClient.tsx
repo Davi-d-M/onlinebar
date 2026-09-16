@@ -75,7 +75,6 @@ interface Product {
 
 export default function ProductDetailClient({ product, relatedProducts }: { product: Product, relatedProducts: Product[] }) {
   const [dossier, setDossier] = useState<ProductDossier | null>(null);
-  const [loadingDossier, setLoadingDossier] = useState(true);
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedVariant, setSelectedVariant] = useState<string>(
     (product.sizes && Array.isArray(product.sizes) && product.sizes.length > 0) ? product.sizes[0] : 'Standard'
@@ -102,7 +101,6 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
             // Fetch Dossier
             const knowledge = await ApexKnowledge.getDossier(product.id);
             if (knowledge) setDossier(knowledge);
-            setLoadingDossier(false);
 
             const { data: { session } } = await supabase.auth.getSession();
 
@@ -512,13 +510,13 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
         {/* 🧬 ELITE DOSSIER SECTION */}
         <div className="grid lg:grid-cols-12 gap-10 mb-24 items-stretch">
             <div className="lg:col-span-4 h-full flex flex-col gap-10">
-                {dossier ? (
+                {dossier && dossier.sensory_dna ? (
                     <ProductDNACard
                         dna={dossier.sensory_dna}
-                        origin={dossier.country_of_origin}
+                        origin={dossier.country_of_origin || 'Unknown'}
                         style={product.category || 'Premium Spirit'}
                         abv={dossier.abv_actual || product.beverage_specs?.abv || 'N/A'}
-                        verification={dossier.source_verification}
+                        verification={dossier.source_verification || {}}
                     />
                 ) : (
                     <Card className="p-8 rounded-[3.5rem] bg-slate-50 border border-slate-100 h-full flex flex-col items-center justify-center gap-4 text-center opacity-40">
@@ -534,15 +532,15 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
             <div className="lg:col-span-8 flex flex-col gap-10">
                 {dossier && (
                     <DossierEditorialHub
-                        story={dossier.origin_story}
-                        origin={dossier.region_of_origin}
-                        production={dossier.production_method}
-                        brandName={dossier.brand_identity}
+                        story={dossier.origin_story || undefined}
+                        origin={dossier.region_of_origin || undefined}
+                        production={dossier.production_method || undefined}
+                        brandName={dossier.brand_identity || undefined}
                     />
                 )}
                 {product.beverage_specs?.perfect_serve && (
                     <PerfectServeCommerce
-                        mainProduct={product as any}
+                        mainProduct={product as unknown as { id: number, name: string, price: number, image_url: string }}
                         mixerId={product.beverage_specs.perfect_serve.mixer_id}
                         glassware={product.beverage_specs.perfect_serve.glassware}
                     />

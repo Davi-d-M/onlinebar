@@ -328,7 +328,14 @@ export default function AdminGamificationPage() {
                                                         {React.createElement(Icon, { className: "h-6 w-6" })}
                                                     </div>
                                                 </div>
-                                                <button onClick={() => setConfig({...config, tiers: config.tiers.filter((_, idx) => idx !== i)})} className="absolute top-2 right-2 h-8 w-8 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-slate-300 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all shadow-sm">
+                                                <button
+                                                    onClick={() => {
+                                                        if (window.confirm("Expunge this VIP tier from the reward matrix?")) {
+                                                            setConfig({...config, tiers: config.tiers.filter((_, idx) => idx !== i)});
+                                                        }
+                                                    }}
+                                                    className="absolute top-2 right-2 h-8 w-8 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-slate-300 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all shadow-sm"
+                                                >
                                                     <Trash2 className="h-4 w-4" />
                                                 </button>
                                             </div>
@@ -385,7 +392,14 @@ export default function AdminGamificationPage() {
                                                         setConfig({...config, badges: newBadges});
                                                     }} className="h-10 rounded-xl bg-white border-none text-[10px] font-medium italic" />
                                                 </div>
-                                                <button onClick={() => setConfig({...config, badges: config.badges.filter((_, idx) => idx !== i)})} className="absolute top-4 right-4 h-8 w-8 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-slate-300 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all shadow-sm">
+                                                <button
+                                                    onClick={() => {
+                                                        if (window.confirm("Delete this achievement badge? Existing patrons will lose this node.")) {
+                                                            setConfig({...config, badges: config.badges.filter((_, idx) => idx !== i)});
+                                                        }
+                                                    }}
+                                                    className="absolute top-4 right-4 h-8 w-8 rounded-lg bg-white border border-slate-100 flex items-center justify-center text-slate-300 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all shadow-sm"
+                                                >
                                                     <Trash2 className="h-4 w-4" />
                                                 </button>
                                             </div>

@@ -66,6 +66,21 @@ export default function MarketingAutopilot() {
         }
     }, []);
 
+    const handleDeleteRule = async (id: string, name: string) => {
+        if (!supabase || !confirm(`Permanently expunge automation protocol "${name}"?`)) return;
+        try {
+            const { error } = await supabase.from('marketing_automations').delete().eq('id', id);
+            if (error) throw error;
+            setRules(prev => prev.filter(r => r.id !== id));
+            await logAuditAction(email, 'DELETE_AUTOMATION', { id, name });
+            setMessage({ type: 'success', text: `Node "${name}" successfully expelled.` });
+            setTimeout(() => setMessage(null), 3000);
+        } catch (err) {
+            console.error(err);
+            setMessage({ type: 'error', text: "Expulsion Protocol Failed." });
+        }
+    };
+
     React.useEffect(() => {
         fetchRules();
     }, [fetchRules]);
@@ -188,7 +203,12 @@ export default function MarketingAutopilot() {
                                                     rule.is_active ? "translate-x-6" : "translate-x-0"
                                                 )} />
                                             </button>
-                                            <button className="text-[8px] font-black uppercase text-rose-400 hover:text-rose-600 transition-colors">Expel Node</button>
+                                            <button
+                                                onClick={() => handleDeleteRule(rule.id, rule.name)}
+                                                className="text-[8px] font-black uppercase text-rose-400 hover:text-rose-600 transition-colors"
+                                            >
+                                                Expel Node
+                                            </button>
                                         </div>
                                     </div>
                                 </div>

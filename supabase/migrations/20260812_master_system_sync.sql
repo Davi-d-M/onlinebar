@@ -327,12 +327,11 @@ CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS trigger AS $$
 BEGIN
   INSERT INTO public.profiles (id, email, full_name, phone_number)
-  VA
-  LUES (
+  VALUES (
     new.id,
     new.email,
-    new.raw_user_meta_data->>'full_name',
-    new.raw_user_meta_data->>'phone_number'
+    NULLIF(new.raw_user_meta_data->>'full_name', ''),
+    NULLIF(new.raw_user_meta_data->>'phone_number', '')
   );
   RETURN new;
 END;

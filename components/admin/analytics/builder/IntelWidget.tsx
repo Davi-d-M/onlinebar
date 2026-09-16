@@ -18,7 +18,7 @@ interface WidgetProps {
         title: string;
         type: string;
         data_source: string;
-        config: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+        config: Record<string, unknown>;
     };
 }
 

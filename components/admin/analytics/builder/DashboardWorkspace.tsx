@@ -29,7 +29,7 @@ interface Widget {
     title: string;
     type: string;
     data_source: string;
-    config: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+    config: Record<string, unknown>;
     layout_x: number;
     layout_y: number;
     layout_w: number;
@@ -71,6 +71,18 @@ export default function DashboardWorkspace({ slug }: { slug: string }) {
             layout_h: 2
         };
         setEditingWidget(newWid as Widget);
+    };
+
+    const handleDeleteWidget = async (widgetId: string) => {
+        if (!supabase || !window.confirm("Are you sure you want to remove this Intelligence Node?")) return;
+        try {
+            const { error } = await supabase.from('intel_widgets').delete().eq('id', widgetId);
+            if (error) throw error;
+            fetchData();
+        } catch (err) {
+            console.error("Widget Deletion Failure:", err);
+            alert("Uplink Failure: Could not expunge widget.");
+        }
     };
 
     if (loading) return (
@@ -137,7 +149,10 @@ export default function DashboardWorkspace({ slug }: { slug: string }) {
                                 >
                                     <Settings2 size={14} />
                                 </button>
-                                <button className="h-8 w-8 rounded-full bg-white border border-slate-100 shadow-xl flex items-center justify-center text-rose-500 hover:scale-110 transition-transform">
+                                <button
+                                    onClick={() => handleDeleteWidget(widget.id)}
+                                    className="h-8 w-8 rounded-full bg-white border border-slate-100 shadow-xl flex items-center justify-center text-rose-500 hover:scale-110 transition-transform"
+                                >
                                     <Trash2 size={14} />
                                 </button>
                             </div>

@@ -1272,7 +1272,12 @@ function UploadContent() {
                                   </div>
                                   <div className="flex items-center gap-2">
                                       <button
-                                        onClick={(e) => { e.stopPropagation(); handleDeleteProduct(p.id, p.name); }}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            if (window.confirm(`Expunge ${p.name} from global catalogue?`)) {
+                                                handleDeleteProduct(p.id, p.name);
+                                            }
+                                        }}
                                         className="h-10 w-10 rounded-xl flex items-center justify-center text-slate-200 hover:text-rose-500 hover:bg-rose-50 opacity-0 group-hover:opacity-100 transition-all"
                                       >
                                           <Trash2 className="h-4 w-4" />

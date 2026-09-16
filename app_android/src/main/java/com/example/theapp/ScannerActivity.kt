@@ -30,6 +30,9 @@ import com.google.mlkit.vision.label.ImageLabeling
 import com.google.mlkit.vision.label.defaults.ImageLabelerOptions
 import java.util.concurrent.Executors
 
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
+
 class ScannerActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,8 +70,15 @@ class ScannerActivity : ComponentActivity() {
 fun EdgeAiTriage(onTriageDetected: (String) -> Unit) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-    val cameraExecutor = Executors.newSingleThreadExecutor()
-    val labeler = ImageLabeling.getClient(ImageLabelerOptions.DEFAULT_OPTIONS)
+    val cameraExecutor = remember { Executors.newSingleThreadExecutor() }
+    val labeler = remember { ImageLabeling.getClient(ImageLabelerOptions.DEFAULT_OPTIONS) }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            cameraExecutor.shutdown()
+            labeler.close()
+        }
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         AndroidView(
@@ -106,8 +116,12 @@ fun EdgeAiTriage(onTriageDetected: (String) -> Unit) {
                         }
 
                     val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-                    cameraProvider.unbindAll()
-                    cameraProvider.bindToLifecycle(lifecycleOwner, cameraSelector, preview, imageAnalyzer)
+                    try {
+                        cameraProvider.unbindAll()
+                        cameraProvider.bindToLifecycle(lifecycleOwner, cameraSelector, preview, imageAnalyzer)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
                 }, ContextCompat.getMainExecutor(ctx))
                 previewView
             }
@@ -126,7 +140,13 @@ fun EdgeAiTriage(onTriageDetected: (String) -> Unit) {
 fun BarcodeScanner(onBarcodeDetected: (String) -> Unit) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-    val cameraExecutor = Executors.newSingleThreadExecutor()
+    val cameraExecutor = remember { Executors.newSingleThreadExecutor() }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            cameraExecutor.shutdown()
+        }
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         AndroidView(
@@ -161,6 +181,7 @@ fun BarcodeScanner(onBarcodeDetected: (String) -> Unit) {
                                         }
                                         .addOnCompleteListener {
                                             imageProxy.close()
+                                            scanner.close()
                                         }
                                 }
                             }
@@ -177,7 +198,7 @@ fun BarcodeScanner(onBarcodeDetected: (String) -> Unit) {
                             imageAnalyzer
                         )
                     } catch (exc: Exception) {
-                        // Handle error
+                        exc.printStackTrace()
                     }
                 }, ContextCompat.getMainExecutor(ctx))
                 previewView

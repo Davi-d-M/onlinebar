@@ -15,7 +15,8 @@ import {
     Filter,
     Activity,
     DollarSign,
-    ShoppingCart
+    ShoppingCart,
+    Trash2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -90,6 +91,18 @@ export default function AudiencesPage() {
     const filtered = segments.filter(s =>
         s.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
+    const handleDeleteSegment = async (id: string, name: string) => {
+        if (!supabase || !confirm(`Permanently expunge audience segment "${name}"?`)) return;
+        try {
+            const { error } = await supabase.from('customer_segments').delete().eq('id', id);
+            if (error) throw error;
+            setSegments(prev => prev.filter(s => s.id !== id));
+        } catch (err) {
+            console.error(err);
+            alert("Uplink Failure: Could not expunge segment.");
+        }
+    };
 
     return (
         <div className="p-8 space-y-10 bg-background min-h-screen text-left">
@@ -211,9 +224,14 @@ export default function AudiencesPage() {
                                         <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
                                             <Target size={24} />
                                         </div>
-                                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg">
-                                            <MoreVertical size={16} className="text-muted-foreground" />
-                                        </Button>
+                                        <div className="flex gap-2">
+                                            <Button onClick={() => handleDeleteSegment(seg.id, seg.name)} variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-rose-50 text-slate-300 hover:text-rose-500 transition-all">
+                                                <Trash2 size={16} />
+                                            </Button>
+                                            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg">
+                                                <MoreVertical size={16} className="text-muted-foreground" />
+                                            </Button>
+                                        </div>
                                     </div>
                                     <div>
                                         <h3 className="text-xl font-black text-foreground uppercase tracking-tight">{seg.name}</h3>

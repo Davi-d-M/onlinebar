@@ -24,7 +24,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { cn, formatPrice } from '@/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useCart } from '@/context/CartContext';
+import { useCart, CartItem } from '@/context/CartContext';
 import { useRouter } from 'next/navigation';
 
 const RECIPIENTS = [
@@ -67,12 +67,12 @@ export default function GiftingHub() {
     const handleEstablishGift = () => {
         if (!selectedBottle) return;
 
-        const items = [
+        const items: CartItem[] = [
             { ...selectedBottle, quantity: 1, base_price: selectedBottle.price, image: selectedBottle.image_url },
             ...selectedSnacks.map(s => ({ ...s, quantity: 1, base_price: s.price, image: s.image_url }))
         ];
 
-        addBundleToCart(items as any); // eslint-disable-line @typescript-eslint/no-explicit-any
+        addBundleToCart(items);
         // Persist note to session storage for checkout to pick up
         if (personalNote) {
             sessionStorage.setItem('ob_gift_note', personalNote);

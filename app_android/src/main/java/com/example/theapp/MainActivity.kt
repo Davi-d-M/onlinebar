@@ -46,13 +46,39 @@ import androidx.compose.ui.window.Dialog
 import androidx.work.*
 import java.util.concurrent.TimeUnit
 
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.activity.result.ActivityResultLauncher
+import androidx.core.app.ActivityCompat
+
 class MainActivity : FragmentActivity() {
+    companion object {
+        const val BASE_URL = "https://onlinebar-os.onrender.com"
+        const val ADMIN_URL = "$BASE_URL/admin"
+        const val OFFLINE_STORAGE_PREFS = "titan_offline_storage"
+    }
+
     private lateinit var executor: Executor
     private lateinit var biometricPrompt: BiometricPrompt
     private lateinit var promptInfo: BiometricPrompt.PromptInfo
     private var titanWebView: WebView? = null
+    private var networkCallback: ConnectivityManager.NetworkCallback? = null
     
     private var memberPassBitmap by mutableStateOf<Bitmap?>(null)
+
+    private val permissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val cameraGranted = permissions[Manifest.permission.CAMERA] ?: false
+        val locationGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false
+        
+        if (!cameraGranted) {
+            Toast.makeText(this, "Camera permission is required for scanning SKU", Toast.LENGTH_SHORT).show()
+        }
+        if (!locationGranted) {
+            Toast.makeText(this, "Location permission is required for grid tracking", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     private val scannerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
@@ -111,17 +137,19 @@ class MainActivity : FragmentActivity() {
 
         biometricPrompt.authenticate(promptInfo)
 
+        requestInitialPermissions()
         scheduleWidgetUpdates()
 
         val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkRequest = NetworkRequest.Builder().build()
-        connectivityManager.registerNetworkCallback(networkRequest, object : ConnectivityManager.NetworkCallback() {
+        networkCallback = object : ConnectivityManager.NetworkCallback() {
             override fun onAvailable(network: Network) {
                 runOnUiThread {
                     syncOfflineDrops()
                 }
             }
-        })
+        }
+        networkCallback?.let { connectivityManager.registerNetworkCallback(networkRequest, it) }
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -140,7 +168,7 @@ class MainActivity : FragmentActivity() {
                     color = MaterialTheme.colorScheme.background,
                 ) {
                     if (isAuthorized) {
-                        TitanHubWebBridge("https://onlinebar-os.onrender.com/admin", onWebViewCreated = { titanWebView = it })
+                        TitanHubWebBridge(ADMIN_URL, onWebViewCreated = { titanWebView = it })
 
                         // Handle Intent after WebView is ready or via URL change
                         LaunchedEffect(intent) {
@@ -198,9 +226,15 @@ class MainActivity : FragmentActivity() {
                 launchScanner()
             }
             "new_order" -> {
-                titanWebView?.loadUrl("https://onlinebar-os.onrender.com/admin/orders?action=new")
+                titanWebView?.loadUrl("$ADMIN_URL/orders?action=new")
             }
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        networkCallback?.let { connectivityManager.unregisterNetworkCallback(it) }
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -208,7 +242,24 @@ class MainActivity : FragmentActivity() {
         handleIntent(intent)
     }
 
+    private fun requestInitialPermissions() {
+        val permissions = mutableListOf(
+            Manifest.permission.CAMERA,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissions.add(Manifest.permission.POST_NOTIFICATIONS)
+        }
+        
+        permissionLauncher.launch(permissions.toTypedArray())
+    }
+
     fun launchScanner(mode: String = "BARCODE") {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            permissionLauncher.launch(arrayOf(Manifest.permission.CAMERA))
+            return
+        }
         val intent = Intent(this, ScannerActivity::class.java).apply {
             putExtra("SCAN_MODE", mode)
         }
@@ -236,14 +287,16 @@ class MainActivity : FragmentActivity() {
     }
 
     private fun syncOfflineDrops() {
-        val prefs = getSharedPreferences("titan_offline_storage", Context.MODE_PRIVATE)
+        val prefs = getSharedPreferences(OFFLINE_STORAGE_PREFS, Context.MODE_PRIVATE)
         val queue = prefs.getStringSet("offline_drops", mutableSetOf())?.toList() ?: emptyList()
         
         if (queue.isNotEmpty()) {
             Toast.makeText(this, "Master Hub: Syncing ${queue.size} Offline Drops...", Toast.LENGTH_SHORT).show()
             queue.forEach { orderId ->
                 // Fire and forget JS bridge to trigger the web-based completion logic
-                titanWebView?.evaluateJavascript("javascript:if(window.onTitanOfflineSync) window.onTitanSyncOrder('$orderId');", null)
+                titanWebView?.post {
+                    titanWebView?.evaluateJavascript("javascript:if(window.onTitanOfflineSync) window.onTitanSyncOrder('$orderId');", null)
+                }
             }
             prefs.edit().remove("offline_drops").apply()
         }
@@ -251,7 +304,7 @@ class MainActivity : FragmentActivity() {
 }
 
 class TitanBridge(private val activity: MainActivity, private val webView: WebView) {
-    private val prefs = activity.getSharedPreferences("titan_offline_storage", Context.MODE_PRIVATE)
+    private val prefs = activity.getSharedPreferences(MainActivity.OFFLINE_STORAGE_PREFS, Context.MODE_PRIVATE)
 
     @JavascriptInterface
     fun triggerScanner(mode: String = "BARCODE") {
@@ -288,6 +341,11 @@ class TitanBridge(private val activity: MainActivity, private val webView: WebVi
     @JavascriptInterface
     fun toggleTracking(active: Boolean) {
         activity.runOnUiThread {
+            if (active && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(activity, "Location permission required for tracking", Toast.LENGTH_SHORT).show()
+                return@runOnUiThread
+            }
+            
             val intent = Intent(activity, LocationService::class.java)
             if (active) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

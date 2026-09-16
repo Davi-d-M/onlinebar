@@ -2,6 +2,7 @@ package com.example.theapp
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import okhttp3.OkHttpClient
@@ -10,17 +11,17 @@ import java.io.IOException
 
 class WidgetUpdateWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
 
-    override suspend fun doWork(): androidx.work.ListenableWorker.Result {
+    override suspend fun doWork(): Result {
         val client = OkHttpClient()
         val request = Request.Builder()
-            .url("https://onlinebar-os.onrender.com/api/mobile/widget-config")
+            .url("${MainActivity.BASE_URL}/api/mobile/widget-config")
             .build()
 
         return try {
             val response = client.newCall(request).execute()
             val jsonStr = response.body?.string()
             
-            if (jsonStr != null) {
+            if (response.isSuccessful && jsonStr != null) {
                 val prefs = applicationContext.getSharedPreferences("ob_widget_prefs", Context.MODE_PRIVATE)
                 prefs.edit().putString("active_config", jsonStr).apply()
                 
@@ -30,12 +31,14 @@ class WidgetUpdateWorker(context: Context, params: WorkerParameters) : Coroutine
                 }
                 applicationContext.sendBroadcast(intent)
                 
-                androidx.work.ListenableWorker.Result.success()
+                Result.success()
             } else {
-                androidx.work.ListenableWorker.Result.retry()
+                Log.w("WIDGET_WORKER", "Failed to fetch config: ${response.code}")
+                Result.retry()
             }
         } catch (e: IOException) {
-            androidx.work.ListenableWorker.Result.retry()
+            Log.e("WIDGET_WORKER", "Network error during widget sync", e)
+            Result.retry()
         }
     }
 }

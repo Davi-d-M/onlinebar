@@ -48,8 +48,9 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
   const addToCart = async (item: CartItem) => {
     // Meta Tracking
-    if (typeof window !== 'undefined' && (window as any).fbq) {
-        (window as any).fbq('track', 'AddToCart', {
+    const win = window as unknown as Window & { fbq?: (...args: unknown[]) => void };
+    if (typeof window !== 'undefined' && win.fbq) {
+        win.fbq('track', 'AddToCart', {
             content_name: item.name,
             content_ids: [item.id],
             content_type: 'product',

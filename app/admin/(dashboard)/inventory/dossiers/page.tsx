@@ -14,7 +14,8 @@ import {
     Loader2,
     Database,
     Filter,
-    Download
+    Download,
+    Trash2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -57,7 +58,14 @@ export default function ProductDossierGrid() {
                 .order('name');
 
             if (data) {
-                setProducts(data.map((p: any) => {
+                const dbData = data as unknown as Array<{
+                    id: number;
+                    name: string;
+                    brand: string | null;
+                    category: string | null;
+                    product_dossiers: Array<{ id: string; last_verified_at: string }>;
+                }>;
+                setProducts(dbData.map((p) => {
                     const dossier = p.product_dossiers?.[0];
                     return {
                         id: dossier?.id || '',
@@ -90,6 +98,18 @@ export default function ProductDossierGrid() {
     });
 
     const categories = ['all', ...Array.from(new Set(products.map(p => p.category.toLowerCase())))];
+
+    const handleDeleteDossier = async (productId: number, productName: string) => {
+        if (!supabase || !window.confirm(`Are you sure you want to expunge the research dossier for ${productName}? This will reset all verification data.`)) return;
+        try {
+            const { error } = await supabase.from('product_dossiers').delete().eq('product_id', productId);
+            if (error) throw error;
+            fetchData();
+        } catch (err) {
+            console.error("Dossier Expunge Failure:", err);
+            alert("Uplink Failure: Could not expunge dossier.");
+        }
+    };
 
     return (
         <div className="p-8 space-y-10 bg-slate-50 min-h-screen text-left pb-40 selection:bg-primary/20">
@@ -212,6 +232,15 @@ export default function ProductDossierGrid() {
                                             <Edit3 size={20} />
                                         </button>
                                     </Link>
+                                    {item.is_dossier_complete && (
+                                        <button
+                                            onClick={() => handleDeleteDossier(item.product_id, item.product_name)}
+                                            className="h-12 w-12 rounded-xl bg-slate-50 flex items-center justify-center text-slate-300 hover:bg-rose-500 hover:text-white transition-all shadow-sm border border-slate-100"
+                                            title="Expunge Dossier"
+                                        >
+                                            <Trash2 size={20} />
+                                        </button>
+                                    )}
                                 </div>
                             </div>
                             {item.is_dossier_complete && <ShieldCheck className="absolute -bottom-4 -right-4 h-24 w-24 text-emerald-500/5 rotate-12" />}

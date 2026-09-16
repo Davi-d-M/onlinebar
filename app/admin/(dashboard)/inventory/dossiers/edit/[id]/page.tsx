@@ -18,17 +18,29 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import { ProductDossier, SensoryDNA } from '@/lib/engines/productKnowledgeEngine';
+import { Product } from '@/types/product';
+
+interface Brand {
+    id: string;
+    name: string;
+}
+
+interface CategoryV2 {
+    id: string;
+    name: string;
+}
 
 export default function DossierEditor() {
     const { id } = useParams();
     const router = useRouter();
     const [loading, setLoading] = React.useState(true);
     const [saving, setSaving] = React.useState(false);
-    const [product, setProduct] = React.useState<any>(null);
-    const [brands, setBrands] = React.useState<any[]>([]);
-    const [categories, setCategories] = React.useState<any[]>([]);
+    const [product, setProduct] = React.useState<Product | null>(null);
+    const [brands, setBrands] = React.useState<Brand[]>([]);
+    const [categories, setCategories] = React.useState<CategoryV2[]>([]);
 
-    const [form, setForm] = React.useState<any>({
+    const [form, setForm] = React.useState<Partial<ProductDossier>>({
         brand_id: null,
         category_v2_id: null,
         brand_identity: '',
@@ -72,10 +84,10 @@ export default function DossierEditor() {
                 if (prodRes.data) {
                     setProduct(prodRes.data);
                     if (dossierRes.data) {
-                        setForm(dossierRes.data);
+                        setForm(dossierRes.data as ProductDossier);
                     } else {
                         // Prefill some defaults from product record
-                        setForm((f: any) => ({
+                        setForm((f) => ({
                             ...f,
                             brand_identity: prodRes.data.brand || '',
                             country_of_origin: prodRes.data.beverage_specs?.origin || '',
@@ -105,19 +117,23 @@ export default function DossierEditor() {
             if (error) throw error;
             alert("Dossier Node Synchronized. 🛰️");
             router.push('/admin/inventory/dossiers');
-        } catch (err: any) {
-            alert(`Uplink Failure: ${err.message}`);
+        } catch (err: unknown) {
+            alert(`Uplink Failure: ${(err as Error).message}`);
         } finally {
             setSaving(false);
         }
     };
 
-    const updateDNA = (key: string, val: number) => {
-        setForm({ ...form, sensory_dna: { ...form.sensory_dna, [key]: val } });
+    const updateDNA = (key: keyof SensoryDNA, val: number) => {
+        const currentDNA = form.sensory_dna || {
+            sweetness: 50, body: 50, oak: 0, smoke: 0, intensity: 50, acidity: 0, tannin: 0, bitterness: 0
+        };
+        setForm({ ...form, sensory_dna: { ...currentDNA, [key]: val } });
     };
 
-    const toggleVerification = (field: string, level: string) => {
-        setForm({ ...form, source_verification: { ...form.source_verification, [field]: level } });
+    const toggleVerification = (field: string, level: 'MANUFACTURER' | 'EDITORIAL' | 'TECHNICAL' | 'UNKNOWN') => {
+        const currentVerification = form.source_verification || {};
+        setForm({ ...form, source_verification: { ...currentVerification, [field]: level } });
     };
 
     if (loading) return (
@@ -159,13 +175,13 @@ export default function DossierEditor() {
                             <div className="flex items-center gap-3">
                                 <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest">Verification</p>
                                 <div className="flex gap-1">
-                                    {['MANUFACTURER', 'EDITORIAL', 'UNKNOWN'].map(lvl => (
+                                    {(['MANUFACTURER', 'EDITORIAL', 'UNKNOWN'] as const).map((lvl: 'MANUFACTURER' | 'EDITORIAL' | 'TECHNICAL' | 'UNKNOWN') => (
                                         <button
                                             key={lvl}
                                             onClick={() => toggleVerification('identity', lvl)}
                                             className={cn(
                                                 "px-2 py-1 rounded-md text-[7px] font-black uppercase border transition-all",
-                                                form.source_verification['identity'] === lvl ? "bg-primary text-white border-primary" : "bg-slate-50 text-slate-300"
+                                                form.source_verification?.['identity'] === lvl ? "bg-primary text-white border-primary" : "bg-slate-50 text-slate-300"
                                             )}
                                         >
                                             {lvl.substring(0,3)}
@@ -200,16 +216,16 @@ export default function DossierEditor() {
                             </div>
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Country of Origin</label>
-                                <Input value={form.country_of_origin} onChange={e => setForm({...form, country_of_origin: e.target.value})} className="h-14 rounded-2xl bg-slate-50 border-slate-100 font-bold" />
+                                <Input value={form.country_of_origin || ''} onChange={e => setForm({...form, country_of_origin: e.target.value})} className="h-14 rounded-2xl bg-slate-50 border-slate-100 font-bold" />
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-black uppercase text-slate-400 ml-1">ABV (%)</label>
-                                    <Input value={form.abv_actual} onChange={e => setForm({...form, abv_actual: e.target.value})} className="h-14 rounded-2xl bg-slate-50 border-slate-100 font-bold" />
+                                    <Input value={form.abv_actual || ''} onChange={e => setForm({...form, abv_actual: e.target.value})} className="h-14 rounded-2xl bg-slate-50 border-slate-100 font-bold" />
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Size (ml)</label>
-                                    <Input type="number" value={form.volume_ml} onChange={e => setForm({...form, volume_ml: parseInt(e.target.value)})} className="h-14 rounded-2xl bg-slate-50 border-slate-100 font-bold" />
+                                    <Input type="number" value={form.volume_ml || 0} onChange={e => setForm({...form, volume_ml: parseInt(e.target.value)})} className="h-14 rounded-2xl bg-slate-50 border-slate-100 font-bold" />
                                 </div>
                             </div>
                         </div>
@@ -225,13 +241,13 @@ export default function DossierEditor() {
                             <div className="flex items-center gap-3">
                                 <p className="text-[9px] font-black text-slate-300 uppercase tracking-widest">Source Confidence</p>
                                 <div className="flex gap-1">
-                                    {['TECHNICAL', 'EDITORIAL', 'UNKNOWN'].map(lvl => (
+                                    {(['TECHNICAL', 'EDITORIAL', 'UNKNOWN'] as const).map((lvl: 'MANUFACTURER' | 'EDITORIAL' | 'TECHNICAL' | 'UNKNOWN') => (
                                         <button
                                             key={lvl}
                                             onClick={() => toggleVerification('sensory_dna', lvl)}
                                             className={cn(
                                                 "px-2 py-1 rounded-md text-[7px] font-black uppercase border transition-all",
-                                                form.source_verification['sensory_dna'] === lvl ? "bg-primary text-white border-primary" : "bg-slate-50 text-slate-300"
+                                                form.source_verification?.['sensory_dna'] === lvl ? "bg-primary text-white border-primary" : "bg-slate-50 text-slate-300"
                                             )}
                                         >
                                             {lvl.substring(0,3)}
@@ -251,18 +267,18 @@ export default function DossierEditor() {
                                 { key: 'acidity', label: 'Acidity' },
                                 { key: 'tannin', label: 'Tannin / Structure' },
                                 { key: 'bitterness', label: 'Bitterness' },
-                            ].map(metric => (
+                            ].map((metric) => (
                                 <div key={metric.key} className="space-y-4">
                                     <div className="flex justify-between items-center px-1">
                                         <label className="text-[10px] font-black uppercase text-slate-500 tracking-widest">{metric.label}</label>
-                                        <span className="text-xs font-black text-primary">{form.sensory_dna[metric.key]}%</span>
+                                        <span className="text-xs font-black text-primary">{form.sensory_dna?.[metric.key as keyof SensoryDNA] ?? 0}%</span>
                                     </div>
                                     <input
                                         type="range"
                                         min="0"
                                         max="100"
-                                        value={form.sensory_dna[metric.key]}
-                                        onChange={e => updateDNA(metric.key, parseInt(e.target.value))}
+                                        value={form.sensory_dna?.[metric.key as keyof SensoryDNA] ?? 50}
+                                        onChange={e => updateDNA(metric.key as keyof SensoryDNA, parseInt(e.target.value))}
                                         className="w-full h-2 bg-slate-100 rounded-full appearance-none cursor-pointer accent-primary"
                                     />
                                 </div>
@@ -280,7 +296,7 @@ export default function DossierEditor() {
                             <div className="space-y-3">
                                 <label className="text-[10px] font-black uppercase text-slate-400 ml-1">The Origin Story</label>
                                 <textarea
-                                    value={form.origin_story}
+                                    value={form.origin_story || ''}
                                     onChange={e => setForm({...form, origin_story: e.target.value})}
                                     className="w-full h-48 rounded-[2rem] bg-slate-50 border border-slate-100 p-8 font-medium italic text-sm leading-relaxed resize-none outline-none focus:ring-4 focus:ring-primary/5 transition-all"
                                     placeholder="The history and legacy of this bottle..."
@@ -289,7 +305,7 @@ export default function DossierEditor() {
                             <div className="space-y-3">
                                 <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Production Method</label>
                                 <textarea
-                                    value={form.production_method}
+                                    value={form.production_method || ''}
                                     onChange={e => setForm({...form, production_method: e.target.value})}
                                     className="w-full h-40 rounded-[2rem] bg-slate-50 border border-slate-100 p-8 font-medium italic text-sm leading-relaxed resize-none outline-none focus:ring-4 focus:ring-primary/5 transition-all"
                                     placeholder="Distillation, maturation, and specific craft details..."
@@ -309,7 +325,7 @@ export default function DossierEditor() {
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-black uppercase text-primary tracking-widest ml-1">Constituent Statement</label>
                                     <textarea
-                                        value={form.constituents_statement}
+                                        value={form.constituents_statement || ''}
                                         onChange={e => setForm({...form, constituents_statement: e.target.value})}
                                         className="w-full h-24 rounded-2xl bg-white/5 border border-white/10 p-5 text-sm font-bold outline-none resize-none"
                                         placeholder="e.g. Contains Ethanol, Water, Botanicals..."
@@ -318,8 +334,8 @@ export default function DossierEditor() {
                                 <div className="space-y-4">
                                     <label className="text-[10px] font-black uppercase text-primary tracking-widest ml-1">Local Availability Node</label>
                                     <select
-                                        value={form.kenyan_availability_status}
-                                        onChange={e => setForm({...form, kenyan_availability_status: e.target.value})}
+                                        value={form.kenyan_availability_status || 'AVAILABLE'}
+                                        onChange={e => setForm({...form, kenyan_availability_status: e.target.value as 'AVAILABLE' | 'OUT_OF_STOCK' | 'DISCONTINUED'})}
                                         className="w-full h-14 px-6 rounded-2xl bg-white/5 border border-white/10 text-sm font-black uppercase outline-none"
                                     >
                                         <option value="AVAILABLE">Available for Dispatch</option>
@@ -358,7 +374,7 @@ export default function DossierEditor() {
                         <div className="space-y-4">
                             <div className="flex items-center justify-between py-2 border-b border-slate-50">
                                 <span className="text-[9px] font-black uppercase text-slate-500">Established</span>
-                                <span className="text-[9px] font-black text-foreground">{new Date(form.created_at || Date.now()).toLocaleDateString()}</span>
+                                <span className="text-[9px] font-black text-foreground">{form.created_at ? new Date(form.created_at).toLocaleDateString() : 'New Node'}</span>
                             </div>
                             <div className="flex items-center justify-between py-2 border-b border-slate-50">
                                 <span className="text-[9px] font-black uppercase text-slate-500">Node Score</span>
