@@ -98,8 +98,10 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
         if (data.user) {
             await handleIdentityStitching(data.user.id);
             await OB_OS.track('USER_REGISTERED', { userId: data.user.id, anonymousId: localStorage.getItem('ob_anonymous_id') || undefined });
-            setMessage({ type: 'success', text: 'Identity established! Synchronizing profile... 🛰️' });
-            if (onSuccess) onSuccess(data.user.id);
+            setMessage({ type: 'success', text: 'Registration Successful! Establishing profile... 🛰️' });
+            if (onSuccess) {
+                setTimeout(() => onSuccess(data.user!.id), 2000);
+            }
         }
       } else {
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
@@ -112,7 +114,9 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
             await handleIdentityStitching(data.user.id);
             await OB_OS.track('USER_LOGIN', { userId: data.user.id });
             setMessage({ type: 'success', text: 'Access Granted. Entering Vault... 🛡️' });
-            if (onSuccess) onSuccess(data.user.id);
+            if (onSuccess) {
+                setTimeout(() => onSuccess(data.user!.id), 1500);
+            }
         }
       }
     } catch (error: unknown) {
@@ -169,7 +173,9 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
                 await handleIdentityStitching(data.user.id);
                 await OB_OS.track('USER_LOGIN', { userId: data.user.id });
                 setMessage({ type: 'success', text: isSignUp ? 'Identity Established! Synchronizing... 🛡️' : 'Access Granted. Entering Vault... 🛡️' });
-                if (onSuccess) onSuccess(data.user.id);
+                if (onSuccess) {
+                    setTimeout(() => onSuccess(data.user!.id), 1500);
+                }
             }
         }
     } catch (error: unknown) {
