@@ -25,6 +25,13 @@ interface AuthFormProps {
     onSuccess?: (userId: string) => void;
 }
 
+interface AuthError {
+  message: string;
+  details?: string;
+  code?: string;
+  hint?: string;
+}
+
 export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthFormProps) {
   const router = useRouter();
   const [method, setAuthMethod] = useState<AuthMethod>('email');
@@ -115,7 +122,7 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
         }
       }
     } catch (error: unknown) {
-      const err = error as { message?: string; details?: string; code?: string; hint?: string };
+      const err = error as AuthError;
       console.error("[OB_OS] Auth Failure:", err);
       setMessage({ type: 'error', text: err.message || "Uplink Failure" });
       if (err.details || err.code || err.hint) {
@@ -170,7 +177,7 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
             }
         }
     } catch (error: unknown) {
-        const err = error as { message?: string; details?: string; code?: string; hint?: string };
+        const err = error as AuthError;
         setMessage({ type: 'error', text: err.message || "Uplink Failure" });
         if (err.details || err.code || err.hint) {
             setDebugInfo(JSON.stringify({ code: err.code, details: err.details, hint: err.hint }));
