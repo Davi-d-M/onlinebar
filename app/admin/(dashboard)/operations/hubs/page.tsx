@@ -12,7 +12,8 @@ import {
     ArrowUpRight,
     Zap,
     Search,
-    Edit3
+    Edit3,
+    Trash2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -201,9 +202,15 @@ export default function HubsManagement() {
                                             </button>
                                             <button
                                                 onClick={() => { setEditHub(hub); setIsEditing(true); }}
-                                                className="h-10 w-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-300 hover:bg-primary hover:text-white transition-all"
+                                                className="h-10 w-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-300 hover:bg-primary hover:text-white transition-all shadow-sm border border-slate-100"
                                             >
                                                 <Edit3 size={18} />
+                                            </button>
+                                            <button
+                                                onClick={() => handleDeleteHub(hub.id, hub.name)}
+                                                className="h-10 w-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-200 hover:text-rose-500 hover:bg-rose-50 transition-all border border-slate-100 shadow-sm"
+                                            >
+                                                <Trash2 size={18} />
                                             </button>
                                         </div>
                                     </div>

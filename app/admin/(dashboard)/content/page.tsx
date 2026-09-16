@@ -7,7 +7,6 @@ import {
     Plus,
     Rocket,
     Search,
-    Clock,
     Loader2,
     Trash2,
     ChevronRight,
@@ -19,6 +18,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
 import PreviewStudio from '@/components/admin/content/PreviewStudio';
 import ChannelConnector from '@/components/admin/content/ChannelConnector';
 import { ContentCommand } from '@/lib/engines/contentCommandEngine';
@@ -36,7 +36,6 @@ interface ContentItem {
 export default function ContentCommandHub() {
     const { email: adminEmail } = useAdmin();
     const [items, setItems] = React.useState<ContentItem[]>([]);
-    const [loading, setLoading] = React.useState(true);
     const [search, setSearch] = React.useState('');
     const [isEstablishing, setIsEstablishing] = React.useState(false);
 
@@ -47,7 +46,6 @@ export default function ContentCommandHub() {
 
     const fetchContent = React.useCallback(async () => {
         if (!supabase) return;
-        setLoading(true);
         try {
             const { data } = await supabase
                 .from('content_master')
@@ -55,7 +53,7 @@ export default function ContentCommandHub() {
                 .neq('status', 'ARCHIVED')
                 .order('created_at', { ascending: false });
             if (data) setItems(data as ContentItem[]);
-        } finally { setLoading(false); }
+        } finally { }
     }, []);
 
     React.useEffect(() => {
@@ -94,12 +92,14 @@ export default function ContentCommandHub() {
                         <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Content Command Node</span>
                     </div>
                     <h1 className="text-4xl lg:text-5xl font-black text-foreground uppercase tracking-tighter leading-none">The Command Center</h1>
-                    <p className="text-muted-foreground text-sm font-medium mt-1 italic">Orchestrate brand narratives across all platform terminals.</p>
+                    <p className="text-muted-foreground text-sm font-medium mt-1 italic">Orchestrating brand narratives across all platform terminals.</p>
                 </div>
                 <div className="flex gap-4">
-                    <Button variant="outline" className="rounded-xl h-12 px-6 border-slate-200 bg-white font-black uppercase text-[10px] tracking-widest shadow-sm">
-                        <Calendar size={14} className="mr-2" /> Strategic Timeline
-                    </Button>
+                    <Link href="/admin/growth/calendar">
+                        <Button variant="outline" className="rounded-xl h-12 px-6 border-slate-200 bg-white font-black uppercase text-[10px] tracking-widest shadow-sm">
+                            <Calendar size={14} className="mr-2" /> Strategic Timeline
+                        </Button>
+                    </Link>
                 </div>
             </header>
 
@@ -217,7 +217,13 @@ export default function ContentCommandHub() {
                                             >
                                                 <Trash2 size={18} />
                                             </button>
-                                            <button className="h-10 w-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-300 hover:bg-primary hover:text-white transition-all shadow-sm">
+                                            <button
+                                                onClick={() => {
+                                                    // This should eventually open a detail/edit view
+                                                    alert("Variant Inspector Node under construction. 🛰️");
+                                                }}
+                                                className="h-10 w-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-300 hover:bg-primary hover:text-white transition-all shadow-sm"
+                                            >
                                                 <ChevronRight size={20} />
                                             </button>
                                         </div>

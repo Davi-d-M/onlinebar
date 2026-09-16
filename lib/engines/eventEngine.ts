@@ -3,7 +3,6 @@ import { trackEngagementEvent } from '../gamificationEngine';
 import { processAutomationRules } from './automationEngine';
 import { triggerNotificationByEvent } from './notificationService';
 import { ApexMind } from './predictiveEngine';
-import { ApexLoyalty } from './loyaltyEngine';
 
 export type SystemEventType =
     | 'ORDER_CREATED'

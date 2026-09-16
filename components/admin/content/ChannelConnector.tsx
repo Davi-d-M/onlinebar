@@ -6,16 +6,12 @@ import {
     Link2,
     Link2Off,
     RefreshCcw,
-    ShieldCheck,
     Camera as Instagram,
-    Video as Youtube,
-    Globe as Linkedin,
-    MessageSquare as Twitter,
     MessageCircle,
     Music,
     CheckCircle2,
-    AlertCircle,
-    Loader2
+    Loader2,
+    Globe
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -70,7 +66,7 @@ export default function ChannelConnector() {
         { id: 'INSTAGRAM', label: 'Instagram', icon: Instagram, color: 'text-rose-500', bg: 'bg-rose-50' },
         { id: 'TIKTOK', label: 'TikTok', icon: Music, color: 'text-black', bg: 'bg-slate-100' },
         { id: 'WHATSAPP', label: 'WhatsApp', icon: MessageCircle, color: 'text-emerald-500', bg: 'bg-emerald-50' },
-        { id: 'X', label: 'X (Twitter)', icon: Twitter, color: 'text-sky-500', bg: 'bg-sky-50' },
+        { id: 'X', label: 'X (Twitter)', icon: Globe, color: 'text-sky-500', bg: 'bg-sky-50' },
     ];
 
     return (

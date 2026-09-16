@@ -397,7 +397,7 @@ function UploadContent() {
         const { data } = await supabase!.from('hub_inventory').select('*').eq('product_id', product.id);
         if (data) {
             const hStock: Record<string, string> = {};
-            data.forEach((hs: any) => hStock[hs.hub_id] = String(hs.stock_level));
+            data.forEach((hs: { hub_id: string, stock_level: number }) => hStock[hs.hub_id] = String(hs.stock_level));
             setHubStock(hStock);
         }
     }

@@ -101,7 +101,7 @@ class ContentCommandEngine {
 
         // 4. Log Audit
         await supabase.from('content_audit_log').insert([{
-            content_id: id as any,
+            content_id: id,
             actor_email: actorEmail,
             action: 'DELETE',
             metadata: { jobs_impacted: jobs?.length }

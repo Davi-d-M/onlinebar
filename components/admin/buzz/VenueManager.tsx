@@ -8,7 +8,6 @@ import {
     Search,
     Edit3,
     Trash2,
-    CheckCircle2,
     MapPin,
     ArrowUpRight,
     Star,
@@ -21,11 +20,11 @@ import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
 export default function VenueManager() {
-    const [venues, setVenues] = React.useState<any[]>([]);
+    const [venues, setVenues] = React.useState<{ id: string, name: string, city: string, category: string, is_verified: boolean, rating: number, is_active: boolean, address?: string }[]>([]);
     const [loading, setLoading] = React.useState(true);
     const [search, setSearch] = React.useState('');
     const [isEditing, setIsEditing] = React.useState(false);
-    const [editForm, setEditForm] = React.useState<any>(null);
+    const [editForm, setEditForm] = React.useState<{ id?: string, name: string, city: string, category: string, is_active: boolean, address?: string, rating?: number } | null>(null);
 
     const fetchVenues = React.useCallback(async () => {
         if (!supabase) return;
@@ -135,8 +134,8 @@ export default function VenueManager() {
                 ))}
             </div>
 
-            {isEditing && (
-        <div className="fixed inset-0 z-[1000] flex items-center justify-end bg-slate-900/10 backdrop-blur-md p-4 animate-in fade-in duration-300">
+            {isEditing && editForm && (
+                <div className="fixed inset-0 z-[1000] flex items-center justify-end bg-slate-900/10 backdrop-blur-md p-4 animate-in fade-in duration-300">
                     <Card className="h-full w-full max-w-xl bg-white rounded-l-[4rem] shadow-2xl flex flex-col animate-in slide-in-from-right-full duration-500 overflow-hidden text-left">
                         <div className="p-10 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
                             <div className="flex items-center gap-4">
@@ -149,16 +148,16 @@ export default function VenueManager() {
                         <div className="flex-1 overflow-y-auto p-10 space-y-8 no-scrollbar">
                              <div className="space-y-2">
                                 <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Venue Identity</label>
-                                <Input value={editForm.name} onChange={e => setEditForm({...editForm, name: e.target.value})} className="h-14 rounded-2xl bg-slate-50 border-slate-100 font-bold" />
+                                <Input value={editForm.name} onChange={e => setEditForm({...editForm!, name: e.target.value})} className="h-14 rounded-2xl bg-slate-50 border-slate-100 font-bold" />
                              </div>
                              <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-black uppercase text-slate-400 ml-1">City Hub</label>
-                                    <Input value={editForm.city} onChange={e => setEditForm({...editForm, city: e.target.value})} className="h-14 rounded-2xl bg-slate-50 border-slate-100 font-bold" />
+                                    <Input value={editForm.city} onChange={e => setEditForm({...editForm!, city: e.target.value})} className="h-14 rounded-2xl bg-slate-50 border-slate-100 font-bold" />
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Category Type</label>
-                                    <select value={editForm.category} onChange={e => setEditForm({...editForm, category: e.target.value})} className="w-full h-14 rounded-2xl bg-slate-50 border-slate-100 px-6 font-black text-xs uppercase outline-none">
+                                    <select value={editForm.category} onChange={e => setEditForm({...editForm!, category: e.target.value})} className="w-full h-14 rounded-2xl bg-slate-50 border-slate-100 px-6 font-black text-xs uppercase outline-none">
                                         <option value="Bar">Bar</option>
                                         <option value="Club">Nightclub</option>
                                         <option value="Lounge">Executive Lounge</option>
@@ -168,7 +167,7 @@ export default function VenueManager() {
                              </div>
                              <div className="space-y-2">
                                 <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Physical Address</label>
-                                <Input value={editForm.address || ''} onChange={e => setEditForm({...editForm, address: e.target.value})} className="h-14 rounded-2xl bg-slate-50 border-slate-100 font-bold" />
+                                <Input value={editForm.address || ''} onChange={e => setEditForm({...editForm!, address: e.target.value})} className="h-14 rounded-2xl bg-slate-50 border-slate-100 font-bold" />
                              </div>
                         </div>
 

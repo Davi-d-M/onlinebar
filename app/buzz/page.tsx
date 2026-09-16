@@ -11,19 +11,15 @@ import {
     ChevronRight,
     MapPin,
     Smartphone,
-    Globe,
     Clock,
     Loader2,
     ArrowRight,
-    Navigation,
     Sparkles,
-    Star,
-    CheckCircle2,
-    Activity
+    CheckCircle2
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { cn, formatPrice } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import PulseDetailModal from '@/components/buzz/PulseDetailModal';
@@ -51,7 +47,6 @@ export default function TheBuzzDiscovery() {
     const [isDetailOpen, setIsDetailOpen] = React.useState(false);
     const [filter, setFilter] = React.useState<'trending' | 'near-me' | 'tonight'>('trending');
     const [loading, setLoading] = React.useState(true);
-    const [nightPlannerOpen, setNightPlannerOpen] = React.useState(false);
 
     const fetchBuzzData = React.useCallback(async () => {
         if (!supabase) return;
@@ -63,13 +58,13 @@ export default function TheBuzzDiscovery() {
             ]);
 
             if (hotspotsRes.data) {
-                const data = (hotspotsRes.data as any[]).map(h => ({ ...h, confidence: 92 }));
+                const data = (hotspotsRes.data as { zone_name: string, buzz_score: number, buzz_status: 'BUZZING' | 'BUSY' | 'ACTIVE' | 'QUIET', active_visitors: number, active_orders: number }[]).map((h, i) => ({ ...h, id: String(i), confidence: 92 }));
                 setHotspots(data);
                 setSelectedArea(data[0]);
             }
 
             if (storiesRes.data) {
-                setStories((storiesRes.data as any[]).map((s) => ({
+                setStories((storiesRes.data as { id: string, title: string, description: string | null, area_zone: string | null, buzz_categories: { label: string } | null, status: string, trend_score: number, latitude: number, longitude: number, start_at: string, buzz_media: { media_type: string, url: string }[] }[]).map((s) => ({
                     id: s.id,
                     title: s.title,
                     description: s.description || '',
@@ -80,7 +75,7 @@ export default function TheBuzzDiscovery() {
                     latitude: Number(s.latitude),
                     longitude: Number(s.longitude),
                     starts_at: s.start_at,
-                    media: s.buzz_media.map((m: any) => ({ type: m.media_type, url: m.url })),
+                    media: s.buzz_media.map((m) => ({ type: m.media_type as 'IMAGE' | 'VIDEO', url: m.url })),
                     distance: '1.2 km',
                     confidence: 88
                 })));
@@ -133,7 +128,6 @@ export default function TheBuzzDiscovery() {
                             </div>
                         </div>
                         <Button
-                            onClick={() => setNightPlannerOpen(true)}
                             className="h-20 px-10 rounded-[2rem] bg-primary text-white font-black uppercase tracking-widest text-[10px] shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
                         >
                             <Zap className="h-4 w-4 mr-3 fill-current" /> Build My Night

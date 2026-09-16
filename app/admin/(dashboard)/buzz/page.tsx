@@ -3,16 +3,11 @@
 import * as React from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import {
-    Calendar,
-    MapPin,
-    Eye,
     Loader2,
     ChevronRight,
     Zap,
     Clock,
     Camera,
-    Video,
-    Flame,
     Plus,
     TrendingUp,
     CheckCircle2,
@@ -20,11 +15,15 @@ import {
     Activity,
     Navigation,
     ShieldCheck,
-    Star
+    Star,
+    Eye,
+    MapPin,
+    Calendar
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
 import BuzzStudio from '@/components/admin/buzz/BuzzStudio';
 import VenueManager from '@/components/admin/buzz/VenueManager';
 
@@ -39,18 +38,9 @@ interface BuzzPost {
     confidence?: number;
 }
 
-interface Venue {
-    id: string;
-    name: string;
-    city: string;
-    is_verified: boolean;
-    category: string;
-}
-
 export default function BuzzCommandTower() {
     const [activeTab, setActiveTab] = React.useState<'happenings' | 'venues'>('happenings');
     const [posts, setPosts] = React.useState<BuzzPost[]>([]);
-    const [venues, setVenues] = React.useState<Venue[]>([]);
     const [loading, setLoading] = React.useState(true);
     const [studioOpen, setStudioOpen] = React.useState(false);
     const [editingPostId, setEditingPostId] = React.useState<string | null>(null);
@@ -59,13 +49,13 @@ export default function BuzzCommandTower() {
         if (!supabase) return;
         setLoading(true);
         try {
-            const [postsRes, venuesRes] = await Promise.all([
+            const [postsRes] = await Promise.all([
                 supabase.from('buzz_posts').select('*, buzz_categories(label)').order('created_at', { ascending: false }),
                 supabase.from('buzz_venues').select('*').limit(5)
             ]);
 
             if (postsRes.data) {
-                setPosts((postsRes.data as any[]).map((d) => ({
+                setPosts((postsRes.data as { id: string, title: string, status: string, trend_score: number, area_zone: string, start_at: string, buzz_categories: { label: string } | null }[]).map((d) => ({
                     id: d.id,
                     title: d.title,
                     status: d.status,
@@ -76,8 +66,6 @@ export default function BuzzCommandTower() {
                     category_label: d.buzz_categories?.label || 'General'
                 })));
             }
-
-            if (venuesRes.data) setVenues(venuesRes.data as Venue[]);
 
         } catch (err) { console.error(err); }
         finally { setLoading(false); }
@@ -113,6 +101,11 @@ export default function BuzzCommandTower() {
                         <button onClick={() => setActiveTab('happenings')} className={cn("px-6 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all", activeTab === 'happenings' ? "bg-primary text-white shadow-lg" : "text-slate-400")}>Live Nowcasts</button>
                         <button onClick={() => setActiveTab('venues')} className={cn("px-6 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all", activeTab === 'venues' ? "bg-primary text-white shadow-lg" : "text-slate-400")}>Venue Registry</button>
                     </div>
+                    <Link href="/admin/growth/calendar">
+                        <Button variant="outline" className="h-12 px-6 rounded-xl border-slate-200 bg-white font-black uppercase text-[10px] tracking-widest shadow-sm">
+                            <Calendar size={14} className="mr-2" /> Global Schedule
+                        </Button>
+                    </Link>
                     <Button
                         onClick={() => { setEditingPostId(null); setStudioOpen(true); }}
                         className="rounded-xl h-12 px-8 bg-primary text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
@@ -284,7 +277,7 @@ export default function BuzzCommandTower() {
                                 </div>
                             </div>
                         </div>
-                        <Zap size={64} className="absolute -bottom-6 -left-6 text-primary/5 rotate-12" />
+                        <Zap size={64} className="absolute -bottom-6 -right-6 text-primary/5 rotate-12" />
                     </Card>
                 </div>
 

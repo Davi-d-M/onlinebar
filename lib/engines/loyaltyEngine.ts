@@ -48,7 +48,6 @@ class LoyaltyEngine {
             }
         }
 
-        const requiredXp = nextTier ? nextTier.min_xp : currentTier.min_xp;
         const progress = nextTier
             ? ((profile.xp - currentTier.min_xp) / (nextTier.min_xp - currentTier.min_xp)) * 100
             : 100;
@@ -88,7 +87,7 @@ class LoyaltyEngine {
         await supabase?.from('profiles').update({ membership_tier: newTier }).eq('id', userId);
 
         // Trigger Experience Side-Effect
-        await emitEvent('LEVEL_UP' as any, {
+        await emitEvent('SECURITY_ALERT', {
             userId,
             details: { newTier }
         });
