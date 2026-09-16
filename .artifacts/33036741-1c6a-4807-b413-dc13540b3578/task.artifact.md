@@ -1,3 +1,5 @@
 - [x] Fix `lib/onlineBarOS.ts` Type Error (`.catch` issue)
 - [x] Remove unused `MoreVertical` in `app/admin/(dashboard)/marketing/list/page.tsx`
 - [x] Resolve `any` warnings in `components/auth/AuthForm.tsx`
+- [x] Implement robust Session Monitor in `PremiumOnboarding.tsx`
+- [x] Refine `AuthForm.tsx` success logic and rate-limit feedback

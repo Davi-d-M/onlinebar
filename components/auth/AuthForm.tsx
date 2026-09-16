@@ -100,10 +100,8 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
         if (data.user) {
             await handleIdentityStitching(data.user.id);
             await OB_OS.track('USER_REGISTERED', { userId: data.user.id, anonymousId: localStorage.getItem('ob_anonymous_id') || undefined });
-            setMessage({ type: 'success', text: 'Registration Successful! Verification link transmitted. 🛰️' });
-            if (onSuccess) {
-                setTimeout(() => onSuccess(data.user!.id), 2000);
-            }
+            setMessage({ type: 'success', text: 'Identity established! Synchronizing profile... 🛰️' });
+            if (onSuccess) onSuccess(data.user.id);
         }
       } else {
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
@@ -116,17 +114,19 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
             await handleIdentityStitching(data.user.id);
             await OB_OS.track('USER_LOGIN', { userId: data.user.id });
             setMessage({ type: 'success', text: 'Access Granted. Entering Vault... 🛡️' });
-            if (onSuccess) {
-                setTimeout(() => onSuccess(data.user!.id), 1500);
-            } else {
-                setTimeout(() => router.push('/'), 1500);
-            }
+            if (onSuccess) onSuccess(data.user.id);
         }
       }
     } catch (error: unknown) {
       const err = error as AuthError;
       console.error("[OB_OS] Auth Failure:", err);
-      setMessage({ type: 'error', text: err.message || "Uplink Failure" });
+
+      let errorText = err.message || "Uplink Failure";
+      if (err.code === 'over_email_send_rate_limit') {
+          errorText = "Too many attempts! Check your Supabase Dashboard Rate Limits or wait a minute. 🛡️";
+      }
+
+      setMessage({ type: 'error', text: errorText });
       if (err.details || err.code || err.hint) {
           setDebugInfo(JSON.stringify({ code: err.code, details: err.details, hint: err.hint }));
       }
@@ -170,17 +170,18 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
             if (data.user) {
                 await handleIdentityStitching(data.user.id);
                 await OB_OS.track('USER_LOGIN', { userId: data.user.id });
-                setMessage({ type: 'success', text: isSignUp ? 'Registration Successful! Entering Vault... 🛡️' : 'Access Granted. Entering Vault... 🛡️' });
-                if (onSuccess) {
-                    setTimeout(() => onSuccess(data.user!.id), 1500);
-                } else {
-                    setTimeout(() => router.push('/'), 1500);
-                }
+                setMessage({ type: 'success', text: isSignUp ? 'Identity Established! Synchronizing... 🛡️' : 'Access Granted. Entering Vault... 🛡️' });
+                if (onSuccess) onSuccess(data.user.id);
             }
         }
     } catch (error: unknown) {
         const err = error as AuthError;
-        setMessage({ type: 'error', text: err.message || "Uplink Failure" });
+        let errorText = err.message || "Uplink Failure";
+        if (err.code === 'over_email_send_rate_limit' || err.code === 'over_sms_send_rate_limit') {
+            errorText = "Too many attempts! Check your Supabase Dashboard Rate Limits or wait a minute. 🛡️";
+        }
+
+        setMessage({ type: 'error', text: errorText });
         if (err.details || err.code || err.hint) {
             setDebugInfo(JSON.stringify({ code: err.code, details: err.details, hint: err.hint }));
         }

@@ -39,6 +39,32 @@ export default function PremiumOnboarding() {
 
     const anonId = React.useMemo(() => typeof window !== 'undefined' ? localStorage.getItem('ob_anonymous_id') : null, []);
 
+    // 🛡️ [IDENTITY_SYNC] Session Monitor
+    // If a session is established (even via background trigger), advance the onboarding.
+    React.useEffect(() => {
+        if (!supabase) return;
+
+        const checkSession = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session?.user && (step === 'INTRO' || step === 'AUTH')) {
+                console.log("[OB_OS] Active session detected. Synchronizing profile node...");
+                setUserId(session.user.id);
+                setStep('PERSONALIZE');
+            }
+        };
+
+        checkSession();
+
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+            if (session?.user && (step === 'INTRO' || step === 'AUTH')) {
+                setUserId(session.user.id);
+                setStep('PERSONALIZE');
+            }
+        });
+
+        return () => subscription.unsubscribe();
+    }, [step]);
+
     React.useEffect(() => {
         OB_OS.track('ONBOARDING_STARTED', { anonymousId: anonId || undefined });
     }, [anonId]);
