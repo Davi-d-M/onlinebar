@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import { OB_OS } from '@/lib/onlineBarOS';
 import {
@@ -33,7 +32,6 @@ interface AuthError {
 }
 
 export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthFormProps) {
-  const router = useRouter();
   const [method, setAuthMethod] = useState<AuthMethod>('email');
   const [isSignUp, setIsSignUp] = useState(initialMode === 'signup');
 
