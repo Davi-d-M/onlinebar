@@ -90,11 +90,8 @@ export default function ProductCard({ product }: { product: Product }) {
 
     if (isLocked) return;
 
-    // Require variant selection if variants are available
-    if (product.sizes && Array.isArray(product.sizes) && product.sizes.length > 0 && !selectedVariant) {
-      alert('Please select a model/color before adding to cart');
-      return;
-    }
+    // Use first available variant if none selected (Non-blocking flow)
+    const variant = selectedVariant || (product.sizes && product.sizes.length > 0 ? product.sizes[0] : undefined);
 
     setIsAdding(true);
     // await new Promise((resolve) => setTimeout(resolve, 300));
@@ -107,7 +104,7 @@ export default function ProductCard({ product }: { product: Product }) {
       image: imageUrl,
       quantity: 1,
       category: product.category,
-      size: selectedVariant || undefined,
+      size: variant,
       wholesale_price: product.wholesale_price,
       wholesale_min_qty: product.wholesale_min_qty
     });

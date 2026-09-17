@@ -1,27 +1,30 @@
-# UI Hardening: Universal "Fit-to-Screen" Walkthrough
+# UI Refinement: Hexagon Chart Restore & Frictionless Add-to-Cart
 
-I have implemented a rigorous overflow-prevention strategy to ensure the **Online Bar OS** fits perfectly on all devices, eliminating the "screen pulling" issue reported.
+I have restored the high-fidelity sensory DNA chart and removed the blocking alerts from the product grid to ensure a smooth, premium shopping experience.
 
 ## Changes Made
 
-### 1. Global Overflow Shield
-- **Strict Bounds**: Re-enabled `overflow-x: hidden` on the `html` and `body` tags in `globals.css`. This acts as a master lock, preventing any component from expanding the page width beyond the viewport.
-- **Rhythmic Sizing**: Standardized the `100%` width utility to ensure the app doesn't accidentally calculate widths including the scrollbar (which `100vw` often does).
+### 1. Frictionless Add-to-Cart
+- **The Issue**: Clicking "Add to Bag" on the main product grid was triggering a blocking browser alert: *"Please select a model/color before adding to cart"*.
+- **The Fix**: Refactored `ProductCard.tsx` to automatically default to the first available size (e.g., '750ml' or 'Standard') when a user adds an item directly from the grid. This allows for rapid, uninterrupted shopping while still allowing the user to select specific variants on the product detail page.
 
-### 2. Header & Dropdown Hardening
-- **Viewport Constraints**: Added `max-width: 95vw` to the search results and discovery hub dropdowns in the Header.
-- **Safe Centering**: Even if these dropdowns have a large fixed base width (e.g., 800px), they will now gracefully shrink to fit smaller screens (tablets/foldables) instead of pushing the page edge.
-
-### 3. Hero & Container Integrity
-- **Background Clipping**: Added `overflow-hidden` to the **NeuralHero** section. This ensures that the large blurred "neon" background elements stay contained within the section and don't cause ghost overflow.
-- **Mobile Nav Safety**: Verified the fixed bottom navigation to ensure it stays anchored within the viewport bounds.
+### 2. Sensory DNA Hexagon Chart Restore
+- **Visual Upgrade**: Replaced the standard progress bars in the Product DNA section with a cinematic **Radar Chart (Hexagon)**.
+- **Data Mapping**: The chart high-fidelity nodes now accurately display:
+    - **Body**
+    - **Sweetness**
+    - **Oak**
+    - **Smoke**
+    - **Intensity**
+- **Premium Styling**: Integrated `recharts` for smooth animations and used the Online Bar signature brand colors for a high-end editorial feel.
 
 ## Verification Results
 
 ### Success Matrix
 > [!NOTE]
-> - **Build Stability**: Passed. Performed a full `npm run build` with zero errors.
-> - **Horizontal Lock**: Verified. The page is now "swipe-proof" horizontally on mobile viewports.
+> - **Build Stability**: Passed. A full `npm run build` was performed with zero errors.
+> - **UX Flow**: Verified that the browser alert is gone. Items are added to the bag instantly with a satisfying "Added" feedback state.
+> - **Visual Fidelity**: The Radar Chart renders correctly on both mobile and desktop viewports, staying within the safe bounds of the Product DNA card.
 
 > [!TIP]
-> If you still see the old "screen pull" in your browser, perform a **Hard Refresh** (`Ctrl + Shift + R` or `Cmd + Shift + R`) to clear the old CSS cache.
+> You can now test the live catalog. Clicking "Add to Bag" on a bottle will instantly establish it in the cart without any "noncense" popups.

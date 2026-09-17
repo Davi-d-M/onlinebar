@@ -40,6 +40,14 @@ export default function AIConcierge() {
     const scrollRef = React.useRef<HTMLDivElement>(null);
 
     React.useEffect(() => {
+        const handleModalActive = (e: any) => {
+            if (e.detail?.active) setIsOpen(false);
+        };
+        window.addEventListener('ob-modal-active', handleModalActive);
+        return () => window.removeEventListener('ob-modal-active', handleModalActive);
+    }, []);
+
+    React.useEffect(() => {
         if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }, [messages]);
 
@@ -116,7 +124,7 @@ export default function AIConcierge() {
     };
 
     return (
-        <div className="fixed bottom-24 lg:bottom-10 left-6 sm:left-10 z-[200]">
+        <div className="fixed bottom-24 lg:bottom-10 left-6 sm:left-10 z-[2100]">
             {!isOpen ? (
                 <button
                     onClick={() => setIsOpen(true)}
@@ -126,7 +134,7 @@ export default function AIConcierge() {
                     <div className="absolute -top-1 -right-1 h-5 w-5 bg-emerald-500 rounded-full border-2 border-white animate-pulse" />
                 </button>
             ) : (
-                <Card className="w-[400px] h-[650px] rounded-[3.5rem] bg-white border border-slate-100 shadow-[0_30px_100px_-15px_rgba(0,0,0,0.2)] flex flex-col overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-10 duration-500 text-left">
+                <Card className="w-[calc(100vw-32px)] sm:w-[400px] h-[600px] sm:h-[650px] rounded-[3rem] sm:rounded-[3.5rem] bg-white border border-slate-100 shadow-[0_30px_100px_-15px_rgba(0,0,0,0.2)] flex flex-col overflow-hidden animate-in zoom-in-95 slide-in-from-bottom-10 duration-500 text-left">
                     <div className="p-8 bg-primary text-white relative overflow-hidden flex justify-between items-center shadow-lg">
                         <div className="relative z-10 flex items-center gap-4">
                             <div className="h-12 w-12 rounded-2xl bg-white/20 flex items-center justify-center backdrop-blur-md border border-white/20"><Bot size={24} /></div>

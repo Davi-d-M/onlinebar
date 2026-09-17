@@ -9,6 +9,12 @@ export default function ExitIntentPopup() {
     const [hasBeenShown, setHasBeenShown] = useState(false);
 
     useEffect(() => {
+        if (isVisible) {
+            window.dispatchEvent(new CustomEvent('ob-modal-active', { detail: { type: 'EXIT_INTENT', active: true } }));
+        }
+    }, [isVisible]);
+
+    useEffect(() => {
         // Check if already shown in this session
         const shown = sessionStorage.getItem('exit_popup_shown');
         if (shown) {
@@ -31,7 +37,7 @@ export default function ExitIntentPopup() {
     if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-slate-500/10 backdrop-blur-md animate-in fade-in duration-300">
+    <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4 bg-slate-500/10 backdrop-blur-md animate-in fade-in duration-300">
         <div className="bg-white rounded-[3rem] max-w-lg w-full overflow-hidden shadow-2xl relative animate-in zoom-in-95 duration-500">
             <button
                 onClick={() => setIsVisible(false)}

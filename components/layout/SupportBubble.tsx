@@ -32,6 +32,17 @@ export default function SupportBubble() {
     const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 
     useEffect(() => {
+        const handleModalActive = (e: any) => {
+            if (e.detail?.active) {
+                setIsOpen(false);
+                setShowLabel(false);
+            }
+        };
+        window.addEventListener('ob-modal-active', handleModalActive);
+        return () => window.removeEventListener('ob-modal-active', handleModalActive);
+    }, []);
+
+    useEffect(() => {
         async function checkUser() {
             if (!supabase) return;
             const { data: { session } } = await supabase.auth.getSession();
@@ -119,11 +130,11 @@ export default function SupportBubble() {
     };
 
     return (
-        <div className="fixed bottom-24 lg:bottom-8 right-6 sm:right-8 z-[200] flex flex-col items-end gap-4">
+        <div className="fixed bottom-24 lg:bottom-8 right-6 sm:right-8 z-[2100] flex flex-col items-end gap-4">
 
             {/* Greeting Label */}
             {showLabel && !isOpen && (
-                <div className="bg-white px-6 py-4 rounded-[1.8rem] border border-slate-100 shadow-2xl animate-in slide-in-from-right-4 duration-500 flex items-center gap-4 group">
+                <div className="bg-white px-6 py-4 rounded-[1.8rem] border border-slate-100 shadow-2xl animate-in slide-in-from-right-4 duration-500 flex items-center gap-4 group max-w-[calc(100vw-48px)]">
                     <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-white font-black text-xs shadow-lg shadow-primary/20">
                         {(userProfile?.full_name as string)?.substring(0, 1) || settings?.branding?.owner_name?.substring(0, 1) || 'A'}
                     </div>
@@ -145,7 +156,7 @@ export default function SupportBubble() {
 
             {/* Smart Dashboard */}
             {isOpen && (
-                <div className="bg-white rounded-[2.5rem] w-80 shadow-2xl border border-slate-100 overflow-hidden animate-in slide-in-from-bottom-4 duration-500">
+                <div className="bg-white rounded-[2.5rem] w-[calc(100vw-32px)] sm:w-80 shadow-2xl border border-slate-100 overflow-hidden animate-in slide-in-from-bottom-4 duration-500">
                     <div className="bg-primary p-6 text-white flex justify-between items-center shadow-lg">
                         <div className="flex items-center gap-3">
                             <div className="h-8 w-8 rounded-xl bg-primary/20 flex items-center justify-center text-primary"><Zap className="h-4 w-4 fill-current" /></div>

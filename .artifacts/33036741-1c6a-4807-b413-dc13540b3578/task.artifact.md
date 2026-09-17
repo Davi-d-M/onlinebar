@@ -1,5 +1,3 @@
-- [x] Apply `overflow-x: hidden` to root in `globals.css`
-- [x] Add viewport constraints to Header dropdowns
-- [x] Harden Hero container overflow
-- [x] Verify Mobile Nav bounds
-- [x] Run clean build and push
+- [ ] Remove variant alert and implement auto-defaulting in `ProductCard.tsx`
+- [ ] Implement Hexagon (Radar) Chart in `ProductDNACard.tsx`
+- [ ] Verify build stability and UI flow
