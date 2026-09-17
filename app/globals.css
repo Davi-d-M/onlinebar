@@ -67,6 +67,10 @@
   * {
     @apply border-border;
   }
+  html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
   body {
     @apply bg-background text-foreground;
     background-color: #ffffff !important;
@@ -122,6 +126,11 @@
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.container {
+  width: min(100% - 32px, 1200px);
+  margin-inline: auto;
 }
 
 .no-scrollbar::-webkit-scrollbar {

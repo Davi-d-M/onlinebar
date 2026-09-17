@@ -62,6 +62,13 @@ import ExperienceNotificationHost from "@/components/layout/ExperienceNotificati
 import { type StoreSettings, DEFAULT_SETTINGS } from "@/lib/useSettings";
 import { getCachedSettings } from "@/lib/cachedData";
 import { Suspense } from "react";
+import type { Viewport } from 'next';
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+};
 
 export default async function RootLayout({
   children,

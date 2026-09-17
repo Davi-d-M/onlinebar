@@ -195,7 +195,7 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
   };
 
   return (
-    <div className="max-w-md w-full mx-auto p-10 bg-white rounded-[3rem] border border-slate-100 shadow-2xl space-y-10 animate-in zoom-in-95 duration-500">
+    <div className="w-full max-w-md mx-auto p-6 sm:p-10 bg-white rounded-[2rem] sm:rounded-[3rem] border border-slate-100 shadow-2xl space-y-8 sm:space-y-10 animate-in zoom-in-95 duration-500">
       <div className="text-center space-y-3">
           <div className="mx-auto h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-sm border border-primary/10">
               <ShieldCheck size={32} />

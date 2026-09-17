@@ -1,29 +1,41 @@
-# Implementation Plan - Emergency Identity System Recovery (v3)
+# Implementation Plan - UI Hardening & Identity Success Logic
 
-The goal is to force-clear any conflicting database triggers on the `auth.users` table and re-establish a single, hardened identity establishment node.
+The goal is to ensure the application UI fits correctly on all screens (especially mobile), eliminate rate-limit blockers, and provide bulletproof feedback for user registration.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> - **Trigger Reset**: I will run a script that attempts to DROP multiple possible trigger names on `auth.users` to ensure no legacy or hidden triggers are blocking new user creation.
-> - **Manual SQL Execution**: You MUST run this new script in your Supabase SQL Editor for it to take effect.
+> - **Rate Limits**: I will increase the Supabase email rate limits to prevent the "For security purposes..." error you saw.
+> - **Mobile Fit**: I'll apply responsive CSS changes to the Auth and Onboarding screens to ensure they fit perfectly on your phone.
+> - **Success Feedback**: I'll add a clear success state and a brief delay before redirection so you know exactly when it works.
 
 ## Proposed Changes
 
-### Database Layer (Supabase)
+### 1. Global Responsiveness
 
-#### [NEW] [emergency_identity_recovery.sql](file:///C:/Users/hp/AndroidStudioProjects/onbar/supabase/migrations/20260916_emergency_identity_recovery.sql)
-- Attempt to drop common trigger names: `on_auth_user_created`, `tr_handle_new_user`, `sync_user_profile`, etc.
-- Re-create the `handle_new_user` function with advanced error handling (trapping exceptions).
-- Ensure `ON CONFLICT (id) DO UPDATE` is used to repair existing profiles.
+#### [MODIFY] [layout.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/layout.tsx)
+- Add `Viewport` configuration with `viewport-fit=cover` to support modern notched devices.
 
-### Application Layer (Next.js)
+#### [MODIFY] [globals.css](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/globals.css)
+- Implement a responsive `container` class as suggested in the advice.
+- Ensure `html` and `body` have `max-width: 100%` and `overflow-x: hidden`.
+
+### 2. Authentication Flow Hardening
+
+#### [MODIFY] [config.toml](file:///C:/Users/hp/AndroidStudioProjects/onbar/supabase/config.toml)
+- Increase `email_sent` rate limit from 2 to 100 per hour to prevent "over_email_send_rate_limit" errors.
 
 #### [MODIFY] [AuthForm.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/components/auth/AuthForm.tsx)
-- Add a "Technical Intel" node that appears ONLY when a database error occurs, showing the raw error object to the user (helpful for debugging).
+- Ensure all success messages are prominent and clear.
+- Auto-clear status messages after 4 seconds as requested.
+- Add a 1.5s delay after success before redirecting to allow the user to read the confirmation.
+
+#### [MODIFY] [PremiumOnboarding.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/components/auth/PremiumOnboarding.tsx)
+- Implement a session monitor that advances the onboarding as soon as a session is detected, even if the form submission logic is slow.
 
 ## Verification Plan
 
 ### Manual Verification
-- After running the recovery SQL, try to sign up again.
-- If it still fails, the new "Technical Intel" node in the UI will show us the EXACT Postgres error code and message.
+- Test signup/login on a narrow screen (mobile view) and verify no horizontal scroll.
+- Verify that clicking "Initialize Profile" doesn't trigger a rate-limit error immediately.
+- Confirm that the "Registration Successful" message appears and stays for a few seconds before the next step.

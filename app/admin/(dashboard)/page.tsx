@@ -265,26 +265,26 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="space-y-12 animate-in fade-in duration-700 bg-slate-50 min-h-screen p-8 pb-20 text-left selection:bg-primary/20">
+    <div className="space-y-8 sm:space-y-12 animate-in fade-in duration-700 bg-slate-50 min-h-screen p-4 sm:p-8 pb-20 text-left selection:bg-primary/20">
       <CommandRelay />
 
       {/* EXECUTIVE HEADER */}
-      <header className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 border-b border-slate-200 pb-10">
+      <header className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6 border-b border-slate-200 pb-8 sm:pb-10">
           <div className="text-left">
-              <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mb-2">Online Bar Control</p>
-              <h1 className="text-5xl font-black text-foreground uppercase tracking-tighter leading-none">Control <span className="text-primary">Tower</span> 🏰</h1>
-              <div className="flex items-center gap-4 mt-4">
+              <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mb-2">Online Bar Control</p>
+              <h1 className="text-3xl sm:text-5xl font-black text-foreground uppercase tracking-tighter leading-none">Control <span className="text-primary">Tower</span> 🏰</h1>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mt-4">
                   <div className="flex items-center gap-2 text-emerald-500">
                       <ShieldCheck size={14} />
                       <span className="text-[9px] font-black uppercase tracking-widest">Fortress Security Active</span>
                   </div>
-                  <div className="h-1 w-1 rounded-full bg-slate-300" />
-                  <p className="text-[10px] font-black uppercase text-slate-400">Authenticated: {email?.split('@')[0]}</p>
+                  <div className="hidden sm:block h-1 w-1 rounded-full bg-slate-300" />
+                  <p className="text-[9px] sm:text-[10px] font-black uppercase text-slate-400">Authenticated: {email?.split('@')[0]}</p>
               </div>
           </div>
-          <div className="flex gap-2">
-              <Link href="/admin/marketing/create">
-                  <Button className="h-14 px-8 rounded-2xl bg-primary text-white font-black uppercase text-xs tracking-widest shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all">
+          <div className="flex gap-2 w-full sm:w-auto">
+              <Link href="/admin/marketing/create" className="w-full sm:w-auto">
+                  <Button className="w-full sm:w-auto h-12 sm:h-14 px-6 sm:px-8 rounded-xl sm:rounded-2xl bg-primary text-white font-black uppercase text-[10px] sm:text-xs tracking-widest shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all">
                       <Send className="h-4 w-4 mr-2" /> Launch Campaign
                   </Button>
               </Link>
