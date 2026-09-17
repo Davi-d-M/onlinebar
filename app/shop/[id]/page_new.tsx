@@ -8,7 +8,7 @@ import { supabase } from '@/lib/supabaseClient';
 import { useCart } from '@/context/CartContext';
 import { MessageSquare, ShoppingCart, ArrowLeft, Zap, ShieldCheck, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { formatPrice } from '@/lib/utils';
+import { formatPrice, normalizeImage } from '@/lib/utils';
 import ReviewSection from '@/components/product/ReviewSection';
 import { useSettings } from '@/lib/useSettings';
 
@@ -87,7 +87,7 @@ export default function DynamicProductDetailPage({ params }: { params: { id: str
       name: product.name,
       price: product.price,
       base_price: product.price,
-      image: product.image_url || '/images/NoImage.jpg',
+      image: normalizeImage(product.image_url),
       quantity: quantity,
       category: product.category,
     });
@@ -140,7 +140,7 @@ export default function DynamicProductDetailPage({ params }: { params: { id: str
           
           <div className="bg-slate-50 rounded-[2rem] p-6 flex items-center justify-center aspect-square border border-slate-100 overflow-hidden sticky top-8 relative">
             <Image
-              src={product.image_url || "/images/NoImage.jpg"}
+              src={normalizeImage(product.image_url)}
               alt={product.name}
               fill
               className="object-contain transform hover:scale-110 transition-transform duration-500 ease-out p-6"
@@ -227,7 +227,7 @@ export default function DynamicProductDetailPage({ params }: { params: { id: str
               <Link key={item.id} href={`/shop/${item.id}`} className="group block text-left">
                 <div className="bg-slate-50 rounded-[1.5rem] aspect-square flex items-center justify-center p-6 mb-3 border border-transparent group-hover:border-slate-100 transition-all shadow-sm relative overflow-hidden">
                   <Image
-                    src={item.image_url || "/images/NoImage.jpg"}
+                    src={normalizeImage(item.image_url)}
                     alt={item.name} 
                     fill
                     className="object-contain transform group-hover:scale-105 transition-transform duration-300 p-4"

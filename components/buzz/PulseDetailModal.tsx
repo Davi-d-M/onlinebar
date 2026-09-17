@@ -10,7 +10,7 @@ import {
     Loader2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { formatPrice } from '@/lib/utils';
+import { formatPrice, normalizeImage } from '@/lib/utils';
 import { supabase } from '@/lib/supabaseClient';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -78,13 +78,7 @@ export default function PulseDetailModal({ areaName, postId, onClose }: PulseDet
 
                 {/* HERO AREA */}
                 <div className="relative h-72 shrink-0 bg-slate-50">
-                    {post?.hero_image_url ? (
-                        <Image src={post.hero_image_url} alt="" fill className="object-cover opacity-80" />
-                    ) : (
-                        <div className="h-full w-full flex items-center justify-center text-primary opacity-10">
-                            <Flame size={80} />
-                        </div>
-                    )}
+                    <Image src={normalizeImage(post?.hero_image_url)} alt="" fill className="object-cover opacity-80" />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent" />
                     <button
                         onClick={onClose}
@@ -136,7 +130,7 @@ export default function PulseDetailModal({ areaName, postId, onClose }: PulseDet
                                         <div key={p.id} className="p-4 rounded-3xl bg-slate-50 border border-slate-100 flex items-center justify-between group hover:bg-white hover:shadow-xl transition-all">
                                             <div className="flex items-center gap-4">
                                                 <div className="h-14 w-14 rounded-2xl bg-white border border-slate-100 p-2 flex items-center justify-center shrink-0">
-                                                    <Image src={p.image_url || '/images/NoImage.jpg'} alt="" width={56} height={56} className="h-full w-full object-contain" />
+                                                    <Image src={normalizeImage(p.image_url)} alt="" width={56} height={56} className="h-full w-full object-contain" />
                                                 </div>
                                                 <div className="text-left">
                                                     <p className="text-[11px] font-black uppercase text-foreground leading-tight truncate max-w-[150px]">{p.name}</p>

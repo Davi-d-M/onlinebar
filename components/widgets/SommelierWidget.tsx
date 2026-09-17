@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { cn, formatPrice } from '@/lib/utils';
+import { cn, formatPrice, normalizeImage } from '@/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -85,7 +85,7 @@ export default function SommelierWidget() {
                         i === 1 && "md:scale-110 md:z-10 md:border-primary/20 md:shadow-primary/5"
                     )}>
                         <div className="aspect-square w-full bg-slate-50 rounded-[2.5rem] flex items-center justify-center p-10 relative overflow-hidden group-hover:scale-105 transition-transform duration-700">
-                             <Image src={r.image_url || '/images/NoImage.jpg'} alt="" fill className="object-contain p-8" />
+                             <Image src={normalizeImage(r.image_url)} alt="" fill className="object-contain p-8" />
                              <div className="absolute top-6 left-6 h-10 w-10 rounded-xl bg-white/80 backdrop-blur-md flex items-center justify-center text-primary shadow-sm">
                                  <Wine size={20} />
                              </div>

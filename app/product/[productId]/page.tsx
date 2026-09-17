@@ -11,7 +11,7 @@ import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { supabase } from "@/lib/supabaseClient";
 import { type User } from "@supabase/supabase-js";
-import { cn, formatPrice } from "@/lib/utils";
+import { cn, formatPrice, normalizeImage } from "@/lib/utils";
 import type { Product as ProductType } from "@/types/product";
 import {
   Check,
@@ -131,7 +131,7 @@ export default function Product() {
         const saved = localStorage.getItem('ob_recent_views');
         let views = saved ? JSON.parse(saved) : [];
         views = views.filter((v: Record<string, unknown>) => v.id !== liveProduct.id);
-        views.unshift({ id: liveProduct.id, name: liveProduct.name, image: liveProduct.image_url || liveProduct.image });
+        views.unshift({ id: liveProduct.id, name: liveProduct.name, image: normalizeImage(liveProduct.image_url || liveProduct.image) });
         localStorage.setItem('ob_recent_views', JSON.stringify(views.slice(0, 10)));
     }
   }, [liveProduct]);
@@ -162,7 +162,7 @@ export default function Product() {
       name: product.name,
       price: finalPrice,
       base_price: product.price,
-      image: product.image || product.image_url || '',
+      image: normalizeImage(product.image || product.image_url),
       quantity: quantity,
       category: product.category,
     });
@@ -198,7 +198,7 @@ export default function Product() {
         id: product.id,
         name: product.name,
         price: product.price,
-        image: product.image || product.image_url || '',
+        image: normalizeImage(product.image || product.image_url),
         rating: product.rating,
       });
 
@@ -226,7 +226,7 @@ export default function Product() {
           <div className="w-full max-w-[500px] mx-auto flex flex-col items-center">
             <div className="rounded-3xl shadow-sm overflow-hidden mb-4 w-full bg-slate-50 border border-slate-100 p-8 flex items-center justify-center aspect-square text-left relative">
               <Image
-                src={product.image_url || product.image || '/images/NoImage.jpg'}
+                src={normalizeImage(product.image_url || product.image)}
                 alt={product.name}
                 fill
                 className="object-contain transform hover:scale-105 transition-transform duration-500 p-8"

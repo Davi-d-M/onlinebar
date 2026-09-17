@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
-import { formatPrice } from '@/lib/utils';
+import { formatPrice, normalizeImage } from '@/lib/utils';
 import { ShoppingCart, ArrowRight, Loader2, Sparkles, Zap } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -84,7 +84,7 @@ export default function Recommendations() {
           <Card key={String(product.id)} className="group rounded-[2.5rem] bg-white border border-slate-100 shadow-sm hover:shadow-2xl hover:border-primary/20 transition-all overflow-hidden flex flex-col">
             <Link href={`/product/${product.id}`} className="block aspect-square bg-slate-50 relative overflow-hidden">
                 <Image
-                    src={product.image_url || '/images/NoImage.jpg'}
+                    src={normalizeImage(product.image_url)}
                     alt={product.name}
                     fill
                     className="object-contain p-8 group-hover:scale-110 transition-transform duration-500"
@@ -105,7 +105,7 @@ export default function Recommendations() {
                   name: product.name,
                   price: product.price,
                   base_price: product.price,
-                  image: product.image_url,
+                  image: normalizeImage(product.image_url),
                   quantity: 1,
                   category: product.category
                 } as CartItem)}

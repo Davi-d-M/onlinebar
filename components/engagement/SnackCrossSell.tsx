@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabaseClient';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Cookie, Plus, Zap } from 'lucide-react';
-import { formatPrice } from '@/lib/utils';
+import { formatPrice, normalizeImage } from '@/lib/utils';
 import { useCart } from '@/context/CartContext';
 import Image from 'next/image';
 
@@ -62,7 +62,7 @@ export default function SnackCrossSell() {
                     <div key={s.id} className="bg-white p-4 rounded-2xl border border-slate-100 flex items-center justify-between gap-4 group/item hover:border-primary/20 transition-all shadow-sm">
                         <div className="flex items-center gap-4">
                             <div className="h-12 w-12 rounded-xl bg-slate-50 relative overflow-hidden shrink-0">
-                                <Image src={s.image_url || '/images/NoImage.jpg'} alt={s.name} fill className="object-contain p-2" />
+                                <Image src={normalizeImage(s.image_url)} alt={s.name} fill className="object-contain p-2" />
                             </div>
                             <div className="min-w-0">
                                 <p className="text-[11px] font-black text-foreground uppercase truncate">{s.name}</p>
@@ -78,7 +78,7 @@ export default function SnackCrossSell() {
                                 base_price: s.price,
                                 quantity: 1,
                                 category: s.category,
-                                image: s.image_url
+                                image: normalizeImage(s.image_url)
                             })}
                             className="h-8 w-8 rounded-lg bg-primary text-white shadow-lg shadow-primary/10 active:scale-90 transition-all"
                         >

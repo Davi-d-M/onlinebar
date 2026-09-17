@@ -1,42 +1,36 @@
-# Implementation Plan - Emergency Dashboard Hardening & Code Cleanup
+# Implementation Plan - Final Stability Node & Cache Recovery
 
-The goal is to fix the "White Screen" and "Overlapping/Broken" issues in the Admin Dashboard by performing a deep cleanup of duplicate code blocks and hardening the deletion engine.
+The goal is to provide a final set of stability fixes for the "Failed to fetch" and "placeholder.jpg" errors, and give instructions for a clean environment restart.
 
 ## User Review Required
 
 > [!CAUTION]
-> - **Code Duplication**: I've identified massive redundancy in `upload/page.tsx` (multiple identical logic blocks). I will strip these out to restore system performance and visual clarity.
-> - **Universal Deletion**: I will force-deploy the delete buttons to the **Cellar Hub**, **Munchie Hub**, and **Partner Hub**, ensuring they are visible on mobile.
+> - **Failed to Fetch**: This error means your browser cannot talk to Supabase. If you are on a different network or the IP changed, you must update `.env.local`.
+> - **Cache Purge**: You MUST manually delete your `.next` folder to clear the old `placeholder.jpg` 404 responses from the Next.js internal cache.
 
 ## Proposed Changes
 
-### 1. Dashboard Cleanup (The "Overlap" Fix)
+### 1. Authentication Layer Resilience
 
-#### [MODIFY] [upload/page.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/admin/(dashboard)/upload/page.tsx)
-- Remove 4+ redundant `stockIntelligence` Card blocks that are cluttering the file.
-- Restore the clean, single-card flow.
-- Re-inject the **Delete Product** button into the sticky bottom bar.
+#### [MODIFY] [AuthForm.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/components/auth/AuthForm.tsx)
+- Added detailed debug logging that prints the Supabase URL (obfuscated) to the console when a fetch failure occurs.
+- Improved the "Failed to fetch" error message with actionable advice for local development.
 
-### 2. Functional Deletion Engine
+### 2. Asset Integrity
 
-#### [MODIFY] [upload/page.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/admin/(dashboard)/upload/page.tsx)
-- Harden `handleDeleteProduct` to clear local state and trigger a grid refresh.
-- Make the feed trash icons permanently visible on mobile.
+#### [FIX] [NeuralHero.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/components/home/hero/NeuralHero.tsx)
+- Removed hardcoded background image dependencies to prevent 404s.
 
-#### [MODIFY] [munchies/page.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/admin/(dashboard)/munchies/page.tsx)
-- Add a **Delete** button to the main Edit card.
-- Ensure the delete action records an audit log.
+#### [HARDEN] [lib/utils.ts](file:///C:/Users/hp/AndroidStudioProjects/onbar/lib/utils.ts)
+- Hardened `normalizeImage` to handle more edge cases (like URLs without leading slashes).
 
-#### [MODIFY] [vendors/page.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/admin/(dashboard)/operations/vendors/page.tsx)
-- **[NEW]** Add delete functionality to the Partner grid rows.
+### 3. Cleanup Action
+
+#### [NEW] [clean_restart.sh](file:///C:/Users/hp/AndroidStudioProjects/onbar/.artifacts/33036741-1c6a-4807-b413-dc13540b3578/scratch/clean_restart.sh)
+- A helper script for the user to completely reset their dev environment (delete `.next`, restart dev server).
 
 ## Verification Plan
 
 ### Manual Verification
-- Check the **Cellar Hub**; it should no longer have 4 identical stock boxes.
-- Verify the **Red Delete Button** appears in the bottom bar when editing an item.
-- Delete a test snack in **Munchie Hub** and verify it disappears from the feed.
-- Check **Audit Logs** to confirm accountability.
-
-### Automated Tests
-- Full `npm run build` to ensure the cleanup didn't break imports or types.
+- **Network Check**: Verify that `supabase start` is running if developing locally.
+- **Cache Check**: Run the `clean_restart.sh` (or follow manual steps) and verify the 404 for `placeholder.jpg` is gone.

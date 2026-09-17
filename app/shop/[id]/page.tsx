@@ -2,6 +2,7 @@ import { supabase } from '@/lib/supabaseClient';
 import ProductDetailClient from '@/components/product/ProductDetailClient';
 import { Metadata } from 'next';
 import { Product } from '@/types/product';
+import { normalizeImage } from '@/lib/utils';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -33,13 +34,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title: product.name,
       description: product.description || undefined,
-      images: [(product.image_url || product.image || '/images/NoImage.jpg')],
+      images: [normalizeImage(product.image_url || product.image)],
       type: 'website',
     },
     twitter: {
         card: 'summary_large_image',
         title: product.name,
-        images: [(product.image_url || product.image || '/images/NoImage.jpg')],
+        images: [normalizeImage(product.image_url || product.image)],
     }
   };
 }
@@ -97,7 +98,7 @@ export default async function Page({ params }: Props) {
       .limit(4);
     related = (data || []).map((p) => ({
         ...(p as Record<string, unknown>),
-        image_url: (p as Record<string, unknown>).image_url || '/images/NoImage.jpg'
+        image_url: normalizeImage((p as Record<string, unknown>).image_url as string)
     })) as unknown as Product[];
   }
 
@@ -120,7 +121,7 @@ export default async function Page({ params }: Props) {
               "@context": "https://schema.org/",
               "@type": "Product",
               "name": product.name || 'Premium Selection',
-              "image": product.image_url ? [product.image_url, ...(Array.isArray(product.image_url) ? [product.image_url] : [])] : ['/images/NoImage.jpg'],
+              "image": [normalizeImage(product.image_url || product.image)],
               "description": product.description || '',
               "brand": {
                 "@type": "Brand",

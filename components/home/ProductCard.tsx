@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useCart } from "@/context/CartContext";
-import { cn, formatPrice } from "@/lib/utils";
+import { cn, formatPrice, normalizeImage } from "@/lib/utils";
 import { Check, Eye, Heart, ShoppingCart, X, ArrowUpDown, MessageSquare, TrendingUp, Lock } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -77,7 +77,7 @@ export default function ProductCard({ product }: { product: Product }) {
       checkTier();
   }, []);
 
-  const imageUrl = product.image || product.image_url || '/images/NoImage.jpg';
+  const imageUrl = normalizeImage(product.image || product.image_url);
   const isSale = product.old_price && Number(product.old_price) > Number(product.price);
   const isComparing = compareList.some(p => p.id === product.id);
 

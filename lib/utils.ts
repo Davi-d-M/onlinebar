@@ -4,6 +4,25 @@ import { twMerge } from "tailwind-merge"
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
+/**
+ * Normalizes image URLs and provides robust fallbacks for missing or legacy assets.
+ */
+export const normalizeImage = (url: string | undefined | null) => {
+    if (!url) return '/images/NoImage.jpg';
+
+    // Check if it's exactly the placeholder or contains it
+    const isPlaceholder =
+        url === '/placeholder.jpg' ||
+        url === 'placeholder.jpg' ||
+        url.includes('placeholder.jpg') ||
+        url === 'https://onlinebar.co.ke/placeholder.jpg';
+
+    if (isPlaceholder) {
+        return '/images/NoImage.jpg';
+    }
+    return url;
+};
+
 export const formatPrice = (price: number | string | undefined | null) => {
   const numericPrice = typeof price === 'string' ? parseFloat(price) : Number(price || 0);
   return new Intl.NumberFormat("en-KE", {

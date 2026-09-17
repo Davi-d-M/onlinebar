@@ -134,7 +134,9 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
       let errorText = (err && typeof err === 'object' && 'message' in err) ? err.message : "Uplink Failure";
 
       if (errorText === 'Failed to fetch') {
-          errorText = "Network Error: Cannot reach Supabase. Ensure your local Supabase is running or check your internet. 🛰️";
+          const urlNode = process.env.NEXT_PUBLIC_SUPABASE_URL || 'UNDEFINED';
+          console.warn(`[OB_OS] Fetch Blocked. Supabase Node: ${urlNode.substring(0, 10)}...`);
+          errorText = "Network Error: Cannot reach Supabase. Ensure your local Supabase is running or update your .env.local IP. 🛰️";
       }
 
       if (err && typeof err === 'object' && 'code' in err && (err.code === 'over_email_send_rate_limit' || err.code === 'over_sms_send_rate_limit')) {
@@ -197,7 +199,9 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
         let errorText = (err && typeof err === 'object' && 'message' in err) ? err.message : "Uplink Failure";
 
         if (errorText === 'Failed to fetch') {
-            errorText = "Network Error: Cannot reach Supabase. Ensure your local Supabase is running. 🛰️";
+            const urlNode = process.env.NEXT_PUBLIC_SUPABASE_URL || 'UNDEFINED';
+            console.warn(`[OB_OS] Fetch Blocked. Supabase Node: ${urlNode.substring(0, 10)}...`);
+            errorText = "Network Error: Cannot reach Supabase. Ensure your local Supabase is running or update your .env.local IP. 🛰️";
         }
 
         if (err && typeof err === 'object' && 'code' in err && (err.code === 'over_email_send_rate_limit' || err.code === 'over_sms_send_rate_limit')) {

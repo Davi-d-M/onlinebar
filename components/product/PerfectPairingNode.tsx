@@ -7,7 +7,7 @@ import {
     Zap
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
-import { formatPrice } from '@/lib/utils';
+import { formatPrice, normalizeImage } from '@/lib/utils';
 import { NeuralSommelier, PairingNode } from '@/lib/engines/sommelierEngine';
 import Image from 'next/image';
 import { useCart } from '@/context/CartContext';
@@ -45,7 +45,7 @@ export default function PerfectPairingNode({ productId, category }: { productId:
                     <Card key={p.id} className="p-6 rounded-[2.5rem] bg-white border border-slate-100 shadow-sm hover:shadow-xl transition-all group overflow-hidden relative">
                         <div className="flex items-center gap-6 relative z-10 text-left">
                             <div className="h-20 w-20 rounded-[1.5rem] bg-slate-50 border border-slate-100 flex items-center justify-center p-3 shrink-0 relative overflow-hidden group-hover:scale-105 transition-transform">
-                                <Image src={p.image_url || '/images/NoImage.jpg'} alt="" fill className="object-contain p-2" />
+                                <Image src={normalizeImage(p.image_url)} alt="" fill className="object-contain p-2" />
                             </div>
                             <div className="flex-1 min-w-0">
                                 <p className="text-[9px] font-black uppercase text-primary tracking-widest mb-1">{p.reason}</p>
@@ -54,7 +54,7 @@ export default function PerfectPairingNode({ productId, category }: { productId:
                                     <p className="text-lg font-black text-foreground">{formatPrice(p.price)}</p>
                                     <Button
                                         size="sm"
-                                        onClick={() => addToCart({ id: p.id, name: p.name, price: p.price, base_price: p.price, image: p.image_url, quantity: 1 })}
+                                        onClick={() => addToCart({ id: p.id, name: p.name, price: p.price, base_price: p.price, image: normalizeImage(p.image_url), quantity: 1 })}
                                         className="h-10 px-6 rounded-xl bg-primary text-white font-black uppercase text-[8px] tracking-widest active:scale-95 transition-all shadow-lg shadow-primary/20"
                                     >
                                         <ShoppingBag size={12} className="mr-2" /> Add

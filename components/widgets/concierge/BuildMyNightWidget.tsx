@@ -13,7 +13,7 @@ import {
     Loader2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { cn, formatPrice } from '@/lib/utils';
+import { cn, formatPrice, normalizeImage } from '@/lib/utils';
 import { supabase } from '@/lib/supabaseClient';
 import { useCart } from '@/context/CartContext';
 import Image from 'next/image';
@@ -76,7 +76,7 @@ export default function BuildMyNightWidget() {
             name: r.name,
             price: r.price,
             base_price: r.price,
-            image: r.image_url,
+            image: normalizeImage(r.image_url),
             quantity: 1,
             category: r.category
         }));
@@ -197,7 +197,7 @@ export default function BuildMyNightWidget() {
                                         <div key={prod.id} className="p-4 rounded-3xl bg-slate-50 border border-slate-100 flex items-center justify-between group hover:bg-white hover:shadow-xl transition-all">
                                             <div className="flex items-center gap-4">
                                                 <div className="h-14 w-14 rounded-2xl bg-white p-2 border border-slate-100 flex items-center justify-center relative overflow-hidden">
-                                                    <Image src={prod.image_url || '/images/NoImage.jpg'} alt="" fill className="object-contain p-2" />
+                                                    <Image src={normalizeImage(prod.image_url)} alt="" fill className="object-contain p-2" />
                                                 </div>
                                                 <div className="text-left">
                                                     <p className="text-[11px] font-black uppercase text-foreground leading-none truncate max-w-[150px]">{prod.name}</p>
