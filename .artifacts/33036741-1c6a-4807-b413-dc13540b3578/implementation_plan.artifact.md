@@ -1,36 +1,38 @@
-# Implementation Plan - Final Stability Node & Cache Recovery
+# Implementation Plan - Universal "Fit-to-Screen" Hardening
 
-The goal is to provide a final set of stability fixes for the "Failed to fetch" and "placeholder.jpg" errors, and give instructions for a clean environment restart.
+The user is experiencing horizontal overflow ("forced to pull the screen") on mobile devices. I will apply a "Nuclear" overflow-prevention strategy to ensure the app stays perfectly centered and fits the viewport.
 
 ## User Review Required
 
-> [!CAUTION]
-> - **Failed to Fetch**: This error means your browser cannot talk to Supabase. If you are on a different network or the IP changed, you must update `.env.local`.
-> - **Cache Purge**: You MUST manually delete your `.next` folder to clear the old `placeholder.jpg` 404 responses from the Next.js internal cache.
+> [!IMPORTANT]
+> - **Overflow Shield**: I am re-enabling strict `overflow-x: hidden` on the root `html` and `body` tags. This is the most effective way to stop "screen pulling."
+> - **Responsive Dropdowns**: I noticed some fixed widths (800px) in the Header that could be leaking on tablets. I'll ensure these are capped by the viewport width.
 
 ## Proposed Changes
 
-### 1. Authentication Layer Resilience
+### 1. Global CSS Hardening
 
-#### [MODIFY] [AuthForm.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/components/auth/AuthForm.tsx)
-- Added detailed debug logging that prints the Supabase URL (obfuscated) to the console when a fetch failure occurs.
-- Improved the "Failed to fetch" error message with actionable advice for local development.
+#### [MODIFY] [globals.css](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/globals.css)
+- Re-add `overflow-x: hidden` to `html` and `body`.
+- Ensure `*` box-sizing is handled (standard in Tailwind but good to verify).
+- Add a safety utility `.break-anywhere` for long text strings that might push the container.
 
-### 2. Asset Integrity
+### 2. Header & UI Node Hardening
 
-#### [FIX] [NeuralHero.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/components/home/hero/NeuralHero.tsx)
-- Removed hardcoded background image dependencies to prevent 404s.
+#### [MODIFY] [Header.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/components/layout/Header.tsx)
+- Wrap large dropdowns (`Discovery Hub`, `Search Results`) with `max-w-[95vw]` to prevent them from extending beyond the screen edge on smaller desktop/tablet views.
 
-#### [HARDEN] [lib/utils.ts](file:///C:/Users/hp/AndroidStudioProjects/onbar/lib/utils.ts)
-- Hardened `normalizeImage` to handle more edge cases (like URLs without leading slashes).
+#### [MODIFY] [MobileBottomNav.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/components/layout/MobileBottomNav.tsx)
+- Ensure the nav container uses `max-w-full`.
 
-### 3. Cleanup Action
+### 3. Hero & Background Hardening
 
-#### [NEW] [clean_restart.sh](file:///C:/Users/hp/AndroidStudioProjects/onbar/.artifacts/33036741-1c6a-4807-b413-dc13540b3578/scratch/clean_restart.sh)
-- A helper script for the user to completely reset their dev environment (delete `.next`, restart dev server).
+#### [MODIFY] [NeuralHero.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/components/home/hero/NeuralHero.tsx)
+- Add `overflow-hidden` to the section container to ensure the blurred decorative elements don't cause the parent to expand.
 
 ## Verification Plan
 
 ### Manual Verification
-- **Network Check**: Verify that `supabase start` is running if developing locally.
-- **Cache Check**: Run the `clean_restart.sh` (or follow manual steps) and verify the 404 for `placeholder.jpg` is gone.
+- Open the site in a mobile browser.
+- Try to "swipe" horizontally. The screen should remain locked in place.
+- Open the search bar and verify dropdowns don't cause a scrollbar.

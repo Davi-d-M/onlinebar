@@ -1,5 +1,5 @@
-- [x] Reposition `AIConcierge` and `SupportBubble` (Completed)
-- [x] Add Delete button to Edit Bar in `upload/page.tsx`
-- [x] Fix Trash icon visibility in `upload/page.tsx`
-- [x] Implement Deletion Engine in `munchies/page.tsx`
-- [x] Verify Audit Logs for deletion actions
+- [x] Apply `overflow-x: hidden` to root in `globals.css`
+- [x] Add viewport constraints to Header dropdowns
+- [x] Harden Hero container overflow
+- [x] Verify Mobile Nav bounds
+- [x] Run clean build and push

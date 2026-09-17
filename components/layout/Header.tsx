@@ -322,7 +322,7 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
 
             {/* Discovery Hub (Focus but no query) - Mega Menu Style */}
             {isSearchFocused && searchQuery.length === 0 && (
-                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-[800px] bg-white/90 backdrop-blur-2xl rounded-[3rem] shadow-2xl border border-slate-50 overflow-hidden animate-in fade-in slide-in-from-top-4 duration-500 p-10 z-[70] ring-1 ring-primary/5">
+                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-[800px] max-w-[95vw] bg-white/90 backdrop-blur-2xl rounded-[3rem] shadow-2xl border border-slate-50 overflow-hidden animate-in fade-in slide-in-from-top-4 duration-500 p-10 z-[70] ring-1 ring-primary/5">
                     <div className="grid grid-cols-12 gap-12">
                         <div className="col-span-7 space-y-8">
                             <div>
@@ -380,7 +380,7 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
 
             {/* Search Results Dropdown (Wider & Frosted) */}
             {searchResults.length > 0 && (
-                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-[700px] bg-white/90 backdrop-blur-2xl rounded-[3rem] shadow-2xl border border-slate-100 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-300 p-6 z-[70]">
+                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-[700px] max-w-[95vw] bg-white/90 backdrop-blur-2xl rounded-[3rem] shadow-2xl border border-slate-100 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-300 p-6 z-[70]">
                     <div className="p-4 border-b border-slate-50 flex items-center justify-between mb-4">
                         <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Payload matches</p>
                         <span className="text-[9px] font-black uppercase bg-primary/10 text-primary px-3 py-1 rounded-full border border-primary/20">{searchResults.length} Units Found</span>
