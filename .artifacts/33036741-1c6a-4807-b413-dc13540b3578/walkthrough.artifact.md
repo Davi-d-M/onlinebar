@@ -1,30 +1,49 @@
-# UI Refinement: Hexagon Chart Restore & Frictionless Add-to-Cart
+# UI Refinement: Hexagon Chart Restore & Identity Hardening
 
-I have restored the high-fidelity sensory DNA chart and removed the blocking alerts from the product grid to ensure a smooth, premium shopping experience.
+I have restored the **Elite Hexagon Chart** (Sensory DNA) to all products and provided a fail-safe fallback so it never shows a loading state again. I've also addressed the "fake images" and Supabase configuration issues.
 
 ## Changes Made
 
-### 1. Frictionless Add-to-Cart
-- **The Issue**: Clicking "Add to Bag" on the main product grid was triggering a blocking browser alert: *"Please select a model/color before adding to cart"*.
-- **The Fix**: Refactored `ProductCard.tsx` to automatically default to the first available size (e.g., '750ml' or 'Standard') when a user adds an item directly from the grid. This allows for rapid, uninterrupted shopping while still allowing the user to select specific variants on the product detail page.
+### 1. Hexagon Chart (Sensory DNA) Restore
+- **The Problem**: The Hexagon chart was only showing for products that had "Research Dossiers" in the database. For new or sample products, it was showing a generic "Loading" spinner.
+- **The Fix**: Implemented a **UX Hardening Fallback**. Every drink now displays the Hexagon chart instantly. If no real tasting data exists yet, the system generates a balanced "Neutral Profile" so the UI stays premium and animated.
 
-### 2. Sensory DNA Hexagon Chart Restore
-- **Visual Upgrade**: Replaced the standard progress bars in the Product DNA section with a cinematic **Radar Chart (Hexagon)**.
-- **Data Mapping**: The chart high-fidelity nodes now accurately display:
-    - **Body**
-    - **Sweetness**
-    - **Oak**
-    - **Smoke**
-    - **Intensity**
-- **Premium Styling**: Integrated `recharts` for smooth animations and used the Online Bar signature brand colors for a high-end editorial feel.
+### 2. Fake Image Cleanup Node
+- **The Issue**: Many sample products in the database still point to `/placeholder.jpg`.
+- **The Fix**: I have provided a **Nuclear Cleanup Script** (see below) to expunge these fake items from your grid.
+
+### 3. Supabase Identity Hardening
+- Provided the exact configuration strings for your Supabase **URL Configuration** screen to make your live deployment "real."
+
+## Action Required
+
+### 🚀 Step 1: Update Supabase URL Config
+Based on your screenshot, please paste these values into the **URL Configuration** screen in your Supabase Dashboard:
+
+- **Site URL**: `https://onlinebar.onrender.com`
+- **Redirect URLs**:
+    - `http://localhost:3000/**`
+    - `http://localhost:3001/**`
+    - `https://onlinebar.onrender.com/**`
+
+### 🧹 Step 2: Remove Fake Images (SQL)
+Run this code in your **Supabase SQL Editor** to permanently remove all products that don't have real photos:
+
+```sql
+-- DELETE all products that are still using the placeholder image
+DELETE FROM public.products
+WHERE image_url LIKE '%placeholder.jpg%';
+
+-- OPTIONAL: If you want to keep them but hide them until you upload photos
+-- UPDATE public.products SET status = 'Draft' WHERE image_url LIKE '%placeholder.jpg%';
+```
 
 ## Verification Results
 
 ### Success Matrix
 > [!NOTE]
-> - **Build Stability**: Passed. A full `npm run build` was performed with zero errors.
-> - **UX Flow**: Verified that the browser alert is gone. Items are added to the bag instantly with a satisfying "Added" feedback state.
-> - **Visual Fidelity**: The Radar Chart renders correctly on both mobile and desktop viewports, staying within the safe bounds of the Product DNA card.
+> - **Visual Fidelity**: The Hexagon chart is now visible on **every** product detail page.
+> - **Build Stability**: Verified the code compiles perfectly without the "Cannot find module" errors.
 
 > [!TIP]
-> You can now test the live catalog. Clicking "Add to Bag" on a bottle will instantly establish it in the cart without any "noncense" popups.
+> If you are still seeing "Failed to fetch" in your local browser, ensure you have hard-refreshed with `Ctrl + Shift + R`.
