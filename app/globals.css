@@ -80,13 +80,23 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
-    line-height: 1.5;
-    letter-spacing: -0.01em;
+    line-height: 1.6;
+    letter-spacing: -0.015em;
     word-spacing: 0.05em;
   }
   img {
     max-width: 100%;
     height: auto;
+  }
+}
+
+/* 💠 PREMIUM INTERACTIVE LAYER */
+@layer components {
+  .btn-premium {
+    @apply transition-all duration-300 ease-out active:scale-[0.97] hover:brightness-110 disabled:opacity-50 disabled:active:scale-100;
+  }
+  .input-premium {
+    @apply transition-all duration-300 focus:ring-4 focus:ring-primary/5 focus:border-primary/30;
   }
 }
 

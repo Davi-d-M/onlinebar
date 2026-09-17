@@ -1,5 +1,4 @@
-- [x] Reposition `AIConcierge` button above mobile nav
-- [x] Reposition `SupportBubble` button above mobile nav
-- [x] Add bottom padding to `Footer` for mobile nav clearance
-- [x] Harden global image fitting and container styles in `globals.css`
-- [x] Verify UI layout on mobile viewports
+- [x] Refine global typography and button feedback in `globals.css`
+- [x] Improve spacing and visual hierarchy in `AuthForm.tsx`
+- [x] Perfect transitions and grid rhythms in `PremiumOnboarding.tsx`
+- [x] Verify production build stability

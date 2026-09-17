@@ -228,69 +228,69 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
       </div>
 
       {method === 'email' ? (
-          <form onSubmit={handleEmailAuth} className="space-y-5">
+          <form onSubmit={handleEmailAuth} className="space-y-6 sm:space-y-8">
             {isSignUp && (
-              <div className="space-y-5 animate-in slide-in-from-top-2 duration-300">
-                <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Full Identity</label>
+              <div className="space-y-6 animate-in slide-in-from-top-2 duration-500">
+                <div className="space-y-3">
+                    <label className="text-[10px] font-black uppercase text-slate-400 ml-1 tracking-[0.15em]">Full Identity</label>
                     <div className="relative">
-                        <Input value={fullName} onChange={e => setFullName(e.target.value)} placeholder="Full Name" className="h-14 rounded-2xl bg-slate-50 border-slate-100 pl-12 font-bold" />
+                        <Input value={fullName} onChange={e => setFullName(e.target.value)} placeholder="Full Name" className="h-14 rounded-2xl bg-slate-50 border-slate-100 pl-12 font-bold input-premium" />
                         <Globe className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
                     </div>
                 </div>
-                <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Mobile Uplink</label>
+                <div className="space-y-3">
+                    <label className="text-[10px] font-black uppercase text-slate-400 ml-1 tracking-[0.15em]">Mobile Uplink</label>
                     <div className="relative">
-                        <Input value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} placeholder="07XXXXXXXX" className="h-14 rounded-2xl bg-slate-50 border-slate-100 pl-12 font-bold" />
+                        <Input value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} placeholder="07XXXXXXXX" className="h-14 rounded-2xl bg-slate-50 border-slate-100 pl-12 font-bold input-premium" />
                         <Smartphone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
                     </div>
                 </div>
-                <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Delivery Address</label>
+                <div className="space-y-3">
+                    <label className="text-[10px] font-black uppercase text-slate-400 ml-1 tracking-[0.15em]">Delivery Address</label>
                     <div className="relative">
-                        <Input required value={address} onChange={e => setAddress(e.target.value)} placeholder="e.g. Kilimani, Galana Rd" className="h-14 rounded-2xl bg-slate-50 border-slate-100 pl-12 font-bold" />
+                        <Input required value={address} onChange={e => setAddress(e.target.value)} placeholder="e.g. Kilimani, Galana Rd" className="h-14 rounded-2xl bg-slate-50 border-slate-100 pl-12 font-bold input-premium" />
                         <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
                     </div>
                 </div>
               </div>
             )}
-            <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Secure Email</label>
+            <div className="space-y-3">
+              <label className="text-[10px] font-black uppercase text-slate-400 ml-1 tracking-[0.15em]">Secure Email</label>
               <div className="relative">
-                  <Input type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="patron@onlinebar.co.ke" className="h-14 rounded-2xl bg-slate-50 border-slate-100 pl-12 font-bold" />
+                  <Input type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="patron@onlinebar.co.ke" className="h-14 rounded-2xl bg-slate-50 border-slate-100 pl-12 font-bold input-premium" />
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
               </div>
             </div>
-            <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Secret Key</label>
+            <div className="space-y-3">
+              <label className="text-[10px] font-black uppercase text-slate-400 ml-1 tracking-[0.15em]">Secret Key</label>
               <div className="relative">
-                  <Input type="password" required value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" className="h-14 rounded-2xl bg-slate-50 border-slate-100 pl-12 font-bold" />
+                  <Input type="password" required value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" className="h-14 rounded-2xl bg-slate-50 border-slate-100 pl-12 font-bold input-premium" />
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
               </div>
             </div>
-            <Button type="submit" disabled={loading} className="w-full h-16 rounded-2xl bg-primary text-white font-black uppercase text-xs tracking-widest shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
+            <Button type="submit" disabled={loading} className="w-full h-16 rounded-2xl bg-primary text-white font-black uppercase text-xs tracking-widest shadow-xl shadow-primary/20 btn-premium mt-4">
                 {loading ? <Loader2 className="animate-spin" /> : isSignUp ? 'Initialize Profile' : 'Enter Vault'}
             </Button>
           </form>
       ) : (
-          <form onSubmit={handlePhoneOTP} className="space-y-5">
-              <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Mobile Uplink</label>
+          <form onSubmit={handlePhoneOTP} className="space-y-6 sm:space-y-8">
+              <div className="space-y-3">
+                <label className="text-[10px] font-black uppercase text-slate-400 ml-1 tracking-[0.15em]">Mobile Uplink</label>
                 <div className="relative">
-                    <Input required value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} placeholder="07XXXXXXXX" className="h-14 rounded-2xl bg-slate-50 border-slate-100 pl-12 font-black text-lg" disabled={showOtpField} />
+                    <Input required value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} placeholder="07XXXXXXXX" className="h-14 rounded-2xl bg-slate-50 border-slate-100 pl-12 font-black text-lg input-premium" disabled={showOtpField} />
                     <Smartphone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
                 </div>
               </div>
               {showOtpField && (
-                <div className="space-y-2 animate-in slide-in-from-top-2 duration-300">
-                    <label className="text-[10px] font-black uppercase text-primary ml-1 animate-pulse">Enter 6-Digit Code</label>
+                <div className="space-y-3 animate-in slide-in-from-top-2 duration-500">
+                    <label className="text-[10px] font-black uppercase text-primary ml-1 animate-pulse tracking-[0.15em]">Enter 6-Digit Code</label>
                     <div className="relative">
-                        <Input required value={otp} onChange={e => setOtp(e.target.value)} placeholder="XXXXXX" maxLength={6} className="h-16 rounded-2xl bg-primary/5 border-primary/20 text-center font-black text-2xl tracking-[0.5em] text-primary" />
+                        <Input required value={otp} onChange={e => setOtp(e.target.value)} placeholder="XXXXXX" maxLength={6} className="h-16 rounded-2xl bg-primary/5 border-primary/20 text-center font-black text-2xl tracking-[0.5em] text-primary input-premium" />
                         <Key className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-primary/30" />
                     </div>
                 </div>
               )}
-              <Button type="submit" disabled={loading} className="w-full h-16 rounded-2xl bg-primary text-white font-black uppercase text-xs tracking-widest shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
+              <Button type="submit" disabled={loading} className="w-full h-16 rounded-2xl bg-primary text-white font-black uppercase text-xs tracking-widest shadow-xl shadow-primary/20 btn-premium mt-4">
                   {loading ? <Loader2 className="animate-spin" /> : showOtpField ? 'Verify & Enter' : 'Send Access Code'}
               </Button>
               {showOtpField && <button type="button" onClick={() => setShowOtpField(false)} className="w-full text-[9px] font-black uppercase text-slate-400 hover:text-primary transition-colors tracking-widest">Change Phone Number</button>}
