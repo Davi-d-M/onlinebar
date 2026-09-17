@@ -64,7 +64,7 @@ export default function CompareModal({
                             <div className="aspect-square rounded-[2.5rem] bg-white flex items-center justify-center p-2 border border-slate-100 shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden relative">
                                 {!img1Error ? (
                                     <Image
-                                        src={p1.image_url || p1.image || '/placeholder.jpg'}
+                                        src={p1.image_url || p1.image || '/images/NoImage.jpg'}
                                         alt={p1.name}
                                         fill
                                         className="object-contain p-4 transform group-hover:scale-110 transition-transform duration-700"
@@ -91,7 +91,7 @@ export default function CompareModal({
                             <div className="aspect-square rounded-[2.5rem] bg-white flex items-center justify-center p-2 border border-slate-100 shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden relative">
                                 {!img2Error ? (
                                     <Image
-                                        src={p2.image_url || p2.image || '/placeholder.jpg'}
+                                        src={p2.image_url || p2.image || '/images/NoImage.jpg'}
                                         alt={p2.name}
                                         fill
                                         className="object-contain p-4 transform group-hover:scale-110 transition-transform duration-700"

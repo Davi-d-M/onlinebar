@@ -77,7 +77,7 @@ export default function ProductCard({ product }: { product: Product }) {
       checkTier();
   }, []);
 
-  const imageUrl = product.image || product.image_url || '/placeholder.jpg';
+  const imageUrl = product.image || product.image_url || '/images/NoImage.jpg';
   const isSale = product.old_price && Number(product.old_price) > Number(product.price);
   const isComparing = compareList.some(p => p.id === product.id);
 

@@ -181,7 +181,7 @@ export default function GiftingHub() {
                                             )}
                                         >
                                             <div className="h-20 w-20 rounded-2xl bg-slate-50 relative overflow-hidden shrink-0 shadow-inner group-hover:scale-105 transition-transform">
-                                                <Image src={p.image_url || '/placeholder.jpg'} alt="" fill className="object-contain p-2" />
+                                                <Image src={p.image_url || '/images/NoImage.jpg'} alt="" fill className="object-contain p-2" />
                                             </div>
                                             <div className="flex-1 min-w-0 text-left">
                                                 <p className="text-[11px] font-black uppercase text-foreground truncate">{p.name}</p>
@@ -225,7 +225,7 @@ export default function GiftingHub() {
                                                     )}
                                                 >
                                                     <div className="h-12 w-12 rounded-xl bg-white relative overflow-hidden shadow-sm">
-                                                        <Image src={s.image_url || '/placeholder.jpg'} alt="" fill className="object-contain p-2" />
+                                                        <Image src={s.image_url || '/images/NoImage.jpg'} alt="" fill className="object-contain p-2" />
                                                     </div>
                                                     <span className="text-[8px] font-black uppercase text-center truncate w-full">{s.name}</span>
                                                     <span className="text-[9px] font-bold text-primary">{formatPrice(s.price)}</span>
@@ -285,7 +285,7 @@ export default function GiftingHub() {
                                     {selectedBottle ? (
                                         <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex items-center gap-4 animate-in zoom-in-95">
                                             <div className="h-12 w-12 rounded-xl bg-white p-2 relative overflow-hidden shadow-sm">
-                                                <Image src={selectedBottle.image_url || '/placeholder.jpg'} alt="" fill className="object-contain p-1" />
+                                                <Image src={selectedBottle.image_url || '/images/NoImage.jpg'} alt="" fill className="object-contain p-1" />
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <p className="text-[10px] font-black uppercase text-primary leading-none mb-1">Elite Node</p>

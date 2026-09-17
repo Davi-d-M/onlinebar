@@ -121,7 +121,7 @@ export default function PremiumOnboarding() {
                     </div>
 
                     <div className="aspect-[4/5] bg-slate-50 rounded-[2.5rem] sm:rounded-[3rem] border border-slate-100 relative overflow-hidden group">
-                        <div className="absolute inset-0 bg-[url('/bg-pattern.png')] opacity-10" />
+                        <div className="absolute inset-0 bg-slate-200/20 opacity-10" style={{ backgroundImage: 'radial-gradient(circle, #000 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
                         <div className="absolute inset-0 flex flex-col items-center justify-center p-8 sm:p-12 space-y-6">
                             <Zap className="h-12 w-12 sm:h-16 sm:w-16 text-primary" fill="currentColor" />
                             <h2 className="text-xl sm:text-2xl font-black text-foreground uppercase tracking-tight leading-tight">Your Drinks. <br />Your Way.</h2>

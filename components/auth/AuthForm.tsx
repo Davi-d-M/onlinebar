@@ -47,6 +47,14 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
   const [message, setMessage] = useState<{ type: 'success' | 'error' | 'idle', text: string }>({ type: 'idle', text: '' });
   const [debugInfo, setDebugInfo] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
+
+  useEffect(() => {
+    if (cooldown > 0) {
+      const timer = setTimeout(() => setCooldown(cooldown - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [cooldown]);
 
   useEffect(() => {
     if (message.text) {
@@ -124,8 +132,14 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
       console.error("[OB_OS] Auth Failure:", err);
 
       let errorText = (err && typeof err === 'object' && 'message' in err) ? err.message : "Uplink Failure";
-      if (err && typeof err === 'object' && 'code' in err && err.code === 'over_email_send_rate_limit') {
+
+      if (errorText === 'Failed to fetch') {
+          errorText = "Network Error: Cannot reach Supabase. Ensure your local Supabase is running or check your internet. 🛰️";
+      }
+
+      if (err && typeof err === 'object' && 'code' in err && (err.code === 'over_email_send_rate_limit' || err.code === 'over_sms_send_rate_limit')) {
           errorText = "Too many attempts! Check your Supabase Dashboard Rate Limits or wait a minute. 🛡️";
+          setCooldown(60);
       }
 
       setMessage({ type: 'error', text: errorText });
@@ -181,8 +195,14 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
     } catch (error: unknown) {
         const err = error as AuthError;
         let errorText = (err && typeof err === 'object' && 'message' in err) ? err.message : "Uplink Failure";
+
+        if (errorText === 'Failed to fetch') {
+            errorText = "Network Error: Cannot reach Supabase. Ensure your local Supabase is running. 🛰️";
+        }
+
         if (err && typeof err === 'object' && 'code' in err && (err.code === 'over_email_send_rate_limit' || err.code === 'over_sms_send_rate_limit')) {
             errorText = "Too many attempts! Check your Supabase Dashboard Rate Limits or wait a minute. 🛡️";
+            setCooldown(60);
         }
 
         setMessage({ type: 'error', text: errorText });
@@ -268,8 +288,8 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
               </div>
             </div>
-            <Button type="submit" disabled={loading} className="w-full h-16 rounded-2xl bg-primary text-white font-black uppercase text-xs tracking-widest shadow-xl shadow-primary/20 btn-premium mt-4">
-                {loading ? <Loader2 className="animate-spin" /> : isSignUp ? 'Initialize Profile' : 'Enter Vault'}
+            <Button type="submit" disabled={loading || cooldown > 0} className="w-full h-16 rounded-2xl bg-primary text-white font-black uppercase text-xs tracking-widest shadow-xl shadow-primary/20 btn-premium mt-4">
+                {loading ? <Loader2 className="animate-spin" /> : cooldown > 0 ? `Ready in ${cooldown}s` : (isSignUp ? 'Initialize Profile' : 'Enter Vault')}
             </Button>
           </form>
       ) : (
@@ -290,8 +310,8 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
                     </div>
                 </div>
               )}
-              <Button type="submit" disabled={loading} className="w-full h-16 rounded-2xl bg-primary text-white font-black uppercase text-xs tracking-widest shadow-xl shadow-primary/20 btn-premium mt-4">
-                  {loading ? <Loader2 className="animate-spin" /> : showOtpField ? 'Verify & Enter' : 'Send Access Code'}
+              <Button type="submit" disabled={loading || cooldown > 0} className="w-full h-16 rounded-2xl bg-primary text-white font-black uppercase text-xs tracking-widest shadow-xl shadow-primary/20 btn-premium mt-4">
+                  {loading ? <Loader2 className="animate-spin" /> : cooldown > 0 ? `Ready in ${cooldown}s` : (showOtpField ? 'Verify & Enter' : 'Send Access Code')}
               </Button>
               {showOtpField && <button type="button" onClick={() => setShowOtpField(false)} className="w-full text-[9px] font-black uppercase text-slate-400 hover:text-primary transition-colors tracking-widest">Change Phone Number</button>}
           </form>

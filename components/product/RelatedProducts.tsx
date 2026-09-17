@@ -78,7 +78,7 @@ export default function RelatedProducts({ product }: RelatedProductsProps) {
               <Link href={`/shop/${p.id}`}>
                 <div className="aspect-square overflow-hidden bg-slate-50 p-8 flex items-center justify-center relative">
                   <Image
-                    src={p.image || p.image_url || '/placeholder.jpg'}
+                    src={p.image || p.image_url || '/images/NoImage.jpg'}
                     alt={p.name}
                     fill
                     className="object-contain p-8 transition-transform duration-700 group-hover:scale-110"

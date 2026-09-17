@@ -90,8 +90,8 @@ export default function NeuralHero() {
             "relative min-h-[85vh] flex items-center overflow-hidden px-6 sm:px-12 lg:px-20 py-20 transition-colors duration-1000",
             persona?.vibe === 'ELITE' ? "bg-slate-50 text-foreground" : "bg-white text-foreground"
         )}>
-            {/* Neural Background Noise */}
-            <div className="absolute inset-0 bg-[url('/grid-noise.png')] opacity-[0.03] pointer-events-none" />
+            {/* Neural Background Noise (Fallback) */}
+            <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-slate-900/5" />
             <div className={cn(
                 "absolute top-0 right-0 w-2/3 h-full rounded-l-[20rem] blur-3xl -z-10 animate-pulse opacity-40",
                 persona?.vibe === 'LIVELY' ? "bg-rose-500/20" : "bg-primary/10"

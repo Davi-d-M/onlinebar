@@ -29,7 +29,7 @@ export default function CompareBar() {
                     {compareList.map(item => (
                         <div key={item.id} className="relative group">
                             <div className="h-10 w-10 rounded-full bg-slate-100 p-1.5 border border-slate-200 flex items-center justify-center overflow-hidden relative">
-                                <Image src={item.image_url || item.image || '/placeholder.jpg'} alt="" fill className="object-contain p-1" />
+                                <Image src={item.image_url || item.image || '/images/NoImage.jpg'} alt="" fill className="object-contain p-1" />
                             </div>
                             <button
                                 onClick={() => toggleCompare(item)}

@@ -33,13 +33,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title: product.name,
       description: product.description || undefined,
-      images: [(product.image_url || product.image || '/placeholder.jpg')],
+      images: [(product.image_url || product.image || '/images/NoImage.jpg')],
       type: 'website',
     },
     twitter: {
         card: 'summary_large_image',
         title: product.name,
-        images: [(product.image_url || product.image || '/placeholder.jpg')],
+        images: [(product.image_url || product.image || '/images/NoImage.jpg')],
     }
   };
 }
@@ -97,7 +97,7 @@ export default async function Page({ params }: Props) {
       .limit(4);
     related = (data || []).map((p) => ({
         ...(p as Record<string, unknown>),
-        image_url: (p as Record<string, unknown>).image_url || '/placeholder.jpg'
+        image_url: (p as Record<string, unknown>).image_url || '/images/NoImage.jpg'
     })) as unknown as Product[];
   }
 
@@ -120,7 +120,7 @@ export default async function Page({ params }: Props) {
               "@context": "https://schema.org/",
               "@type": "Product",
               "name": product.name || 'Premium Selection',
-              "image": product.image_url ? [product.image_url, ...(Array.isArray(product.image_url) ? [product.image_url] : [])] : ['/placeholder.jpg'],
+              "image": product.image_url ? [product.image_url, ...(Array.isArray(product.image_url) ? [product.image_url] : [])] : ['/images/NoImage.jpg'],
               "description": product.description || '',
               "brand": {
                 "@type": "Brand",

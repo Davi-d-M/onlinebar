@@ -136,7 +136,7 @@ export default function PulseDetailModal({ areaName, postId, onClose }: PulseDet
                                         <div key={p.id} className="p-4 rounded-3xl bg-slate-50 border border-slate-100 flex items-center justify-between group hover:bg-white hover:shadow-xl transition-all">
                                             <div className="flex items-center gap-4">
                                                 <div className="h-14 w-14 rounded-2xl bg-white border border-slate-100 p-2 flex items-center justify-center shrink-0">
-                                                    <Image src={p.image_url || '/placeholder.jpg'} alt="" width={56} height={56} className="h-full w-full object-contain" />
+                                                    <Image src={p.image_url || '/images/NoImage.jpg'} alt="" width={56} height={56} className="h-full w-full object-contain" />
                                                 </div>
                                                 <div className="text-left">
                                                     <p className="text-[11px] font-black uppercase text-foreground leading-tight truncate max-w-[150px]">{p.name}</p>

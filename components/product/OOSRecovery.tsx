@@ -58,7 +58,7 @@ export default function OOSRecovery({ productId, isOpen, onClose }: { productId:
                                 {recoveryData?.suggestions?.map((s) => (
                                     <div key={s.id} className="p-4 rounded-3xl bg-slate-50 border border-slate-100 flex items-center gap-4 group hover:bg-white hover:shadow-lg hover:border-primary/20 transition-all">
                                         <div className="h-14 w-14 rounded-2xl bg-white p-2 border border-slate-100 shrink-0">
-                                            <Image src={s.image_url || '/placeholder.jpg'} alt="" width={56} height={56} className="h-full w-full object-contain" />
+                                            <Image src={s.image_url || '/images/NoImage.jpg'} alt="" width={56} height={56} className="h-full w-full object-contain" />
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <p className="text-[10px] font-black uppercase truncate text-foreground">{s.name}</p>

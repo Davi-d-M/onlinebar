@@ -29,7 +29,7 @@ export async function GET() {
             return NextResponse.json({
                 title: 'Nairobi Buzz Active',
                 description: 'The premium cellar is synchronized and ready for dispatch.',
-                image_url: 'https://onlinebar.co.ke/placeholder.jpg',
+                image_url: 'https://onlinebar.co.ke/images/NoImage.jpg',
                 cta_label: 'OPEN BAR',
                 deep_link: '/shop',
                 content_type: 'DEFAULT'
@@ -41,7 +41,7 @@ export async function GET() {
             id: widget.id,
             title: widget.title.toUpperCase(),
             description: widget.description,
-            image_url: widget.image_url || 'https://onlinebar.co.ke/placeholder.jpg',
+            image_url: widget.image_url || 'https://onlinebar.co.ke/images/NoImage.jpg',
             cta_label: widget.cta_label || 'EXPLORE',
             deep_link: widget.deep_link || `/shop/${widget.product_id || ''}`,
             content_type: widget.content_type

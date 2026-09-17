@@ -197,7 +197,7 @@ export default function BuildMyNightWidget() {
                                         <div key={prod.id} className="p-4 rounded-3xl bg-slate-50 border border-slate-100 flex items-center justify-between group hover:bg-white hover:shadow-xl transition-all">
                                             <div className="flex items-center gap-4">
                                                 <div className="h-14 w-14 rounded-2xl bg-white p-2 border border-slate-100 flex items-center justify-center relative overflow-hidden">
-                                                    <Image src={prod.image_url || '/placeholder.jpg'} alt="" fill className="object-contain p-2" />
+                                                    <Image src={prod.image_url || '/images/NoImage.jpg'} alt="" fill className="object-contain p-2" />
                                                 </div>
                                                 <div className="text-left">
                                                     <p className="text-[11px] font-black uppercase text-foreground leading-none truncate max-w-[150px]">{prod.name}</p>

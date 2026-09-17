@@ -153,9 +153,9 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
 
   const allImages = Array.isArray(product.images) && product.images.length > 0
     ? product.images.filter(img => typeof img === 'string' && img.length > 0)
-    : [product.image_url || '/placeholder.jpg'];
+    : [product.image_url || '/images/NoImage.jpg'];
 
-  if (allImages.length === 0) allImages.push('/placeholder.jpg');
+  if (allImages.length === 0) allImages.push('/images/NoImage.jpg');
 
   const hasVideo = Boolean(product.video_url);
 
@@ -166,7 +166,7 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
       name: product.name,
       price: product.price,
       base_price: product.price,
-      image: product.image_url || '/placeholder.jpg',
+      image: product.image_url || '/images/NoImage.jpg',
       quantity: quantity,
       category: product.category,
       size: selectedVariant,
@@ -289,7 +289,7 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
                     />
                 ) : (
                     <Image
-                      src={(hasVideo ? allImages[activeImageIndex - 1] : allImages[activeImageIndex]) || '/placeholder.jpg'}
+                      src={(hasVideo ? allImages[activeImageIndex - 1] : allImages[activeImageIndex]) || '/images/NoImage.jpg'}
                       alt={product.name}
                       fill
                       sizes="(max-width: 768px) 100vw, 50vw"
@@ -489,7 +489,7 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
                                 id: product.id,
                                 name: product.name,
                                 price: product.price,
-                                image: product.image_url || '/placeholder.jpg'
+                                image: product.image_url || '/images/NoImage.jpg'
                             });
                         }
                     }}
@@ -577,7 +577,7 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
                 <div className="flex-1 relative flex items-center justify-center p-12">
                     <div className="relative w-full h-full max-w-5xl">
                         <Image
-                            src={allImages[activeImageIndex] || '/placeholder.jpg'}
+                            src={allImages[activeImageIndex] || '/images/NoImage.jpg'}
                             alt={product.name}
                             fill
                             className="object-contain animate-in zoom-in-95 duration-500"
@@ -660,7 +660,7 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
               {relatedProducts.map((item) => (
                 <Link key={item.id} href={`/shop/${item.id}`} className="group block text-left">
                   <div className="bg-slate-50 rounded-[2.5rem] aspect-square flex items-center justify-center p-8 mb-6 border border-transparent group-hover:border-slate-100 transition-all relative overflow-hidden shadow-sm hover:shadow-2xl">
-                    <Image src={item.image_url || '/placeholder.jpg'} alt={item.name} fill className="object-contain p-8 transform group-hover:scale-110 transition-transform duration-500" />
+                    <Image src={item.image_url || '/images/NoImage.jpg'} alt={item.name} fill className="object-contain p-8 transform group-hover:scale-110 transition-transform duration-500" />
                   </div>
                   <h3 className="text-[13px] font-black text-foreground uppercase tracking-widest truncate group-hover:text-primary transition-colors">{item.name}</h3>
                   <p className="text-sm font-black text-slate-400 mt-2">{formatPrice(item.price)}</p>

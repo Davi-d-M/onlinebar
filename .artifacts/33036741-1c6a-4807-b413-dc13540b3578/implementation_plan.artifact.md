@@ -1,35 +1,36 @@
-# Implementation Plan - 3D Spin Engine Verification
+# Implementation Plan - Asset Recovery & Next.js Image Hardening
 
-The user wants assurance that the 3D product visualization feature is functioning correctly and is "well-integrated" into the application experience.
+The goal is to resolve the runtime errors caused by missing local assets (`grid-noise.png`, `placeholder.jpg`) and unauthorized external image domains (`images.unsplash.com`).
 
 ## User Review Required
 
-> [!NOTE]
-> - **Model URLs**: For the 3D spin to work, each product must have a valid `.glb` or `.gltf` URL in its `beverage_specs.model_3d_url` field in the database.
-> - **Performance**: I have verified that the 3D engine uses "High-Performance" GPU settings, but older mobile devices might see a slight delay during initial load.
+> [!IMPORTANT]
+> - **External Domains**: I am white-listing `images.unsplash.com` in `next.config.ts`. If you use other image providers (e.g., Cloudinary, Amazon S3), they must also be added.
+> - **Missing Assets**: `/grid-noise.png` and `/placeholder.jpg` are missing from your `public/` directory. I will point the code to existing fallbacks or provide instructions to restore them.
 
-## Proposed Actions
+## Proposed Changes
 
-### 1. Engine Health Audit
-- Verified `Product3DViewer.tsx` implementation:
-    - Uses `react-three/fiber` for efficient WebGL rendering.
-    - Includes `autoRotate` logic with delta-time smoothing (prevents jitter).
-    - Features `OrbitControls` for manual 360-degree exploration.
-    - Uses `Environment (studio)` for realistic lighting reflections on bottle surfaces.
+### 1. Project Configuration
 
-### 2. Integration Verification
-- Verified `ProductDetailClient.tsx` logic:
-    - Implements **Dynamic Importing** to ensure the 3D library only loads when needed (saves ~500KB of initial page weight).
-    - Correctly toggles between the static high-res image and the 3D canvas.
-    - Displays a "Zap" icon only for products with 3D nodes enabled.
+#### [MODIFY] [next.config.ts](file:///C:/Users/hp/AndroidStudioProjects/onbar/next.config.ts)
+- Add `images.unsplash.com` to `remotePatterns` to allow loading product images from Unsplash.
 
-### 3. Safety & Fallbacks
-- Verified the cinematic loading state (`LoadingBottle`) which provides visual feedback during asset download.
-- Confirmed that the `onClose` handler correctly releases WebGL resources when returning to the static view.
+### 2. Missing Assets & Fallbacks
 
-## Verification Results
+#### [MODIFY] [NeuralHero.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/components/home/hero/NeuralHero.tsx)
+- Remove the dependency on `/grid-noise.png` or provide a CSS-based noise fallback to prevent 404 errors during development.
 
-### Success Matrix
-> [!NOTE]
-> - **Spin Fidelity**: The 0.7 rotation speed provides a smooth, "premium" feel without being too fast for the user to see details.
-> - **UI Overlay**: All 3D controls (Pause, Reset) are positioned in the safe-area corners, preventing overlap with the primary "Add to Bag" actions.
+#### [MODIFY] All components using `/placeholder.jpg`
+- Update the default fallback path to `/images/NoImage.jpg` (which exists in your project) instead of the non-existent root `/placeholder.jpg`.
+
+### 3. Public Directory
+
+#### [ACTION] Instruction for User
+- If you have specific `grid-noise.png` or `placeholder.jpg` files, please place them in the `C:/Users/hp/AndroidStudioProjects/onbar/public/` folder.
+
+## Verification Plan
+
+### Manual Verification
+- Run `npm run dev`.
+- Verify that the Unsplash runtime error is gone.
+- Check the browser console to ensure no 404 errors are triggered for `/grid-noise.png` or `/placeholder.jpg`.

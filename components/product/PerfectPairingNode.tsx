@@ -45,7 +45,7 @@ export default function PerfectPairingNode({ productId, category }: { productId:
                     <Card key={p.id} className="p-6 rounded-[2.5rem] bg-white border border-slate-100 shadow-sm hover:shadow-xl transition-all group overflow-hidden relative">
                         <div className="flex items-center gap-6 relative z-10 text-left">
                             <div className="h-20 w-20 rounded-[1.5rem] bg-slate-50 border border-slate-100 flex items-center justify-center p-3 shrink-0 relative overflow-hidden group-hover:scale-105 transition-transform">
-                                <Image src={p.image_url || '/placeholder.jpg'} alt="" fill className="object-contain p-2" />
+                                <Image src={p.image_url || '/images/NoImage.jpg'} alt="" fill className="object-contain p-2" />
                             </div>
                             <div className="flex-1 min-w-0">
                                 <p className="text-[9px] font-black uppercase text-primary tracking-widest mb-1">{p.reason}</p>

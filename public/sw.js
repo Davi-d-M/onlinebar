@@ -5,7 +5,7 @@ const CACHE_NAME = 'ob-os-cache-v2';
 const ASSETS_TO_CACHE = [
   '/',
   '/favicon.svg',
-  '/placeholder.jpg',
+  '/images/NoImage.jpg',
   '/widgets/mobile-node.json'
 ];
 

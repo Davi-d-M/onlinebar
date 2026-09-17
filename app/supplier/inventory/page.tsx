@@ -115,7 +115,7 @@ export default function SupplierInventory() {
                         <div className="flex items-center gap-6 mb-8">
                             <div className="h-20 w-20 rounded-[2rem] bg-slate-50 p-3 border border-slate-100 flex items-center justify-center shrink-0">
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img src={p.image_url || '/placeholder.jpg'} alt="" className="max-h-full w-auto object-contain" />
+                                <img src={p.image_url || '/images/NoImage.jpg'} alt="" className="max-h-full w-auto object-contain" />
                             </div>
                             <div className="min-w-0">
                                 <h3 className="text-lg font-black text-foreground uppercase tracking-tight truncate">{p.name}</h3>
