@@ -809,63 +809,6 @@ function UploadContent() {
                   )}
               </Card>
 
-              {stockIntelligence && (
-                  <Card className={cn(
-                      "rounded-[3rem] border shadow-sm overflow-hidden bg-white animate-in zoom-in-95 duration-500",
-                      stockIntelligence.isReorderUrgent ? "border-rose-100" : "border-slate-100"
-                  )}>
-                      <div className="p-8 flex items-center justify-between border-b border-slate-50">
-                          <div className="flex items-center gap-4">
-                              <div className={cn(
-                                  "h-10 w-10 rounded-xl flex items-center justify-center shadow-sm",
-                                  stockIntelligence.isReorderUrgent ? "bg-rose-50 text-rose-500" : "bg-emerald-50 text-emerald-500"
-                              )}>
-                                  <ProfitIcon className="h-5 w-5" />
-                              </div>
-                              <div className="text-left">
-                                  <h2 className="text-lg font-black text-foreground uppercase tracking-tighter">Stock Intelligence</h2>
-                                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Predictive Velocity Scan</p>
-                              </div>
-                          </div>
-                          {stockIntelligence.isReorderUrgent && (
-                              <span className="px-3 py-1 bg-rose-500 text-white text-[8px] font-black rounded-full animate-pulse uppercase">REORDER URGENT</span>
-                          )}
-                      </div>
-                      <CardContent className="p-10 space-y-8">
-                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
-                              <div className="space-y-1">
-                                  <p className="text-[8px] font-black uppercase text-slate-400 tracking-widest">Current Stock</p>
-                                  <p className="text-2xl font-black text-foreground">{stockIntelligence.currentStock}</p>
-                              </div>
-                              <div className="space-y-1">
-                                  <p className="text-[8px] font-black uppercase text-slate-400 tracking-widest">Avg Daily Sales</p>
-                                  <p className="text-2xl font-black text-foreground">{stockIntelligence.avgDailySales}</p>
-                              </div>
-                              <div className="space-y-1">
-                                  <p className="text-[8px] font-black uppercase text-slate-400 tracking-widest">Days Remaining</p>
-                                  <p className={cn(
-                                      "text-2xl font-black",
-                                      stockIntelligence.isReorderUrgent ? "text-rose-600" : "text-emerald-600"
-                                  )}>{stockIntelligence.daysRemaining}</p>
-                              </div>
-                              <div className="space-y-1">
-                                  <p className="text-[8px] font-black uppercase text-slate-400 tracking-widest">Reorder Point</p>
-                                  <p className="text-2xl font-black text-foreground">{stockIntelligence.reorderPoint}</p>
-                              </div>
-                          </div>
-
-                          <div className="flex gap-4">
-                              <Button type="button" onClick={generateSupplierPO} className="flex-1 h-14 rounded-2xl bg-indigo-600 text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-indigo-100 hover:scale-[1.02] active:scale-95 transition-all">
-                                  <Download className="h-4 w-4 mr-2" /> Create Purchase Order
-                              </Button>
-                              <Button type="button" variant="outline" className="flex-1 h-14 rounded-2xl border-slate-100 font-black uppercase text-[10px] tracking-widest">
-                                  Modify Threshold
-                              </Button>
-                          </div>
-                      </CardContent>
-                  </Card>
-              )}
-
               <Card className="rounded-[3rem] border border-slate-100 shadow-sm overflow-hidden bg-white">
                   <button type="button" onClick={() => toggleSection('inventory')} className="w-full p-8 flex items-center justify-between hover:bg-slate-50 transition-colors">
                       <div className="flex items-center gap-4">
@@ -930,63 +873,6 @@ function UploadContent() {
                   )}
               </Card>
 
-              {stockIntelligence && (
-                  <Card className={cn(
-                      "rounded-[3rem] border shadow-sm overflow-hidden bg-white animate-in zoom-in-95 duration-500",
-                      stockIntelligence.isReorderUrgent ? "border-rose-100" : "border-slate-100"
-                  )}>
-                      <div className="p-8 flex items-center justify-between border-b border-slate-50">
-                          <div className="flex items-center gap-4">
-                              <div className={cn(
-                                  "h-10 w-10 rounded-xl flex items-center justify-center shadow-sm",
-                                  stockIntelligence.isReorderUrgent ? "bg-rose-50 text-rose-500" : "bg-emerald-50 text-emerald-500"
-                              )}>
-                                  <ProfitIcon className="h-5 w-5" />
-                              </div>
-                              <div className="text-left">
-                                  <h2 className="text-lg font-black text-foreground uppercase tracking-tighter">Stock Intelligence</h2>
-                                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Predictive Velocity Scan</p>
-                              </div>
-                          </div>
-                          {stockIntelligence.isReorderUrgent && (
-                              <span className="px-3 py-1 bg-rose-500 text-white text-[8px] font-black rounded-full animate-pulse uppercase">REORDER URGENT</span>
-                          )}
-                      </div>
-                      <CardContent className="p-10 space-y-8">
-                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
-                              <div className="space-y-1">
-                                  <p className="text-[8px] font-black uppercase text-slate-400 tracking-widest">Current Stock</p>
-                                  <p className="text-2xl font-black text-foreground">{stockIntelligence.currentStock}</p>
-                              </div>
-                              <div className="space-y-1">
-                                  <p className="text-[8px] font-black uppercase text-slate-400 tracking-widest">Avg Daily Sales</p>
-                                  <p className="text-2xl font-black text-foreground">{stockIntelligence.avgDailySales}</p>
-                              </div>
-                              <div className="space-y-1">
-                                  <p className="text-[8px] font-black uppercase text-slate-400 tracking-widest">Days Remaining</p>
-                                  <p className={cn(
-                                      "text-2xl font-black",
-                                      stockIntelligence.isReorderUrgent ? "text-rose-600" : "text-emerald-600"
-                                  )}>{stockIntelligence.daysRemaining}</p>
-                              </div>
-                              <div className="space-y-1">
-                                  <p className="text-[8px] font-black uppercase text-slate-400 tracking-widest">Reorder Point</p>
-                                  <p className="text-2xl font-black text-foreground">{stockIntelligence.reorderPoint}</p>
-                              </div>
-                          </div>
-
-                          <div className="flex gap-4">
-                              <Button type="button" onClick={generateSupplierPO} className="flex-1 h-14 rounded-2xl bg-indigo-600 text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-indigo-100 hover:scale-[1.02] active:scale-95 transition-all">
-                                  <Download className="h-4 w-4 mr-2" /> Create Purchase Order
-                              </Button>
-                              <Button type="button" variant="outline" className="flex-1 h-14 rounded-2xl border-slate-100 font-black uppercase text-[10px] tracking-widest">
-                                  Modify Threshold
-                              </Button>
-                          </div>
-                      </CardContent>
-                  </Card>
-              )}
-
               <Card className="rounded-[3rem] border border-slate-100 shadow-sm overflow-hidden bg-white">
                   <button type="button" onClick={() => toggleSection('description')} className="w-full p-8 flex items-center justify-between hover:bg-slate-50 transition-colors">
                       <div className="flex items-center gap-4">
@@ -1015,63 +901,6 @@ function UploadContent() {
                       </CardContent>
                   )}
               </Card>
-
-              {stockIntelligence && (
-                  <Card className={cn(
-                      "rounded-[3rem] border shadow-sm overflow-hidden bg-white animate-in zoom-in-95 duration-500",
-                      stockIntelligence.isReorderUrgent ? "border-rose-100" : "border-slate-100"
-                  )}>
-                      <div className="p-8 flex items-center justify-between border-b border-slate-50">
-                          <div className="flex items-center gap-4">
-                              <div className={cn(
-                                  "h-10 w-10 rounded-xl flex items-center justify-center shadow-sm",
-                                  stockIntelligence.isReorderUrgent ? "bg-rose-50 text-rose-500" : "bg-emerald-50 text-emerald-500"
-                              )}>
-                                  <ProfitIcon className="h-5 w-5" />
-                              </div>
-                              <div className="text-left">
-                                  <h2 className="text-lg font-black text-foreground uppercase tracking-tighter">Stock Intelligence</h2>
-                                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Predictive Velocity Scan</p>
-                              </div>
-                          </div>
-                          {stockIntelligence.isReorderUrgent && (
-                              <span className="px-3 py-1 bg-rose-500 text-white text-[8px] font-black rounded-full animate-pulse uppercase">REORDER URGENT</span>
-                          )}
-                      </div>
-                      <CardContent className="p-10 space-y-8">
-                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
-                              <div className="space-y-1">
-                                  <p className="text-[8px] font-black uppercase text-slate-400 tracking-widest">Current Stock</p>
-                                  <p className="text-2xl font-black text-foreground">{stockIntelligence.currentStock}</p>
-                              </div>
-                              <div className="space-y-1">
-                                  <p className="text-[8px] font-black uppercase text-slate-400 tracking-widest">Avg Daily Sales</p>
-                                  <p className="text-2xl font-black text-foreground">{stockIntelligence.avgDailySales}</p>
-                              </div>
-                              <div className="space-y-1">
-                                  <p className="text-[8px] font-black uppercase text-slate-400 tracking-widest">Days Remaining</p>
-                                  <p className={cn(
-                                      "text-2xl font-black",
-                                      stockIntelligence.isReorderUrgent ? "text-rose-600" : "text-emerald-600"
-                                  )}>{stockIntelligence.daysRemaining}</p>
-                              </div>
-                              <div className="space-y-1">
-                                  <p className="text-[8px] font-black uppercase text-slate-400 tracking-widest">Reorder Point</p>
-                                  <p className="text-2xl font-black text-foreground">{stockIntelligence.reorderPoint}</p>
-                              </div>
-                          </div>
-
-                          <div className="flex gap-4">
-                              <Button type="button" onClick={generateSupplierPO} className="flex-1 h-14 rounded-2xl bg-indigo-600 text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-indigo-100 hover:scale-[1.02] active:scale-95 transition-all">
-                                  <Download className="h-4 w-4 mr-2" /> Create Purchase Order
-                              </Button>
-                              <Button type="button" variant="outline" className="flex-1 h-14 rounded-2xl border-slate-100 font-black uppercase text-[10px] tracking-widest">
-                                  Modify Threshold
-                              </Button>
-                          </div>
-                      </CardContent>
-                  </Card>
-              )}
 
               <Card className="rounded-[3rem] border border-slate-100 shadow-sm overflow-hidden bg-white">
                   <button type="button" onClick={() => toggleSection('media')} className="w-full p-8 flex items-center justify-between hover:bg-slate-50 transition-colors">
@@ -1197,17 +1026,17 @@ function UploadContent() {
                           </Button>
                       )}
                       {editingId && (
-                          <Button
+                          <button
                               type="button"
                               onClick={() => {
                                   if (window.confirm(`Expunge ${form.name} from global catalogue?`)) {
                                       handleDeleteProduct(editingId, form.name);
                                   }
                               }}
-                              className="h-16 px-8 rounded-2xl bg-rose-50 text-rose-500 font-black uppercase text-[10px] tracking-widest border-2 border-rose-100 hover:bg-rose-500 hover:text-white transition-all active:scale-95"
+                              className="h-16 px-8 rounded-2xl bg-rose-600 text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-rose-100 hover:bg-rose-700 transition-all active:scale-95"
                           >
                               <Trash2 className="h-5 w-5 mr-3" /> Delete Product
-                          </Button>
+                          </button>
                       )}
                       <Button type="submit" disabled={isSubmitting} className="flex-1 h-16 rounded-2xl bg-primary text-white font-black uppercase tracking-[0.3em] text-xs hover:bg-primary/90 transition-all active:scale-95 shadow-xl shadow-primary/20">
                         {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin mr-3" /> : <Wine className="h-5 w-5 mr-3" />}
@@ -1291,7 +1120,7 @@ function UploadContent() {
                                                 handleDeleteProduct(p.id, p.name);
                                             }
                                         }}
-                                        className="h-10 w-10 rounded-xl flex items-center justify-center text-slate-200 hover:text-rose-500 hover:bg-rose-50 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-all"
+                                        className="h-10 w-10 rounded-xl flex items-center justify-center text-slate-200 hover:text-rose-500 hover:bg-rose-50 transition-all"
                                       >
                                           <Trash2 className="h-4 w-4" />
                                       </button>

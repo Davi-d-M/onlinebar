@@ -13,6 +13,8 @@ import {
     Plus,
     Loader2,
     DollarSign,
+    X,
+    Trash2,
     Camera,
     Flame,
     Utensils
@@ -295,7 +297,7 @@ function MunchieContent() {
                             <Button
                                 type="button"
                                 onClick={() => handleDeleteSnack(editingId, form.name)}
-                                className="h-20 px-8 rounded-[2rem] bg-rose-50 text-rose-500 font-black uppercase text-[10px] tracking-widest border-2 border-rose-100 hover:bg-rose-500 hover:text-white transition-all"
+                                className="h-20 px-8 rounded-[2rem] bg-rose-600 text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-rose-100 hover:bg-rose-700 transition-all active:scale-95"
                             >
                                 <Trash2 className="h-5 w-5" />
                             </Button>

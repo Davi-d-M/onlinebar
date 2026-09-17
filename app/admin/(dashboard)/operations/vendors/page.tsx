@@ -14,7 +14,8 @@ import {
     Truck,
     Loader2,
     CheckCircle2,
-    ShieldAlert
+    ShieldAlert,
+    Trash2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -65,6 +66,24 @@ export default function MultiVendorHub() {
     React.useEffect(() => {
         fetchVendors();
     }, [fetchVendors]);
+
+    const handleDeleteVendor = async (id: string, name: string) => {
+        if (!supabase || !adminEmail) return;
+        if (!window.confirm(`Expunge ${name} from the partner grid? This cannot be undone.`)) return;
+
+        try {
+            const { error } = await supabase.from('marketplace_vendors').delete().eq('id', id);
+            if (error) throw error;
+
+            setVendors(prev => prev.filter(v => v.id !== id));
+            await logAuditAction(adminEmail, 'DELETE_VENDOR', { id, name });
+            setMessage({ type: 'success', text: "Partner Node Expunged." });
+        } catch (err: unknown) {
+            setMessage({ type: 'error', text: (err as Error).message });
+        } finally {
+            setTimeout(() => setMessage(null), 3000);
+        }
+    };
 
     const handleApproveVendor = async (id: string) => {
         if (!supabase) return;
@@ -262,7 +281,7 @@ export default function MultiVendorHub() {
                                         {v.status === 'Pending' && (
                                             <Button onClick={() => handleApproveVendor(v.id)} size="sm" className="h-10 px-4 rounded-xl bg-primary text-white font-black uppercase text-[9px] shadow-lg shadow-primary/20">Approve</Button>
                                         )}
-                                        <Button variant="outline" size="icon" className="h-10 w-10 rounded-xl border-slate-100"><MoreVertical size={16} className="text-slate-400" /></Button>
+                                        <Button onClick={() => handleDeleteVendor(v.id, v.name)} variant="outline" size="icon" className="h-10 w-10 rounded-xl border-rose-100 text-rose-400 hover:bg-rose-50"><Trash2 size={16} /></Button>
                                     </div>
                                 </td>
                             </tr>

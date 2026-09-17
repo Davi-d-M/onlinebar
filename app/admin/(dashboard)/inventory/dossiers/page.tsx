@@ -232,15 +232,13 @@ export default function ProductDossierGrid() {
                                             <Edit3 size={20} />
                                         </button>
                                     </Link>
-                                    {item.is_dossier_complete && (
-                                        <button
-                                            onClick={() => handleDeleteDossier(item.product_id, item.product_name)}
-                                            className="h-12 w-12 rounded-xl bg-slate-50 flex items-center justify-center text-slate-300 hover:bg-rose-500 hover:text-white transition-all shadow-sm border border-slate-100"
-                                            title="Expunge Dossier"
-                                        >
-                                            <Trash2 size={20} />
-                                        </button>
-                                    )}
+                                    <button
+                                        onClick={() => handleDeleteDossier(item.product_id, item.product_name)}
+                                        className="h-12 w-12 rounded-xl bg-slate-50 flex items-center justify-center text-slate-300 hover:bg-rose-500 hover:text-white transition-all shadow-sm border border-slate-100"
+                                        title="Expunge Dossier"
+                                    >
+                                        <Trash2 size={20} />
+                                    </button>
                                 </div>
                             </div>
                             {item.is_dossier_complete && <ShieldCheck className="absolute -bottom-4 -right-4 h-24 w-24 text-emerald-500/5 rotate-12" />}

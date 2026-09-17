@@ -1,36 +1,42 @@
-# Implementation Plan - Asset Recovery & Next.js Image Hardening
+# Implementation Plan - Emergency Dashboard Hardening & Code Cleanup
 
-The goal is to resolve the runtime errors caused by missing local assets (`grid-noise.png`, `placeholder.jpg`) and unauthorized external image domains (`images.unsplash.com`).
+The goal is to fix the "White Screen" and "Overlapping/Broken" issues in the Admin Dashboard by performing a deep cleanup of duplicate code blocks and hardening the deletion engine.
 
 ## User Review Required
 
-> [!IMPORTANT]
-> - **External Domains**: I am white-listing `images.unsplash.com` in `next.config.ts`. If you use other image providers (e.g., Cloudinary, Amazon S3), they must also be added.
-> - **Missing Assets**: `/grid-noise.png` and `/placeholder.jpg` are missing from your `public/` directory. I will point the code to existing fallbacks or provide instructions to restore them.
+> [!CAUTION]
+> - **Code Duplication**: I've identified massive redundancy in `upload/page.tsx` (multiple identical logic blocks). I will strip these out to restore system performance and visual clarity.
+> - **Universal Deletion**: I will force-deploy the delete buttons to the **Cellar Hub**, **Munchie Hub**, and **Partner Hub**, ensuring they are visible on mobile.
 
 ## Proposed Changes
 
-### 1. Project Configuration
+### 1. Dashboard Cleanup (The "Overlap" Fix)
 
-#### [MODIFY] [next.config.ts](file:///C:/Users/hp/AndroidStudioProjects/onbar/next.config.ts)
-- Add `images.unsplash.com` to `remotePatterns` to allow loading product images from Unsplash.
+#### [MODIFY] [upload/page.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/admin/(dashboard)/upload/page.tsx)
+- Remove 4+ redundant `stockIntelligence` Card blocks that are cluttering the file.
+- Restore the clean, single-card flow.
+- Re-inject the **Delete Product** button into the sticky bottom bar.
 
-### 2. Missing Assets & Fallbacks
+### 2. Functional Deletion Engine
 
-#### [MODIFY] [NeuralHero.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/components/home/hero/NeuralHero.tsx)
-- Remove the dependency on `/grid-noise.png` or provide a CSS-based noise fallback to prevent 404 errors during development.
+#### [MODIFY] [upload/page.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/admin/(dashboard)/upload/page.tsx)
+- Harden `handleDeleteProduct` to clear local state and trigger a grid refresh.
+- Make the feed trash icons permanently visible on mobile.
 
-#### [MODIFY] All components using `/placeholder.jpg`
-- Update the default fallback path to `/images/NoImage.jpg` (which exists in your project) instead of the non-existent root `/placeholder.jpg`.
+#### [MODIFY] [munchies/page.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/admin/(dashboard)/munchies/page.tsx)
+- Add a **Delete** button to the main Edit card.
+- Ensure the delete action records an audit log.
 
-### 3. Public Directory
-
-#### [ACTION] Instruction for User
-- If you have specific `grid-noise.png` or `placeholder.jpg` files, please place them in the `C:/Users/hp/AndroidStudioProjects/onbar/public/` folder.
+#### [MODIFY] [vendors/page.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/admin/(dashboard)/operations/vendors/page.tsx)
+- **[NEW]** Add delete functionality to the Partner grid rows.
 
 ## Verification Plan
 
 ### Manual Verification
-- Run `npm run dev`.
-- Verify that the Unsplash runtime error is gone.
-- Check the browser console to ensure no 404 errors are triggered for `/grid-noise.png` or `/placeholder.jpg`.
+- Check the **Cellar Hub**; it should no longer have 4 identical stock boxes.
+- Verify the **Red Delete Button** appears in the bottom bar when editing an item.
+- Delete a test snack in **Munchie Hub** and verify it disappears from the feed.
+- Check **Audit Logs** to confirm accountability.
+
+### Automated Tests
+- Full `npm run build` to ensure the cleanup didn't break imports or types.

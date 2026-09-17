@@ -138,7 +138,7 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
       }
 
       if (err && typeof err === 'object' && 'code' in err && (err.code === 'over_email_send_rate_limit' || err.code === 'over_sms_send_rate_limit')) {
-          errorText = "Too many attempts! Check your Supabase Dashboard Rate Limits or wait a minute. 🛡️";
+          errorText = "Rate Limit Hit! Go to Supabase Dashboard > Authentication > Rate Limits to increase this limit. 🛡️";
           setCooldown(60);
       }
 
@@ -201,7 +201,7 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
         }
 
         if (err && typeof err === 'object' && 'code' in err && (err.code === 'over_email_send_rate_limit' || err.code === 'over_sms_send_rate_limit')) {
-            errorText = "Too many attempts! Check your Supabase Dashboard Rate Limits or wait a minute. 🛡️";
+            errorText = "Rate Limit Hit! Go to Supabase Dashboard > Authentication > Rate Limits to increase this limit. 🛡️";
             setCooldown(60);
         }
 
@@ -332,6 +332,14 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
                       <code className="text-[9px] text-slate-300 font-mono break-all">{debugInfo}</code>
                   </div>
               )}
+          </div>
+      )}
+
+      {cooldown > 0 && (
+          <div className="p-4 bg-primary/10 border border-primary/20 rounded-2xl animate-in zoom-in-95">
+              <p className="text-[10px] font-black uppercase text-primary text-center">
+                  Uplink Throttled. Try Google Social Login below while you wait. ⚡
+              </p>
           </div>
       )}
 

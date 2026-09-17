@@ -460,6 +460,23 @@ export default function AdminOrdersPage() {
       }
   };
 
+  const handleDeleteOrder = async (id: number) => {
+      if (!supabase || !canManageOrders) return;
+      if (!window.confirm(`Nuclear Option: Expunge Order #${id} from the records?`)) return;
+
+      try {
+          const { error } = await supabase.from('orders').delete().eq('id', id);
+          if (error) throw error;
+
+          await logAuditAction(email, 'DELETE_ORDER', { id });
+          setOrders(prev => prev.filter(o => o.id !== id));
+          setStatusMessage({ type: 'success', text: `Order #${id} expunged.` });
+      } catch (err: unknown) {
+          const error = err as Error;
+          setStatusMessage({ type: 'error', text: error.message });
+      }
+  };
+
   if (role !== 'owner' && role !== 'admin' && role !== 'staff') {
       return (
           <div className="p-24 flex flex-col items-center justify-center text-center">
@@ -830,6 +847,15 @@ export default function AdminOrdersPage() {
                                             title="Copy Runner Dispatch Link"
                                         >
                                             <Navigation className="h-4 w-4" />
+                                        </Button>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="h-9 w-9 rounded-xl hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition-all active:scale-95"
+                                            onClick={() => handleDeleteOrder(order.id)}
+                                            title="Expunge Order"
+                                        >
+                                            <Trash2 className="h-4 w-4" />
                                         </Button>
                                     </div>
                                 </td>
