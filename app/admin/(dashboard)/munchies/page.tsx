@@ -13,7 +13,6 @@ import {
     Plus,
     Loader2,
     DollarSign,
-    X,
     Trash2,
     Camera,
     Flame,

@@ -19,7 +19,8 @@ import {
   CheckSquare,
   Square,
   ThermometerSnowflake,
-  Coffee
+  Coffee,
+  Trash2
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
