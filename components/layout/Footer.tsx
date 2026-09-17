@@ -110,7 +110,7 @@ export default function Footer({ initialSettings }: { initialSettings?: StoreSet
   ];
 
   return (
-    <footer className="bg-background border-t border-border">
+    <footer className="bg-background border-t border-border pb-20 lg:pb-0">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="py-12 border-b border-border" id="footer-newsletter">
           <div className="max-w-2xl mx-auto text-center">

@@ -116,7 +116,7 @@ export default function AIConcierge() {
     };
 
     return (
-        <div className="fixed bottom-10 left-10 z-[200]">
+        <div className="fixed bottom-24 lg:bottom-10 left-6 sm:left-10 z-[200]">
             {!isOpen ? (
                 <button
                     onClick={() => setIsOpen(true)}

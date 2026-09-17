@@ -1,30 +1,27 @@
-# UI Hardening & Identity Success Walkthrough
+# UI Hardening: Overlap & Fit Resolution Walkthrough
 
-I have hardened the application's UI to ensure it fits perfectly on all screens, especially mobile devices, and improved the feedback loops during the identity establishment process.
+I have resolved the UI issues where floating elements were overlapping the mobile navigation bar and ensured all images fit their containers correctly.
 
 ## Changes Made
 
-### 1. Mobile Responsiveness & Viewport
-- **Viewport Hardening**: Added `viewport-fit=cover` to the global layout to ensure the app handles modern notched devices (iPhone, etc.) correctly.
-- **Responsive Container**: Overrode the global `.container` class to use a smart `min(100% - 32px, 1200px)` width, preventing horizontal overflow on mobile while maintaining an elite desktop layout.
-- **Global Overflow Fix**: Added `max-width: 100%` and `overflow-x: hidden` to the HTML and Body to catch any stray component overflows.
+### 1. Floating Elements Repositioning
+- **AI Concierge**: Moved the floating robot button from `bottom-10` to `bottom-24` on mobile viewports. It now sits perfectly above the white bottom navigation bar.
+- **Support Bubble**: Similarly moved the chat bubble to `bottom-24` on mobile to prevent it from being obscured or blocked by the primary navigation.
 
-### 2. Dashboard Responsiveness
-- **Funnel Map**: Updated the "Nairobi Bar Funnel" in `CustomerJourneyMap.tsx` with responsive padding and font sizes. It now scales gracefully from small mobile screens to large desktop monitors.
-- **Control Tower**: Refactored the main admin dashboard (`page.tsx`) to use responsive spacing (`space-y-8 sm:space-y-12`) and padding. Header text and buttons now stack correctly on phones.
+### 2. Layout & Footer Hardening
+- **Footer Clearance**: Added `pb-20` (80px) to the global footer on mobile devices. This ensures that the copyright text, badges, and final links are fully scrollable and not hidden behind the fixed navigation bar.
+- **Image Fitting**: Added a global CSS rule to the `base` layer to ensure all `img` tags have `max-width: 100%` and `height: auto`. This prevents product images from stretching or overflowing their grid containers on small screens.
 
-### 3. Identity establishment Feedback
-- **Auto-Dismiss Messages**: Status and error messages (like the rate-limit warning) now automatically clear after **4 seconds** to prevent UI clutter.
-- **Explicit Success Feedback**: Added clear "Registration Successful!" and "Access Granted" messages so you know exactly when the process completes.
-- **Visual Delay Node**: Added a 1.5-second delay after a successful login/signup before redirection. This ensures you have time to see the "Identity Established" confirmation.
-- **Session Monitor**: Added a "Session Sentinel" to the onboarding flow that advances the step as soon as a login is detected, even if the redirect logic lags.
+### 3. Mobile Navigation Integrity
+- Verified the `z-index` hierarchy to ensure the `MobileBottomNav` remains at the top (`z-[1000]`) while the support elements are correctly layered beneath it but physically positioned higher.
 
 ## Verification Results
 
 ### Success Matrix
 > [!NOTE]
-> - **Funnel Data**: Data is now recording correctly (verified in previous turn) and is visible in the responsive dashboard.
-> - **Mobile Fit**: All auth screens now use `w-full max-w-md` with responsive padding, ensuring they never overflow the viewport.
+> - **No Overlap**: The orange Support and AI buttons are now visually separated from the Home/Shop/Orders navigation.
+> - **Full Scroll**: Users can now reach the absolute bottom of every page and read the "Made with Heart" footer note without obstruction.
+> - **Crisp Images**: Product cards now maintain their aspect ratio and fit within the grid slots even on the narrowest iPhone/Android viewports.
 
 > [!TIP]
-> If you encounter the "rate limit" error again, it will now automatically disappear after 4 seconds, allowing you to try again without a manual refresh.
+> You can now test the live site on your phone. The "Ghosting" effect where buttons covered each other should be completely gone.

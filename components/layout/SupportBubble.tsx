@@ -119,7 +119,7 @@ export default function SupportBubble() {
     };
 
     return (
-        <div className="fixed bottom-8 right-8 z-[200] flex flex-col items-end gap-4">
+        <div className="fixed bottom-24 lg:bottom-8 right-6 sm:right-8 z-[200] flex flex-col items-end gap-4">
 
             {/* Greeting Label */}
             {showLabel && !isOpen && (
