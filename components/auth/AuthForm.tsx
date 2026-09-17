@@ -123,8 +123,8 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
       const err = error as AuthError;
       console.error("[OB_OS] Auth Failure:", err);
 
-      let errorText = err.message || "Uplink Failure";
-      if (err.code === 'over_email_send_rate_limit') {
+      let errorText = (err && typeof err === 'object' && 'message' in err) ? err.message : "Uplink Failure";
+      if (err && typeof err === 'object' && 'code' in err && err.code === 'over_email_send_rate_limit') {
           errorText = "Too many attempts! Check your Supabase Dashboard Rate Limits or wait a minute. 🛡️";
       }
 
@@ -180,8 +180,8 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
         }
     } catch (error: unknown) {
         const err = error as AuthError;
-        let errorText = err.message || "Uplink Failure";
-        if (err.code === 'over_email_send_rate_limit' || err.code === 'over_sms_send_rate_limit') {
+        let errorText = (err && typeof err === 'object' && 'message' in err) ? err.message : "Uplink Failure";
+        if (err && typeof err === 'object' && 'code' in err && (err.code === 'over_email_send_rate_limit' || err.code === 'over_sms_send_rate_limit')) {
             errorText = "Too many attempts! Check your Supabase Dashboard Rate Limits or wait a minute. 🛡️";
         }
 

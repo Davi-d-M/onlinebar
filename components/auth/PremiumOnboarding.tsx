@@ -46,11 +46,15 @@ export default function PremiumOnboarding() {
 
         const checkSession = async () => {
             if (!supabase) return;
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session?.user && (step === 'INTRO' || step === 'AUTH')) {
-                console.log("[OB_OS] Active session detected. Synchronizing profile node...");
-                setUserId(session.user.id);
-                setStep('PERSONALIZE');
+            try {
+                const { data: { session } } = await supabase.auth.getSession();
+                if (session?.user && (step === 'INTRO' || step === 'AUTH')) {
+                    console.log("[OB_OS] Active session detected. Synchronizing profile node...");
+                    setUserId(session.user.id);
+                    setStep('PERSONALIZE');
+                }
+            } catch (e) {
+                console.warn("[OB_OS] Session Check Error:", e);
             }
         };
 

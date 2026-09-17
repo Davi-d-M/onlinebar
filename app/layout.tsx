@@ -56,7 +56,6 @@ import PublicLayoutShield from "@/components/layout/PublicLayoutShield";
 import JsonLd from "@/components/seo/JsonLd";
 import AnalyticsTracker from "@/components/layout/AnalyticsTracker";
 import MobileBottomNav from "@/components/layout/MobileBottomNav";
-import LevelUpCelebration from "@/components/engagement/LevelUpCelebration";
 import InstallAppWidget from "@/components/layout/InstallAppWidget";
 import ExperienceNotificationHost from "@/components/layout/ExperienceNotificationHost";
 import { type StoreSettings, DEFAULT_SETTINGS } from "@/lib/useSettings";
@@ -76,12 +75,16 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   // Fetch settings with shared cache
-  const { data: settingsRes } = await getCachedSettings();
   const settings = { ...DEFAULT_SETTINGS } as StoreSettings;
-  (settingsRes || []).forEach(item => {
-      const key = item.key as keyof StoreSettings;
-      (settings as unknown as Record<string, unknown>)[key] = item.value;
-  });
+  try {
+    const { data: settingsRes } = await getCachedSettings();
+    (settingsRes || []).forEach(item => {
+        const key = item.key as keyof StoreSettings;
+        (settings as unknown as Record<string, unknown>)[key] = item.value;
+    });
+  } catch (err) {
+    console.error("[OB_OS] Critical Layout Settings Failure:", err);
+  }
 
   return (
     <html lang="en">
@@ -129,7 +132,6 @@ export default async function RootLayout({
         <CartProvider>
           <WishlistProvider>
             <PublicLayoutShield initialSettings={settings}>
-                <LevelUpCelebration />
                 {children}
             </PublicLayoutShield>
             <InstallAppWidget />

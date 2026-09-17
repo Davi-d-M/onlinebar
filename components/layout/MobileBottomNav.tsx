@@ -31,7 +31,7 @@ export default function MobileBottomNav() {
     if (pathname?.startsWith('/admin')) return null;
 
     return (
-        <nav className="fixed bottom-0 left-0 right-0 z-[1000] lg:hidden bg-white/80 backdrop-blur-xl border-t border-slate-100 pb-safe-area-inset-bottom animate-in slide-in-from-bottom-full duration-500">
+        <nav className="fixed bottom-0 left-0 right-0 z-[1000] lg:hidden bg-white/80 backdrop-blur-xl border-t border-slate-100 pb-safe animate-in slide-in-from-bottom-full duration-500">
             <div className="flex justify-around items-center h-20 px-4">
                 {NAV_ITEMS.map((item) => {
                     const Icon = item.icon;
