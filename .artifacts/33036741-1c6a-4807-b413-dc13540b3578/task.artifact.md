@@ -1,4 +1,5 @@
-- [x] Refine global typography and button feedback in `globals.css`
-- [x] Improve spacing and visual hierarchy in `AuthForm.tsx`
-- [x] Perfect transitions and grid rhythms in `PremiumOnboarding.tsx`
-- [x] Verify production build stability
+- [x] Reposition `AIConcierge` and `SupportBubble` (Completed)
+- [x] Add Delete button to Edit Bar in `upload/page.tsx`
+- [x] Fix Trash icon visibility in `upload/page.tsx`
+- [x] Implement Deletion Engine in `munchies/page.tsx`
+- [x] Verify Audit Logs for deletion actions

@@ -74,6 +74,27 @@ function MunchieContent() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
+  const handleDeleteSnack = async (id: number, name: string) => {
+      if (!supabase || !role) return;
+      if (!window.confirm(`Expunge ${name} from the midnight grid?`)) return;
+
+      try {
+          const { error } = await supabase.from('products').delete().eq('id', id);
+          if (error) throw error;
+
+          await logAuditAction(email || 'admin', 'DELETE_SNACK', { id, name });
+          if (editingId === id) {
+              setEditingId(null);
+              setForm(initialForm);
+          }
+          fetchSnacks();
+          setMessage({ type: 'success', text: `${name} has been removed.` });
+          setTimeout(() => setMessage(null), 3000);
+      } catch (err: unknown) {
+          setMessage({ type: 'error', text: (err as Error).message });
+      }
+  };
+
   const fetchSnacks = async () => {
     if (!supabase) return;
     try {
@@ -269,8 +290,17 @@ function MunchieContent() {
                         </div>
                     </div>
 
-                    <div className="pt-10 border-t border-slate-50">
-                        <Button type="submit" disabled={isSubmitting} className="w-full h-20 rounded-[2rem] bg-primary text-white font-black uppercase tracking-[0.3em] text-sm shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
+                    <div className="pt-10 border-t border-slate-50 flex gap-4">
+                        {editingId && (
+                            <Button
+                                type="button"
+                                onClick={() => handleDeleteSnack(editingId, form.name)}
+                                className="h-20 px-8 rounded-[2rem] bg-rose-50 text-rose-500 font-black uppercase text-[10px] tracking-widest border-2 border-rose-100 hover:bg-rose-500 hover:text-white transition-all"
+                            >
+                                <Trash2 className="h-5 w-5" />
+                            </Button>
+                        )}
+                        <Button type="submit" disabled={isSubmitting} className="flex-1 h-20 rounded-[2rem] bg-primary text-white font-black uppercase tracking-[0.3em] text-sm shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
                             {isSubmitting ? <Loader2 className="animate-spin mr-3" /> : <Flame className="mr-3" />}
                             {editingId ? 'Execute Update' : 'Deploy to Midnight Grid'}
                         </Button>
@@ -325,7 +355,18 @@ function MunchieContent() {
                                             </div>
                                         </div>
                                     </div>
-                                    <ChevronRight className="h-5 w-5 text-slate-200 group-hover:text-primary transition-colors" />
+                                    <div className="flex items-center gap-2">
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleDeleteSnack(s.id, s.name);
+                                            }}
+                                            className="h-10 w-10 rounded-xl flex items-center justify-center text-slate-200 hover:text-rose-500 hover:bg-rose-50 sm:opacity-0 group-hover:opacity-100 transition-all"
+                                        >
+                                            <Trash2 className="h-4 w-4" />
+                                        </button>
+                                        <ChevronRight className="h-5 w-5 text-slate-200 group-hover:text-primary transition-colors" />
+                                    </div>
                                 </div>
                             ))}
                         </div>

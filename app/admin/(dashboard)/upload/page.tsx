@@ -1196,6 +1196,19 @@ function UploadContent() {
                               Authorize for Grid
                           </Button>
                       )}
+                      {editingId && (
+                          <Button
+                              type="button"
+                              onClick={() => {
+                                  if (window.confirm(`Expunge ${form.name} from global catalogue?`)) {
+                                      handleDeleteProduct(editingId, form.name);
+                                  }
+                              }}
+                              className="h-16 px-8 rounded-2xl bg-rose-50 text-rose-500 font-black uppercase text-[10px] tracking-widest border-2 border-rose-100 hover:bg-rose-500 hover:text-white transition-all active:scale-95"
+                          >
+                              <Trash2 className="h-5 w-5 mr-3" /> Delete Product
+                          </Button>
+                      )}
                       <Button type="submit" disabled={isSubmitting} className="flex-1 h-16 rounded-2xl bg-primary text-white font-black uppercase tracking-[0.3em] text-xs hover:bg-primary/90 transition-all active:scale-95 shadow-xl shadow-primary/20">
                         {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin mr-3" /> : <Wine className="h-5 w-5 mr-3" />}
                         {editingId ? 'Save Product Changes' : 'Deploy New Inventory'}
@@ -1278,7 +1291,7 @@ function UploadContent() {
                                                 handleDeleteProduct(p.id, p.name);
                                             }
                                         }}
-                                        className="h-10 w-10 rounded-xl flex items-center justify-center text-slate-200 hover:text-rose-500 hover:bg-rose-50 opacity-0 group-hover:opacity-100 transition-all"
+                                        className="h-10 w-10 rounded-xl flex items-center justify-center text-slate-200 hover:text-rose-500 hover:bg-rose-50 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-all"
                                       >
                                           <Trash2 className="h-4 w-4" />
                                       </button>
