@@ -30,7 +30,13 @@ export const WishlistProvider = ({ children }: { children: React.ReactNode }) =>
   useEffect(() => {
     const savedWishlist = localStorage.getItem("wishlist");
     if (savedWishlist) {
-      setWishlist(JSON.parse(savedWishlist));
+      try {
+        setWishlist(JSON.parse(savedWishlist));
+      } catch (e) {
+        console.warn("[OB_OS] Wishlist parse failed. Resetting node...", e);
+        localStorage.removeItem("wishlist");
+        setWishlist([]);
+      }
     }
 
     async function checkUser() {

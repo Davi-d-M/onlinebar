@@ -1,51 +1,35 @@
-# Implementation Plan - Customer 360 Behavioral Audit OS
+# Implementation Plan - Reliability & Cache Recovery
 
-The goal is to implement a first-party behavioral audit layer in the "ONLINE BAR" platform, tracking every user journey from anonymous landing to final delivery mission, including engagement, friction, and commerce metrics.
+The goal is to eliminate runtime crashes caused by corrupted local storage data and provide a "Clean Slate" utility to resolve Webpack cache corruption.
 
 ## User Review Required
 
-> [!IMPORTANT]
-> - **Data Volume**: This system will generate a high volume of event data. I am implementing an **Event Batching Engine** to minimize database load.
-> - **Privacy**: All tracking respects the Kenya Data Protection Act. I will integrate a centralized **Consent Shield** that toggles these behavioral nodes.
+> [!CAUTION]
+> - **Cache Corruption**: You are seeing Webpack errors (`invalid code lengths set`). I've provided a script to clear your build cache.
+> - **Broken Storage**: If your browser has a corrupted "cart" or "wishlist" from a previous session, the app will now gracefully reset them instead of showing a white screen.
 
 ## Proposed Changes
 
-### 1. Master Event Engine (OB-OS Core)
+### 1. Data Integrity Hardening
 
-#### [MODIFY] [lib/onlineBarOS.ts](file:///C:/Users/hp/AndroidStudioProjects/onbar/lib/onlineBarOS.ts)
-- **High-Resolution Tracking**: Expand the `track` method to handle specialized events like `RAGE_CLICK`, `DEAD_CLICK`, and `SCROLL_DEPTH`.
-- **Active Time Engine**: Implement a background timer that distinguishes between "Active" and "Idle" time on the platform.
-- **Batch Processing**: Buffer events in memory and transmit them in bundles of 10 or every 30 seconds to reduce Supabase request overhead.
+#### [MODIFY] [CartContext.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/context/CartContext.tsx)
+- Wrap `JSON.parse` in a `try/catch` block.
+- If parsing fails, log a warning and fallback to an empty cart `[]`.
 
-### 2. Global Behavioral Sentinel (Frontend)
+#### [MODIFY] [WishlistContext.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/context/WishlistContext.tsx)
+- Wrap `JSON.parse` in a `try/catch` block.
+- If parsing fails, fallback to an empty wishlist `[]`.
 
-#### [NEW] `components/layout/AnalyticsTracker.tsx`
-- **Page Audit**: Automatic page view tracking with title and entry/exit nodes.
-- **Click Intelligence**: Global listener for all `button` and `a` clicks, capturing element text and location.
-- **Friction Detection**: Detect "Rage Clicks" (multiple clicks on the same element within a short window).
-- **Scroll Monitoring**: Track milestones (25%, 50%, 75%, 100%) to measure content attention.
+#### [MODIFY] [Header.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/components/layout/Header.tsx)
+- Harden the "Recently Viewed" parsing logic to prevent crashes from malformed session data.
 
-#### [MODIFY] `app/layout.tsx`
-- Integrate the `AnalyticsTracker` at the root Level.
+### 2. Environment Stability
 
-### 3. Customer 360 Admin UI
-
-#### [MODIFY] `app/admin/(dashboard)/customers/[phone]/page.tsx`
-- **Total Experience HUD**: Display total sessions, active time, and cross-channel engagement stats.
-- **Journey Timeline**: A vertical "Fidelity Timeline" showing the customer's exact path (Landing -> Search -> Product -> Cart -> Order).
-- **Friction Radar**: Highlight rage clicks and payment failures to identify "Stuck" customers.
-- **Device & Source Profile**: Display preferred device and marketing attribution (e.g., Instagram conversion).
-
-### 4. Database Schema (Supabase)
-
-#### [NEW] `supabase/migrations/20261001_customer_360_audit_v4.sql`
-- Tables for `customer_aggregate_metrics`, `search_intelligence`, and `session_forensics`.
-- Automated triggers to calculate `LTV`, `AOV`, and `Affinities` in real-time.
+#### [NEW] [clean_rebuild.sh](file:///C:/Users/hp/AndroidStudioProjects/onbar/.artifacts/33036741-1c6a-4807-b413-dc13540b3578/scratch/clean_rebuild.sh)
+- A specialized script for Windows/Bash to delete `.next` and `node_modules/.cache` to fix the "invalid code lengths" error.
 
 ## Verification Plan
 
 ### Manual Verification
-- **Engagement Test**: Browse several products and categories as a guest, then sign up. Verify the "Customer 360" profile correctly stitches the anonymous history.
-- **Friction Test**: Repeatedly click a button and verify a "Rage Click" alert appears in the Admin session forensics.
-- **Search Audit**: Perform a search with "zero results" and verify it appears in the "Demand Radar" dashboard.
-- **Time Check**: Leave the tab inactive for 2 minutes, then return. Verify "Active Time" vs "Total Dwell" is recorded accurately.
+- **Reset Test**: Manually set `localStorage.setItem('cart', 'invalid-json')` in your browser console and refresh. The app should load an empty cart instead of crashing.
+- **Cache Fix**: Run the rebuild script and verify the Webpack warning `[webpack.cache.PackFileCacheStrategy]` disappears.

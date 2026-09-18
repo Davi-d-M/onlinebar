@@ -38,7 +38,13 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const savedCart = localStorage.getItem("cart");
     if (savedCart) {
-      setCart(JSON.parse(savedCart));
+      try {
+        setCart(JSON.parse(savedCart));
+      } catch (e) {
+        console.warn("[OB_OS] Cart parse failed. Resetting node...", e);
+        localStorage.removeItem("cart");
+        setCart([]);
+      }
     }
   }, []);
 

@@ -165,10 +165,13 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
         const saved = localStorage.getItem('ob_recent_views');
         if (saved) {
             const parsed = JSON.parse(saved) as RecentView[];
-            if (Array.isArray(parsed)) setRecentlyViewed(parsed.slice(0, 3));
+            if (Array.isArray(parsed)) {
+                setRecentlyViewed(parsed.slice(0, 3));
+            }
         }
     } catch (e) {
         console.warn("Recent views parse error:", e);
+        localStorage.removeItem('ob_recent_views');
     }
   }, [isSearchFocused]);
 

@@ -1,6 +1,5 @@
-- [x] Deploy Supabase Schema for Customer 360 v4.0
-- [x] Implement High-Resolution Event Engine in `lib/onlineBarOS.ts`
-- [x] Create `AnalyticsTracker` component for global behavioral monitoring
-- [x] Build the "Customer 360" Admin HUD in `customers/[phone]/page.tsx`
-- [x] Implement Identity Stitching for Anonymous -> Registered flows
-- [x] Verify automatic experience detection (Rage/Dead Clicks)
+- [x] Harden `JSON.parse` in `CartContext.tsx`
+- [x] Harden `JSON.parse` in `WishlistContext.tsx`
+- [x] Refine `Header.tsx` recently viewed logic
+- [x] Create `clean_rebuild.sh` script
+- [x] Verify build stability
