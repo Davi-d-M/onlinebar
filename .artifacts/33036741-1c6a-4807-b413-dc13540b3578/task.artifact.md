@@ -1,5 +1,5 @@
-- [x] Repair `app/admin/(dashboard)/upload/page.tsx` (Remove duplicate closing tags & restore full feature set)
-- [x] Implement instant `anonymousId` generation in `AnalyticsTracker.tsx`
-- [x] Ensure `OnlineBarOS` constructor handles ID persistence
-- [x] Verify production build success
-- [x] Harden UI overlay synchronization
+- [ ] Fix `const imageUrls` reassignment error in `app/admin/(dashboard)/upload/page.tsx`
+- [ ] Optimize Font loading in `app/layout.tsx` to prevent network blocks
+- [ ] Refactor `AnalyticsTracker.tsx` to use non-blocking `requestIdleCallback`
+- [ ] Defer non-critical scripts in `RootLayout`
+- [ ] Verify build and load performance

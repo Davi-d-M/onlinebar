@@ -1,35 +1,45 @@
-# Implementation Plan - Total Behavioral Onboarding & Admin Integrity
+# Implementation Plan - Performance & Zero-Latency Hardening
 
-The goal is to ensure that data collection starts **the absolute moment** a visitor hits the platform and to fix the "butchered" code in the Admin Inventory Master.
+The goal is to resolve the "Eternity Loading" issue by removing blocking server-side calls, optimizing asset loading, and ensuring the behavioral tracking node is truly non-blocking.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> - **Immediate Identity**: I am moving the `anonymousId` generation to the global `AnalyticsTracker`. This means every visitor gets a trackable ID the millisecond they land, allowing us to build their 360 profile before they even click anything.
-> - **Code Repair**: I identified a syntax error in the `AdminUploadPage` caused by redundant closing tags. I will expunge the extra code to restore the page.
+> - **Streaming Layout**: I am moving the "Settings" fetch from a blocking `await` in the `RootLayout` to a more resilient pattern. This ensures the app shell (Header/Footer) renders instantly while settings load in the background.
+> - **Font Hardening**: I will host the **Inter** font locally within the project to eliminate the dependency on Google's CSS servers, which are currently timing out in your build logs.
+> - **Tracking Deferral**: The behavioral tracking engine will now use `requestIdleCallback`. This means data collection will wait until the main UI is interactive, making the app feel snappy.
 
 ## Proposed Changes
 
-### 1. Global Behavioral Sentinel (Frontend)
+### 1. Asset & Font Optimization
+
+#### [MODIFY] [layout.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/layout.tsx)
+- Disable Google Fonts `preload` and `subset` fetching to prevent network-blocked renders.
+- Host font files locally if possible, or use `display: swap` more aggressively.
+
+### 2. Layout Resilience
+
+#### [MODIFY] [layout.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/layout.tsx)
+- Refactor the `RootLayout` to prioritize the "First Paint."
+- Move `JsonLd` and other meta scripts to `afterInteractive` strategy.
+
+### 3. Intelligence Node Hardening (Non-blocking)
 
 #### [MODIFY] [AnalyticsTracker.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/components/layout/AnalyticsTracker.tsx)
-- **Instant ID Generation**: Generate and store `ob_anonymous_id` (UUID) if it doesn't exist yet.
-- **UTM Node**: Ensure UTM parameters (`utm_source`, `utm_campaign`, etc.) are captured on the first session hit and persisted in the `customer_sessions` table.
+- Wrap heavy database initialization calls in `setTimeout(..., 0)` or `requestIdleCallback`.
+- This ensures that "Collecting Data" doesn't compete with the browser for rendering the actual shop grid.
 
-### 2. Admin Inventory Master (Code Integrity)
+### 4. Admin Integrity Fix
 
 #### [FIX] [upload/page.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/admin/(dashboard)/upload/page.tsx)
-- Remove the duplicate `</div> ); }` blocks at the end of the file that are causing the build to fail.
-- Ensure the `overflow-visible` change is maintained to prevent button cutting.
-
-### 3. Predictive Intelligence (OS Core)
-
-#### [MODIFY] [lib/onlineBarOS.ts](file:///C:/Users/hp/AndroidStudioProjects/onbar/lib/onlineBarOS.ts)
-- Update the constructor to ensure it always has a fallback `anonymousId` context.
+- Change `const imageUrls` to `let imageUrls` to resolve the build-blocking constant reassignment error.
 
 ## Verification Plan
 
+### Automated Verification
+- Run `npm run build` and verify that the "request to fonts.googleapis.com failed" warning is gone.
+- Verify build time is under 2 minutes.
+
 ### Manual Verification
-- **Cold Landing Test**: Open the site in Incognito. Check `localStorage` for `ob_anonymous_id`. Verify a `PAGE_VIEW` event is recorded in Supabase with this ID immediately.
-- **Admin Build**: Run `npm run build` and verify the `AdminUploadPage` error is gone.
-- **Marketing Audit**: Visit the site with `?utm_source=instagram` and verify the source is correctly attributed in the Admin Customer 360 view.
+- Open the app and verify the Header appears in under 500ms.
+- Check the browser network tab to ensure tracking calls happen **after** the `load` event.

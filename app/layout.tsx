@@ -9,7 +9,7 @@ const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
   display: "swap",
-  preload: false, // Fix for "Failed to fetch Inter" in restricted network build envs
+  preload: false,
 });
 
 export const metadata: Metadata = {
@@ -69,23 +69,11 @@ export const viewport: Viewport = {
   viewportFit: 'cover',
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Fetch settings with shared cache
-  const settings = { ...DEFAULT_SETTINGS } as StoreSettings;
-  try {
-    const { data: settingsRes } = await getCachedSettings();
-    (settingsRes || []).forEach(item => {
-        const key = item.key as keyof StoreSettings;
-        (settings as unknown as Record<string, unknown>)[key] = item.value;
-    });
-  } catch (err) {
-    console.error("[OB_OS] Critical Layout Settings Failure:", err);
-  }
-
   return (
     <html lang="en">
       <body
@@ -95,7 +83,32 @@ export default async function RootLayout({
             <AnalyticsTracker />
         </Suspense>
         <JsonLd />
-        {/* Enterprise Marketing Scripts */}
+
+        <CartProvider>
+          <WishlistProvider>
+            <Suspense fallback={<div className="min-h-screen bg-white" />}>
+                <PublicLayoutWrapper>{children}</PublicLayoutWrapper>
+            </Suspense>
+            <InstallAppWidget />
+            <ExperienceNotificationHost />
+            <MobileBottomNav />
+            <Script id="register-sw" strategy="lazyOnload">
+                {`
+                if ('serviceWorker' in navigator) {
+                    window.addEventListener('load', function() {
+                    navigator.serviceWorker.register('/sw.js').then(function(registration) {
+                        console.log('OB-OS ServiceWorker registration successful');
+                    }, function(err) {
+                        console.log('OB-OS ServiceWorker registration failed: ', err);
+                    });
+                    });
+                }
+                `}
+            </Script>
+          </WishlistProvider>
+        </CartProvider>
+
+        {/* Enterprise Marketing Scripts (Deferred) */}
         {process.env.NEXT_PUBLIC_GA_ID && (
             <Script
                 strategy="afterInteractive"
@@ -113,7 +126,7 @@ export default async function RootLayout({
             </Script>
         )}
 
-        {/* Meta Pixel Protocol */}
+        {/* Meta Pixel Protocol (Deferred) */}
         <Script id="fb-pixel" strategy="afterInteractive">
             {`
                 !function(f,b,e,v,n,t,s)
@@ -128,31 +141,27 @@ export default async function RootLayout({
                 fbq('track', 'PageView');
             `}
         </Script>
-
-        <CartProvider>
-          <WishlistProvider>
-            <PublicLayoutShield initialSettings={settings}>
-                {children}
-            </PublicLayoutShield>
-            <InstallAppWidget />
-            <ExperienceNotificationHost />
-            <MobileBottomNav />
-            <Script id="register-sw">
-                {`
-                if ('serviceWorker' in navigator) {
-                    window.addEventListener('load', function() {
-                    navigator.serviceWorker.register('/sw.js').then(function(registration) {
-                        console.log('OB-OS ServiceWorker registration successful');
-                    }, function(err) {
-                        console.log('OB-OS ServiceWorker registration failed: ', err);
-                    });
-                    });
-                }
-                `}
-            </Script>
-          </WishlistProvider>
-        </CartProvider>
       </body>
     </html>
   );
+}
+
+async function PublicLayoutWrapper({ children }: { children: React.ReactNode }) {
+    // Fetch settings with shared cache (Streaming Node)
+    const settings = { ...DEFAULT_SETTINGS } as StoreSettings;
+    try {
+        const { data: settingsRes } = await getCachedSettings();
+        (settingsRes || []).forEach(item => {
+            const key = item.key as keyof StoreSettings;
+            (settings as unknown as Record<string, unknown>)[key] = item.value;
+        });
+    } catch (err) {
+        console.error("[OB_OS] Critical Layout Settings Failure:", err);
+    }
+
+    return (
+        <PublicLayoutShield initialSettings={settings}>
+            {children}
+        </PublicLayoutShield>
+    );
 }
