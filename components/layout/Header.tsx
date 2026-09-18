@@ -24,6 +24,15 @@ interface RecentView {
   image: string;
 }
 
+interface NotificationNode {
+    id: string;
+    title: string;
+    message: string;
+    is_read: boolean;
+    created_at: string;
+    type?: string;
+}
+
 function UserMenu({ isMobileMenu = false }: { isMobileMenu?: boolean }) {
   const [displayEmail, setDisplayEmail] = useState<string | null>(null);
   const [points, setPoints] = useState<number | null>(null);
@@ -154,7 +163,8 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
-  const [hasUnread, setHasUnread] = useState(true);
+  const [notifications, setNotifications] = useState<NotificationNode[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
   const [recentlyViewed, setRecentlyViewed] = useState<RecentView[]>([]);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
 
@@ -255,6 +265,73 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
 
     return () => clearTimeout(delayDebounceFn);
   }, [searchQuery]);
+
+  useEffect(() => {
+    async function initNotifications() {
+        if (!supabase) return;
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) return;
+
+        // 1. Initial Fetch
+        const [notifsRes, countRes] = await Promise.all([
+            supabase.from('user_notifications').select('*').eq('user_id', session.user.id).order('created_at', { ascending: false }).limit(10),
+            supabase.from('user_notifications').select('*', { count: 'exact', head: true }).eq('user_id', session.user.id).eq('is_read', false)
+        ]);
+
+        if (notifsRes.data) setNotifications(notifsRes.data as NotificationNode[]);
+        if (countRes.count !== null) setUnreadCount(countRes.count);
+
+        // 2. Real-time Subscription
+        const channel = supabase.channel(`header-notifs-${session.user.id}`)
+            .on('postgres_changes', {
+                event: 'INSERT',
+                schema: 'public',
+                table: 'user_notifications',
+                filter: `user_id=eq.${session.user.id}`
+            }, (payload) => {
+                const newNode = payload.new as NotificationNode;
+                setNotifications(prev => [newNode, ...prev.slice(0, 9)]);
+                setUnreadCount(c => c + 1);
+            })
+            .on('postgres_changes', {
+                event: 'UPDATE',
+                schema: 'public',
+                table: 'user_notifications',
+                filter: `user_id=eq.${session.user.id}`
+            }, (payload) => {
+                const updated = payload.new as NotificationNode;
+                setNotifications(current => {
+                    const next = current.map(n => n.id === updated.id ? updated : n);
+                    setUnreadCount(next.filter(n => !n.is_read).length);
+                    return next;
+                });
+            })
+            .subscribe();
+
+        return () => { supabase.removeChannel(channel); };
+    }
+    initNotifications();
+  }, [pathname]);
+
+  const handleMarkAllRead = async () => {
+      if (!supabase) return;
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      // Optimistic Update
+      setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
+      setUnreadCount(0);
+
+      try {
+          await supabase
+            .from('user_notifications')
+            .update({ is_read: true })
+            .eq('user_id', session.user.id)
+            .eq('is_read', false);
+      } catch (err) {
+          console.error("Mark read failed", err);
+      }
+  };
 
   const handleGlobalSearch = (term?: string) => {
       const finalTerm = term || searchQuery;
@@ -473,36 +550,46 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
 
             <div className="relative p-2 rounded-full hover:bg-slate-50 transition-all duration-200 group cursor-pointer active:scale-95" onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}>
                 <Bell className="h-6 w-6 text-slate-600 group-hover:text-primary" />
-                {hasUnread && <span className="absolute top-2 right-2 h-4 w-4 bg-primary text-white text-[8px] font-black rounded-full flex items-center justify-center border-2 border-white animate-bounce">1</span>}
+                {unreadCount > 0 && <span className="absolute top-2 right-2 h-4 w-4 bg-primary text-white text-[8px] font-black rounded-full flex items-center justify-center border-2 border-white animate-bounce">{unreadCount}</span>}
 
                 {isNotificationsOpen && (
                     <div className="absolute top-full right-0 mt-3 w-80 bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-300 z-[70] p-4 text-left">
                         <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
                             <h3 className="text-xs font-black uppercase tracking-widest text-foreground">Notifications Hub</h3>
-                            <button className="text-[9px] font-black text-primary uppercase hover:underline" onClick={(e) => { e.stopPropagation(); setHasUnread(false); setIsNotificationsOpen(false); }}>Mark all read</button>
-                        </div>
-                        <div className="space-y-3">
-                            {hasUnread ? (
-                                <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex gap-4 group/item hover:border-primary/20 transition-all">
-                                    <div className="h-10 w-10 rounded-xl bg-white flex items-center justify-center text-primary shadow-sm shrink-0 border border-slate-100 group-hover/item:scale-110 transition-transform"><Zap className="h-5 w-5 fill-current" /></div>
-                                    <div>
-                                        <p className="text-[11px] font-black text-foreground uppercase leading-tight">Welcome to the Club!</p>
-                                        <p className="text-[10px] text-slate-500 mt-1.5 leading-relaxed font-medium">Complete your profile setup to earn your first 100 points instantly.</p>
-                                    </div>
-                                </div>
+                            {unreadCount > 0 ? (
+                                <button
+                                    className="text-[10px] font-black text-primary uppercase hover:underline transition-all active:scale-95"
+                                    onClick={(e) => { e.stopPropagation(); handleMarkAllRead(); }}
+                                >
+                                    Mark all read
+                                </button>
                             ) : (
-                                <div className="py-8 text-center space-y-2">
-                                    <CheckCircle className="h-8 w-8 text-emerald-500 mx-auto opacity-20" />
-                                    <p className="text-[10px] font-black uppercase text-slate-400">No new alerts.</p>
+                                <Link href="/profile" className="text-[9px] font-black text-slate-300 uppercase hover:text-primary transition-colors">View All</Link>
+                            )}
+                        </div>
+                        <div className="space-y-3 max-h-[400px] overflow-y-auto no-scrollbar pr-1">
+                            {notifications.length > 0 ? (
+                                notifications.map((n) => (
+                                    <div key={n.id} className={cn(
+                                        "p-4 rounded-2xl border transition-all flex gap-4 group/item",
+                                        n.is_read ? "bg-white border-transparent opacity-60 grayscale" : "bg-slate-50 border-slate-100 hover:border-primary/20"
+                                    )}>
+                                        <div className="h-10 w-10 rounded-xl bg-white flex items-center justify-center text-primary shadow-sm shrink-0 border border-slate-100 group-hover/item:scale-110 transition-transform">
+                                            {n.type === 'reward' ? <Zap className="h-5 w-5 fill-current" /> : <Package className="h-5 w-5" />}
+                                        </div>
+                                        <div className="min-w-0 flex-1">
+                                            <p className="text-[11px] font-black text-foreground uppercase leading-tight truncate">{n.title}</p>
+                                            <p className="text-[10px] text-slate-500 mt-1.5 leading-relaxed font-medium line-clamp-2">{n.message}</p>
+                                            <p className="text-[7px] font-black text-slate-300 uppercase mt-2 tracking-widest">{new Date(n.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="py-12 text-center space-y-2 opacity-30">
+                                    <CheckCircle className="h-10 w-10 mx-auto" />
+                                    <p className="text-[10px] font-black uppercase tracking-widest">Cellar node silent.</p>
                                 </div>
                             )}
-                            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex gap-4 group/item hover:border-primary/20 transition-all opacity-50 grayscale">
-                                <div className="h-10 w-10 rounded-xl bg-white flex items-center justify-center text-slate-400 shadow-sm shrink-0 border border-slate-100"><Package className="h-5 w-5" /></div>
-                                <div>
-                                    <p className="text-[11px] font-black text-slate-400 uppercase leading-tight">Order Logged</p>
-                                    <p className="text-[10px] text-slate-400 mt-1.5 leading-relaxed font-medium italic">Older notification read.</p>
-                                </div>
-                            </div>
                         </div>
                         <div className="mt-6 pt-4 border-t border-slate-100 text-center">
                             <p className="text-[8px] font-black text-slate-300 uppercase tracking-widest">Real-time alerts active</p>

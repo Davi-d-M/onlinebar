@@ -224,7 +224,7 @@ function MunchieContent() {
             <Utensils className="absolute -bottom-10 -right-10 h-64 w-64 text-primary/5 rotate-12 -z-0" />
         </div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-10">
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-10 xl:items-start">
 
           {/* LEFT: UPLOAD FORM */}
           <div className="xl:col-span-7 space-y-8">
@@ -297,14 +297,14 @@ function MunchieContent() {
                             <Button
                                 type="button"
                                 onClick={() => handleDeleteSnack(editingId, form.name)}
-                                className="h-14 px-8 rounded-2xl bg-rose-600 text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-rose-100 hover:bg-rose-700 transition-all active:scale-95"
+                                className="h-16 px-8 rounded-2xl bg-rose-600 text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-rose-100 hover:bg-rose-700 transition-all active:scale-95"
                             >
                                 <Trash2 className="h-5 w-5" />
                             </Button>
                         )}
-                        <Button type="submit" disabled={isSubmitting} className="flex-1 h-14 min-w-[200px] rounded-2xl bg-primary text-white font-black uppercase tracking-[0.2em] text-xs shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
-                            {isSubmitting ? <Loader2 className="animate-spin mr-3 h-4 w-4" /> : <Flame className="mr-3 h-4 w-4" />}
-                            {editingId ? 'Execute Update' : 'Deploy to Grid'}
+                        <Button type="submit" disabled={isSubmitting} className="flex-1 h-16 min-w-[240px] rounded-2xl bg-primary text-white font-black uppercase tracking-[0.3em] text-sm shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
+                            {isSubmitting ? <Loader2 className="animate-spin mr-3" /> : <Flame className="mr-3" />}
+                            {editingId ? 'Execute Update' : 'Deploy to Midnight Grid'}
                         </Button>
                     </div>
                 </Card>

@@ -1,5 +1,6 @@
-- [ ] Fix `const imageUrls` reassignment error in `app/admin/(dashboard)/upload/page.tsx`
-- [ ] Optimize Font loading in `app/layout.tsx` to prevent network blocks
-- [ ] Refactor `AnalyticsTracker.tsx` to use non-blocking `requestIdleCallback`
-- [ ] Defer non-critical scripts in `RootLayout`
-- [ ] Verify build and load performance
+- [ ] Define `NotificationNode` interface in `Header.tsx`
+- [ ] Implement `notifications` and `unreadCount` state in `Header` component
+- [ ] Add `fetchNotifications` and real-time subscription to `Header.tsx`
+- [ ] Implement `handleMarkAllRead` with Supabase persistence
+- [ ] Map real data to the Notifications Hub UI
+- [ ] Verify build and functionality

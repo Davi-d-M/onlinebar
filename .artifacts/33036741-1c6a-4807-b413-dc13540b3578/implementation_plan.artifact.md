@@ -1,45 +1,35 @@
-# Implementation Plan - Performance & Zero-Latency Hardening
+# Implementation Plan - Real-time Notifications & Persistence
 
-The goal is to resolve the "Eternity Loading" issue by removing blocking server-side calls, optimizing asset loading, and ensuring the behavioral tracking node is truly non-blocking.
+The goal is to ensure that the "Mark all read" action in the Notifications Hub correctly updates the database and that the UI reflects real, persistent data rather than hardcoded placeholders.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> - **Streaming Layout**: I am moving the "Settings" fetch from a blocking `await` in the `RootLayout` to a more resilient pattern. This ensures the app shell (Header/Footer) renders instantly while settings load in the background.
-> - **Font Hardening**: I will host the **Inter** font locally within the project to eliminate the dependency on Google's CSS servers, which are currently timing out in your build logs.
-> - **Tracking Deferral**: The behavioral tracking engine will now use `requestIdleCallback`. This means data collection will wait until the main UI is interactive, making the app feel snappy.
+> - **Database Synchronization**: I will implement a logic that fetches real notifications from the `user_notifications` table in Supabase.
+> - **Bulk Update**: The "Mark all read" button will execute a Supabase `update` query to set `is_read = true` for all notifications belonging to the current user.
 
 ## Proposed Changes
 
-### 1. Asset & Font Optimization
+### 1. Header Logic Overhaul
 
-#### [MODIFY] [layout.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/layout.tsx)
-- Disable Google Fonts `preload` and `subset` fetching to prevent network-blocked renders.
-- Host font files locally if possible, or use `display: swap` more aggressively.
+#### [MODIFY] [Header.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/components/layout/Header.tsx)
+- Add state for `notifications` (array) and `unreadCount` (number).
+- Implement a `fetchNotifications` function that queries Supabase.
+- Add a real-time listener using `supabase.channel` to update the hub as new notifications arrive.
+- Update the "Mark all read" button to call a `handleMarkAllRead` function that:
+    1. Updates the `user_notifications` table.
+    2. Resets the local unread count.
+    3. Optimistically updates the local notification list.
 
-### 2. Layout Resilience
+### 2. UI Data Mapping
 
-#### [MODIFY] [layout.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/layout.tsx)
-- Refactor the `RootLayout` to prioritize the "First Paint."
-- Move `JsonLd` and other meta scripts to `afterInteractive` strategy.
-
-### 3. Intelligence Node Hardening (Non-blocking)
-
-#### [MODIFY] [AnalyticsTracker.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/components/layout/AnalyticsTracker.tsx)
-- Wrap heavy database initialization calls in `setTimeout(..., 0)` or `requestIdleCallback`.
-- This ensures that "Collecting Data" doesn't compete with the browser for rendering the actual shop grid.
-
-### 4. Admin Integrity Fix
-
-#### [FIX] [upload/page.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/admin/(dashboard)/upload/page.tsx)
-- Change `const imageUrls` to `let imageUrls` to resolve the build-blocking constant reassignment error.
+#### [MODIFY] [Header.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/components/layout/Header.tsx)
+- Replace the hardcoded "Welcome to the Club!" and "Order Logged" blocks with a `.map()` function that iterates over the `notifications` state.
+- Format timestamps using a human-readable "relative time" (e.g., "5 mins ago").
 
 ## Verification Plan
 
-### Automated Verification
-- Run `npm run build` and verify that the "request to fonts.googleapis.com failed" warning is gone.
-- Verify build time is under 2 minutes.
-
 ### Manual Verification
-- Open the app and verify the Header appears in under 500ms.
-- Check the browser network tab to ensure tracking calls happen **after** the `load` event.
+- **Scenario A**: Login as a user, receive a test notification (e.g., via the reward system), and verify it appears in the Header dropdown.
+- **Scenario B**: Click "Mark all read" in the Header. Refresh the page or check the Profile page to ensure they remain "read" in the database.
+- **Scenario C**: Verify that the orange bubble "1" on the bell icon disappears only after the update is successful.
