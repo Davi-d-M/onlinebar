@@ -62,7 +62,14 @@ export type OSEventType =
     | 'BUZZ_OPEN'
     | 'MAP_SIGNAL_OPEN'
     | 'DIRECTIONS_INIT'
-    | 'HEARTBEAT';
+    | 'HEARTBEAT'
+    | 'RAGE_CLICK'
+    | 'DEAD_CLICK'
+    | 'SCROLL_DEPTH'
+    | 'NAV_BACKTRACK'
+    | 'MPESA_TIMEOUT'
+    | 'PAYMENT_FAIL'
+    | 'FORM_ABANDONED';
 
 interface OSEventPayload {
     userId?: string;
@@ -83,6 +90,8 @@ class OnlineBarOS {
     private static instance: OnlineBarOS;
     private correlationId: string | null = null;
     private sessionId: string | null = null;
+    private eventQueue: any[] = [];
+    private flushInterval: NodeJS.Timeout | null = null;
 
     private constructor() {
         if (typeof window !== 'undefined') {
@@ -91,6 +100,9 @@ class OnlineBarOS {
                 this.sessionId = uuidv4();
                 localStorage.setItem('ob_session_active_id', this.sessionId);
             }
+
+            // Start the Intelligence Flusher (Every 15s)
+            this.flushInterval = setInterval(() => this.flushQueue(), 15000);
         }
     }
 
@@ -99,6 +111,24 @@ class OnlineBarOS {
             OnlineBarOS.instance = new OnlineBarOS();
         }
         return OnlineBarOS.instance;
+    }
+
+    private async flushQueue() {
+        if (this.eventQueue.length === 0 || !supabase) return;
+
+        const batch = [...this.eventQueue];
+        this.eventQueue = [];
+
+        try {
+            const { error } = await supabase.rpc('log_event_batch', { p_events: batch });
+            if (error) {
+                console.error("[OB_OS] Intelligence Flush Failure:", error);
+                // Re-queue to try again next time? (Basic persistence)
+                this.eventQueue = [...batch, ...this.eventQueue];
+            }
+        } catch (err) {
+            console.error("[OB_OS] Intelligence Exception:", err);
+        }
     }
 
     public getSessionId(): string | null {
@@ -121,7 +151,20 @@ class OnlineBarOS {
                 this.ensureSessionRecord(sessId, payload.userId, payload.anonymousId).catch(() => {});
             }
 
-            // 1. Emit System Event (Logic + Automation)
+            // 1. High-Fidelity Batching for Behavioral Noise
+            if (['UI_INTERACTION', 'SCROLL_DEPTH', 'RAGE_CLICK', 'DEAD_CLICK', 'SECTION_VISIBLE'].includes(eventType)) {
+                this.eventQueue.push({
+                    session_id: sessId,
+                    action_type: eventType,
+                    page_url: typeof window !== 'undefined' ? window.location.pathname : undefined,
+                    metadata: payload.details || {},
+                    timestamp: new Date().toISOString()
+                });
+                if (this.eventQueue.length >= 10) this.flushQueue();
+                return;
+            }
+
+            // 2. Emit System Event (Logic + Automation)
             if (this.isSystemEvent(eventType)) {
                 await emitEvent(eventType as SystemEventType, payload, { corrId, reqId, sessId });
             }

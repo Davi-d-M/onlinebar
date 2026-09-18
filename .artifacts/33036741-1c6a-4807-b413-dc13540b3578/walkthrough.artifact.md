@@ -1,49 +1,37 @@
-# UI Refinement: Hexagon Chart Restore & Identity Hardening
+# Customer 360 Behavioral Audit OS Walkthrough
 
-I have restored the **Elite Hexagon Chart** (Sensory DNA) to all products and provided a fail-safe fallback so it never shows a loading state again. I've also addressed the "fake images" and Supabase configuration issues.
+I have successfully deployed the first-party behavioral audit layer, enabling high-fidelity customer journey tracking and predictive intelligence for the ONLINE BAR platform.
 
 ## Changes Made
 
-### 1. Hexagon Chart (Sensory DNA) Restore
-- **The Problem**: The Hexagon chart was only showing for products that had "Research Dossiers" in the database. For new or sample products, it was showing a generic "Loading" spinner.
-- **The Fix**: Implemented a **UX Hardening Fallback**. Every drink now displays the Hexagon chart instantly. If no real tasting data exists yet, the system generates a balanced "Neutral Profile" so the UI stays premium and animated.
+### 1. Master Event Engine & SDK (OB-OS Core)
+- **High-Resolution Tracking**: Expanded `OnlineBarOS` to handle `RAGE_CLICK`, `DEAD_CLICK`, and `SCROLL_DEPTH` events.
+- **Intelligence Batching**: Implemented an memory-buffered flusher that bundles events and transmits them every 15 seconds to minimize database overhead.
+- **Identity Stitching**: Re-engineered the session logic to merge anonymous behavioral ghost profiles into registered patron records upon signup.
 
-### 2. Fake Image Cleanup Node
-- **The Issue**: Many sample products in the database still point to `/placeholder.jpg`.
-- **The Fix**: I have provided a **Nuclear Cleanup Script** (see below) to expunge these fake items from your grid.
+### 2. Global Behavioral Sentinel (Analytics Tracker)
+- **Click Intelligence**: Automatically captures metadata for all interactive elements (IDs, text, coordinates).
+- **Friction Radar**: Detects "Rage Clicks" (repeated fast clicking) and "Dead Clicks" on static elements.
+- **Active Time Calculation**: A precise timer now distinguishes between active engagement and background idle time.
+- **Dwell Heartbeat**: Sends a sync signal every 15 seconds to maintain real-time session continuity.
 
-### 3. Supabase Identity Hardening
-- Provided the exact configuration strings for your Supabase **URL Configuration** screen to make your live deployment "real."
+### 3. Customer 360 Admin HUD
+- **Public Identity Nodes**: Every customer now has a unique `OB-CUS-` identifier.
+- **Total Experience HUD**: Vertical summary of lifetime sessions, active time, and total click volume.
+- **Friction Radar**: Direct visibility into rage clicks and confusion points for specific patrons.
+- **Acquisition Attribution**: Identifies the primary conversion source (e.g., Instagram vs Google).
 
-## Action Required
-
-### 🚀 Step 1: Update Supabase URL Config
-Based on your screenshot, please paste these values into the **URL Configuration** screen in your Supabase Dashboard:
-
-- **Site URL**: `https://onlinebar.onrender.com`
-- **Redirect URLs**:
-    - `http://localhost:3000/**`
-    - `http://localhost:3001/**`
-    - `https://onlinebar.onrender.com/**`
-
-### 🧹 Step 2: Remove Fake Images (SQL)
-Run this code in your **Supabase SQL Editor** to permanently remove all products that don't have real photos:
-
-```sql
--- DELETE all products that are still using the placeholder image
-DELETE FROM public.products
-WHERE image_url LIKE '%placeholder.jpg%';
-
--- OPTIONAL: If you want to keep them but hide them until you upload photos
--- UPDATE public.products SET status = 'Draft' WHERE image_url LIKE '%placeholder.jpg%';
-```
+### 4. Database Infrastructure (Supabase)
+- **Schema v4.0**: Deployed `customer_aggregate_metrics` and `search_intelligence` tables.
+- **Real-time Triggers**: Automated the calculation of aggregate behavioral scores on every session update.
 
 ## Verification Results
 
 ### Success Matrix
 > [!NOTE]
-> - **Visual Fidelity**: The Hexagon chart is now visible on **every** product detail page.
-> - **Build Stability**: Verified the code compiles perfectly without the "Cannot find module" errors.
+> - **Batch Performance**: Verified that 10+ clicks only trigger a single `log_event_batch` RPC call.
+> - **Active Time Accuracy**: Confirmed that switching tabs pauses the `total_active_time_sec` counter.
+> - **Identity Merge**: Verified that cart items and page views from an anonymous session are correctly inherited by the new registered profile.
 
 > [!TIP]
-> If you are still seeing "Failed to fetch" in your local browser, ensure you have hard-refreshed with `Ctrl + Shift + R`.
+> To view a customer's journey, go to **Workforce Hub -> Directory** and click the Eye icon on any patron.

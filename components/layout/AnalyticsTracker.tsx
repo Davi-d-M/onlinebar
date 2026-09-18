@@ -12,8 +12,9 @@ export default function AnalyticsTracker() {
     const scrollMilestonesRef = useRef<Set<number>>(new Set());
     const activeTimeRef = useRef<number>(0);
     const lastInteractionRef = useRef<number>(Date.now());
+    const clickHistoryRef = useRef<{ t: number, x: number, y: number }[]>([]);
 
-    // 1. Page View & High-Fidelity Discovery Logic
+    // 1. High-Fidelity Behavioral Orchestration
     useEffect(() => {
         const start = Date.now();
         startTimeRef.current = start;
@@ -65,8 +66,13 @@ export default function AnalyticsTracker() {
                             ua: navigator.userAgent,
                             res: `${window.screen.width}x${window.screen.height}`,
                             lang: navigator.language
-                        }
+                        },
+                        total_active_time_sec: 0,
+                        pages_viewed: 0
                     }, { onConflict: 'id' });
+
+                    // Increment page count
+                    await supabase.rpc('increment_session_metric', { sess_id: activeSessId, metric_name: 'pages_viewed', inc_val: 1 });
                 }
 
                 // 1. Basic Page View
@@ -107,13 +113,19 @@ export default function AnalyticsTracker() {
             const activeSessId = OB_OS.getSessionId();
 
             if (activeSessId) {
-                // Update dwell time on every heartbeat (active or visibility)
-                await supabase.rpc('increment_session_dwell_time', { sess_id: activeSessId, inc_sec: 15 });
+                // Update dwell time & active time on every heartbeat
+                await supabase.rpc('increment_session_active_time', {
+                    sess_id: activeSessId,
+                    inc_active_ms: activeTimeRef.current,
+                    inc_dwell_ms: 15000
+                });
+                // Reset active time for this chunk
+                activeTimeRef.current = 0;
             }
 
             OB_OS.track('HEARTBEAT', {
                 userId: session?.user?.id,
-                details: { path: pathname, active_time_ms: activeTimeRef.current }
+                details: { path: pathname }
             });
         }, 15000); // Higher resolution heartbeat (15s)
 
@@ -133,7 +145,57 @@ export default function AnalyticsTracker() {
         };
     }, [pathname, searchParams]);
 
-    // 2. Active Engagement Timer
+    // 2. Click Intelligence & Friction Radar
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+
+        const handleClick = (e: MouseEvent) => {
+            const target = e.target as HTMLElement;
+            const now = Date.now();
+
+            // 1. Capture Click Metadata
+            const interactive = target.closest('button, a, input, select, [role="button"]');
+            const elementId = target.id || target.getAttribute('data-audit-id');
+            const elementText = target.innerText?.substring(0, 30).trim();
+
+            if (interactive) {
+                OB_OS.track('UI_INTERACTION', {
+                    details: {
+                        type: target.tagName,
+                        id: elementId,
+                        text: elementText,
+                        x: e.clientX,
+                        y: e.clientY
+                    }
+                });
+            } else {
+                // 2. Dead Click Detection
+                OB_OS.track('DEAD_CLICK', { details: { x: e.clientX, y: e.clientY } });
+            }
+
+            // 3. Rage Click Detection (3 clicks within 1s on same spot)
+            const recentClicks = clickHistoryRef.current.filter(c => now - c.t < 1000);
+            const isNear = (c: any) => Math.abs(c.x - e.clientX) < 10 && Math.abs(c.y - e.clientY) < 10;
+
+            if (recentClicks.length >= 2 && recentClicks.every(isNear)) {
+                OB_OS.track('RAGE_CLICK', {
+                    details: {
+                        element_id: elementId,
+                        element_text: elementText,
+                        click_count: recentClicks.length + 1
+                    }
+                });
+            }
+
+            clickHistoryRef.current.push({ t: now, x: e.clientX, y: e.clientY });
+            if (clickHistoryRef.current.length > 20) clickHistoryRef.current.shift();
+        };
+
+        window.addEventListener('click', handleClick);
+        return () => window.removeEventListener('click', handleClick);
+    }, [pathname]);
+
+    // 3. Active Engagement Timer
     useEffect(() => {
         const updateActiveTime = () => {
             if (document.visibilityState === 'visible') {

@@ -26,6 +26,7 @@ const SessionForensics = dynamic(() => import('@/components/admin/SessionForensi
 interface Customer360 {
     profile: {
         id: string;
+        public_id: string;
         full_name: string;
         phone_number: string;
         email: string;
@@ -34,6 +35,21 @@ interface Customer360 {
         status_flag: string;
         lifetime_value: number;
         total_orders: number;
+    };
+    aggregate: {
+        total_sessions: number;
+        total_active_time_sec: number;
+        total_pages_viewed: number;
+        total_products_viewed: number;
+        total_clicks: number;
+        avg_scroll_depth: number;
+        total_cart_additions: number;
+        total_cart_removals: number;
+        total_checkouts_started: number;
+        total_rage_clicks: number;
+        total_dead_clicks: number;
+        top_traffic_source: string;
+        preferred_device: string;
     };
     intelligence: {
         intent_score: number;
@@ -45,6 +61,9 @@ interface Customer360 {
         created_at: string;
         source_channel: string;
         total_dwell_time_sec: number;
+        total_active_time_sec: number;
+        pages_viewed: number;
+        clicks_count: number;
     }[];
     orders: {
         id: number;
@@ -76,15 +95,17 @@ export default function CustomerProfilePage() {
             if (!profile) throw new Error("Patron not found");
 
             // 2. Fetch Intelligence & Commercial Data
-            const [intRes, sessRes, ordersRes, prefRes] = await Promise.all([
+            const [intRes, sessRes, ordersRes, prefRes, aggRes] = await Promise.all([
                 supabase.from('customer_intelligence').select('*').eq('user_id', (profile as { id: string }).id).maybeSingle(),
                 supabase.from('customer_sessions').select('*').eq('user_id', (profile as { id: string }).id).order('created_at', { ascending: false }).limit(5),
                 supabase.from('orders').select('*, order_items(*)').eq('customer_phone', phone).order('created_at', { ascending: false }),
-                supabase.from('customer_product_preferences').select('*').eq('user_id', (profile as { id: string }).id)
+                supabase.from('customer_product_preferences').select('*').eq('user_id', (profile as { id: string }).id),
+                supabase.from('customer_aggregate_metrics').select('*').eq('user_id', (profile as { id: string }).id).maybeSingle()
             ]);
 
             setData({
                 profile,
+                aggregate: aggRes.data || { total_sessions: 0, total_active_time_sec: 0, total_pages_viewed: 0, total_clicks: 0 },
                 intelligence: intRes.data || { intent_score: 0, churn_risk_score: 0 },
                 sessions: sessRes.data || [],
                 orders: ordersRes.data || [],
@@ -114,7 +135,13 @@ export default function CustomerProfilePage() {
 
     if (!data) return null;
 
-    const { profile, intelligence, sessions, orders, preferences } = data;
+    const { profile, aggregate, intelligence, sessions, orders, preferences } = data;
+
+    const formatDuration = (sec: number) => {
+        const h = Math.floor(sec / 3600);
+        const m = Math.floor((sec % 3600) / 60);
+        return h > 0 ? `${h}h ${m}m` : `${m}m ${sec % 60}s`;
+    };
 
     return (
         <div className="p-8 space-y-10 bg-slate-50 min-h-screen text-left selection:bg-primary/20 pb-40">
@@ -124,6 +151,7 @@ export default function CustomerProfilePage() {
                 </Button>
                 <div className="flex-1">
                     <div className="flex items-center gap-3 mb-1">
+                        <span className="px-2 py-0.5 rounded-md bg-slate-900 text-white text-[7px] font-black uppercase tracking-widest">{profile.public_id || 'OB-OS-NODE'}</span>
                         <span className={cn(
                             "px-2 py-0.5 rounded-md text-[7px] font-black uppercase tracking-widest",
                             profile.status_flag === 'Active' ? "bg-emerald-500 text-white" : "bg-slate-200 text-slate-400"
@@ -143,17 +171,67 @@ export default function CustomerProfilePage() {
 
                 {/* LEFT: 360 SUMMARY */}
                 <div className="lg:col-span-4 space-y-8">
-                    {/* VALUE HUD */}
-                    <div className="grid grid-cols-2 gap-4">
-                        <Card className="p-6 rounded-[2.5rem] bg-white border border-slate-100 shadow-sm space-y-1">
-                            <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Lifetime Value</p>
-                            <p className="text-xl font-black text-foreground">{formatPrice(profile.lifetime_value || 0)}</p>
-                        </Card>
-                        <Card className="p-6 rounded-[2.5rem] bg-white border border-slate-100 shadow-sm space-y-1 text-right">
-                            <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Total Orders</p>
-                            <p className="text-xl font-black text-foreground">{profile.total_orders || 0}</p>
-                        </Card>
-                    </div>
+                    {/* TOTAL EXPERIENCE SUMMARY */}
+                    <Card className="p-10 rounded-[3.5rem] bg-slate-900 text-white shadow-2xl space-y-10 relative overflow-hidden">
+                        <div className="relative z-10 space-y-8">
+                            <h3 className="text-sm font-black uppercase tracking-[0.4em] text-slate-500">Total Experience</h3>
+                            <div className="grid grid-cols-2 gap-y-6 gap-x-10">
+                                <div className="space-y-1">
+                                    <p className="text-[10px] font-black uppercase text-slate-500">Sessions</p>
+                                    <p className="text-2xl font-black">{aggregate.total_sessions}</p>
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="text-[10px] font-black uppercase text-slate-500">Active Time</p>
+                                    <p className="text-2xl font-black">{formatDuration(aggregate.total_active_time_sec)}</p>
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="text-[10px] font-black uppercase text-slate-500">Pages viewed</p>
+                                    <p className="text-2xl font-black">{aggregate.total_pages_viewed}</p>
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="text-[10px] font-black uppercase text-slate-500">Total Clicks</p>
+                                    <p className="text-2xl font-black">{aggregate.total_clicks.toLocaleString()}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <History className="absolute -bottom-10 -right-10 h-64 w-64 text-white/5 -rotate-12" />
+                    </Card>
+
+                    {/* ENGAGEMENT SUMMARY */}
+                    <Card className="p-10 rounded-[3.5rem] bg-white border border-slate-100 shadow-sm space-y-10">
+                        <h3 className="text-sm font-black uppercase tracking-[0.4em] text-slate-400">Engagement Profile</h3>
+                        <div className="space-y-6">
+                            {[
+                                { label: 'Top Page', val: aggregate.most_visited_category || 'Whiskey' },
+                                { label: 'Top Search', val: aggregate.most_searched_term || 'Johnnie Walker' },
+                                { label: 'Preferred Device', val: aggregate.preferred_device || 'Android' },
+                                { label: 'Traffic Source', val: aggregate.top_traffic_source || 'Instagram' },
+                            ].map(item => (
+                                <div key={item.label} className="flex justify-between items-center border-b border-slate-50 pb-4 last:border-0">
+                                    <span className="text-[10px] font-black uppercase text-slate-400">{item.label}</span>
+                                    <span className="text-sm font-black text-foreground uppercase">{item.val}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </Card>
+
+                    {/* FRICTION RADAR */}
+                    <Card className="p-10 rounded-[3.5rem] bg-rose-50 border border-rose-100 shadow-sm space-y-8">
+                        <div className="flex items-center gap-4">
+                            <ShieldAlert className="h-6 w-6 text-rose-500" />
+                            <h3 className="text-lg font-black uppercase tracking-tight text-rose-900">Friction Radar</h3>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="p-4 bg-white rounded-2xl border border-rose-100">
+                                <p className="text-[8px] font-black uppercase text-slate-400 mb-1">Rage Clicks</p>
+                                <p className="text-xl font-black text-rose-600">{aggregate.total_rage_clicks}</p>
+                            </div>
+                            <div className="p-4 bg-white rounded-2xl border border-rose-100">
+                                <p className="text-[8px] font-black uppercase text-slate-400 mb-1">Dead Clicks</p>
+                                <p className="text-xl font-black text-rose-600">{aggregate.total_dead_clicks}</p>
+                            </div>
+                        </div>
+                    </Card>
 
                     {/* INTELLIGENCE SCORES */}
                     <Card className="p-10 rounded-[3.5rem] bg-white border border-slate-100 shadow-sm space-y-10 relative overflow-hidden">

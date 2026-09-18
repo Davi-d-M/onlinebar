@@ -13,16 +13,31 @@ import {
     Building2,
     Target,
     CheckCircle2,
-    Zap
+    Zap,
+    X,
+    Loader2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { useSettings } from '@/lib/useSettings';
+import { supabase } from '@/lib/supabaseClient';
 
 export default function CorporatePortal() {
     const { settings } = useSettings();
     const [guestCount, setGuestCount] = React.useState(50);
     const [durationHours, setDurationHours] = React.useState(4);
+
+    // Form State
+    const [isFormOpen, setIsFormOpen] = React.useState(false);
+    const [isSubmitting, setIsSubmitting] = React.useState(false);
+    const [submitted, setSubmitted] = React.useState(false);
+    const [form, setForm] = React.useState({
+        company: '',
+        contact_name: '',
+        email: '',
+        phone: '',
+        requirements: ''
+    });
 
     const estimates = React.useMemo(() => {
         // High-level beverage volume estimates for events
@@ -36,6 +51,35 @@ export default function CorporatePortal() {
             softs: Math.ceil(guestCount * 2)
         };
     }, [guestCount, durationHours]);
+
+    const handleInquirySubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!supabase) return;
+        setIsSubmitting(true);
+
+        try {
+            const { error } = await supabase.from('messages').insert([{
+                name: form.contact_name,
+                email: form.email,
+                subject: 'CORPORATE_INQUIRY',
+                message: `Company: ${form.company}\nPhone: ${form.phone}\nGuests: ${guestCount}\nDuration: ${durationHours}h\nRequirements: ${form.requirements}`,
+                status: 'New'
+            }]);
+
+            if (error) throw error;
+            setSubmitted(true);
+            setTimeout(() => {
+                setIsFormOpen(false);
+                setSubmitted(false);
+                setForm({ company: '', contact_name: '', email: '', phone: '', requirements: '' });
+            }, 3000);
+        } catch (err) {
+            console.error(err);
+            alert("Uplink Failure. Please try again.");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
     return (
         <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8 text-left selection:bg-primary/20 pb-40">
@@ -135,8 +179,8 @@ export default function CorporatePortal() {
 
                             <div className="pt-8 border-t border-slate-50 flex justify-end">
                                 <Button
-                                    onClick={() => window.open(`https://wa.me/${settings.contact.whatsapp}?text=Hello! I want to request a quote for an institutional event with ${guestCount} guests.`, '_blank')}
-                                    className="h-16 px-12 rounded-2xl bg-primary text-white font-black uppercase text-xs tracking-[0.2em] shadow-2xl shadow-primary/20 active:scale-95 transition-all flex items-center gap-3"
+                                    onClick={() => setIsFormOpen(true)}
+                                    className="h-16 px-12 rounded-2xl bg-primary text-white font-black uppercase text-xs tracking-[0.2em] shadow-xl shadow-primary/20 active:scale-95 transition-all flex items-center gap-3"
                                 >
                                     Generate Executive Quote <ArrowRight size={18} />
                                 </Button>
@@ -186,7 +230,7 @@ export default function CorporatePortal() {
                                 </div>
 
                                 <Button
-                                    onClick={() => window.open(`https://wa.me/${settings.contact.whatsapp}?text=Hello! I want to initialize a professional corporate account for my organization.`, '_blank')}
+                                    onClick={() => setIsFormOpen(true)}
                                     className="w-full h-16 rounded-2xl bg-primary text-white font-black uppercase text-xs tracking-widest shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
                                 >
                                     Initialize Corporate Account
@@ -194,6 +238,67 @@ export default function CorporatePortal() {
                             </div>
                             <div className="absolute -bottom-10 -left-10 h-64 w-64 bg-primary/10 rounded-full blur-3xl opacity-20"></div>
                         </Card>
+
+                        {/* CORPORATE LEAD MODAL */}
+                        {isFormOpen && (
+                            <div className="fixed inset-0 z-[6000] flex items-center justify-center p-4 bg-slate-900/10 backdrop-blur-md animate-in fade-in duration-300">
+                                <Card className="max-w-xl w-full p-8 sm:p-12 rounded-[3rem] bg-white border border-slate-100 shadow-2xl relative animate-in zoom-in-95 duration-500 overflow-hidden">
+                                    <button onClick={() => setIsFormOpen(false)} className="absolute top-8 right-8 text-slate-300 hover:text-foreground transition-colors"><X size={24}/></button>
+
+                                    {submitted ? (
+                                        <div className="py-20 text-center space-y-6 animate-in zoom-in-95">
+                                            <div className="h-20 w-20 rounded-[2rem] bg-emerald-50 text-emerald-500 mx-auto flex items-center justify-center shadow-inner"><CheckCircle2 size={40} /></div>
+                                            <div className="space-y-2">
+                                                <h3 className="text-2xl font-black uppercase tracking-tighter">Payload Received.</h3>
+                                                <p className="text-slate-500 font-medium italic italic px-10 leading-relaxed">
+                                                    &quot;Your executive inquiry has been transmitted to our corporate desk. An account manager will reach out shortly.&quot;
+                                                </p>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <form onSubmit={handleInquirySubmit} className="space-y-8 text-left">
+                                            <div className="space-y-2">
+                                                <h3 className="text-2xl font-black uppercase tracking-tighter">Corporate Inquiry</h3>
+                                                <p className="text-[10px] font-black uppercase text-primary tracking-widest">Protocol: Institutional Onboarding</p>
+                                            </div>
+
+                                            <div className="space-y-4">
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div className="space-y-1">
+                                                        <label className="text-[9px] font-black uppercase text-slate-400 ml-1">Company Name</label>
+                                                        <Input required value={form.company} onChange={e => setForm({...form, company: e.target.value})} className="h-12 rounded-xl bg-slate-50 border-slate-100 font-bold" />
+                                                    </div>
+                                                    <div className="space-y-1">
+                                                        <label className="text-[9px] font-black uppercase text-slate-400 ml-1">Contact Name</label>
+                                                        <Input required value={form.contact_name} onChange={e => setForm({...form, contact_name: e.target.value})} className="h-12 rounded-xl bg-slate-50 border-slate-100 font-bold" />
+                                                    </div>
+                                                </div>
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div className="space-y-1">
+                                                        <label className="text-[9px] font-black uppercase text-slate-400 ml-1">Work Email</label>
+                                                        <Input required type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} className="h-12 rounded-xl bg-slate-50 border-slate-100 font-bold" />
+                                                    </div>
+                                                    <div className="space-y-1">
+                                                        <label className="text-[9px] font-black uppercase text-slate-400 ml-1">Phone Number</label>
+                                                        <Input required value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} className="h-12 rounded-xl bg-slate-50 border-slate-100 font-bold" />
+                                                    </div>
+                                                </div>
+                                                <div className="space-y-1">
+                                                    <label className="text-[9px] font-black uppercase text-slate-400 ml-1">Event Requirements</label>
+                                                    <Textarea required value={form.requirements} onChange={e => setForm({...form, requirements: e.target.value})} placeholder="Describe your event or bulk needs..." className="min-h-[100px] rounded-2xl bg-slate-50 border-slate-100 font-medium resize-none p-4" />
+                                                </div>
+                                            </div>
+
+                                            <Button type="submit" disabled={isSubmitting} className="w-full h-16 rounded-2xl bg-primary text-white font-black uppercase text-xs tracking-widest shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
+                                                {isSubmitting ? <Loader2 className="animate-spin" /> : 'Submit Inquiry'}
+                                            </Button>
+                                        </form>
+                                    )}
+
+                                    <div className="absolute -bottom-10 -right-10 h-48 w-48 bg-primary/5 rounded-full blur-3xl"></div>
+                                </Card>
+                            </div>
+                        )}
 
                         <div className="p-10 rounded-[3rem] bg-indigo-600 text-white space-y-6 text-left relative overflow-hidden shadow-xl">
                             <h4 className="text-sm font-black uppercase tracking-[0.3em] opacity-60">Office Pulse</h4>

@@ -11,7 +11,8 @@ import {
   Search,
   Zap,
   Send,
-  Loader2
+  Loader2,
+  Building2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -37,7 +38,7 @@ export default function AdminMessagesPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [filter, setFilter] = useState<'all' | 'New' | 'Read' | 'Replied'>('all');
+  const [filter, setFilter] = useState<'all' | 'New' | 'Read' | 'Replied' | 'Corporate'>('all');
 
   const [replyingTo, setReplyingTo] = useState<number | null>(null);
   const [replyText, setReplyText] = useState('');
@@ -124,7 +125,8 @@ export default function AdminMessagesPage() {
       const matchesSearch = (m.name || '').toLowerCase().includes(query) ||
                             (m.email || '').toLowerCase().includes(query) ||
                             (m.subject || '').toLowerCase().includes(query);
-      const matchesFilter = filter === 'all' || m.status === filter;
+      const matchesFilter = filter === 'all' ||
+                            (filter === 'Corporate' ? m.subject === 'CORPORATE_INQUIRY' : m.status === filter);
       return matchesSearch && matchesFilter;
   });
 
@@ -162,14 +164,15 @@ export default function AdminMessagesPage() {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
           </div>
           <div className="flex gap-2">
-              {(['all', 'New', 'Read', 'Replied'] as const).map(f => (
+              {(['all', 'New', 'Read', 'Replied', 'Corporate'] as const).map(f => (
                   <Button
                     key={f}
                     onClick={() => setFilter(f)}
                     variant={filter === f ? 'default' : 'outline'}
                     className={cn(
                         "rounded-xl h-14 px-6 font-black uppercase text-[10px] tracking-widest transition-all shadow-sm active:scale-95",
-                        filter === f ? "bg-primary text-white shadow-primary/20" : "bg-white border-slate-100 text-slate-400 hover:text-primary hover:border-primary/20"
+                        filter === f ? "bg-primary text-white shadow-primary/20" : "bg-white border-slate-100 text-slate-400 hover:text-primary hover:border-primary/20",
+                        f === 'Corporate' && filter !== f && "text-indigo-500 border-indigo-100 hover:text-white hover:bg-indigo-500 hover:border-indigo-500"
                     )}
                   >
                       {f}
@@ -211,6 +214,11 @@ export default function AdminMessagesPage() {
                                       <p className="text-[10px] font-bold text-slate-400 uppercase">{msg.email}</p>
                                   </div>
                                   <div className="ml-auto flex items-center gap-3">
+                                    {msg.subject === 'CORPORATE_INQUIRY' && (
+                                        <span className="px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-600 text-[8px] font-black uppercase border border-indigo-100 flex items-center gap-1.5 shadow-sm">
+                                            <Building2 size={10} /> Corporate Lead
+                                        </span>
+                                    )}
                                     {msg.user_id && (
                                         <span className="px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-600 text-[8px] font-black uppercase border border-indigo-100">Verified Patron</span>
                                     )}

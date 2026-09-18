@@ -53,3 +53,12 @@ export const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     return R * c;
 };
+
+/**
+ * Dispatches a global UI overlay state event to manage mutual exclusion.
+ */
+export const dispatchUIOverlay = (activeId: 'AI_CONCIERGE' | 'SUPPORT' | 'EXIT_INTENT' | null) => {
+    if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('ob-overlay-state', { detail: { active: activeId } }));
+    }
+};

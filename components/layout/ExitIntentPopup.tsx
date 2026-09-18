@@ -15,7 +15,22 @@ export default function ExitIntentPopup() {
     }, [isVisible]);
 
     useEffect(() => {
-        // Check if already shown in this session
+        if (isVisible) {
+            window.dispatchEvent(new CustomEvent('ob-overlay-state', { detail: { active: 'EXIT_INTENT' } }));
+        }
+    }, [isVisible]);
+
+    useEffect(() => {
+        const handleOverlay = (e: any) => {
+            if (e.detail?.active && e.detail.active !== 'EXIT_INTENT') {
+                // Exit intent usually stays open once triggered, but we can hide it if needed
+            }
+        };
+        window.addEventListener('ob-overlay-state', handleOverlay);
+        return () => window.removeEventListener('ob-overlay-state', handleOverlay);
+    }, []);
+
+    useEffect(() => {
         const shown = sessionStorage.getItem('exit_popup_shown');
         if (shown) {
             setHasBeenShown(true);

@@ -1,31 +1,51 @@
-# Implementation Plan - Emergency Identity System Hardening
+# Implementation Plan - Customer 360 Behavioral Audit OS
 
-The goal is to fix the "Impossible Login" issue by relaxing strict configuration checks that were blocking local development and providing a smoother, more automated authentication flow.
+The goal is to implement a first-party behavioral audit layer in the "ONLINE BAR" platform, tracking every user journey from anonymous landing to final delivery mission, including engagement, friction, and commerce metrics.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> - **Configuration Fix**: I found that the app was blocking any Supabase connection that wasn't `https://*.supabase.co`. This was likely blocking your local development server. I've removed this restriction.
-> - **Confirmation Node**: If your Supabase project has "Email Confirmations" enabled, users won't be able to log in until they click the link in their email. I've added a message to the UI to clarify this.
+> - **Data Volume**: This system will generate a high volume of event data. I am implementing an **Event Batching Engine** to minimize database load.
+> - **Privacy**: All tracking respects the Kenya Data Protection Act. I will integrate a centralized **Consent Shield** that toggles these behavioral nodes.
 
 ## Proposed Changes
 
-### 1. Supabase Client Hardening
+### 1. Master Event Engine (OB-OS Core)
 
-#### [MODIFY] [supabaseClient.ts](file:///C:/Users/hp/AndroidStudioProjects/onbar/lib/supabaseClient.ts)
-- Remove the strict regex check for `*.supabase.co`.
-- Allow any valid URL (including `localhost` or local IPs) to ensure the client initializes correctly in development.
+#### [MODIFY] [lib/onlineBarOS.ts](file:///C:/Users/hp/AndroidStudioProjects/onbar/lib/onlineBarOS.ts)
+- **High-Resolution Tracking**: Expand the `track` method to handle specialized events like `RAGE_CLICK`, `DEAD_CLICK`, and `SCROLL_DEPTH`.
+- **Active Time Engine**: Implement a background timer that distinguishes between "Active" and "Idle" time on the platform.
+- **Batch Processing**: Buffer events in memory and transmit them in bundles of 10 or every 30 seconds to reduce Supabase request overhead.
 
-### 2. Authentication UI (AuthForm)
+### 2. Global Behavioral Sentinel (Frontend)
 
-#### [MODIFY] [AuthForm.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/components/auth/AuthForm.tsx)
-- **Auto-Switch Mode**: If a user attempts to "Sign Up" with an email that already exists, the form will now provide a clear "Switch to Login" suggestion.
-- **Confirmation Awareness**: Added a check for the `confirmation_sent` state. If Supabase requires email verification, the app will show a "Check your Inbox" instruction instead of a generic success message.
-- **Fetch Resilience**: Improved the "Network Error" message to be more descriptive about IP mismatches in `.env.local`.
+#### [NEW] `components/layout/AnalyticsTracker.tsx`
+- **Page Audit**: Automatic page view tracking with title and entry/exit nodes.
+- **Click Intelligence**: Global listener for all `button` and `a` clicks, capturing element text and location.
+- **Friction Detection**: Detect "Rage Clicks" (multiple clicks on the same element within a short window).
+- **Scroll Monitoring**: Track milestones (25%, 50%, 75%, 100%) to measure content attention.
+
+#### [MODIFY] `app/layout.tsx`
+- Integrate the `AnalyticsTracker` at the root Level.
+
+### 3. Customer 360 Admin UI
+
+#### [MODIFY] `app/admin/(dashboard)/customers/[phone]/page.tsx`
+- **Total Experience HUD**: Display total sessions, active time, and cross-channel engagement stats.
+- **Journey Timeline**: A vertical "Fidelity Timeline" showing the customer's exact path (Landing -> Search -> Product -> Cart -> Order).
+- **Friction Radar**: Highlight rage clicks and payment failures to identify "Stuck" customers.
+- **Device & Source Profile**: Display preferred device and marketing attribution (e.g., Instagram conversion).
+
+### 4. Database Schema (Supabase)
+
+#### [NEW] `supabase/migrations/20261001_customer_360_audit_v4.sql`
+- Tables for `customer_aggregate_metrics`, `search_intelligence`, and `session_forensics`.
+- Automated triggers to calculate `LTV`, `AOV`, and `Affinities` in real-time.
 
 ## Verification Plan
 
 ### Manual Verification
-- **Test 1**: Try to log in with an incorrect URL in `.env.local`. Verify the descriptive network error appears.
-- **Test 2**: Try to sign up with an existing email. Verify the "User already registered" error is handled gracefully with a switch suggestion.
-- **Test 3**: Sign up with a new email and verify the instructions for email confirmation appear if needed.
+- **Engagement Test**: Browse several products and categories as a guest, then sign up. Verify the "Customer 360" profile correctly stitches the anonymous history.
+- **Friction Test**: Repeatedly click a button and verify a "Rage Click" alert appears in the Admin session forensics.
+- **Search Audit**: Perform a search with "zero results" and verify it appears in the "Demand Radar" dashboard.
+- **Time Check**: Leave the tab inactive for 2 minutes, then return. Verify "Active Time" vs "Total Dwell" is recorded accurately.
