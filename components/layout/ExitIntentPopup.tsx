@@ -21,8 +21,8 @@ export default function ExitIntentPopup() {
     }, [isVisible]);
 
     useEffect(() => {
-        const handleOverlay = (e: any) => {
-            if (e.detail?.active && e.detail.active !== 'EXIT_INTENT') {
+        const handleOverlay = (e: Event) => {
+            if ((e as CustomEvent).detail?.active && (e as CustomEvent).detail.active !== 'EXIT_INTENT') {
                 // Exit intent usually stays open once triggered, but we can hide it if needed
             }
         };

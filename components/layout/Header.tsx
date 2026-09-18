@@ -163,8 +163,9 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
   const searchRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleOverlay = (e: any) => {
-        if (e.detail?.active && !['SEARCH', 'NOTIFICATIONS'].includes(e.detail.active)) {
+    const handleOverlay = (e: Event) => {
+        const detail = (e as CustomEvent).detail;
+        if (detail?.active && !['SEARCH', 'NOTIFICATIONS'].includes(detail.active)) {
             setIsSearchFocused(false);
             setIsSearchOpen(false);
             setIsNotificationsOpen(false);

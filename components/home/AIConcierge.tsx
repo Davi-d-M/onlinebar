@@ -40,8 +40,9 @@ export default function AIConcierge() {
     const scrollRef = React.useRef<HTMLDivElement>(null);
 
     React.useEffect(() => {
-        const handleOverlay = (e: any) => {
-            if (e.detail?.active && e.detail.active !== 'AI_CONCIERGE') {
+        const handleOverlay = (e: Event) => {
+            const detail = (e as CustomEvent).detail;
+            if (detail?.active && detail.active !== 'AI_CONCIERGE') {
                 setIsOpen(false);
             }
         };
@@ -56,8 +57,8 @@ export default function AIConcierge() {
     }, [isOpen]);
 
     React.useEffect(() => {
-        const handleModalActive = (e: any) => {
-            if (e.detail?.active) setIsOpen(false);
+        const handleModalActive = (e: Event) => {
+            if ((e as CustomEvent).detail?.active) setIsOpen(false);
         };
         window.addEventListener('ob-modal-active', handleModalActive);
         return () => window.removeEventListener('ob-modal-active', handleModalActive);

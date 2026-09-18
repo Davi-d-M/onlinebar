@@ -236,18 +236,19 @@ function UploadContent() {
     }
 
     // Bridge Listener: Handle Native SKU Scans
-    (window as any).onBarScan = (sku: string) => {
+    (window as Window & { onBarScan?: (sku: string) => void }).onBarScan = (sku: string) => {
         setForm(prev => ({ ...prev, sku: sku }));
         setMessage({ type: 'success', text: `Node Synced: ${sku}` });
         setTimeout(() => setMessage(null), 3000);
     };
 
-    return () => { delete (window as any).onBarScan; };
+    return () => { delete (window as Window & { onBarScan?: (sku: string) => void }).onBarScan; };
   }, []);
 
   const triggerBarScanner = () => {
-    if ((window as any).BarNode?.triggerScanner) {
-        (window as any).BarNode?.triggerScanner();
+    const win = window as Window & { BarNode?: { triggerScanner: () => void } };
+    if (win.BarNode?.triggerScanner) {
+        win.BarNode.triggerScanner();
     } else {
         alert("Native Scanner Node not detected. Use the Online Bar Mobile App.");
     }
@@ -393,10 +394,11 @@ function UploadContent() {
 
     // Fetch Hub Stock (Phase 13)
     async function fetchHubStock() {
-        const { data } = await supabase!.from('hub_inventory').select('*').eq('product_id', product.id);
+        if (!supabase) return;
+        const { data } = await supabase.from('hub_inventory').select('*').eq('product_id', product.id);
         if (data) {
             const hStock: Record<string, string> = {};
-            data.forEach((hs: any) => hStock[hs.hub_id] = String(hs.stock_level));
+            data.forEach((hs: { hub_id: string, stock_level: number }) => hStock[hs.hub_id] = String(hs.stock_level));
             setHubStock(hStock);
         }
     }
@@ -430,7 +432,7 @@ function UploadContent() {
 
     try {
       let imageUrls = [...existingImages];
-      let videoUrl = videoPreviewUrl || '';
+      const videoUrl = videoPreviewUrl || '';
       const BUCKET = 'onlinebar-assets';
 
       if (selectedFiles.length > 0 && supabase) {
@@ -937,7 +939,7 @@ function UploadContent() {
                                               {audit && audit.issues.length > 0 && (
                                                   <div className="absolute inset-0 bg-black/80 backdrop-blur-sm p-4 flex flex-col justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-30 overflow-y-auto no-scrollbar">
                                                       <p className="text-[8px] font-black uppercase text-primary tracking-widest">Quality Audit</p>
-                                                      {audit.issues.map((iss, i) => (
+                                                      {audit.issues.map((iss: string, i: number) => (
                                                           <p key={i} className="text-[7px] text-white font-medium leading-tight">• {iss}</p>
                                                       ))}
                                                   </div>
@@ -965,7 +967,7 @@ function UploadContent() {
                                                 type="button"
                                                 onClick={(e) => {
                                                     e.preventDefault();
-                                                    const win = window as any;
+                                                    const win = window as Window & { BarNode?: { triggerScanner: (mode: string) => void } };
                                                     win.BarNode?.triggerScanner?.('TRIAGE');
                                                 }}
                                                 disabled={isVisionScanning}

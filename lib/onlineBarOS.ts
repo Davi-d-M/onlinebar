@@ -90,7 +90,13 @@ class OnlineBarOS {
     private static instance: OnlineBarOS;
     private correlationId: string | null = null;
     private sessionId: string | null = null;
-    private eventQueue: any[] = [];
+    private eventQueue: {
+        session_id: string | undefined;
+        action_type: OSEventType;
+        page_url: string | undefined;
+        metadata: Record<string, unknown>;
+        timestamp: string;
+    }[] = [];
     private flushInterval: NodeJS.Timeout | null = null;
 
     private constructor() {

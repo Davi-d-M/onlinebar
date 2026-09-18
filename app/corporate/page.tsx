@@ -21,11 +21,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
-import { useSettings } from '@/lib/useSettings';
 import { supabase } from '@/lib/supabaseClient';
 
 export default function CorporatePortal() {
-    const { settings } = useSettings();
     const [guestCount, setGuestCount] = React.useState(50);
     const [durationHours, setDurationHours] = React.useState(4);
 

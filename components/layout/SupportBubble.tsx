@@ -35,15 +35,16 @@ export default function SupportBubble() {
     const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 
     useEffect(() => {
-        const handleOverlay = (e: any) => {
-            if (e.detail?.active && e.detail.active !== 'SUPPORT') {
+        const handleOverlay = (e: Event) => {
+            const detail = (e as CustomEvent).detail;
+            if (detail?.active && detail.active !== 'SUPPORT') {
                 setIsOpen(false);
                 setShowLabel(false);
             }
         };
         window.addEventListener('ob-overlay-state', handleOverlay);
         return () => window.removeEventListener('ob-overlay-state', handleOverlay);
-    }, []);
+    }, [pathname]);
 
     useEffect(() => {
         if (isOpen) {
@@ -52,15 +53,15 @@ export default function SupportBubble() {
     }, [isOpen]);
 
     useEffect(() => {
-        const handleModalActive = (e: any) => {
-            if (e.detail?.active) {
+        const handleModalActive = (e: Event) => {
+            if ((e as CustomEvent).detail?.active) {
                 setIsOpen(false);
                 setShowLabel(false);
             }
         };
         window.addEventListener('ob-modal-active', handleModalActive);
         return () => window.removeEventListener('ob-modal-active', handleModalActive);
-    }, []);
+    }, [pathname]);
 
     useEffect(() => {
         async function checkUser() {
@@ -79,7 +80,7 @@ export default function SupportBubble() {
 
         const timer = setTimeout(() => setShowLabel(true), 5000);
         return () => clearTimeout(timer);
-    }, []);
+    }, [pathname]);
 
     const handleDismissLabel = () => {
         setShowLabel(false);

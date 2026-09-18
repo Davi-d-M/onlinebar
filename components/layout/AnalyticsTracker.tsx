@@ -213,7 +213,7 @@ export default function AnalyticsTracker() {
 
             // 3. Rage Click Detection (3 clicks within 1s on same spot)
             const recentClicks = clickHistoryRef.current.filter(c => now - c.t < 1000);
-            const isNear = (c: any) => Math.abs(c.x - e.clientX) < 10 && Math.abs(c.y - e.clientY) < 10;
+            const isNear = (c: { x: number, y: number }) => Math.abs(c.x - e.clientX) < 10 && Math.abs(c.y - e.clientY) < 10;
 
             if (recentClicks.length >= 2 && recentClicks.every(isNear)) {
                 OB_OS.track('RAGE_CLICK', {
