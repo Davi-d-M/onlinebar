@@ -6,7 +6,7 @@ const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 const isConfigured =
   typeof supabaseUrl === 'string' &&
   supabaseUrl.trim().length > 0 &&
-  /^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(supabaseUrl.trim()) &&
+  supabaseUrl.startsWith('http') &&
   typeof supabaseKey === 'string' &&
   supabaseKey.trim().length > 0;
 

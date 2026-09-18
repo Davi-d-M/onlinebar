@@ -106,9 +106,12 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
         if (data.user) {
             await handleIdentityStitching(data.user.id);
             await OB_OS.track('USER_REGISTERED', { userId: data.user.id, anonymousId: localStorage.getItem('ob_anonymous_id') || undefined });
-            setMessage({ type: 'success', text: 'Registration Successful! Establishing profile... 🛰️' });
-            if (onSuccess) {
-                setTimeout(() => onSuccess(data.user!.id), 2000);
+
+            if (data.session) {
+                setMessage({ type: 'success', text: 'Registration Successful! Establishing profile... 🛰️' });
+                if (onSuccess) setTimeout(() => onSuccess(data.user!.id), 2000);
+            } else {
+                setMessage({ type: 'success', text: 'Identity Reserved! Please check your email inbox to confirm your account. 🛡️' });
             }
         }
       } else {
@@ -142,6 +145,14 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
       if (err && typeof err === 'object' && 'code' in err && (err.code === 'over_email_send_rate_limit' || err.code === 'over_sms_send_rate_limit')) {
           errorText = "Rate Limit Hit! Go to Supabase Dashboard > Authentication > Rate Limits to increase this limit. 🛡️";
           setCooldown(60);
+      }
+
+      if (err.message?.includes("already registered") || err.code === '23505') {
+          errorText = "Identity already exists on the grid. Switch to Login mode below. 🛰️";
+      }
+
+      if (err.message?.includes("Invalid login credentials")) {
+          errorText = "Incorrect key or identity not found. Ensure you have registered first. 🛡️";
       }
 
       setMessage({ type: 'error', text: errorText });
@@ -207,6 +218,10 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
         if (err && typeof err === 'object' && 'code' in err && (err.code === 'over_email_send_rate_limit' || err.code === 'over_sms_send_rate_limit')) {
             errorText = "Rate Limit Hit! Go to Supabase Dashboard > Authentication > Rate Limits to increase this limit. 🛡️";
             setCooldown(60);
+        }
+
+        if (err.message?.includes("already registered") || err.code === '23505') {
+            errorText = "Identity already exists on the grid. Switch to Login mode below. 🛰️";
         }
 
         setMessage({ type: 'error', text: errorText });

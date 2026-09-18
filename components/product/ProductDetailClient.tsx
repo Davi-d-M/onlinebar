@@ -6,8 +6,7 @@ import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { MessageSquare, ShoppingCart, Share2, ArrowLeft, Zap, ChevronLeft, ChevronRight, Layers, Check, Loader2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { formatPrice, cn, getReferralLink, normalizeImage } from '@/lib/utils';
+import { formatPrice, cn, getReferralLink } from '@/lib/utils';
 import ReviewSection from '@/components/product/ReviewSection';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
@@ -25,7 +24,7 @@ import ProductDNACard from './ProductDNACard';
 import PerfectServeCommerce from './PerfectServeCommerce';
 import DossierEditorialHub from './DossierEditorialHub';
 import AuthenticitySentinel from './AuthenticitySentinel';
-import { ApexKnowledge, ProductDossier } from '@/lib/engines/productKnowledgeEngine';
+import { ApexKnowledge, ProductDossier, SensoryDNA } from '@/lib/engines/productKnowledgeEngine';
 
 const Product3DViewer = dynamic(() => import('./Product3DViewer'), {
     ssr: false,
