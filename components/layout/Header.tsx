@@ -301,19 +301,12 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
                 filter: `user_id=eq.${session.user.id}`
             }, (payload) => {
                 const updated = payload.new as NotificationNode;
-                setNotifications(current => current.map(n => n.id === updated.id ? updated : n));
-                setUnreadCount(prev => {
-                    // Recalculate accurately based on current state logic
-                    // We can't easily access notifications state here without a ref or another useEffect
-                    // So let's just trigger a re-fetch of the count for absolute precision
-                    if (supabase) {
-                        supabase.from('user_notifications')
-                            .select('*', { count: 'exact', head: true })
-                            .eq('user_id', session.user.id)
-                            .eq('is_read', false)
-                            .then(res => { if(res.count !== null) setUnreadCount(res.count); });
-                    }
-                    return prev;
+                setNotifications(current => {
+                    const next = current.map(n => n.id === updated.id ? updated : n);
+                    // Recalculate unread count from the updated list
+                    const unread = next.filter(n => !n.is_read).length;
+                    setUnreadCount(unread);
+                    return next;
                 });
             })
             .subscribe();

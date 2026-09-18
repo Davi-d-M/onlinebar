@@ -58,7 +58,8 @@ import AnalyticsTracker from "@/components/layout/AnalyticsTracker";
 import MobileBottomNav from "@/components/layout/MobileBottomNav";
 import InstallAppWidget from "@/components/layout/InstallAppWidget";
 import ExperienceNotificationHost from "@/components/layout/ExperienceNotificationHost";
-import { DEFAULT_SETTINGS } from "@/lib/useSettings";
+import { type StoreSettings, DEFAULT_SETTINGS } from "@/lib/useSettings";
+import { getCachedSettings } from "@/lib/cachedData";
 import { Suspense } from "react";
 import type { Viewport } from 'next';
 
@@ -95,7 +96,11 @@ export default function RootLayout({
                 {`
                 if ('serviceWorker' in navigator) {
                     window.addEventListener('load', function() {
-                    navigator.serviceWorker.register('/sw.js').catch(err => console.warn('SW failed', err));
+                    navigator.serviceWorker.register('/sw.js').then(function(registration) {
+                        console.log('OB-OS ServiceWorker registration successful');
+                    }, function(err) {
+                        console.log('OB-OS ServiceWorker registration failed: ', err);
+                    });
                     });
                 }
                 `}
