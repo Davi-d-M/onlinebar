@@ -1,5 +1,5 @@
-- [ ] Fix overflow in `AdminUploadPage` (Media Hub & Basic Info)
-- [ ] Refactor AI Vision button positioning in `AdminUploadPage`
-- [ ] Add "Quick Munchies" button to `ProductList.tsx`
-- [ ] Add "Munchie Pulse" bar to `app/shop/page.tsx`
-- [ ] Final production build check
+- [x] Repair `app/admin/(dashboard)/upload/page.tsx` (Remove duplicate closing tags & restore full feature set)
+- [x] Implement instant `anonymousId` generation in `AnalyticsTracker.tsx`
+- [x] Ensure `OnlineBarOS` constructor handles ID persistence
+- [x] Verify production build success
+- [x] Harden UI overlay synchronization

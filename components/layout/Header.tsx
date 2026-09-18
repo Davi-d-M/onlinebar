@@ -163,6 +163,30 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
   const searchRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const handleOverlay = (e: any) => {
+        if (e.detail?.active && !['SEARCH', 'NOTIFICATIONS'].includes(e.detail.active)) {
+            setIsSearchFocused(false);
+            setIsSearchOpen(false);
+            setIsNotificationsOpen(false);
+        }
+    };
+    window.addEventListener('ob-overlay-state', handleOverlay);
+    return () => window.removeEventListener('ob-overlay-state', handleOverlay);
+  }, []);
+
+  useEffect(() => {
+    if (isSearchFocused || isSearchOpen) {
+        window.dispatchEvent(new CustomEvent('ob-overlay-state', { detail: { active: 'SEARCH' } }));
+    }
+  }, [isSearchFocused, isSearchOpen]);
+
+  useEffect(() => {
+    if (isNotificationsOpen) {
+        window.dispatchEvent(new CustomEvent('ob-overlay-state', { detail: { active: 'NOTIFICATIONS' } }));
+    }
+  }, [isNotificationsOpen]);
+
+  useEffect(() => {
     try {
         const saved = localStorage.getItem('ob_recent_views');
         if (saved) {

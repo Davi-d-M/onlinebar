@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { OB_OS, OSEventType } from '@/lib/onlineBarOS';
 import { supabase } from '@/lib/supabaseClient';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function AnalyticsTracker() {
     const pathname = usePathname();
@@ -13,6 +14,36 @@ export default function AnalyticsTracker() {
     const activeTimeRef = useRef<number>(0);
     const lastInteractionRef = useRef<number>(Date.now());
     const clickHistoryRef = useRef<{ t: number, x: number, y: number }[]>([]);
+
+    // 0. Emergency Auth Sync Node
+    useEffect(() => {
+        if (!supabase) return;
+
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+            if (event === 'SIGNED_IN' && session) {
+                const activeSessId = OB_OS.getSessionId();
+                const anonId = localStorage.getItem('ob_anonymous_id');
+
+                // 1. Link Session Immediately
+                if (activeSessId && supabase) {
+                    await supabase.from('customer_sessions').update({
+                        user_id: session.user.id,
+                        updated_at: new Date().toISOString()
+                    }).eq('id', activeSessId);
+                }
+
+                // 2. Identity Stitching
+                if (anonId) {
+                    await OB_OS.stitchIdentity(anonId, session.user.id);
+                }
+
+                // 3. Track Event
+                OB_OS.track('USER_LOGIN', { userId: session.user.id });
+            }
+        });
+
+        return () => subscription.unsubscribe();
+    }, []);
 
     // 1. High-Fidelity Behavioral Orchestration
     useEffect(() => {
@@ -27,7 +58,14 @@ export default function AnalyticsTracker() {
 
             try {
                 const { data: { session } } = await supabase.auth.getSession();
-                const anonId = typeof window !== 'undefined' ? localStorage.getItem('ob_anonymous_id') : null;
+
+                // 🛡️ [IDENTITY_NODE] Instant Identity Generation
+                let anonId = typeof window !== 'undefined' ? localStorage.getItem('ob_anonymous_id') : null;
+                if (!anonId) {
+                    anonId = `anon-${uuidv4().substring(0, 8)}`;
+                    localStorage.setItem('ob_anonymous_id', anonId);
+                }
+
                 const activeSessId = OB_OS.getSessionId();
 
                 // 🚀 [WIDGET_INTEL] Capture Mobile Widget Attribution

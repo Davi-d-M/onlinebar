@@ -101,6 +101,13 @@ class OnlineBarOS {
                 localStorage.setItem('ob_session_active_id', this.sessionId);
             }
 
+            // 🛡️ [IDENTITY_NODE] Ensure Anonymous ID exists immediately
+            let anonId = localStorage.getItem('ob_anonymous_id');
+            if (!anonId) {
+                anonId = `anon-${uuidv4().substring(0, 8)}`;
+                localStorage.setItem('ob_anonymous_id', anonId);
+            }
+
             // Start the Intelligence Flusher (Every 15s)
             this.flushInterval = setInterval(() => this.flushQueue(), 15000);
         }

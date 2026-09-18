@@ -1,32 +1,35 @@
-# Implementation Plan - Admin UI Fit & Munchie Accessibility
+# Implementation Plan - Total Behavioral Onboarding & Admin Integrity
 
-The goal is to fix the "cut off" UI in the Admin Inventory Master and add prominent "Munchie" (snack) accessibility for customers to increase impulse buys.
+The goal is to ensure that data collection starts **the absolute moment** a visitor hits the platform and to fix the "butchered" code in the Admin Inventory Master.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> - **Admin UI Fit**: I am disabling `overflow-hidden` on the Admin Upload cards. This will allow absolute elements (like the AI Vision buttons) to "bleed" out correctly without being cut off.
-> - **Munchie Hub Button**: I'm adding a high-contrast "Munchie Node" quick-access button to the main Shop filters. This targets the "impulse buy" behavior for customers looking for snacks.
+> - **Immediate Identity**: I am moving the `anonymousId` generation to the global `AnalyticsTracker`. This means every visitor gets a trackable ID the millisecond they land, allowing us to build their 360 profile before they even click anything.
+> - **Code Repair**: I identified a syntax error in the `AdminUploadPage` caused by redundant closing tags. I will expunge the extra code to restore the page.
 
 ## Proposed Changes
 
-### 1. Admin Master Hardening (UI Fit)
+### 1. Global Behavioral Sentinel (Frontend)
 
-#### [MODIFY] [app/admin/(dashboard)/upload/page.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/admin/(dashboard)/upload/page.tsx)
-- Change `overflow-hidden` to `overflow-visible` on the Media Hub and Basic Info cards.
-- Refactor the absolute positioning of "CLOUD VISION" buttons to ensure they remain within safe viewports or have enough negative margin to be visible.
+#### [MODIFY] [AnalyticsTracker.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/components/layout/AnalyticsTracker.tsx)
+- **Instant ID Generation**: Generate and store `ob_anonymous_id` (UUID) if it doesn't exist yet.
+- **UTM Node**: Ensure UTM parameters (`utm_source`, `utm_campaign`, etc.) are captured on the first session hit and persisted in the `customer_sessions` table.
 
-### 2. Munchie Discovery Node (Customer Facing)
+### 2. Admin Inventory Master (Code Integrity)
 
-#### [MODIFY] [components/home/ProductList.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/components/home/ProductList.tsx)
-- Add a prominent "Quick Munchies" action button or a specialized banner above the product grid.
-- Link it directly to the `/shop/snacks` page.
+#### [FIX] [upload/page.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/admin/(dashboard)/upload/page.tsx)
+- Remove the duplicate `</div> ); }` blocks at the end of the file that are causing the build to fail.
+- Ensure the `overflow-visible` change is maintained to prevent button cutting.
 
-#### [MODIFY] [app/shop/page.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/shop/page.tsx)
-- Add a "Munchie Pulse" call-to-action bar above the catalog to remind people to add snacks to their bag.
+### 3. Predictive Intelligence (OS Core)
+
+#### [MODIFY] [lib/onlineBarOS.ts](file:///C:/Users/hp/AndroidStudioProjects/onbar/lib/onlineBarOS.ts)
+- Update the constructor to ensure it always has a fallback `anonymousId` context.
 
 ## Verification Plan
 
 ### Manual Verification
-- **Admin Audit**: Go to Admin -> Inventory Master. Open the "Media Hub" section and verify "CLOUD VISION" is fully visible and not cut off.
-- **Customer Audit**: Go to the main Shop page. Verify the new "Munchies" shortcut is highly visible and functional.
+- **Cold Landing Test**: Open the site in Incognito. Check `localStorage` for `ob_anonymous_id`. Verify a `PAGE_VIEW` event is recorded in Supabase with this ID immediately.
+- **Admin Build**: Run `npm run build` and verify the `AdminUploadPage` error is gone.
+- **Marketing Audit**: Visit the site with `?utm_source=instagram` and verify the source is correctly attributed in the Admin Customer 360 view.

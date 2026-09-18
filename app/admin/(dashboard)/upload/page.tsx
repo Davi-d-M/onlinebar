@@ -202,8 +202,8 @@ function UploadContent() {
     setSelectedFiles(prev => prev.filter((_, i) => i !== index));
   };
 
-  const removeExistingImage = (url: number) => {
-    setExistingImages(prev => prev.filter((_, i) => i !== url));
+  const removeExistingImage = (index: number) => {
+    setExistingImages(prev => prev.filter((_, i) => i !== index));
   };
 
   const canManageInventory = role === 'staff' || role === 'admin' || role === 'owner';
@@ -236,18 +236,18 @@ function UploadContent() {
     }
 
     // Bridge Listener: Handle Native SKU Scans
-    (window as Window & { onBarScan?: (sku: string) => void }).onBarScan = (sku: string) => {
+    (window as any).onBarScan = (sku: string) => {
         setForm(prev => ({ ...prev, sku: sku }));
         setMessage({ type: 'success', text: `Node Synced: ${sku}` });
         setTimeout(() => setMessage(null), 3000);
     };
 
-    return () => { delete (window as Window & { onBarScan?: (sku: string) => void }).onBarScan; };
+    return () => { delete (window as any).onBarScan; };
   }, []);
 
   const triggerBarScanner = () => {
-    if ((window as Window & { BarNode?: { triggerScanner: () => void } }).BarNode?.triggerScanner) {
-        (window as Window & { BarNode?: { triggerScanner: () => void } }).BarNode?.triggerScanner();
+    if ((window as any).BarNode?.triggerScanner) {
+        (window as any).BarNode?.triggerScanner();
     } else {
         alert("Native Scanner Node not detected. Use the Online Bar Mobile App.");
     }
@@ -260,9 +260,8 @@ function UploadContent() {
   const profitIntel = useMemo(() => {
       const sell = Number(form.price) || 0;
       const cost = Number(form.cost_price) || 0;
-      const finalPrice = sell;
-      const profit = finalPrice - cost;
-      const margin = finalPrice > 0 ? (profit / finalPrice) * 100 : 0;
+      const profit = sell - cost;
+      const margin = sell > 0 ? (profit / sell) * 100 : 0;
       return { profit, margin };
   }, [form.price, form.cost_price]);
 
@@ -337,8 +336,6 @@ function UploadContent() {
     }
     setIsVisionScanning(true);
     try {
-        // AI Vision Node: Production ready logic.
-        // Requires connection to Gemini Vision or OpenAI Vision endpoint.
         setMessage({ type: 'error', text: "Vision API Node not connected. Please link your Cloud Vision keys in Settings." });
     } finally {
         setIsVisionScanning(false);
@@ -391,7 +388,6 @@ function UploadContent() {
     setExistingImages(product.images || [product.image_url]);
     setVariantStock(vStock);
     setBeverageSpecs(product.beverage_specs ? Object.entries(product.beverage_specs).map(([key, value]) => ({ key, value })) : []);
-    setVideoPreviewUrl(product.video_url || null);
     setEditingId(product.id);
     setFormSession(prev => prev + 1);
 
@@ -400,7 +396,7 @@ function UploadContent() {
         const { data } = await supabase!.from('hub_inventory').select('*').eq('product_id', product.id);
         if (data) {
             const hStock: Record<string, string> = {};
-            data.forEach((hs: { hub_id: string, stock_level: number }) => hStock[hs.hub_id] = String(hs.stock_level));
+            data.forEach((hs: any) => hStock[hs.hub_id] = String(hs.stock_level));
             setHubStock(hStock);
         }
     }
@@ -435,22 +431,13 @@ function UploadContent() {
     try {
       let imageUrls = [...existingImages];
       let videoUrl = videoPreviewUrl || '';
-      const BUCKET = 'apexstores-assets';
-
-      if (selectedVideo) {
-          if (!supabase) throw new Error("Database not connected");
-          const path = `videos/${Date.now()}-${selectedVideo.name}`;
-          await supabase.storage.from(BUCKET).upload(path, selectedVideo);
-          const { data } = supabase.storage.from(BUCKET).getPublicUrl(path);
-          videoUrl = data.publicUrl;
-      }
+      const BUCKET = 'onlinebar-assets';
 
       if (selectedFiles.length > 0 && supabase) {
-          const client = supabase;
           const uploads = selectedFiles.map(async f => {
               const path = `products/${Date.now()}-${f.name}`;
-              await client.storage.from(BUCKET).upload(path, f);
-              return client.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
+              await supabase!.storage.from(BUCKET).upload(path, f);
+              return supabase!.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
           });
           const newUrls = await Promise.all(uploads);
           imageUrls = [...imageUrls, ...newUrls];
@@ -485,11 +472,6 @@ function UploadContent() {
           variant_stock: vStock,
           beverage_specs: specs,
           image_quality_score: avgScore,
-          image_metadata: {
-              audit_count: audits.length,
-              last_audit_at: new Date().toISOString(),
-              all_audits: imageAudits
-          },
           category: form.category,
           sale_end_date: form.sale_end_date || null,
           featured_rank: Number(form.featured_rank),
@@ -515,7 +497,6 @@ function UploadContent() {
       let pId = editingId;
       if (editingId) {
           await supabase.from('products').update(productData).eq('id', editingId);
-          await logAuditAction(email, 'UPDATE_PRODUCT', { id: editingId, name: productData.name });
       } else {
           const { data } = await supabase.from('products').insert([productData]).select('id').single();
           if (data) pId = data.id;
@@ -568,7 +549,11 @@ function UploadContent() {
     const low = products.filter(p => p.stock <= 5);
     const doc = new jsPDF();
     doc.text('Online Bar Purchase Order', 14, 20);
-    autoTable(doc, { startY: 30, head: [['ID', 'Name', 'Stock']], body: low.map(p => [p.id, p.name, p.stock]) });
+    autoTable(doc, {
+        startY: 30,
+        head: [['ID', 'Name', 'Stock']],
+        body: low.map(p => [p.id, p.name, p.stock])
+    });
     doc.save('OnlineBar_PO.pdf');
   };
 
@@ -939,8 +924,8 @@ function UploadContent() {
                                               {audit && (
                                                   <div className={cn(
                                                       "absolute top-2 left-2 px-2 py-0.5 rounded-lg text-[7px] font-black uppercase tracking-widest shadow-lg z-20",
-                                                      audit.score >= 80 ? "bg-emerald-500 text-white" :
-                                                      audit.score >= 60 ? "bg-amber-500 text-white" : "bg-rose-500 text-white"
+                                                      audit.score >= 80 ? "bg-emerald-50 text-white" :
+                                                      audit.score >= 60 ? "bg-amber-50 text-white" : "bg-rose-50 text-white"
                                                   )}>
                                                       Score: {audit.score}
                                                   </div>
@@ -980,8 +965,8 @@ function UploadContent() {
                                                 type="button"
                                                 onClick={(e) => {
                                                     e.preventDefault();
-                                                    const win = window as unknown as { BarNode?: { triggerScanner: (mode: string) => void } };
-                                                    win.BarNode?.triggerScanner('TRIAGE');
+                                                    const win = window as any;
+                                                    win.BarNode?.triggerScanner?.('TRIAGE');
                                                 }}
                                                 disabled={isVisionScanning}
                                                 className="flex-1 h-8 rounded-lg bg-emerald-600 text-white font-black uppercase text-[7px] tracking-widest animate-in zoom-in-95"
@@ -1010,38 +995,37 @@ function UploadContent() {
               </Card>
 
               <div className="sticky bottom-10 z-[50] animate-in slide-in-from-bottom-6 duration-1000">
-                      <div className="flex flex-col sm:flex-row gap-3">
-                          {editingId && products.find(p => p.id === editingId)?.status === 'Pending' && (
-                              <Button
-                                  type="button"
-                                  onClick={async () => {
-                                      if(!supabase) return;
-                                      setIsSubmitting(true);
-                                      await supabase.from('products').update({ status: 'Live' }).eq('id', editingId);
-                                      cancelEditing();
-                                      fetchProducts();
-                                      setMessage({ type: 'success', text: 'Inventory Authorized for Grid! ✅' });
-                                      setIsSubmitting(false);
-                                  }}
-                                  className="h-16 px-8 rounded-2xl bg-emerald-500 text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-emerald-100 hover:bg-emerald-600 transition-all active:scale-95"
-                              >
-                                  Authorize for Grid
-                              </Button>
-                          )}
-                          {editingId && (
-                              <button
-                                  type="button"
-                                  onClick={() => {
-                                      if (window.confirm(`Expunge ${form.name} from global catalogue?`)) {
-                                          handleDeleteProduct(editingId, form.name);
-                                      }
-                                  }}
-                                  className="h-16 px-8 rounded-2xl bg-rose-600 text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-rose-100 hover:bg-rose-700 transition-all active:scale-95"
-                              >
-                                  <Trash2 className="h-5 w-5" />
-                              </button>
-                          )}
-                      </div>
+                  <div className="bg-slate-50 p-4 rounded-[2.5rem] shadow-2xl flex gap-3 border border-slate-200">
+                      {editingId && products.find(p => p.id === editingId)?.status === 'Pending' && (
+                          <Button
+                              type="button"
+                              onClick={async () => {
+                                  if(!supabase) return;
+                                  setIsSubmitting(true);
+                                  await supabase.from('products').update({ status: 'Live' }).eq('id', editingId);
+                                  cancelEditing();
+                                  fetchProducts();
+                                  setMessage({ type: 'success', text: 'Inventory Authorized for Grid! ✅' });
+                                  setIsSubmitting(false);
+                              }}
+                              className="h-16 px-8 rounded-2xl bg-emerald-500 text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-emerald-100 hover:bg-emerald-600 transition-all active:scale-95"
+                          >
+                              Authorize for Grid
+                          </Button>
+                      )}
+                      {editingId && (
+                          <button
+                              type="button"
+                              onClick={() => {
+                                  if (window.confirm(`Expunge ${form.name} from global catalogue?`)) {
+                                      handleDeleteProduct(editingId, form.name);
+                                  }
+                              }}
+                              className="h-16 px-8 rounded-2xl bg-rose-600 text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-rose-100 hover:bg-rose-700 transition-all active:scale-95"
+                          >
+                              <Trash2 className="h-5 w-5 mr-3" /> Delete Product
+                          </button>
+                      )}
                       <Button type="submit" disabled={isSubmitting} className="flex-1 h-16 rounded-2xl bg-primary text-white font-black uppercase tracking-[0.3em] text-xs hover:bg-primary/90 transition-all active:scale-95 shadow-xl shadow-primary/20">
                         {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin mr-3" /> : <Wine className="h-5 w-5 mr-3" />}
                         {editingId ? 'Save Product Changes' : 'Deploy New Inventory'}
