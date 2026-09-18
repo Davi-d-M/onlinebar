@@ -267,6 +267,7 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
   }, [searchQuery]);
 
   useEffect(() => {
+    let channel: any;
     async function initNotifications() {
         if (!supabase) return;
         const { data: { session } } = await supabase.auth.getSession();
@@ -282,7 +283,7 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
         if (countRes.count !== null) setUnreadCount(countRes.count);
 
         // 2. Real-time Subscription
-        const channel = supabase.channel(`header-notifs-${session.user.id}`)
+        channel = supabase.channel(`header-notifs-${session.user.id}`)
             .on('postgres_changes', {
                 event: 'INSERT',
                 schema: 'public',
@@ -300,17 +301,25 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
                 filter: `user_id=eq.${session.user.id}`
             }, (payload) => {
                 const updated = payload.new as NotificationNode;
-                setNotifications(current => {
-                    const next = current.map(n => n.id === updated.id ? updated : n);
-                    setUnreadCount(next.filter(n => !n.is_read).length);
-                    return next;
+                setNotifications(current => current.map(n => n.id === updated.id ? updated : n));
+                setUnreadCount(prev => {
+                    // Recalculate accurately based on current state logic
+                    // We can't easily access notifications state here without a ref or another useEffect
+                    // So let's just trigger a re-fetch of the count for absolute precision
+                    if (supabase) {
+                        supabase.from('user_notifications')
+                            .select('*', { count: 'exact', head: true })
+                            .eq('user_id', session.user.id)
+                            .eq('is_read', false)
+                            .then(res => { if(res.count !== null) setUnreadCount(res.count); });
+                    }
+                    return prev;
                 });
             })
             .subscribe();
-
-        return () => { supabase.removeChannel(channel); };
     }
     initNotifications();
+    return () => { if(channel && supabase) supabase.removeChannel(channel); };
   }, [pathname]);
 
   const handleMarkAllRead = async () => {

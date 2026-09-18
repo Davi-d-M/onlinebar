@@ -58,8 +58,7 @@ import AnalyticsTracker from "@/components/layout/AnalyticsTracker";
 import MobileBottomNav from "@/components/layout/MobileBottomNav";
 import InstallAppWidget from "@/components/layout/InstallAppWidget";
 import ExperienceNotificationHost from "@/components/layout/ExperienceNotificationHost";
-import { type StoreSettings, DEFAULT_SETTINGS } from "@/lib/useSettings";
-import { getCachedSettings } from "@/lib/cachedData";
+import { DEFAULT_SETTINGS } from "@/lib/useSettings";
 import { Suspense } from "react";
 import type { Viewport } from 'next';
 
@@ -86,9 +85,9 @@ export default function RootLayout({
 
         <CartProvider>
           <WishlistProvider>
-            <Suspense fallback={<div className="min-h-screen bg-white" />}>
-                <PublicLayoutWrapper>{children}</PublicLayoutWrapper>
-            </Suspense>
+            <PublicLayoutShield initialSettings={DEFAULT_SETTINGS}>
+                {children}
+            </PublicLayoutShield>
             <InstallAppWidget />
             <ExperienceNotificationHost />
             <MobileBottomNav />
@@ -96,11 +95,7 @@ export default function RootLayout({
                 {`
                 if ('serviceWorker' in navigator) {
                     window.addEventListener('load', function() {
-                    navigator.serviceWorker.register('/sw.js').then(function(registration) {
-                        console.log('OB-OS ServiceWorker registration successful');
-                    }, function(err) {
-                        console.log('OB-OS ServiceWorker registration failed: ', err);
-                    });
+                    navigator.serviceWorker.register('/sw.js').catch(err => console.warn('SW failed', err));
                     });
                 }
                 `}
@@ -144,24 +139,4 @@ export default function RootLayout({
       </body>
     </html>
   );
-}
-
-async function PublicLayoutWrapper({ children }: { children: React.ReactNode }) {
-    // Fetch settings with shared cache (Streaming Node)
-    const settings = { ...DEFAULT_SETTINGS } as StoreSettings;
-    try {
-        const { data: settingsRes } = await getCachedSettings();
-        (settingsRes || []).forEach(item => {
-            const key = item.key as keyof StoreSettings;
-            (settings as unknown as Record<string, unknown>)[key] = item.value;
-        });
-    } catch (err) {
-        console.error("[OB_OS] Critical Layout Settings Failure:", err);
-    }
-
-    return (
-        <PublicLayoutShield initialSettings={settings}>
-            {children}
-        </PublicLayoutShield>
-    );
 }

@@ -3,7 +3,6 @@
 import { useMemo, useState, useEffect, Suspense } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
 import { supabase } from '@/lib/supabaseClient';
 import {
@@ -11,30 +10,21 @@ import {
     ChevronDown,
     ChevronUp,
     ChevronRight,
-    TrendingUp as ProfitIcon,
     Wine,
     Info,
-    Plus,
     ImageIcon,
     Layers,
-    PackageCheck,
-    Sparkles,
     Loader2,
-    FileText,
     Download,
-    DollarSign,
-    Bot,
     X,
     Trash2,
     Camera,
-    Scan,
     Eye
 } from 'lucide-react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { cn, formatPrice } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import { useAdmin } from '@/context/AdminContext';
-import { logAuditAction } from '@/lib/auditService';
 import { useSettings } from '@/lib/useSettings';
 import { auditImageQuality, standardizeImageCanvas, type ImageAuditResult } from '@/lib/engines/imageEngine';
 
@@ -277,7 +267,8 @@ function UploadContent() {
   }, [form]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value, type } = e.target;
+    const target = e.target;
+    const { name, value, type } = target;
     const val = type === 'checkbox' ? (target as HTMLInputElement).checked : value;
     setForm(prev => ({ ...prev, [name]: val }));
   };

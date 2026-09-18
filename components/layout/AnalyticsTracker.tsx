@@ -47,16 +47,22 @@ export default function AnalyticsTracker() {
 
     // 1. High-Fidelity Behavioral Orchestration
     useEffect(() => {
-        // ⚡ [PERFORMANCE_NODE] Defer tracking to prevent block
-        const timer = setTimeout(() => {
-            const start = Date.now();
-            startTimeRef.current = start;
-            scrollMilestonesRef.current = new Set();
-            activeTimeRef.current = 0;
-            lastInteractionRef.current = Date.now();
+        const start = Date.now();
+        startTimeRef.current = start;
+        scrollMilestonesRef.current = new Set();
+        activeTimeRef.current = 0;
+        lastInteractionRef.current = Date.now();
 
+        // ⚡ [PERFORMANCE_NODE] Non-blocking initial track
+        const handleTracking = () => {
             trackPage();
-        }, 100);
+        };
+
+        if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+            (window as any).requestIdleCallback(handleTracking);
+        } else {
+            setTimeout(handleTracking, 200);
+        }
 
         async function trackPage() {
             if (!supabase) return;
@@ -171,7 +177,6 @@ export default function AnalyticsTracker() {
         }, 15000); // Higher resolution heartbeat (15s)
 
         return () => {
-            clearTimeout(timer);
             clearInterval(heartbeat);
             const dwellTime = Date.now() - startTimeRef.current;
             if (dwellTime > 1000) {
