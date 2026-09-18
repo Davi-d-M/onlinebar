@@ -7,12 +7,15 @@ import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
 
+import { usePathname } from 'next/navigation';
+
 interface UserProfile {
     full_name: string;
 }
 
 export default function SupportBubble() {
     const { settings } = useSettings();
+    const pathname = usePathname();
     const [showLabel, setShowLabel] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const [mode, setMode] = useState<'menu' | 'track' | 'message' | 'ai'>('menu');
@@ -72,7 +75,7 @@ export default function SupportBubble() {
 
         // Persistent dismissal check
         const dismissed = localStorage.getItem('support_label_dismissed') === 'true';
-        if (dismissed) return;
+        if (dismissed || pathname === '/track') return;
 
         const timer = setTimeout(() => setShowLabel(true), 5000);
         return () => clearTimeout(timer);

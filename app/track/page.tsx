@@ -186,7 +186,7 @@ function TrackingContent() {
 
   return (
     <div className="min-h-screen bg-white py-16 px-4 sm:px-6 lg:px-8 text-left">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-4xl mx-auto pt-10">
 
         <div className="mb-12">
             <h1 className="text-5xl font-black tracking-tighter text-foreground uppercase mb-4">Track Delivery</h1>
