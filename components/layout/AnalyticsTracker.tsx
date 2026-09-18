@@ -62,11 +62,7 @@ export default function AnalyticsTracker() {
             }
         };
 
-        if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
-            (window as any).requestIdleCallback(handleTracking);
-        } else {
-            setTimeout(handleTracking, 500);
-        }
+        const timer = setTimeout(handleTracking, 1000);
 
         async function trackPage() {
             if (!supabase) return;

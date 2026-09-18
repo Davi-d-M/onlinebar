@@ -2,7 +2,6 @@ import { CartProvider } from "@/context/CartContext";
 import { WishlistProvider } from "@/context/WishlistContext";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import Script from "next/script";
 import "@/app/globals.css";
 
 const inter = Inter({
@@ -13,42 +12,12 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Online Bar | Premium Wine, Spirits & Late Night Snacks Nairobi',
-  description: 'Chilled wine, premium spirits, and your favorite late-night snacks delivered instantly across Nairobi. Fast dispatch. 100% genuine products guaranteed.',
-  keywords: ['Wine delivery Nairobi', 'Whiskey delivery Kenya', 'Late night snacks Nairobi', 'Online Bar Kenya', 'Alcohol delivery Nairobi'],
-  openGraph: {
-    title: 'Online Bar | Premium Drinks & Snacks',
-    description: 'Shop the best wine and spirits with Nairobi fast dispatch and secure M-Pesa checkout.',
-    url: process.env.NEXT_PUBLIC_BASE_URL || 'https://onlinebar-os.onrender.com',
-    siteName: 'Online Bar',
-    locale: 'en_KE',
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Online Bar | Premium Drinks Catalog',
-    description: 'Premium spirits and snacks delivered instantly across Kenya.',
-  },
+  title: 'Online Bar | Premium Drinks',
+  description: 'Premium spirits and snacks delivered instantly across Kenya.',
   manifest: '/manifest.json',
   icons: {
     icon: '/favicon.svg',
     apple: '/favicon.svg',
-  },
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: 'default',
-    title: 'Online Bar',
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-    },
   },
 };
 
@@ -58,16 +27,8 @@ import AnalyticsTracker from "@/components/layout/AnalyticsTracker";
 import MobileBottomNav from "@/components/layout/MobileBottomNav";
 import InstallAppWidget from "@/components/layout/InstallAppWidget";
 import ExperienceNotificationHost from "@/components/layout/ExperienceNotificationHost";
-import { type StoreSettings, DEFAULT_SETTINGS } from "@/lib/useSettings";
-import { getCachedSettings } from "@/lib/cachedData";
+import { DEFAULT_SETTINGS } from "@/lib/useSettings";
 import { Suspense } from "react";
-import type { Viewport } from 'next';
-
-export const viewport: Viewport = {
-  width: 'device-width',
-  initialScale: 1,
-  viewportFit: 'cover',
-};
 
 export default function RootLayout({
   children,
@@ -76,24 +37,30 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${inter.variable} font-sans antialiased flex flex-col min-h-screen pb-20 lg:pb-0`}
-      >
-        <Suspense fallback={null}>
-            <AnalyticsTracker />
-        </Suspense>
-        <JsonLd />
-
+      <body className={`${inter.variable} font-sans antialiased bg-white`}>
         <CartProvider>
           <WishlistProvider>
-            <PublicLayoutShield initialSettings={DEFAULT_SETTINGS}>
-                {children}
-            </PublicLayoutShield>
+            <Suspense fallback={
+                <div className="min-h-screen flex items-center justify-center bg-white p-20 text-center">
+                    <div className="space-y-4">
+                        <div className="h-10 w-10 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
+                        <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest animate-pulse">Syncing Bar OS...</p>
+                    </div>
+                </div>
+            }>
+                <PublicLayoutShield initialSettings={DEFAULT_SETTINGS}>
+                    {children}
+                </PublicLayoutShield>
+                <AnalyticsTracker />
+            </Suspense>
+
             <InstallAppWidget />
             <ExperienceNotificationHost />
             <MobileBottomNav />
           </WishlistProvider>
         </CartProvider>
+
+        <JsonLd />
       </body>
     </html>
   );

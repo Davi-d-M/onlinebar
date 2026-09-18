@@ -267,11 +267,13 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
   }, [searchQuery]);
 
   useEffect(() => {
+    let isMounted = true;
     let channel: any;
+
     async function initNotifications() {
         if (!supabase) return;
         const { data: { session } } = await supabase.auth.getSession();
-        if (!session) return;
+        if (!session || !isMounted) return;
 
         // 1. Initial Fetch
         const [notifsRes, countRes] = await Promise.all([
@@ -279,8 +281,10 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
             supabase.from('user_notifications').select('*', { count: 'exact', head: true }).eq('user_id', session.user.id).eq('is_read', false)
         ]);
 
-        if (notifsRes.data) setNotifications(notifsRes.data as NotificationNode[]);
-        if (countRes.count !== null) setUnreadCount(countRes.count);
+        if (isMounted) {
+            if (notifsRes.data) setNotifications(notifsRes.data as NotificationNode[]);
+            if (countRes.count !== null) setUnreadCount(countRes.count);
+        }
 
         // 2. Real-time Subscription
         channel = supabase.channel(`header-notifs-${session.user.id}`)
@@ -290,8 +294,13 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
                 table: 'user_notifications',
                 filter: `user_id=eq.${session.user.id}`
             }, (payload) => {
+                if (!isMounted) return;
                 const newNode = payload.new as NotificationNode;
-                setNotifications(prev => [newNode, ...prev.slice(0, 9)]);
+                setNotifications(prev => {
+                    const next = [newNode, ...prev.slice(0, 9)];
+                    setUnreadCount(next.filter(x => !x.is_read).length);
+                    return next;
+                });
             })
             .on('postgres_changes', {
                 event: 'UPDATE',
@@ -299,19 +308,24 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
                 table: 'user_notifications',
                 filter: `user_id=eq.${session.user.id}`
             }, (payload) => {
+                if (!isMounted) return;
                 const updated = payload.new as NotificationNode;
-                setNotifications(current => current.map(n => n.id === updated.id ? updated : n));
+                setNotifications(current => {
+                    const next = current.map(n => n.id === updated.id ? updated : n);
+                    setUnreadCount(next.filter(x => !x.is_read).length);
+                    return next;
+                });
             })
             .subscribe();
     }
-    initNotifications();
-    return () => { if(channel && supabase) supabase.removeChannel(channel); };
-  }, [pathname]);
 
-  // Derive unread count from notifications state
-  useEffect(() => {
-      setUnreadCount(notifications.filter(n => !n.is_read).length);
-  }, [notifications]);
+    initNotifications();
+
+    return () => {
+        isMounted = false;
+        if(channel && supabase) supabase.removeChannel(channel);
+    };
+  }, [pathname]);
 
   const handleMarkAllRead = async () => {
       if (!supabase) return;
