@@ -262,17 +262,16 @@ export default function ProfilePage() {
       setOrders(orderData || []);
 
       // Fetch Devices & Achievements (New Infrastructure)
-      if (supabase) {
-          const [devicesRes, achievementsRes, warrantiesRes, serviceRes] = await Promise.all([
-              supabase.from('user_devices').select('*').eq('user_id', session.user.id),
-              supabase.from('user_achievements').select('*').eq('user_id', session.user.id),
-              supabase.from('warranties').select('*').eq('user_id', session.user.id),
-              supabase.from('support_tickets').select('*').eq('user_id', session.user.id).order('created_at', { ascending: false })
-          ]);
-          setDevices(devicesRes.data || []);
-          setAchievements(achievementsRes.data || []);
-          setWarranties(warrantiesRes.data || []);
-          setServiceRequests(serviceRes.data || []);
+      const [devicesRes, achievementsRes, warrantiesRes, serviceRes] = await Promise.all([
+          supabase.from('user_devices').select('*').eq('user_id', session.user.id),
+          supabase.from('user_achievements').select('*').eq('user_id', session.user.id),
+          supabase.from('warranties').select('*').eq('user_id', session.user.id),
+          supabase.from('support_tickets').select('*').eq('user_id', session.user.id).order('created_at', { ascending: false })
+      ]);
+      setDevices(devicesRes.data || []);
+      setAchievements(achievementsRes.data || []);
+      setWarranties(warrantiesRes.data || []);
+      setServiceRequests(serviceRes.data || []);
 
       // Fetch Notifications
       const { data: notifData } = await supabase
@@ -289,21 +288,21 @@ export default function ProfilePage() {
       // Real data only
       setCoupons([]);
 
-          // Recently Purchased Logic
-          const { data: pItems } = await supabase
-            .from('orders')
-            .select('product_id, products(name, image_url, price)')
-            .eq('customer_phone', profileData?.phone_number || session.user.email)
-            .eq('status', 'Delivered')
-            .limit(5);
+      // Recently Purchased Logic
+      const { data: pItems } = await supabase
+        .from('orders')
+        .select('product_id, products(name, image_url, price)')
+        .eq('customer_phone', profileData?.phone_number || session.user.email)
+        .eq('status', 'Delivered')
+        .limit(5);
 
-          if (pItems) setPurchasedItems((pItems as unknown as { product_id: number, products: { name: string, image_url: string, price: number, category: string } | null }[]).map((pi) => ({
-              id: pi.product_id,
-              name: pi.products?.name || 'Product',
-              image: pi.products?.image_url || '',
-              price: pi.products?.price || 0,
-              category: pi.products?.category || ''
-          })));
+      if (pItems) setPurchasedItems((pItems as unknown as { product_id: number, products: { name: string, image_url: string, price: number, category: string } | null }[]).map((pi) => ({
+          id: pi.product_id,
+          name: pi.products?.name || 'Product',
+          image: pi.products?.image_url || '',
+          price: pi.products?.price || 0,
+          category: pi.products?.category || ''
+      })));
 
       // Update Streak Logic
       try {
@@ -321,7 +320,12 @@ export default function ProfilePage() {
 
       // 2. Real-time Notifications Update
       const notifChannel = supabase.channel(`profile-notifs-${session.user.id}`)
-          .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'user_notifications', filter: `user_id=eq.${session.user.id}` }, (payload) => {
+          .on('postgres_changes', {
+              event: 'INSERT',
+              schema: 'public',
+              table: 'user_notifications',
+              filter: `user_id=eq.${session.user.id}`
+          }, (payload) => {
               setNotifications(prev => [payload.new as NotificationNode, ...prev]);
               setUnreadCount(c => c + 1);
           })
@@ -334,7 +338,6 @@ export default function ProfilePage() {
       return () => {
           if (supabase) supabase.removeChannel(notifChannel);
       };
-      }
 
       setLoading(false);
     }

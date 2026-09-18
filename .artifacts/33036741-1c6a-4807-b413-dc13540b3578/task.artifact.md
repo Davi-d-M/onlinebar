@@ -1,6 +1,4 @@
-- [x] Harden `JSON.parse` in `CartContext.tsx`
-- [x] Harden `JSON.parse` in `WishlistContext.tsx`
-- [x] Refine `Header.tsx` recently viewed logic
-- [x] Create `clean_rebuild.sh` script
-- [x] Create `clean_rebuild.ps1` script (Windows compatible)
-- [x] Verify build stability
+- [ ] Fix "Track Delivery" form layout in `app/track/page.tsx`
+- [ ] Add "Munchie Node" section with snack buttons to `app/track/page.tsx`
+- [ ] Integrate `SnackCrossSell` logic or component into the tracking flow
+- [ ] Verify build and UI alignment

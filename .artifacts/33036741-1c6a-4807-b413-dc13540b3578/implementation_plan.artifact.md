@@ -1,35 +1,37 @@
-# Implementation Plan - Reliability & Cache Recovery
+# Implementation Plan - Track Page UI Fix & Snack Integration
 
-The goal is to eliminate runtime crashes caused by corrupted local storage data and provide a "Clean Slate" utility to resolve Webpack cache corruption.
-
-## User Review Required
-
-> [!CAUTION]
-> - **Cache Corruption**: You are seeing Webpack errors (`invalid code lengths set`). I've provided a script to clear your build cache.
-> - **Broken Storage**: If your browser has a corrupted "cart" or "wishlist" from a previous session, the app will now gracefully reset them instead of showing a white screen.
+The user reported a "butchered" frame on the tracking page and requested buttons for snacks/munchies.
 
 ## Proposed Changes
 
-### 1. Data Integrity Hardening
+### 1. Track Page UI Fix
 
-#### [MODIFY] [CartContext.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/context/CartContext.tsx)
-- Wrap `JSON.parse` in a `try/catch` block.
-- If parsing fails, log a warning and fallback to an empty cart `[]`.
+#### [MODIFY] [app/track/page.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/track/page.tsx)
+- Refactor the tracking search form to ensure better alignment and responsiveness.
+- Improve the `Input` visibility by adding a subtle border and adjusting the shadow.
+- Ensure the "Locate Order" button doesn't overflow or overlap awkwardly.
+- Add a new "Munchies Hub" section below the tracking results or search card.
 
-#### [MODIFY] [WishlistContext.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/context/WishlistContext.tsx)
-- Wrap `JSON.parse` in a `try/catch` block.
-- If parsing fails, fallback to an empty wishlist `[]`.
+### 2. Snack Integration
 
-#### [MODIFY] [Header.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/components/layout/Header.tsx)
-- Harden the "Recently Viewed" parsing logic to prevent crashes from malformed session data.
+#### [NEW] `components/product/SnackGrid.tsx` (Optional or use existing components)
+- I will reuse the `SnackCrossSell` logic but adapt it for the tracking page to show a wider variety of snacks.
+- Alternatively, I'll add a dedicated section in `app/track/page.tsx` that fetches and displays snack categories.
 
-### 2. Environment Stability
+## Implementation Details
 
-#### [NEW] [clean_rebuild.sh](file:///C:/Users/hp/AndroidStudioProjects/onbar/.artifacts/33036741-1c6a-4807-b413-dc13540b3578/scratch/clean_rebuild.sh)
-- A specialized script for Windows/Bash to delete `.next` and `node_modules/.cache` to fix the "invalid code lengths" error.
+### Track Form Refactor
+- Use a single container for the input and icon.
+- Adjust button width and padding for better balance.
+
+### Snack Buttons
+- Add a section titled "Fuel your mission" or "Forgot the snacks?".
+- Display quick-add buttons for popular snacks (Nuts, Crisps, Chocolate).
+- Link to the full snack shop.
 
 ## Verification Plan
 
 ### Manual Verification
-- **Reset Test**: Manually set `localStorage.setItem('cart', 'invalid-json')` in your browser console and refresh. The app should load an empty cart instead of crashing.
-- **Cache Fix**: Run the rebuild script and verify the Webpack warning `[webpack.cache.PackFileCacheStrategy]` disappears.
+- View the tracking page and ensure the search bar looks clean and fits the frame.
+- Check that snack buttons are visible and functional (add to cart or link to shop).
+- Verify responsiveness on mobile/tablet viewports.

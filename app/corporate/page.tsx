@@ -18,6 +18,8 @@ import {
     Loader2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
 import { useSettings } from '@/lib/useSettings';
 import { supabase } from '@/lib/supabaseClient';

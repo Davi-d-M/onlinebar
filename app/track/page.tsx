@@ -5,11 +5,13 @@ import { supabase } from '@/lib/supabaseClient';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
-import { Search, Package, Truck, CheckCircle, Clock, AlertCircle, MapPin, ShieldCheck, MessageSquare } from 'lucide-react';
-import { formatPrice, cn } from '@/lib/utils';
+import { Search, Package, Truck, CheckCircle, Clock, AlertCircle, MapPin, ShieldCheck, MessageSquare, Cookie, Zap, ArrowRight } from 'lucide-react';
+import { formatPrice, cn, normalizeImage } from '@/lib/utils';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useSettings } from '@/lib/useSettings';
+import { useCart } from '@/context/CartContext';
+import Image from 'next/image';
 
 interface OrderDetails {
   id: number;
@@ -21,6 +23,14 @@ interface OrderDetails {
   payment_method: string;
   rider_name?: string | null;
   rider_phone?: string | null;
+}
+
+interface QuickSnack {
+    id: number;
+    name: string;
+    price: number;
+    image_url: string;
+    category: string;
 }
 
 const STEPS = [
@@ -36,9 +46,26 @@ function TrackingContent() {
   const [order, setOrder] = useState<OrderDetails | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [snacks, setSnacks] = useState<QuickSnack[]>([]);
 
   const searchParams = useSearchParams();
   const { settings } = useSettings();
+  const { addToCart } = useCart();
+
+  // Load Quick Snacks
+  useEffect(() => {
+      async function fetchSnacks() {
+          if (!supabase) return;
+          const { data } = await supabase
+            .from('products')
+            .select('id, name, price, image_url, category')
+            .eq('is_snack', true)
+            .gt('stock', 0)
+            .limit(3);
+          if (data) setSnacks(data);
+      }
+      fetchSnacks();
+  }, []);
 
   const fetchOrder = async (query: string) => {
     if (!supabase) return;
@@ -166,25 +193,74 @@ function TrackingContent() {
             <p className="text-slate-500 font-medium text-lg italic">Real-time visibility into your beverage dispatch.</p>
         </div>
 
-        <Card className="rounded-[3rem] border-slate-100 shadow-2xl shadow-slate-200/50 mb-16 overflow-hidden">
-            <CardContent className="p-10 bg-slate-50/50">
-                <form onSubmit={(e) => { e.preventDefault(); fetchOrder(searchQuery); }} className="flex flex-col sm:flex-row gap-4">
+        <Card className="rounded-[3rem] border border-slate-100 shadow-2xl shadow-slate-200/50 mb-12 overflow-hidden">
+            <CardContent className="p-8 sm:p-10 bg-slate-50/50">
+                <form onSubmit={(e) => { e.preventDefault(); fetchOrder(searchQuery); }} className="flex flex-col md:flex-row gap-4">
                     <div className="relative flex-1">
                         <Input
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             placeholder="Enter Order ID or Phone"
-                            className="h-16 rounded-[1.5rem] border-white bg-white pl-14 text-sm font-bold shadow-sm"
+                            className="h-16 rounded-2xl border-slate-200 bg-white pl-14 text-sm font-bold shadow-sm focus:ring-primary"
                         />
                         <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-6 w-6 text-slate-300" />
                     </div>
-                    <Button type="submit" disabled={loading} className="h-16 px-12 rounded-[1.5rem] bg-primary text-white font-black uppercase text-xs tracking-widest shadow-2xl shadow-primary/20 transition-all hover:scale-105 active:scale-95">
+                    <Button type="submit" disabled={loading} className="h-16 px-10 rounded-2xl bg-primary text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-primary/20 transition-all hover:scale-[1.02] active:scale-95 shrink-0">
                         {loading ? 'Searching...' : 'Locate Order'}
                     </Button>
                 </form>
-                {error && <p className="mt-6 text-rose-600 text-xs font-black uppercase tracking-widest text-center flex items-center justify-center gap-2"><AlertCircle className="h-4 w-4" /> {error}</p>}
+                {error && <p className="mt-6 text-rose-600 text-[10px] font-black uppercase tracking-widest text-center flex items-center justify-center gap-2 animate-in fade-in slide-in-from-top-1"><AlertCircle className="h-4 w-4" /> {error}</p>}
             </CardContent>
         </Card>
+
+        {/* 🍿 MUNCHIE NODE: QUICK SNACK INTEGRATION */}
+        {!order && snacks.length > 0 && (
+            <section className="mb-20 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
+                <div className="flex items-center justify-between px-4">
+                    <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shadow-sm"><Cookie size={20} /></div>
+                        <div>
+                            <h3 className="text-xl font-black uppercase tracking-tighter text-foreground leading-none">Munchie Node 🍿</h3>
+                            <p className="text-[9px] font-black uppercase text-slate-400 tracking-widest mt-1">Forgot the bites? Fuel your mission.</p>
+                        </div>
+                    </div>
+                    <Link href="/shop/snacks" className="group flex items-center gap-2 text-[9px] font-black uppercase text-slate-400 hover:text-primary transition-colors">
+                        All Snacks <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                    </Link>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    {snacks.map((s) => (
+                        <Card key={s.id} className="p-4 rounded-[2rem] bg-white border border-slate-100 shadow-sm hover:shadow-xl transition-all group/item overflow-hidden relative">
+                            <div className="flex items-center gap-4 relative z-10">
+                                <div className="h-16 w-16 rounded-2xl bg-slate-50 relative overflow-hidden shrink-0 border border-slate-50">
+                                    <Image src={normalizeImage(s.image_url)} alt={s.name} fill className="object-contain p-2 group-hover/item:scale-110 transition-transform" />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                    <p className="text-[10px] font-black text-foreground uppercase truncate tracking-tight">{s.name}</p>
+                                    <p className="text-xs font-black text-primary mt-0.5">{formatPrice(s.price)}</p>
+                                    <Button
+                                        onClick={() => addToCart({
+                                            id: s.id,
+                                            name: s.name,
+                                            price: s.price,
+                                            base_price: s.price,
+                                            quantity: 1,
+                                            category: s.category,
+                                            image: normalizeImage(s.image_url)
+                                        })}
+                                        className="h-8 px-4 rounded-lg bg-primary text-white font-black uppercase text-[8px] tracking-widest mt-2 shadow-lg shadow-primary/10 active:scale-90 transition-all opacity-0 group-hover/item:opacity-100"
+                                    >
+                                        Add to Bag
+                                    </Button>
+                                </div>
+                            </div>
+                            <Zap className="absolute -bottom-4 -left-4 h-12 w-12 text-primary/5 rotate-45 -z-0" />
+                        </Card>
+                    ))}
+                </div>
+            </section>
+        )}
 
         {order ? (
             <div className="animate-in fade-in slide-in-from-bottom-6 duration-700">
@@ -352,6 +428,48 @@ function TrackingContent() {
                         )}
                     </div>
                 </div>
+
+                {/* 🍿 MUNCHIE NODE: RE-SYNC FOR ACTIVE TRACKING */}
+                {snacks.length > 0 && (
+                    <section className="mb-12 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                        <div className="flex items-center gap-3 px-4">
+                            <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary shadow-sm"><Cookie size={16} /></div>
+                            <h3 className="text-lg font-black uppercase tracking-tighter text-foreground leading-none">Add Munchies to your dispatch? 🍿</h3>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            {snacks.map((s) => (
+                                <Card key={s.id} className="p-4 rounded-3xl bg-slate-50 border border-slate-100 shadow-inner group/mini hover:bg-white hover:shadow-xl transition-all">
+                                    <div className="flex items-center gap-4">
+                                        <div className="h-12 w-12 rounded-xl bg-white relative overflow-hidden shrink-0 shadow-sm">
+                                            <Image src={normalizeImage(s.image_url)} alt={s.name} fill className="object-contain p-2" />
+                                        </div>
+                                        <div className="min-w-0 flex-1">
+                                            <p className="text-[9px] font-black text-foreground uppercase truncate">{s.name}</p>
+                                            <Button
+                                                onClick={() => {
+                                                    addToCart({
+                                                        id: s.id,
+                                                        name: s.name,
+                                                        price: s.price,
+                                                        base_price: s.price,
+                                                        quantity: 1,
+                                                        category: s.category,
+                                                        image: normalizeImage(s.image_url)
+                                                    });
+                                                    router.push('/cart');
+                                                }}
+                                                variant="link"
+                                                className="h-auto p-0 text-primary font-black uppercase text-[8px] tracking-widest mt-1 hover:no-underline"
+                                            >
+                                                Add + Order &rarr;
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </Card>
+                            ))}
+                        </div>
+                    </section>
+                )}
 
                 <div className="text-center space-y-6">
                     <p className="text-slate-400 text-sm font-medium italic">Online Bar guarantees genuine products and chilled dispatch.</p>

@@ -71,24 +71,26 @@ function UserMenu({ isMobileMenu = false }: { isMobileMenu?: boolean }) {
   if (displayEmail) {
     return (
       <div className="flex items-center gap-3">
-        <Link href="/profile" className="flex items-center gap-2 group bg-slate-50 hover:bg-white p-1 pr-3 rounded-full border border-slate-100 transition-all hover:shadow-lg">
-            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all shadow-sm">
-                <UserIcon className="h-4 w-4" />
-            </div>
-            <div className="flex flex-col items-start leading-none">
-                <span className={cn(
-                    "text-[9px] font-black uppercase tracking-widest text-slate-400 group-hover:text-foreground transition-colors",
-                    isMobileMenu ? "inline-block" : "hidden lg:inline-block"
-                )}>
-                  {displayEmail?.split('@')?.[0] || 'Member'}
-                </span>
-                {points !== null && (
-                    <Link href="/rewards" className="text-[8px] font-black text-primary uppercase tracking-tighter flex items-center gap-0.5 mt-0.5 hover:underline">
-                        <Zap className="h-2 w-2 fill-current" /> {(points || 0).toLocaleString()} PTS
-                    </Link>
-                )}
-            </div>
-        </Link>
+        <div className="flex items-center gap-2 group bg-slate-50 hover:bg-white p-1 pr-3 rounded-full border border-slate-100 transition-all hover:shadow-lg">
+            <Link href="/profile" className="flex items-center gap-2">
+                <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all shadow-sm">
+                    <UserIcon className="h-4 w-4" />
+                </div>
+                <div className="flex flex-col items-start leading-none">
+                    <span className={cn(
+                        "text-[9px] font-black uppercase tracking-widest text-slate-400 group-hover:text-foreground transition-colors",
+                        isMobileMenu ? "inline-block" : "hidden lg:inline-block"
+                    )}>
+                    {displayEmail?.split('@')?.[0] || 'Member'}
+                    </span>
+                </div>
+            </Link>
+            {points !== null && (
+                <Link href="/rewards" className="text-[8px] font-black text-primary uppercase tracking-tighter flex items-center gap-0.5 mt-0.5 hover:underline border-l border-slate-100 pl-2">
+                    <Zap className="h-2 w-2 fill-current" /> {(points || 0).toLocaleString()} PTS
+                </Link>
+            )}
+        </div>
       </div>
     );
   }
