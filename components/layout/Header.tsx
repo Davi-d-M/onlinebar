@@ -312,7 +312,7 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
           </div>
 
           {/* Search Bar */}
-          <div className="hidden lg:flex flex-1 max-w-sm relative" ref={searchRef}>
+          <div className="hidden lg:flex flex-1 max-w-xs xl:max-w-sm relative" ref={searchRef}>
             <div className="relative w-full">
               <input
                 type="search"

@@ -218,6 +218,9 @@ function UploadContent() {
       ]);
 
       if (prodRes.error) throw prodRes.error;
+
+      // Filter out snacks from the main cellar hub to avoid duplication?
+      // Actually, let's keep them but label them.
       setProducts(prodRes.data || []);
       setHubs(hubRes.data || []);
     } catch (err) {
@@ -623,8 +626,8 @@ function UploadContent() {
           <div className="lg:col-span-7 space-y-8">
             <form key={`form-v2-${editingId || 'new'}-${formSession}`} onSubmit={handleSubmit} className="space-y-8 pb-32">
 
-              <Card className="rounded-[3rem] border border-slate-100 shadow-sm overflow-hidden bg-white">
-                  <button type="button" onClick={() => toggleSection('basic')} className="w-full p-8 flex items-center justify-between hover:bg-slate-50 transition-colors">
+              <Card className="rounded-[3rem] border border-slate-100 shadow-sm overflow-visible bg-white">
+                  <button type="button" onClick={() => toggleSection('basic')} className="w-full p-8 flex items-center justify-between hover:bg-slate-50 transition-colors rounded-t-[3rem]">
                       <div className="flex items-center gap-4">
                           <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shadow-sm"><Info className="h-5 w-5" /></div>
                           <div className="text-left"><h2 className="text-lg font-black text-foreground uppercase tracking-tighter">Basic Information</h2><p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Identify beverage specs</p></div>
@@ -902,8 +905,8 @@ function UploadContent() {
                   )}
               </Card>
 
-              <Card className="rounded-[3rem] border border-slate-100 shadow-sm overflow-hidden bg-white">
-                  <button type="button" onClick={() => toggleSection('media')} className="w-full p-8 flex items-center justify-between hover:bg-slate-50 transition-colors">
+              <Card className="rounded-[3rem] border border-slate-100 shadow-sm overflow-visible bg-white">
+                  <button type="button" onClick={() => toggleSection('media')} className="w-full p-8 flex items-center justify-between hover:bg-slate-50 transition-colors rounded-t-[3rem]">
                       <div className="flex items-center gap-4">
                           <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shadow-sm"><ImageIcon className="h-5 w-5" /></div>
                           <div className="text-left"><h2 className="text-lg font-black text-foreground uppercase tracking-tighter">Media Hub</h2><p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Visual Assets & Video</p></div>
@@ -1007,37 +1010,38 @@ function UploadContent() {
               </Card>
 
               <div className="sticky bottom-10 z-[50] animate-in slide-in-from-bottom-6 duration-1000">
-                  <div className="bg-slate-50 p-4 rounded-[2.5rem] shadow-2xl flex gap-3 border border-slate-200">
-                      {editingId && products.find(p => p.id === editingId)?.status === 'Pending' && (
-                          <Button
-                              type="button"
-                              onClick={async () => {
-                                  if(!supabase) return;
-                                  setIsSubmitting(true);
-                                  await supabase.from('products').update({ status: 'Live' }).eq('id', editingId);
-                                  cancelEditing();
-                                  fetchProducts();
-                                  setMessage({ type: 'success', text: 'Inventory Authorized for Grid! ✅' });
-                                  setIsSubmitting(false);
-                              }}
-                              className="h-16 px-8 rounded-2xl bg-emerald-500 text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-emerald-100 hover:bg-emerald-600 transition-all active:scale-95"
-                          >
-                              Authorize for Grid
-                          </Button>
-                      )}
-                      {editingId && (
-                          <button
-                              type="button"
-                              onClick={() => {
-                                  if (window.confirm(`Expunge ${form.name} from global catalogue?`)) {
-                                      handleDeleteProduct(editingId, form.name);
-                                  }
-                              }}
-                              className="h-16 px-8 rounded-2xl bg-rose-600 text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-rose-100 hover:bg-rose-700 transition-all active:scale-95"
-                          >
-                              <Trash2 className="h-5 w-5 mr-3" /> Delete Product
-                          </button>
-                      )}
+                      <div className="flex flex-col sm:flex-row gap-3">
+                          {editingId && products.find(p => p.id === editingId)?.status === 'Pending' && (
+                              <Button
+                                  type="button"
+                                  onClick={async () => {
+                                      if(!supabase) return;
+                                      setIsSubmitting(true);
+                                      await supabase.from('products').update({ status: 'Live' }).eq('id', editingId);
+                                      cancelEditing();
+                                      fetchProducts();
+                                      setMessage({ type: 'success', text: 'Inventory Authorized for Grid! ✅' });
+                                      setIsSubmitting(false);
+                                  }}
+                                  className="h-16 px-8 rounded-2xl bg-emerald-500 text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-emerald-100 hover:bg-emerald-600 transition-all active:scale-95"
+                              >
+                                  Authorize for Grid
+                              </Button>
+                          )}
+                          {editingId && (
+                              <button
+                                  type="button"
+                                  onClick={() => {
+                                      if (window.confirm(`Expunge ${form.name} from global catalogue?`)) {
+                                          handleDeleteProduct(editingId, form.name);
+                                      }
+                                  }}
+                                  className="h-16 px-8 rounded-2xl bg-rose-600 text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-rose-100 hover:bg-rose-700 transition-all active:scale-95"
+                              >
+                                  <Trash2 className="h-5 w-5" />
+                              </button>
+                          )}
+                      </div>
                       <Button type="submit" disabled={isSubmitting} className="flex-1 h-16 rounded-2xl bg-primary text-white font-black uppercase tracking-[0.3em] text-xs hover:bg-primary/90 transition-all active:scale-95 shadow-xl shadow-primary/20">
                         {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin mr-3" /> : <Wine className="h-5 w-5 mr-3" />}
                         {editingId ? 'Save Product Changes' : 'Deploy New Inventory'}
@@ -1097,7 +1101,7 @@ function UploadContent() {
                           </div>
                       </div>
                       <div className="flex-1 overflow-y-auto divide-y divide-slate-50 no-scrollbar">
-                          {products.filter(p => activeTab === 'live' ? (p.status !== 'Pending') : (p.status === 'Pending')).map(p => (
+                          {products.filter(p => activeTab === 'live' ? (p.status !== 'Pending' && p.status !== 'Proposal') : (p.status === 'Pending' || p.status === 'Proposal')).map(p => (
                                 <div key={p.id} className={cn(
                                     "h-24 w-full hover:bg-slate-50 group flex items-center justify-between cursor-pointer p-6 transition-all",
                                     editingId === p.id && "bg-primary/5 border-l-4 border-primary"
@@ -1107,9 +1111,12 @@ function UploadContent() {
                                           {/* eslint-disable-next-line @next/next/no-img-element */}
                                           <img src={p.image_url} className="max-h-full w-auto object-contain" alt="" />
                                       </div>
-                                      <div className="min-w-0 flex-1">
+                                      <div className="min-w-0 flex-1 text-left">
                                           <p className="text-[11px] font-black text-foreground uppercase truncate leading-none mb-1.5">{p.name}</p>
-                                          <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap overflow-hidden text-ellipsis">{p.stock} Units • {p.category}</p>
+                                          <div className="flex items-center gap-2">
+                                              <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap overflow-hidden text-ellipsis">{p.stock} Units • {p.category}</p>
+                                              {p.is_snack && <span className="px-1.5 py-0.5 rounded-md bg-indigo-50 text-indigo-500 text-[7px] font-black uppercase">Munchie</span>}
+                                          </div>
                                       </div>
                                   </div>
                                   <div className="flex items-center gap-2">

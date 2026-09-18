@@ -265,7 +265,7 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="space-y-8 sm:space-y-12 animate-in fade-in duration-700 bg-slate-50 min-h-screen p-4 sm:p-8 pb-20 text-left selection:bg-primary/20">
+    <div className="space-y-8 lg:space-y-10 animate-in fade-in duration-700 bg-slate-50 min-h-screen text-left selection:bg-primary/20">
       <CommandRelay />
 
       {/* EXECUTIVE HEADER */}

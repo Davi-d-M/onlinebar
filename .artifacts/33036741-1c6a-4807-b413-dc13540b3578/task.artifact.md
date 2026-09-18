@@ -1,2 +1,5 @@
-- [ ] Update `navItems` in `Header.tsx` (Remove emoji, add Buzz and Build My Bar)
-- [ ] Verify build and navigation flow
+- [ ] Fix overflow in `AdminUploadPage` (Media Hub & Basic Info)
+- [ ] Refactor AI Vision button positioning in `AdminUploadPage`
+- [ ] Add "Quick Munchies" button to `ProductList.tsx`
+- [ ] Add "Munchie Pulse" bar to `app/shop/page.tsx`
+- [ ] Final production build check

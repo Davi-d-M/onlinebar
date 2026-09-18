@@ -8,7 +8,8 @@ import {
     Zap,
     CheckCircle2,
     ArrowDown,
-    Loader2
+    Loader2,
+    RefreshCcw
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -55,7 +56,10 @@ export default function CustomerJourneyMap() {
             <header className="flex justify-between items-center">
                 <div>
                     <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tighter text-foreground leading-tight">Nairobi Bar Funnel</h2>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">Acquisition &rarr; Conversion Architecture</p>
+                    <div className="flex items-center gap-4 mt-2">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Acquisition &rarr; Conversion Architecture</p>
+                        <button onClick={fetchFunnel} className="text-primary hover:rotate-180 transition-transform"><RefreshCcw size={14} /></button>
+                    </div>
                 </div>
                 <div className="text-right">
                     <p className="text-2xl sm:text-[2rem] font-black text-primary leading-none tracking-tighter">

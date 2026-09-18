@@ -100,10 +100,11 @@ function MunchieContent() {
     if (!supabase) return;
     try {
       setLoadingSnacks(true);
+      // Online Bar OS: High-Fidelity Query for snacks (Extremely Inclusive)
       const { data, error } = await supabase
         .from('products')
         .select('*')
-        .eq('is_snack', true)
+        .or('is_snack.eq.true,category.ilike.%snack%,category.ilike.%munch%')
         .order('id', { ascending: false });
 
       if (error) throw error;
@@ -204,7 +205,7 @@ function MunchieContent() {
                     <div className="h-2 w-2 rounded-full bg-primary animate-pulse shadow-[0_0_10px_#F5A000]"></div>
                     <span className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400">Midnight Munchie Hub</span>
                 </div>
-                <h1 className="text-5xl font-black tracking-tighter text-foreground uppercase leading-none italic">
+                <h1 className="text-4xl font-black tracking-tighter text-foreground uppercase leading-none italic">
                   The Snack <span className="text-primary">Vault.</span>
                 </h1>
                 <p className="text-slate-500 text-sm font-medium italic">Deploy late-night pairings and surgical restocks.</p>
@@ -223,10 +224,10 @@ function MunchieContent() {
             <Utensils className="absolute -bottom-10 -right-10 h-64 w-64 text-primary/5 rotate-12 -z-0" />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-10">
 
           {/* LEFT: UPLOAD FORM */}
-          <div className="lg:col-span-7 space-y-8">
+          <div className="xl:col-span-7 space-y-8">
             <form onSubmit={handleSubmit} className="space-y-8 pb-32">
                 <Card className="rounded-[3.5rem] border border-slate-100 bg-white shadow-sm p-10 space-y-10 text-left">
                     <div className="flex items-center gap-4 border-b border-slate-50 pb-8">
@@ -291,19 +292,19 @@ function MunchieContent() {
                         </div>
                     </div>
 
-                    <div className="pt-10 border-t border-slate-50 flex gap-4">
+                    <div className="pt-10 border-t border-slate-50 flex flex-wrap gap-4">
                         {editingId && (
                             <Button
                                 type="button"
                                 onClick={() => handleDeleteSnack(editingId, form.name)}
-                                className="h-20 px-8 rounded-[2rem] bg-rose-600 text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-rose-100 hover:bg-rose-700 transition-all active:scale-95"
+                                className="h-14 px-8 rounded-2xl bg-rose-600 text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-rose-100 hover:bg-rose-700 transition-all active:scale-95"
                             >
                                 <Trash2 className="h-5 w-5" />
                             </Button>
                         )}
-                        <Button type="submit" disabled={isSubmitting} className="flex-1 h-20 rounded-[2rem] bg-primary text-white font-black uppercase tracking-[0.3em] text-sm shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
-                            {isSubmitting ? <Loader2 className="animate-spin mr-3" /> : <Flame className="mr-3" />}
-                            {editingId ? 'Execute Update' : 'Deploy to Midnight Grid'}
+                        <Button type="submit" disabled={isSubmitting} className="flex-1 h-14 min-w-[200px] rounded-2xl bg-primary text-white font-black uppercase tracking-[0.2em] text-xs shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
+                            {isSubmitting ? <Loader2 className="animate-spin mr-3 h-4 w-4" /> : <Flame className="mr-3 h-4 w-4" />}
+                            {editingId ? 'Execute Update' : 'Deploy to Grid'}
                         </Button>
                     </div>
                 </Card>
@@ -311,7 +312,7 @@ function MunchieContent() {
           </div>
 
           {/* RIGHT: SNACK GRID & PREVIEW */}
-          <div className="lg:col-span-5 space-y-10">
+          <div className="xl:col-span-5 space-y-10">
               <div className="sticky top-8 space-y-10">
                   <section className="bg-white rounded-[3.5rem] border border-slate-100 shadow-sm p-10 text-left">
                         <div className="flex items-center justify-between mb-10">

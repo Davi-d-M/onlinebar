@@ -226,27 +226,35 @@ export default function ProductList({ initialProducts }: { initialProducts?: Pro
   return (
     <div className="max-w-7xl mx-auto px-4 pb-24 text-left scroll-mt-32 pt-6" id="catalog-start">
 
-      {/* 1. Category Tabs */}
-      <div className="flex overflow-x-auto pb-6 mb-8 gap-2.5 sm:gap-4 scrollbar-hide no-scrollbar -mx-4 px-4">
-          {CATEGORIES.map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => {
-                    setActiveCategory(cat.id);
-                    setSearchQuery(''); // Reset search when switching categories
-                    setSelectedBrand('all'); // Reset brand
-                }}
-                className={cn(
-                    "flex items-center gap-2.5 px-5 py-3.5 sm:px-6 sm:py-4 rounded-2xl text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all duration-300 shrink-0 border whitespace-nowrap",
-                    activeCategory === cat.id
-                        ? "bg-primary text-white border-primary shadow-xl shadow-primary/20 scale-105"
-                        : "bg-white text-slate-400 border-slate-100 hover:border-slate-200"
-                )}
-              >
-                  <cat.icon className={cn("h-3.5 w-3.5 sm:h-4 sm:w-4", activeCategory === cat.id ? "text-white" : "text-slate-300")} />
-                  {cat.label}
-              </button>
-          ))}
+      {/* 1. Category Tabs & Quick Munchies */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-8 px-4">
+          <div className="flex overflow-x-auto pb-2 gap-2.5 sm:gap-4 scrollbar-hide no-scrollbar -mx-4 px-4 flex-1">
+              {CATEGORIES.map((cat) => (
+                  <button
+                    key={cat.id}
+                    onClick={() => {
+                        setActiveCategory(cat.id);
+                        setSearchQuery(''); // Reset search when switching categories
+                        setSelectedBrand('all'); // Reset brand
+                    }}
+                    className={cn(
+                        "flex items-center gap-2.5 px-5 py-3.5 sm:px-6 sm:py-4 rounded-2xl text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all duration-300 shrink-0 border whitespace-nowrap",
+                        activeCategory === cat.id
+                            ? "bg-primary text-white border-primary shadow-xl shadow-primary/20 scale-105"
+                            : "bg-white text-slate-400 border-slate-100 hover:border-slate-200"
+                    )}
+                  >
+                      <cat.icon className={cn("h-3.5 w-3.5 sm:h-4 sm:w-4", activeCategory === cat.id ? "text-white" : "text-slate-300")} />
+                      {cat.label}
+                  </button>
+              ))}
+          </div>
+
+          <Link href="/shop/snacks">
+              <Button className="h-14 px-8 rounded-2xl bg-indigo-600 text-white font-black uppercase text-[10px] tracking-[0.2em] shadow-xl shadow-indigo-100 hover:bg-indigo-700 transition-all active:scale-95 shrink-0">
+                  Quick Munchies 🍿
+              </Button>
+          </Link>
       </div>
 
       {/* 2. Pro Filters Bar */}

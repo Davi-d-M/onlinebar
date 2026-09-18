@@ -342,42 +342,42 @@ export default function AdminLayoutClient({
           <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden bg-slate-50/50">
 
               {/* TOP NAVIGATION BAR */}
-              <header className="h-20 bg-white/80 backdrop-blur-xl border-b border-border flex items-center justify-between px-8 shrink-0 z-40 hidden md:flex sticky top-0">
-                  <div className="flex items-center gap-6">
+              <header className="h-16 bg-white/80 backdrop-blur-xl border-b border-border flex items-center justify-between px-6 shrink-0 z-40 hidden md:flex sticky top-0">
+                  <div className="flex items-center gap-4">
                       <button
                         onClick={() => setIsSearchOpen(true)}
-                        className="flex items-center gap-4 px-6 h-12 rounded-2xl bg-secondary border border-border text-muted-foreground hover:border-primary/30 transition-all group min-w-[400px]"
+                        className="flex items-center gap-3 px-4 h-10 rounded-xl bg-secondary border border-border text-muted-foreground hover:border-primary/30 transition-all group min-w-[300px] lg:min-w-[400px]"
                       >
-                          <Search className="h-4 w-4 group-hover:text-primary transition-colors shrink-0" />
-                          <span className="text-[10px] font-black uppercase tracking-widest group-hover:text-foreground transition-colors">Search Protocol...</span>
-                          <kbd className="ml-auto bg-background px-2 py-1 rounded-lg border border-border text-[8px] font-black text-muted-foreground group-hover:text-primary transition-colors">Ctrl + K</kbd>
+                          <Search className="h-3.5 w-3.5 group-hover:text-primary transition-colors shrink-0" />
+                          <span className="text-[9px] font-black uppercase tracking-widest group-hover:text-foreground transition-colors">Search Protocol...</span>
+                          <kbd className="ml-auto bg-background px-1.5 py-0.5 rounded-md border border-border text-[7px] font-black text-muted-foreground group-hover:text-primary transition-colors">Ctrl + K</kbd>
                       </button>
                   </div>
 
-                  <div className="flex items-center gap-6 lg:gap-8">
-                      <div className="flex items-center gap-2 lg:gap-4">
-                          <Button onClick={() => setIsActivityOpen(true)} variant="ghost" size="icon" className="h-12 w-12 rounded-2xl text-muted-foreground hover:text-primary hover:bg-primary/5 relative">
-                              <Activity className="h-5 w-5" />
+                  <div className="flex items-center gap-4 lg:gap-6">
+                      <div className="flex items-center gap-2 lg:gap-3">
+                          <Button onClick={() => setIsActivityOpen(true)} variant="ghost" size="icon" className="h-10 w-10 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/5 relative">
+                              <Activity className="h-4 w-4" />
                           </Button>
 
-                          <Button onClick={() => setIsNotificationsOpen(true)} variant="ghost" size="icon" className="h-12 w-12 rounded-2xl text-muted-foreground hover:text-primary hover:bg-primary/5 relative">
-                              <Bell className="h-5 w-5" />
-                              <span className="absolute top-3 right-3 h-2 w-2 bg-primary rounded-full border-2 border-background"></span>
+                          <Button onClick={() => setIsNotificationsOpen(true)} variant="ghost" size="icon" className="h-10 w-10 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/5 relative">
+                              <Bell className="h-4 w-4" />
+                              <span className="absolute top-2.5 right-2.5 h-1.5 w-1.5 bg-primary rounded-full border-2 border-background"></span>
                           </Button>
                       </div>
 
-                      <div className="h-6 w-px bg-border mx-2 opacity-50"></div>
+                      <div className="h-5 w-px bg-border mx-1 opacity-50"></div>
 
                       <Link href="/admin/upload">
-                          <Button className="h-12 px-8 rounded-2xl bg-primary text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-3">
-                              <Wine className="h-4 w-4" /> Stock Cellar
+                          <Button className="h-10 px-6 rounded-xl bg-primary text-white font-black uppercase text-[9px] tracking-widest shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2">
+                              <Wine className="h-3.5 w-3.5" /> Stock Cellar
                           </Button>
                       </Link>
                   </div>
               </header>
 
-              <main className="flex-1 overflow-y-auto p-4 sm:p-10 no-scrollbar relative scroll-smooth">
-                <div className="max-w-[1600px] mx-auto w-full space-y-10">
+              <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 no-scrollbar relative scroll-smooth">
+                <div className="container mx-auto w-full space-y-10">
                   {children}
                 </div>
               </main>
