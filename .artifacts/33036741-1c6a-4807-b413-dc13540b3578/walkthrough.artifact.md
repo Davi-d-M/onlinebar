@@ -10,7 +10,14 @@ I have hardened the application's data integrity nodes to prevent runtime crashe
 - **Header Intelligence**: Hardened the "Recently Viewed" history logic in the Header. It now validates that the stored history is a proper array before attempting to render it.
 
 ### 2. Environment Stability (Cache Fix)
-- **Grid Expunge Utility**: Created a `clean_rebuild.sh` script in the `scratch/` directory. This script performs a deep purge of the `.next` and `webpack` caches, which fixes the `invalid code lengths set` error you saw in the terminal.
+- **Grid Expunge Utility**: Created a `clean_rebuild.ps1` script (and a `.sh` version) in the `scratch/` directory. This script performs a deep purge of the `.next` and `webpack` caches, which fixes the `invalid code lengths set` error you saw in the terminal.
+
+> [!IMPORTANT]
+> **Windows/PowerShell Command**:
+> If you are on Windows, use this command to purge your cache:
+> ```powershell
+> Remove-Item -Path .next, node_modules/.cache -Recurse -Force -ErrorAction SilentlyContinue ; npm run dev
+> ```
 
 ## Verification Results
 

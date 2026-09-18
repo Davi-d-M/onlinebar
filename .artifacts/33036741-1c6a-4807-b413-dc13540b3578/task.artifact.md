@@ -2,4 +2,5 @@
 - [x] Harden `JSON.parse` in `WishlistContext.tsx`
 - [x] Refine `Header.tsx` recently viewed logic
 - [x] Create `clean_rebuild.sh` script
+- [x] Create `clean_rebuild.ps1` script (Windows compatible)
 - [x] Verify build stability
