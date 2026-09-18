@@ -5,10 +5,10 @@ import { supabase } from '@/lib/supabaseClient';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
-import { Search, Package, Truck, CheckCircle, Clock, AlertCircle, MapPin, ShieldCheck, MessageSquare, Cookie, Zap, ArrowRight } from 'lucide-react';
+import { Search, Package, Truck, CheckCircle, Clock, AlertCircle, MapPin, ShieldCheck, MessageSquare, Cookie, Zap, ArrowRight, Loader2 } from 'lucide-react';
 import { formatPrice, cn, normalizeImage } from '@/lib/utils';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useSettings } from '@/lib/useSettings';
 import { useCart } from '@/context/CartContext';
 import Image from 'next/image';
@@ -49,6 +49,7 @@ function TrackingContent() {
   const [snacks, setSnacks] = useState<QuickSnack[]>([]);
 
   const searchParams = useSearchParams();
+  const router = useRouter();
   const { settings } = useSettings();
   const { addToCart } = useCart();
 
@@ -193,34 +194,43 @@ function TrackingContent() {
             <p className="text-slate-500 font-medium text-lg italic">Real-time visibility into your beverage dispatch.</p>
         </div>
 
-        <Card className="rounded-[3rem] border border-slate-100 shadow-2xl shadow-slate-200/50 mb-12 overflow-hidden">
-            <CardContent className="p-8 sm:p-10 bg-slate-50/50">
-                <form onSubmit={(e) => { e.preventDefault(); fetchOrder(searchQuery); }} className="flex flex-col md:flex-row gap-4">
-                    <div className="relative flex-1">
-                        <Input
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            placeholder="Enter Order ID or Phone"
-                            className="h-16 rounded-2xl border-slate-200 bg-white pl-14 text-sm font-bold shadow-sm focus:ring-primary"
-                        />
-                        <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-6 w-6 text-slate-300" />
+        <Card className="rounded-[3rem] border border-slate-100 shadow-2xl shadow-slate-200/50 mb-12 overflow-hidden bg-white">
+            <CardContent className="p-8 sm:p-14 bg-slate-50/30">
+                <form onSubmit={(e) => { e.preventDefault(); fetchOrder(searchQuery); }} className="space-y-6">
+                    <div className="flex flex-col md:flex-row gap-4">
+                        <div className="relative flex-1">
+                            <Input
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                placeholder="Order ID or Phone Number"
+                                className="h-20 rounded-[1.8rem] border-slate-200 bg-white pl-16 text-lg font-black shadow-inner focus:ring-primary focus:border-primary"
+                            />
+                            <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-6 w-6 text-slate-300" />
+                        </div>
+                        <Button type="submit" disabled={loading} className="h-20 px-12 rounded-[1.8rem] bg-primary text-white font-black uppercase text-sm tracking-widest shadow-xl shadow-primary/20 transition-all hover:scale-[1.02] active:scale-95 shrink-0">
+                            {loading ? <Loader2 className="animate-spin" /> : 'Locate Order'}
+                        </Button>
                     </div>
-                    <Button type="submit" disabled={loading} className="h-16 px-10 rounded-2xl bg-primary text-white font-black uppercase text-[10px] tracking-widest shadow-xl shadow-primary/20 transition-all hover:scale-[1.02] active:scale-95 shrink-0">
-                        {loading ? 'Searching...' : 'Locate Order'}
-                    </Button>
+                    {error && (
+                        <div className="p-4 bg-rose-50 border border-rose-100 rounded-2xl flex items-center justify-center gap-3 animate-in slide-in-from-top-2">
+                            <AlertCircle className="h-5 w-5 text-rose-500 shrink-0" />
+                            <p className="text-rose-600 text-[10px] font-black uppercase tracking-widest leading-relaxed">
+                                {error}
+                            </p>
+                        </div>
+                    )}
                 </form>
-                {error && <p className="mt-6 text-rose-600 text-[10px] font-black uppercase tracking-widest text-center flex items-center justify-center gap-2 animate-in fade-in slide-in-from-top-1"><AlertCircle className="h-4 w-4" /> {error}</p>}
             </CardContent>
         </Card>
 
-        {/* 🍿 MUNCHIE NODE: QUICK SNACK INTEGRATION */}
+        {/* MUNCHIE NODE: QUICK SNACK INTEGRATION */}
         {!order && snacks.length > 0 && (
             <section className="mb-20 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
                 <div className="flex items-center justify-between px-4">
                     <div className="flex items-center gap-3">
                         <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shadow-sm"><Cookie size={20} /></div>
                         <div>
-                            <h3 className="text-xl font-black uppercase tracking-tighter text-foreground leading-none">Munchie Node 🍿</h3>
+                            <h3 className="text-xl font-black uppercase tracking-tighter text-foreground leading-none">Munchie Node</h3>
                             <p className="text-[9px] font-black uppercase text-slate-400 tracking-widest mt-1">Forgot the bites? Fuel your mission.</p>
                         </div>
                     </div>
@@ -429,12 +439,12 @@ function TrackingContent() {
                     </div>
                 </div>
 
-                {/* 🍿 MUNCHIE NODE: RE-SYNC FOR ACTIVE TRACKING */}
+                {/* MUNCHIE NODE: RE-SYNC FOR ACTIVE TRACKING */}
                 {snacks.length > 0 && (
                     <section className="mb-12 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
                         <div className="flex items-center gap-3 px-4">
                             <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary shadow-sm"><Cookie size={16} /></div>
-                            <h3 className="text-lg font-black uppercase tracking-tighter text-foreground leading-none">Add Munchies to your dispatch? 🍿</h3>
+                            <h3 className="text-lg font-black uppercase tracking-tighter text-foreground leading-none">Add Munchies to your dispatch?</h3>
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             {snacks.map((s) => (

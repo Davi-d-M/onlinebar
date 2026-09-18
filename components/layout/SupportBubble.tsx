@@ -75,7 +75,7 @@ export default function SupportBubble() {
 
         // Persistent dismissal check
         const dismissed = localStorage.getItem('support_label_dismissed') === 'true';
-        if (dismissed || pathname === '/track') return;
+        if (dismissed || pathname?.includes('/track')) return;
 
         const timer = setTimeout(() => setShowLabel(true), 5000);
         return () => clearTimeout(timer);

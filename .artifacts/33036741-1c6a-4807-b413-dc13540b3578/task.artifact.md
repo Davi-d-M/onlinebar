@@ -1,4 +1,2 @@
-- [ ] Fix "Track Delivery" form layout in `app/track/page.tsx`
-- [ ] Add "Munchie Node" section with snack buttons to `app/track/page.tsx`
-- [ ] Integrate `SnackCrossSell` logic or component into the tracking flow
-- [ ] Verify build and UI alignment
+- [ ] Update `navItems` in `Header.tsx` (Remove emoji, add Buzz and Build My Bar)
+- [ ] Verify build and navigation flow

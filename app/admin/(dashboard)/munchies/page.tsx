@@ -184,7 +184,7 @@ function MunchieContent() {
       setSelectedFiles([]);
       setEditingId(null);
       fetchSnacks();
-      setMessage({ type: 'success', text: 'Munchie synchronized to the grid! 🍿' });
+      setMessage({ type: 'success', text: 'Munchie synchronized to the grid!' });
       setTimeout(() => setMessage(null), 3000);
     } catch (err: unknown) {
         setMessage({ type: 'error', text: (err as Error).message });
@@ -205,7 +205,7 @@ function MunchieContent() {
                     <span className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400">Midnight Munchie Hub</span>
                 </div>
                 <h1 className="text-5xl font-black tracking-tighter text-foreground uppercase leading-none italic">
-                  The Snack <span className="text-primary">Vault.</span> 🍿
+                  The Snack <span className="text-primary">Vault.</span>
                 </h1>
                 <p className="text-slate-500 text-sm font-medium italic">Deploy late-night pairings and surgical restocks.</p>
             </div>

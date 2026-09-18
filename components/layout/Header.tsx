@@ -253,12 +253,13 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
 
   const navItems = [
     { href: "/shop", label: "Menu" },
+    { href: "/shop/snacks", label: "Munchies" },
     { href: "/shop/category/new-arrivals", label: "New" },
     { href: "/shop/category/sale", label: "Deals" },
     { href: "/gifting", label: "Gifting" },
-    { href: "/corporate", label: "Corporate" },
+    { href: "/buzz", label: "Buzz" },
+    { href: "/buzz?planner=true", label: "Build My Bar" },
     { href: "/blog", label: "Mixology" },
-    { href: "/warranty", label: "Quality" },
     { href: "/track", label: "Track" }
   ];
 

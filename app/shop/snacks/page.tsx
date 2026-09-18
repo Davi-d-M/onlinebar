@@ -68,7 +68,7 @@ export default function SnackShopPage() {
                     </Link>
                     <div className="max-w-xl space-y-6">
                         <h1 className="text-6xl font-black text-foreground uppercase tracking-tighter leading-none">
-                            The Snack <span className="text-primary italic">Shop.</span> 🍿
+                            The Snack <span className="text-primary italic">Shop.</span>
                         </h1>
                         <p className="text-slate-500 text-lg font-medium leading-relaxed italic">
                             &quot;Premium pairings for your favorite beverages. Chilled, crunchy, and delivered with surgical speed.&quot;

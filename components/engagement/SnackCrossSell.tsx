@@ -51,7 +51,7 @@ export default function SnackCrossSell() {
                 <div className="flex items-center gap-3">
                     <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shadow-sm"><Cookie size={24} /></div>
                     <div>
-                        <h3 className="text-xl font-black uppercase tracking-tighter text-foreground leading-none">Forgot the snacks? 🍿</h3>
+                        <h3 className="text-xl font-black uppercase tracking-tighter text-foreground leading-none">Forgot the snacks?</h3>
                         <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-1">Recommended Pairings</p>
                     </div>
                 </div>

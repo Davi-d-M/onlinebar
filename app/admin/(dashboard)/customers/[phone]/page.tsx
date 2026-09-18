@@ -14,7 +14,8 @@ import {
     ArrowLeft,
     Smartphone,
     Bot,
-    BarChart3
+    BarChart3,
+    ShieldAlert
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -50,6 +51,8 @@ interface Customer360 {
         total_dead_clicks: number;
         top_traffic_source: string;
         preferred_device: string;
+        most_visited_category?: string;
+        most_searched_term?: string;
     };
     intelligence: {
         intent_score: number;
