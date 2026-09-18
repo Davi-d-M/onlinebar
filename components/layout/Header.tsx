@@ -272,10 +272,10 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
       }`}
     >
       <div className="container mx-auto px-4 sm:px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-8 lg:space-x-12">
+        <div className="flex items-center justify-between gap-2 lg:gap-4">
+          <div className="flex items-center space-x-2 lg:space-x-4 shrink-0">
             <Link
-              className="text-xl sm:text-2xl tracking-tighter font-black text-foreground hover:text-primary transition-colors flex items-center gap-2 uppercase"
+              className="text-xl sm:text-2xl tracking-tighter font-black text-foreground hover:text-primary transition-colors flex items-center gap-2 uppercase whitespace-nowrap"
               href="/"
               aria-label="Online Bar Home"
             >
@@ -291,7 +291,7 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
             </Link>
 
             <nav
-              className="hidden md:flex items-center space-x-1"
+              className="hidden xl:flex items-center space-x-0.5"
               role="navigation"
               aria-label="Main navigation"
             >
@@ -299,7 +299,7 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
                 <Link
                   key={href}
                   href={href}
-                  className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-200 ${
+                  className={`px-2.5 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all duration-200 whitespace-nowrap ${
                     pathname === href
                       ? "bg-primary/10 text-primary shadow-sm"
                       : "text-slate-500 hover:bg-slate-50 hover:text-foreground"
@@ -312,7 +312,7 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
           </div>
 
           {/* Search Bar */}
-          <div className="hidden lg:flex flex-1 max-w-2xl mx-4 relative" ref={searchRef}>
+          <div className="hidden lg:flex flex-1 max-w-sm relative" ref={searchRef}>
             <div className="relative w-full">
               <input
                 type="search"

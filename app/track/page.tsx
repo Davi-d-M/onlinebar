@@ -259,7 +259,7 @@ function TrackingContent() {
                                             category: s.category,
                                             image: normalizeImage(s.image_url)
                                         })}
-                                        className="h-8 px-4 rounded-lg bg-primary text-white font-black uppercase text-[8px] tracking-widest mt-2 shadow-lg shadow-primary/10 active:scale-90 transition-all opacity-0 group-hover/item:opacity-100"
+                                        className="h-8 px-4 rounded-lg bg-primary text-white font-black uppercase text-[8px] tracking-widest mt-2 shadow-lg shadow-primary/10 active:scale-90 transition-all"
                                     >
                                         Add to Bag
                                     </Button>
