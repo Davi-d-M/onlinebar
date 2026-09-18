@@ -55,13 +55,17 @@ export default function AnalyticsTracker() {
 
         // ⚡ [PERFORMANCE_NODE] Non-blocking initial track
         const handleTracking = () => {
-            trackPage();
+            try {
+                trackPage();
+            } catch (err) {
+                console.warn("[Analytics] Deferred sequence failed", err);
+            }
         };
 
         if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
             (window as any).requestIdleCallback(handleTracking);
         } else {
-            setTimeout(handleTracking, 200);
+            setTimeout(handleTracking, 500);
         }
 
         async function trackPage() {

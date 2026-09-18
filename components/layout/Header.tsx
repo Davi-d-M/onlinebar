@@ -292,7 +292,6 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
             }, (payload) => {
                 const newNode = payload.new as NotificationNode;
                 setNotifications(prev => [newNode, ...prev.slice(0, 9)]);
-                setUnreadCount(c => c + 1);
             })
             .on('postgres_changes', {
                 event: 'UPDATE',
@@ -301,19 +300,18 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
                 filter: `user_id=eq.${session.user.id}`
             }, (payload) => {
                 const updated = payload.new as NotificationNode;
-                setNotifications(current => {
-                    const next = current.map(n => n.id === updated.id ? updated : n);
-                    // Recalculate unread count from the updated list
-                    const unread = next.filter(n => !n.is_read).length;
-                    setUnreadCount(unread);
-                    return next;
-                });
+                setNotifications(current => current.map(n => n.id === updated.id ? updated : n));
             })
             .subscribe();
     }
     initNotifications();
     return () => { if(channel && supabase) supabase.removeChannel(channel); };
   }, [pathname]);
+
+  // Derive unread count from notifications state
+  useEffect(() => {
+      setUnreadCount(notifications.filter(n => !n.is_read).length);
+  }, [notifications]);
 
   const handleMarkAllRead = async () => {
       if (!supabase) return;
