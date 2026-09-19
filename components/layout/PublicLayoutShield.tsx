@@ -5,7 +5,7 @@ import Header from './Header';
 import Footer from './Footer';
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, Suspense } from 'react';
+import { useEffect, Suspense, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { useSettings, type StoreSettings } from '@/lib/useSettings';
 
@@ -59,22 +59,26 @@ function ShieldContent({ children, initialSettings }: { children: React.ReactNod
     const pathname = usePathname();
     const { settings: hookSettings } = useSettings();
     const settings = initialSettings || hookSettings;
-    const isAdmin = pathname?.startsWith('/admin');
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     // 0. Dynamic Favicon
     useEffect(() => {
-        if (settings?.branding?.favicon_url) {
+        if (mounted && settings?.branding?.favicon_url) {
             const link = document.querySelector("link[rel*='icon']") as HTMLLinkElement || document.createElement('link');
             link.type = 'image/x-icon';
             link.rel = 'shortcut icon';
             link.href = settings.branding.favicon_url;
             document.getElementsByTagName('head')[0].appendChild(link);
         }
-    }, [settings]);
+    }, [settings, mounted]);
 
     // 2. Live Visitor Heartbeat & Demand Prediction
     useEffect(() => {
-        if (!supabase || isAdmin) return;
+        if (!mounted || !supabase || pathname?.startsWith('/admin')) return;
 
         let sessionId = localStorage.getItem('ob_session_id');
         if (!sessionId) {
@@ -82,83 +86,54 @@ function ShieldContent({ children, initialSettings }: { children: React.ReactNod
             localStorage.setItem('ob_session_id', sessionId);
         }
 
-        const isOperational = true;
-
         const sendHeartbeat = async () => {
-            if (!supabase || !isOperational) return;
+            if (!supabase) return;
 
-            // Optional: Request Geo-location for Demand Heatmap
             let lat: number | null = null;
             let lon: number | null = null;
 
-            if (typeof window !== 'undefined' && 'geolocation' in navigator) {
-                // Background request - non blocking
+            if ('geolocation' in navigator) {
                 navigator.geolocation.getCurrentPosition((pos) => {
                     lat = pos.coords.latitude;
                     lon = pos.coords.longitude;
                 }, () => {}, { timeout: 5000 });
             }
 
-            // Non-blocking heartbeat
-            if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
-                (window as Window & { requestIdleCallback: (callback: IdleRequestCallback) => number }).requestIdleCallback(async () => {
-                    if (!supabase) return;
-                    const { data: { session } } = await supabase.auth.getSession();
-                    const cartData = localStorage.getItem('cart');
-                    let cartValue = 0;
-                    if (cartData) {
-                        try {
-                            const parsed = JSON.parse(cartData);
-                            cartValue = parsed.reduce((sum: number, item: { price: number; quantity: number }) => sum + (item.price * item.quantity), 0);
-                        } catch { }
-                    }
-
-                    await supabase.from('active_visitors').upsert({
-                        session_id: sessionId,
-                        customer_name: session?.user?.email?.split('@')[0] || null,
-                        current_page: pathname,
-                        last_active_at: new Date().toISOString(),
-                        cart_value: cartValue,
-                        latitude: lat,
-                        longitude: lon,
-                        status: pathname === '/checkout' ? 'Checkout' : cartValue > 0 ? 'Browsing' : 'Idle'
-                    });
-                });
-            } else {
-                // Fallback for Safari
-                setTimeout(async () => {
-                    if (!supabase) return;
-                    const { data: { session } } = await supabase.auth.getSession();
-                    const cartData = localStorage.getItem('cart');
-                    let cartValue = 0;
-                    if (cartData) {
-                        try {
-                            const parsed = JSON.parse(cartData);
-                            cartValue = parsed.reduce((sum: number, item: { price: number; quantity: number }) => sum + (item.price * item.quantity), 0);
-                        } catch { }
-                    }
-
-                    await supabase.from('active_visitors').upsert({
-                        session_id: sessionId,
-                        customer_name: session?.user?.email?.split('@')[0] || null,
-                        current_page: pathname,
-                        last_active_at: new Date().toISOString(),
-                        cart_value: cartValue,
-                        latitude: lat,
-                        longitude: lon,
-                        status: pathname === '/checkout' ? 'Checkout' : cartValue > 0 ? 'Browsing' : 'Idle'
-                    });
-                }, 1);
+            const { data: { session } } = await supabase.auth.getSession();
+            const cartData = localStorage.getItem('cart');
+            let cartValue = 0;
+            if (cartData) {
+                try {
+                    const parsed = JSON.parse(cartData);
+                    cartValue = parsed.reduce((sum: number, item: { price: number; quantity: number }) => sum + (item.price * item.quantity), 0);
+                } catch { }
             }
+
+            await supabase.from('active_visitors').upsert({
+                session_id: sessionId,
+                customer_name: session?.user?.email?.split('@')[0] || null,
+                current_page: pathname,
+                last_active_at: new Date().toISOString(),
+                cart_value: cartValue,
+                latitude: lat,
+                longitude: lon,
+                status: pathname === '/checkout' ? 'Checkout' : cartValue > 0 ? 'Browsing' : 'Idle'
+            });
         };
 
         sendHeartbeat();
-        const interval = setInterval(sendHeartbeat, 60000); // Pulse every 60s
+        const interval = setInterval(sendHeartbeat, 60000);
         return () => clearInterval(interval);
-    }, [pathname, isAdmin]);
+    }, [pathname, mounted]);
+
+    const isAdmin = pathname?.startsWith('/admin');
 
     if (isAdmin) {
         return <main className="flex-grow">{children}</main>;
+    }
+
+    if (!mounted) {
+        return <div className="min-h-screen bg-white" />; // Prevent layout flash/mismatch
     }
 
     return (
@@ -172,7 +147,9 @@ function ShieldContent({ children, initialSettings }: { children: React.ReactNod
             <Suspense fallback={<div className="h-20 bg-white border-b border-slate-50" />}>
                 <Header initialSettings={settings} />
             </Suspense>
-            <main className="flex-grow">{children}</main>
+            <Suspense fallback={<div className="min-h-screen bg-white" />}>
+                <main className="flex-grow">{children}</main>
+            </Suspense>
             <Footer initialSettings={settings} />
             <ExitIntentPopup />
             <CompareBar />

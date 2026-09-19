@@ -36,23 +36,27 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} font-sans antialiased bg-white text-foreground`}>
-        <CartProvider>
-          <WishlistProvider>
-            <PublicLayoutShield initialSettings={DEFAULT_SETTINGS}>
-                {children}
-            </PublicLayoutShield>
+        <Suspense fallback={null}>
+            <CartProvider>
+                <WishlistProvider>
+                    <PublicLayoutShield initialSettings={DEFAULT_SETTINGS}>
+                        {children}
+                    </PublicLayoutShield>
 
-            <Suspense fallback={null}>
-                <AnalyticsTracker />
-            </Suspense>
+                    <Suspense fallback={null}>
+                        <AnalyticsTracker />
+                    </Suspense>
 
-            <InstallAppWidget />
-            <ExperienceNotificationHost />
-            <MobileBottomNav />
-          </WishlistProvider>
-        </CartProvider>
+                    <Suspense fallback={null}>
+                        <InstallAppWidget />
+                        <ExperienceNotificationHost />
+                        <MobileBottomNav />
+                    </Suspense>
+                </WishlistProvider>
+            </CartProvider>
+        </Suspense>
 
         <JsonLd />
       </body>

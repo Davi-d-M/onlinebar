@@ -9,11 +9,16 @@ import { v4 as uuidv4 } from 'uuid';
 export default function AnalyticsTracker() {
     const pathname = usePathname();
     const searchParams = useSearchParams();
-    const startTimeRef = useRef<number>(Date.now());
+    const startTimeRef = useRef<number>(0);
     const scrollMilestonesRef = useRef<Set<number>>(new Set());
     const activeTimeRef = useRef<number>(0);
-    const lastInteractionRef = useRef<number>(Date.now());
+    const lastInteractionRef = useRef<number>(0);
     const clickHistoryRef = useRef<{ t: number, x: number, y: number }[]>([]);
+
+    useEffect(() => {
+        startTimeRef.current = Date.now();
+        lastInteractionRef.current = Date.now();
+    }, []);
 
     // 0. Emergency Auth Sync Node
     useEffect(() => {
