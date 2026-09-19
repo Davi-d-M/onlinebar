@@ -240,9 +240,13 @@ export default function AffiliateCommandCenter() {
                                 </div>
                                 <div>
                                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-1">Affiliate Level</p>
-                                    <h3 className="text-4xl font-black text-foreground tracking-tighter uppercase">{profile?.affiliates?.affiliate_tier || 'BRONZE'}</h3>
+                                    <h3 className="text-4xl font-black text-foreground tracking-tighter uppercase">
+                                        {stats.conversions >= 50 ? 'GOLD' : stats.conversions >= 10 ? 'SILVER' : 'STARTER'}
+                                    </h3>
                                     <div className="flex items-center gap-2 mt-2">
-                                        <span className="text-[8px] font-bold text-primary uppercase">5% Commission Active</span>
+                                        <span className="text-[8px] font-bold text-primary uppercase">
+                                            {stats.conversions >= 50 ? '15% Commission Active' : stats.conversions >= 10 ? '10% Commission Active' : '5% Commission Active'}
+                                        </span>
                                     </div>
                                 </div>
                             </Card>

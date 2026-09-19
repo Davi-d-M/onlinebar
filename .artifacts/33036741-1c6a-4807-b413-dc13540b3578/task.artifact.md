@@ -1,4 +1,9 @@
-- [ ] Wrap `Header` in `Suspense` in `PublicLayoutShield.tsx`
-- [ ] Refactor notification state update in `Header.tsx` to prevent loops
-- [ ] Harden `AnalyticsTracker.tsx` with non-blocking guards
-- [ ] Verify build and styling
+- [ ] Fix `SECURITY_ALERT` logging error in `lib/engines/eventEngine.ts`
+- [ ] Resolve Profile UUID in `lib/auditService.ts` before emitting events
+- [ ] Restore missing features in `app/admin/(dashboard)/upload/page.tsx`:
+    - [ ] Image Quality Audit & Vision Scan logic
+    - [ ] Bar Node (Scanner) hardware integration
+    - [ ] Neural Intelligence memos (Profit, Stock Velocity)
+    - [ ] Advanced Variants & Beverage Specs
+    - [ ] Logistics Hub Sync
+- [ ] Verify build and functionality

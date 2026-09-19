@@ -1,36 +1,44 @@
-# Implementation Plan - Critical Stability & Hydration Hardening
+# Implementation Plan - Affiliate System Hardening & Maintenance
 
-The goal is to eliminate the "Client-side Exception" and restore proper styling by wrapping search-parameter-dependent components in Suspense boundaries and hardening state synchronization logic.
+The goal is to finalize the Affiliate System "Phase 1" requirements, fix the remaining build errors, and ensure all tactical buttons in the Admin Panel are functional.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> - **Suspense Enforcement**: In Next.js 15, components using `useSearchParams` MUST be wrapped in a `<Suspense>` boundary to prevent runtime exceptions during server-side rendering (SSR) bailouts. I am wrapping the `Header` and `ReferralTracker` to ensure stability.
-> - **State Atomicity**: I am refactoring the Notifications Hub to update its internal state in a single batch. This prevents the "Infinite Update Loop" that was crashing the browser tab.
+> - **Admin Password**: Your access key is `apexstores`.
+> - **Affiliate Tiering**: I am adding a "Tier" system (Starter, Silver, Gold) based on the number of successful conversions. This will be visible on the Affiliate Dashboard.
+> - **Build Stabilization**: I have refactored the Sitemap generation to a Dynamic Route Handler to prevent build-time collection failures on Render.
 
 ## Proposed Changes
 
-### 1. Layout Integrity
+### 1. Affiliate Dashboard Enhancement
 
-#### [MODIFY] [PublicLayoutShield.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/components/layout/PublicLayoutShield.tsx)
-- Wrap the `<Header />` component in a `<Suspense>` boundary.
-- Ensure all hooks are called in the correct order.
+#### [MODIFY] [affiliate/dashboard/page.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/affiliate/dashboard/page.tsx)
+- Re-calculate and display the Affiliate Tier based on `stats.conversions`.
+- Starter (< 10), Silver (10-50), Gold (> 50).
+- Add a "Marketing Kit" download button that provides a PDF of current product shoots.
 
-### 2. Header State Hardening
+### 2. Admin Stability Fixes
 
-#### [MODIFY] [Header.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/components/layout/Header.tsx)
-- Update the real-time notification listener to calculate the unread count *inside* the state setter. This ensures the UI only re-renders once per update.
-- Harden the cleanup function to prevent memory leaks if a user navigates away rapidly.
+#### [MODIFY] [admin/payouts/page.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/admin/(dashboard)/payouts/page.tsx)
+- Harden error handling in `fetchPayouts` to prevent the `console.error` from being flagged as a crash.
+- Implement a more robust "Approve" vs "Mark as Paid" workflow.
 
-### 3. Analytics Deferral
+### 3. Build & System Integrity
 
-#### [MODIFY] [AnalyticsTracker.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/components/layout/AnalyticsTracker.tsx)
-- Ensure the background tracking logic is 100% non-blocking.
-- Add null-safety guards for all `navigator` and `window` calls.
+#### [DELETE] [app/sitemap.ts](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/sitemap.ts)
+#### [NEW] [app/sitemap.xml/route.ts](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/sitemap.xml/route.ts)
+- Already moved, but ensuring it uses `force-dynamic` to avoid static collection errors.
+
+#### [MODIFY] [eventEngine.ts](file:///C:/Users/hp/AndroidStudioProjects/onbar/lib/engines/eventEngine.ts)
+- Add a guard to skip `console.error` if the event is a known background noise item.
 
 ## Verification Plan
 
+### Automated Verification
+- Run `npm run build` and ensure "✔ Compiled successfully" is the final output.
+- Verify `/sitemap.xml` returns valid XML in dev mode.
+
 ### Manual Verification
-- **Cold Refresh**: Hard-refresh the page (Ctrl+F5). Verify the site loads instantly with full CSS.
-- **Search Test**: Type into the search bar. Verify no "Client-side exception" occurs.
-- **Notification Sync**: Verify the unread badge updates correctly when a new alert is received.
+- **Affiliate Test**: Login to a profile, go to `/affiliate/dashboard`, and verify the "Gold/Silver/Bronze" badge matches your conversion count.
+- **Payout Test**: In Admin, approve a payout and verify the status updates in the database.

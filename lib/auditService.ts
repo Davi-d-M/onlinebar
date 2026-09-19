@@ -73,8 +73,8 @@ export async function logAuditAction(
 
     // 🚀 [ENGINES] Emit System Event for real-time automation
     await emitEvent('SECURITY_ALERT', {
-        userId: email,
-        details: { action, ...details },
+        userId: staff?.id || undefined, // Use UUID if available
+        details: { actor_email: email, action, ...details },
     }, { ip, deviceInfo });
 
   } catch (err) {

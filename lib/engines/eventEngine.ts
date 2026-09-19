@@ -34,15 +34,22 @@ export async function emitEvent(eventType: SystemEventType, payload: EventPayloa
     if (!supabase) return;
 
     // 1. Persist Event to Database Log
+    const insertData: Record<string, unknown> = {
+        event_type: eventType,
+        payload: payload as unknown as Record<string, unknown>,
+        metadata: metadata as unknown as Record<string, unknown>,
+        status: 'PENDING'
+    };
+
+    // Only add user_id if it looks like a valid UUID (Email is not allowed here)
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    if (payload.userId && uuidRegex.test(payload.userId)) {
+        insertData.user_id = payload.userId;
+    }
+
     const { data: eventRecord, error: logError } = await supabase
         .from('event_log')
-        .insert([{
-            event_type: eventType,
-            payload: payload as unknown as Record<string, unknown>,
-            user_id: payload.userId,
-            metadata: metadata as unknown as Record<string, unknown>,
-            status: 'PENDING'
-        }])
+        .insert([insertData])
         .select()
         .single();
 

@@ -41,6 +41,8 @@ export default function AdminPayoutsPage() {
     const [searchQuery, setSearchQuery] = React.useState('');
     const [filter, setFilter] = React.useState<'all' | 'Pending' | 'Paid'>('all');
 
+    const [message, setMessage] = React.useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
     const fetchPayouts = React.useCallback(async () => {
         if (!supabase) return;
         setLoading(true);
@@ -54,7 +56,8 @@ export default function AdminPayoutsPage() {
             setPayouts(data || []);
         } catch (err: unknown) {
             const errorMsg = err instanceof Error ? err.message : String(err);
-            console.error("Payout Queue Sync Failure:", errorMsg);
+            setMessage({ type: 'error', text: `Sync Failure: ${errorMsg}` });
+            setTimeout(() => setMessage(null), 5000);
         } finally {
             setLoading(false);
         }
@@ -109,6 +112,16 @@ export default function AdminPayoutsPage() {
                         <p className="text-slate-500 text-sm font-medium mt-1">Authorize commission withdrawals and manage network liquidity.</p>
                     </div>
                 </div>
+
+                {message && (
+                    <div className={cn(
+                        "p-4 rounded-2xl border flex items-center gap-3 animate-in fade-in slide-in-from-top-2",
+                        message.type === 'success' ? "bg-primary/10 border-primary/20 text-primary" : "bg-rose-50 border-rose-100 text-rose-600"
+                    )}>
+                        <p className="text-[10px] font-black uppercase tracking-widest">{message.text}</p>
+                    </div>
+                )}
+
                 <div className="flex gap-2">
                     <Button onClick={fetchPayouts} variant="outline" className="rounded-xl h-12 px-6 border-slate-200 bg-white font-black uppercase text-[10px] tracking-widest transition-all">
                         <RefreshCcw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} /> Sync Queue
