@@ -9,7 +9,6 @@ import { Menu, Search, ShoppingCart, Heart, X, Wine, Zap, Package, User as UserI
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
-import type { RealtimeChannel } from '@supabase/supabase-js';
 import { formatPrice, cn } from "@/lib/utils";
 import { useSettings, type StoreSettings } from "@/lib/useSettings";
 
@@ -270,7 +269,7 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
 
   useEffect(() => {
     let isMounted = true;
-    let channel: RealtimeChannel | null = null;
+    let channel: any = null;
 
     async function initNotifications() {
         if (!supabase) return;
@@ -317,7 +316,9 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
 
     return () => {
         isMounted = false;
-        if(channel) channel.unsubscribe();
+        if(channel && supabase) {
+            supabase.removeChannel(channel);
+        }
     };
   }, [pathname]);
 
