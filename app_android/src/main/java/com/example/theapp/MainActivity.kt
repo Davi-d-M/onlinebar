@@ -53,7 +53,7 @@ import androidx.core.app.ActivityCompat
 
 class MainActivity : FragmentActivity() {
     companion object {
-        const val BASE_URL = "https://onlinebar-os.onrender.com"
+        const val BASE_URL = "https://onlinebar.onrender.com"
         const val ADMIN_URL = "$BASE_URL/admin"
         const val OFFLINE_STORAGE_PREFS = "titan_offline_storage"
     }

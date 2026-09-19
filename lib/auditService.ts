@@ -27,18 +27,20 @@ export async function logAuditAction(
 
     if (typeof window !== 'undefined') {
         try {
-            // Try ipify first
-            const res = await fetch('https://api.ipify.org?format=json', { timeout: 2000 } as unknown as RequestInit);
+            // High-speed IP resolution node (with 1s deadline)
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 1000);
+
+            const res = await fetch('https://api.ipify.org?format=json', { signal: controller.signal });
+            clearTimeout(timeout);
+
             if (res.ok) {
                 const data = await res.json();
                 ip = data.ip;
-            } else {
-                // Try second source if ipify fails
-                const res2 = await fetch('https://ifconfig.me/all.json');
-                const data2 = await res2.json();
-                ip = data2.ip_addr;
             }
-        } catch { ip = 'client-unreachable'; }
+        } catch {
+            ip = 'local-node';
+        }
     }
 
     // Parse User Agent for premium display

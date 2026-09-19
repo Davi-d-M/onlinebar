@@ -104,19 +104,20 @@ async function processEvent(event: { id: string, event_type: SystemEventType, pa
         case 'ORDER_DELIVERED':
             // 🏅 Trigger Gamification (XP, Badges)
             if (user_id) {
-                await trackEngagementEvent(user_id, 'ORDER_COMPLETED', {
+                trackEngagementEvent(user_id, 'ORDER_COMPLETED', {
                     orderTotal: payload.amount,
                     zoneName: payload.zoneName
-                });
+                }).catch(e => console.warn("XP Node Failure:", e));
             }
 
-            // 🧠 Trigger Predictive Engine (Phase 12)
-            await ApexMind.scanForReplenishment();
+            // 🧠 Trigger Predictive Engine (Phase 12) - Background Process
+            ApexMind.scanForReplenishment().catch(e => console.warn("Predictive Node Failure:", e));
 
             // 💰 Trigger Ledger (Payouts, Settlements) - Pillar 3
             // 🔔 Trigger Notifications - Pillar 5
             if (user_id) {
-                await triggerNotificationByEvent('ORDER_DELIVERED', { userId: user_id, orderId: Number(payload.orderId) });
+                triggerNotificationByEvent('ORDER_DELIVERED', { userId: user_id, orderId: Number(payload.orderId) })
+                    .catch(e => console.warn("Notification Node Failure:", e));
             }
             break;
 
