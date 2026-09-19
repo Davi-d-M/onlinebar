@@ -146,12 +146,20 @@ function MunchieContent() {
     setIsSubmitting(true);
     try {
       let imageUrl = '';
-      const BUCKET = 'onlinebar-assets';
+      const BUCKET = 'apexstores-assets';
 
       if (selectedFiles.length > 0) {
           const file = selectedFiles[0];
           const path = `snacks/${Date.now()}-${file.name}`;
-          await supabase.storage.from(BUCKET).upload(path, file);
+          const { error: uploadError } = await supabase.storage.from(BUCKET).upload(path, file);
+
+          if (uploadError) {
+              if (uploadError.message.includes('not found')) {
+                  throw new Error(`Storage Bucket "${BUCKET}" not found. Go to Supabase Dashboard > Storage and create it.`);
+              }
+              throw uploadError;
+          }
+
           imageUrl = supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
       }
 

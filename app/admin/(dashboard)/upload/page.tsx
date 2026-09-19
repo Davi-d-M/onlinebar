@@ -369,12 +369,20 @@ function UploadContent() {
 
     try {
       let imageUrls = [...existingImages];
-      const BUCKET = 'onlinebar-assets';
+      const BUCKET = 'apexstores-assets';
 
       if (selectedFiles.length > 0) {
           const uploads = selectedFiles.map(async f => {
               const path = `products/${Date.now()}-${f.name}`;
-              await supabase!.storage.from(BUCKET).upload(path, f);
+              const { error: uploadError } = await supabase!.storage.from(BUCKET).upload(path, f);
+
+              if (uploadError) {
+                  if (uploadError.message.includes('not found')) {
+                      throw new Error(`Storage Bucket "${BUCKET}" not found. Go to Supabase Dashboard > Storage and create it.`);
+                  }
+                  throw uploadError;
+              }
+
               return supabase!.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
           });
           const newUrls = await Promise.all(uploads);
