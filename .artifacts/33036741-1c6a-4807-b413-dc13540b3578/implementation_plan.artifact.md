@@ -1,44 +1,56 @@
-# Implementation Plan - Affiliate System Hardening & Maintenance
+# Implementation Plan - Affiliate Command Center (Titan/Apex Edition)
 
-The goal is to finalize the Affiliate System "Phase 1" requirements, fix the remaining build errors, and ensure all tactical buttons in the Admin Panel are functional.
+The goal is to transform the existing affiliate page into a professional partner-management command center that connects identity, performance, financials, and security in a single 360° view.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> - **Admin Password**: Your access key is `apexstores`.
-> - **Affiliate Tiering**: I am adding a "Tier" system (Starter, Silver, Gold) based on the number of successful conversions. This will be visible on the Affiliate Dashboard.
-> - **Build Stabilization**: I have refactored the Sitemap generation to a Dynamic Route Handler to prevent build-time collection failures on Render.
+> - **Schema Expansion**: I will be adding an `affiliate_id` link and `commission_percent` to the `coupons` table to support partner-attributed discounts.
+> - **RBAC Enforcement**: Access to financial data (payouts, commission overrides) will be restricted to `OWNER` and `FINANCE_ADMIN` roles based on the existing Identity Engine.
+> - **Audit Trail**: Every change to an affiliate's status or commission will be logged in the `audit_logs` for transparency.
 
 ## Proposed Changes
 
-### 1. Affiliate Dashboard Enhancement
+### 1. Database Hardening
 
-#### [MODIFY] [affiliate/dashboard/page.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/affiliate/dashboard/page.tsx)
-- Re-calculate and display the Affiliate Tier based on `stats.conversions`.
-- Starter (< 10), Silver (10-50), Gold (> 50).
-- Add a "Marketing Kit" download button that provides a PDF of current product shoots.
+#### [NEW] [20261005_affiliate_command_expansion.sql](file:///C:/Users/hp/AndroidStudioProjects/onbar/supabase/migrations/20261005_affiliate_command_expansion.sql)
+- Add `affiliate_id` (UUID) to `public.coupons`.
+- Add `commission_percent` (NUMERIC) to `public.coupons`.
+- Create `affiliate_commission_history` table to track overrides over time.
+- Update `affiliate_performance_summary` view to include revenue and conversion metrics per partner.
 
-### 2. Admin Stability Fixes
+### 2. Admin UI: Affiliate Command Center
 
-#### [MODIFY] [admin/payouts/page.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/admin/(dashboard)/payouts/page.tsx)
-- Harden error handling in `fetchPayouts` to prevent the `console.error` from being flagged as a crash.
-- Implement a more robust "Approve" vs "Mark as Paid" workflow.
+#### [MODIFY] [affiliates/page.tsx](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/admin/(dashboard)/affiliates/page.tsx)
+- Re-architect the page into a multi-tabbed interface:
+    - **Network Pulse**: Global KPIs (Network Value, Total Clicks, Conv Rate).
+    - **Partner Directory**: Master list with advanced search/filters.
+    - **Application Desk**: Review and approve new partners.
+    - **Financial Hub**: Unified payout queue and commission ledger.
+    - **Risk Radar**: Real-time fraud detection signals.
+- Implement a **360° Affiliate Profile Drawer**:
+    - **Performance**: High-fidelity charts for clicks/conversions.
+    - **Identity**: Full profile information and social links.
+    - **Tactical Controls**: Override commission, change tier, suspend/approve.
+    - **Links & Codes**: Manage this partner's unique referral nodes.
+    - **Activity Timeline**: Complete history of generated orders and clicks.
 
-### 3. Build & System Integrity
+### 3. Logic & Security Integration
 
-#### [DELETE] [app/sitemap.ts](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/sitemap.ts)
-#### [NEW] [app/sitemap.xml/route.ts](file:///C:/Users/hp/AndroidStudioProjects/onbar/app/sitemap.xml/route.ts)
-- Already moved, but ensuring it uses `force-dynamic` to avoid static collection errors.
+#### [MODIFY] [auditService.ts](file:///C:/Users/hp/AndroidStudioProjects/onbar/lib/auditService.ts)
+- Ensure all affiliate status changes and commission overrides are captured with the "actor" identity.
 
-#### [MODIFY] [eventEngine.ts](file:///C:/Users/hp/AndroidStudioProjects/onbar/lib/engines/eventEngine.ts)
-- Add a guard to skip `console.error` if the event is a known background noise item.
+#### [MODIFY] [identityEngine.ts](file:///C:/Users/hp/AndroidStudioProjects/onbar/lib/engines/identityEngine.ts)
+- Verify permissions for sensitive payout and override actions.
 
 ## Verification Plan
 
-### Automated Verification
-- Run `npm run build` and ensure "✔ Compiled successfully" is the final output.
-- Verify `/sitemap.xml` returns valid XML in dev mode.
+### Automated Tests
+- Run `npm run build` to ensure no UI regressions.
+- Verify that the new SQL migration applies correctly in a local environment.
 
 ### Manual Verification
-- **Affiliate Test**: Login to a profile, go to `/affiliate/dashboard`, and verify the "Gold/Silver/Bronze" badge matches your conversion count.
-- **Payout Test**: In Admin, approve a payout and verify the status updates in the database.
+- **Scenario A**: Access the new Affiliate Center as an OWNER. Verify all tabs and the 360° drawer load correctly.
+- **Scenario B**: Try to change an affiliate's commission rate. Verify the change is reflected in the UI and logged in the Audit Log.
+- **Scenario C**: Generate a new tracking link for a partner and verify it appears in their profile's "Tactical Nodes" section.
+- **Scenario D**: Verify that a non-admin staff member cannot see sensitive financial data in the directory.

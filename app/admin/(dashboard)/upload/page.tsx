@@ -147,7 +147,6 @@ function UploadContent() {
   const [products, setProducts] = useState<Product[]>([]);
   const [hubs, setHubs] = useState<Hub[]>([]);
   const [hubStock, setHubStock] = useState<Record<string, string>>({});
-  const [loadingProducts, setLoadingProducts] = useState(true);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [formSession, setFormSession] = useState(0);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -199,7 +198,6 @@ function UploadContent() {
   const fetchProducts = async () => {
     if (!supabase) return;
     try {
-      setLoadingProducts(true);
       const [prodRes, hubRes] = await Promise.all([
         supabase.from('products').select('*').order('id', { ascending: false }),
         supabase.from('hubs').select('id, name').eq('is_active', true)
@@ -210,8 +208,6 @@ function UploadContent() {
       setHubs(hubRes.data || []);
     } catch (err: unknown) {
       console.error(err);
-    } finally {
-      setLoadingProducts(false);
     }
   };
 

@@ -1,9 +1,14 @@
-- [ ] Fix `SECURITY_ALERT` logging error in `lib/engines/eventEngine.ts`
-- [ ] Resolve Profile UUID in `lib/auditService.ts` before emitting events
-- [ ] Restore missing features in `app/admin/(dashboard)/upload/page.tsx`:
-    - [ ] Image Quality Audit & Vision Scan logic
-    - [ ] Bar Node (Scanner) hardware integration
-    - [ ] Neural Intelligence memos (Profit, Stock Velocity)
-    - [ ] Advanced Variants & Beverage Specs
-    - [ ] Logistics Hub Sync
-- [ ] Verify build and functionality
+- [ ] 1. Database Hardening (SQL Migration)
+    - [ ] Add `affiliate_id` and `commission_percent` to `coupons` table
+    - [ ] Create `affiliate_commission_history` table
+    - [ ] Update `affiliate_performance_summary` view
+- [ ] 2. Admin UI: Affiliate Command Center Refactor (`affiliates/page.tsx`)
+    - [ ] Implement multi-tabbed layout (Network Pulse, Directory, Applications, Finance, Risk)
+    - [ ] Build 360° Affiliate Profile Drawer
+    - [ ] Add Tactical Controls (Status, Tiers, Overrides)
+- [ ] 3. Logic & Security Integration
+    - [ ] Add Audit logging for affiliate actions
+    - [ ] Verify RBAC checks for sensitive operations
+- [ ] 4. Verification & Testing
+    - [ ] Build verification
+    - [ ] Manual test scenarios
