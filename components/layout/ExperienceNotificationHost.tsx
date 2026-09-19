@@ -34,32 +34,36 @@ export default function ExperienceNotificationHost() {
                         filter: `user_id=eq.${userId}`
                     },
                     async (payload: { new: { template_id: string, payload: Record<string, string | number>, id: string } }) => {
-                        if (!isMounted) return;
+                        if (!isMounted || !supabase) return;
 
-                        // Fetch template details to build the toast
-                        if (!supabase) return;
-                        const { data: template } = await supabase
-                            .from('notification_templates')
-                            .select('*')
-                            .eq('id', payload.new.template_id)
-                            .single();
+                        try {
+                            // Fetch template details to build the toast
+                            const { data: template, error: templateError } = await supabase
+                                .from('notification_templates')
+                                .select('*')
+                                .eq('id', payload.new.template_id)
+                                .maybeSingle();
 
-                        if (template) {
-                            const hydratedTitle = hydrateTemplate(template.title, payload.new.payload);
-                            const hydratedMessage = hydrateTemplate(template.message, payload.new.payload);
+                            if (template && !templateError) {
+                                const payloadData = payload.new.payload || {};
+                                const hydratedTitle = hydrateTemplate(template.title, payloadData);
+                                const hydratedMessage = hydrateTemplate(template.message, payloadData);
 
-                            const newToast: ToastProps = {
-                                id: payload.new.id,
-                                title: hydratedTitle,
-                                message: hydratedMessage,
-                                icon: template.icon,
-                                style: template.style,
-                                actionUrl: template.cta_url ? hydrateTemplate(template.cta_url, payload.new.payload) : undefined,
-                                duration: template.duration,
-                                onClose: removeToast
-                            };
+                                const newToast: ToastProps = {
+                                    id: payload.new.id,
+                                    title: hydratedTitle,
+                                    message: hydratedMessage,
+                                    icon: template.icon,
+                                    style: template.style,
+                                    actionUrl: template.cta_url ? hydrateTemplate(template.cta_url, payloadData) : undefined,
+                                    duration: template.duration,
+                                    onClose: removeToast
+                                };
 
-                            setToasts(prev => [newToast, ...prev].slice(0, 3)); // Max 3 visible
+                                setToasts(prev => [newToast, ...prev].slice(0, 3)); // Max 3 visible
+                            }
+                        } catch (err) {
+                            console.error("[ExperienceHost] Payload processing failed:", err);
                         }
                     }
                 )

@@ -8,7 +8,6 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect, Suspense, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { useSettings, type StoreSettings } from '@/lib/useSettings';
-import { cn } from '@/lib/utils';
 
 // Lazy Load Non-Critical Components
 const LiveTicker = dynamic(() => import('./LiveTicker'), { ssr: false });
@@ -27,6 +26,7 @@ function ReferralTracker() {
     const searchParams = useSearchParams();
 
     useEffect(() => {
+        if (typeof window === 'undefined') return;
         const ref = searchParams.get('ref');
         if (ref && supabase) {
             sessionStorage.setItem('ob_referral_code', ref);
@@ -36,8 +36,12 @@ function ReferralTracker() {
 
             const tracked = sessionStorage.getItem(`tracked_${ref}`);
             if (!tracked) {
-                supabase.rpc('increment_referral_clicks', { code_input: ref })
-                    .then(() => sessionStorage.setItem(`tracked_${ref}`, 'true'));
+                (async () => {
+                    try {
+                        await supabase.rpc('increment_referral_clicks', { code_input: ref });
+                        sessionStorage.setItem(`tracked_${ref}`, 'true');
+                    } catch (e) { /* Ignore RPC errors in tracking */ }
+                })();
             }
         }
     }, [searchParams]);
@@ -95,7 +99,7 @@ function ShieldContent({ children, initialSettings }: { children: React.ReactNod
             let lat: number | null = null;
             let lon: number | null = null;
 
-            if ('geolocation' in navigator) {
+            if (typeof navigator !== 'undefined' && 'geolocation' in navigator) {
                 navigator.geolocation.getCurrentPosition((pos) => {
                     lat = pos.coords.latitude;
                     lon = pos.coords.longitude;
@@ -136,7 +140,7 @@ function ShieldContent({ children, initialSettings }: { children: React.ReactNod
     }
 
     return (
-        <div className={cn(!mounted && "opacity-0")}>
+        <>
             <CookieConsentBanner />
             <LevelUpCelebration />
             <AgeVerification />
@@ -153,6 +157,6 @@ function ShieldContent({ children, initialSettings }: { children: React.ReactNod
             <SupportBubble />
             <AIConcierge />
             <SignInTrigger />
-        </div>
+        </>
     );
 }

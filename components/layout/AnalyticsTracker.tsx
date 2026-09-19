@@ -93,18 +93,21 @@ export default function AnalyticsTracker() {
                 const activeSessId = OB_OS.getSessionId();
 
                 // 🚀 [WIDGET_INTEL] Capture Mobile Widget Attribution
+                const docReferrer = typeof document !== 'undefined' ? document.referrer : '';
                 const source = searchParams.get('utm_source') ||
-                               (typeof document !== 'undefined' && document.referrer && document.referrer.includes('instagram.com') ? 'Instagram' :
-                                typeof document !== 'undefined' && document.referrer && document.referrer.includes('google.com') ? 'Google' : 'Direct');
+                               (docReferrer.includes('instagram.com') ? 'Instagram' :
+                                docReferrer.includes('google.com') ? 'Google' : 'Direct');
 
                 const campaign = searchParams.get('utm_campaign') || 'Direct';
                 const utmId = searchParams.get('utm_id') || undefined;
                 const utmContent = searchParams.get('utm_content') || undefined;
 
                 if (typeof sessionStorage !== 'undefined') {
-                    if (utmId) sessionStorage.setItem('ob_attribution_id', utmId);
-                    if (utmContent) sessionStorage.setItem('ob_content_variant', utmContent);
-                    if (source === 'mobile_widget') sessionStorage.setItem('ob_widget_engagement', 'true');
+                    try {
+                        if (utmId) sessionStorage.setItem('ob_attribution_id', utmId);
+                        if (utmContent) sessionStorage.setItem('ob_content_variant', utmContent);
+                        if (source === 'mobile_widget') sessionStorage.setItem('ob_widget_engagement', 'true');
+                    } catch (e) { /* Ignore quota errors */ }
                 }
 
                 const commonProps = {
@@ -115,6 +118,10 @@ export default function AnalyticsTracker() {
 
                 // 0. Ensure Session Record Exists (Internal Sync)
                 if (activeSessId) {
+                    const ua = typeof navigator !== 'undefined' ? navigator.userAgent : 'Unknown';
+                    const screenRes = typeof window !== 'undefined' ? `${window.screen.width}x${window.screen.height}` : '0x0';
+                    const lang = typeof navigator !== 'undefined' ? navigator.language : 'en';
+
                     await supabase.from('customer_sessions').upsert({
                         id: activeSessId,
                         user_id: session?.user?.id,
@@ -125,9 +132,9 @@ export default function AnalyticsTracker() {
                         attribution_id: utmId,
                         content_variant: utmContent,
                         device_info: {
-                            ua: typeof navigator !== 'undefined' ? navigator.userAgent : 'Unknown',
-                            res: typeof window !== 'undefined' ? `${window.screen.width}x${window.screen.height}` : '0x0',
-                            lang: typeof navigator !== 'undefined' ? navigator.language : 'en'
+                            ua: ua,
+                            res: screenRes,
+                            lang: lang
                         },
                         total_active_time_sec: 0,
                         pages_viewed: 0
