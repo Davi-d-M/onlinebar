@@ -38,25 +38,23 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} font-sans antialiased bg-white text-foreground`}>
-        <Suspense fallback={null}>
-            <CartProvider>
-                <WishlistProvider>
-                    <PublicLayoutShield initialSettings={DEFAULT_SETTINGS}>
-                        {children}
-                    </PublicLayoutShield>
+        <CartProvider>
+          <WishlistProvider>
+            <PublicLayoutShield initialSettings={DEFAULT_SETTINGS}>
+                {children}
+            </PublicLayoutShield>
 
-                    <Suspense fallback={null}>
-                        <AnalyticsTracker />
-                    </Suspense>
+            <Suspense fallback={null}>
+                <AnalyticsTracker />
+            </Suspense>
 
-                    <Suspense fallback={null}>
-                        <InstallAppWidget />
-                        <ExperienceNotificationHost />
-                        <MobileBottomNav />
-                    </Suspense>
-                </WishlistProvider>
-            </CartProvider>
-        </Suspense>
+            <Suspense fallback={null}>
+                <InstallAppWidget />
+                <ExperienceNotificationHost />
+                <MobileBottomNav />
+            </Suspense>
+          </WishlistProvider>
+        </CartProvider>
 
         <JsonLd />
       </body>

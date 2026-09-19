@@ -8,6 +8,7 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect, Suspense, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { useSettings, type StoreSettings } from '@/lib/useSettings';
+import { cn } from '@/lib/utils';
 
 // Lazy Load Non-Critical Components
 const LiveTicker = dynamic(() => import('./LiveTicker'), { ssr: false });
@@ -67,12 +68,14 @@ function ShieldContent({ children, initialSettings }: { children: React.ReactNod
 
     // 0. Dynamic Favicon
     useEffect(() => {
-        if (mounted && settings?.branding?.favicon_url) {
+        if (mounted && typeof document !== 'undefined' && settings?.branding?.favicon_url) {
             const link = document.querySelector("link[rel*='icon']") as HTMLLinkElement || document.createElement('link');
             link.type = 'image/x-icon';
             link.rel = 'shortcut icon';
             link.href = settings.branding.favicon_url;
-            document.getElementsByTagName('head')[0].appendChild(link);
+            if (!link.parentNode) {
+                document.getElementsByTagName('head')[0].appendChild(link);
+            }
         }
     }, [settings, mounted]);
 
@@ -132,12 +135,8 @@ function ShieldContent({ children, initialSettings }: { children: React.ReactNod
         return <main className="flex-grow">{children}</main>;
     }
 
-    if (!mounted) {
-        return <div className="min-h-screen bg-white" />; // Prevent layout flash/mismatch
-    }
-
     return (
-        <>
+        <div className={cn(!mounted && "opacity-0")}>
             <CookieConsentBanner />
             <LevelUpCelebration />
             <AgeVerification />
@@ -147,15 +146,13 @@ function ShieldContent({ children, initialSettings }: { children: React.ReactNod
             <Suspense fallback={<div className="h-20 bg-white border-b border-slate-50" />}>
                 <Header initialSettings={settings} />
             </Suspense>
-            <Suspense fallback={<div className="min-h-screen bg-white" />}>
-                <main className="flex-grow">{children}</main>
-            </Suspense>
+            <main className="flex-grow">{children}</main>
             <Footer initialSettings={settings} />
             <ExitIntentPopup />
             <CompareBar />
             <SupportBubble />
             <AIConcierge />
             <SignInTrigger />
-        </>
+        </div>
     );
 }

@@ -94,8 +94,8 @@ export default function AnalyticsTracker() {
 
                 // 🚀 [WIDGET_INTEL] Capture Mobile Widget Attribution
                 const source = searchParams.get('utm_source') ||
-                               (typeof document !== 'undefined' && document.referrer.includes('instagram.com') ? 'Instagram' :
-                                typeof document !== 'undefined' && document.referrer.includes('google.com') ? 'Google' : 'Direct');
+                               (typeof document !== 'undefined' && document.referrer && document.referrer.includes('instagram.com') ? 'Instagram' :
+                                typeof document !== 'undefined' && document.referrer && document.referrer.includes('google.com') ? 'Google' : 'Direct');
 
                 const campaign = searchParams.get('utm_campaign') || 'Direct';
                 const utmId = searchParams.get('utm_id') || undefined;
@@ -125,9 +125,9 @@ export default function AnalyticsTracker() {
                         attribution_id: utmId,
                         content_variant: utmContent,
                         device_info: {
-                            ua: navigator.userAgent,
-                            res: `${window.screen.width}x${window.screen.height}`,
-                            lang: navigator.language
+                            ua: typeof navigator !== 'undefined' ? navigator.userAgent : 'Unknown',
+                            res: typeof window !== 'undefined' ? `${window.screen.width}x${window.screen.height}` : '0x0',
+                            lang: typeof navigator !== 'undefined' ? navigator.language : 'en'
                         },
                         total_active_time_sec: 0,
                         pages_viewed: 0

@@ -1,5 +1,4 @@
 import WidgetRegistry from "@/components/widgets/WidgetRegistry";
-import AIConcierge from "@/components/home/AIConcierge";
 
 export const revalidate = 300; // Shared with cache
 
@@ -9,9 +8,6 @@ export default async function Home() {
 
       {/* 🧩 Master Orchestration Hub */}
       <WidgetRegistry pageRoute="/" />
-
-      {/* 🤖 Floating AI Support Node */}
-      <AIConcierge />
 
     </div>
   );
