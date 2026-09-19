@@ -22,17 +22,41 @@ const AgeVerification = dynamic(() => import('./AgeVerification'), { ssr: false 
 const LevelUpCelebration = dynamic(() => import('../engagement/LevelUpCelebration'), { ssr: false });
 const CookieConsentBanner = dynamic(() => import('./CookieConsentBanner'), { ssr: false });
 
+function ReferralTracker() {
+    const searchParams = useSearchParams();
+
+    useEffect(() => {
+        const ref = searchParams.get('ref');
+        if (ref && supabase) {
+            sessionStorage.setItem('ob_referral_code', ref);
+            const expiry = new Date();
+            expiry.setDate(expiry.getDate() + 30);
+            document.cookie = `ob_referral_code=${ref}; path=/; expires=${expiry.toUTCString()}; SameSite=Lax`;
+
+            const tracked = sessionStorage.getItem(`tracked_${ref}`);
+            if (!tracked) {
+                supabase.rpc('increment_referral_clicks', { code_input: ref })
+                    .then(() => sessionStorage.setItem(`tracked_${ref}`, 'true'));
+            }
+        }
+    }, [searchParams]);
+
+    return null;
+}
+
 export default function PublicLayoutShield({ children, initialSettings }: { children: React.ReactNode, initialSettings?: StoreSettings }) {
     return (
-        <Suspense fallback={null}>
-            <ShieldContent initialSettings={initialSettings}>{children}</ShieldContent>
-        </Suspense>
+        <ShieldContent initialSettings={initialSettings}>
+            <Suspense fallback={null}>
+                <ReferralTracker />
+            </Suspense>
+            {children}
+        </ShieldContent>
     );
 }
 
 function ShieldContent({ children, initialSettings }: { children: React.ReactNode, initialSettings?: StoreSettings }) {
     const pathname = usePathname();
-    const searchParams = useSearchParams();
     const { settings: hookSettings } = useSettings();
     const settings = initialSettings || hookSettings;
     const isAdmin = pathname?.startsWith('/admin');
@@ -47,27 +71,6 @@ function ShieldContent({ children, initialSettings }: { children: React.ReactNod
             document.getElementsByTagName('head')[0].appendChild(link);
         }
     }, [settings]);
-
-    // 1. Referral Tracking
-    useEffect(() => {
-        const ref = searchParams.get('ref');
-        if (ref && supabase) {
-            // 1. Save to session storage & cookie (30 days)
-            sessionStorage.setItem('ob_referral_code', ref);
-
-            // Standard cookie set
-            const expiry = new Date();
-            expiry.setDate(expiry.getDate() + 30);
-            document.cookie = `ob_referral_code=${ref}; path=/; expires=${expiry.toUTCString()}; SameSite=Lax`;
-
-            // 2. Increment clicks (Idempotent per session)
-            const tracked = sessionStorage.getItem(`tracked_${ref}`);
-            if (!tracked) {
-                supabase.rpc('increment_referral_clicks', { code_input: ref })
-                    .then(() => sessionStorage.setItem(`tracked_${ref}`, 'true'));
-            }
-        }
-    }, [searchParams]);
 
     // 2. Live Visitor Heartbeat & Demand Prediction
     useEffect(() => {

@@ -18,15 +18,14 @@ import {
     Download,
     X,
     Trash2,
-    Camera,
-    Eye
+    Camera
 } from 'lucide-react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { cn } from '@/lib/utils';
 import { useAdmin } from '@/context/AdminContext';
 import { useSettings } from '@/lib/useSettings';
-import { auditImageQuality, standardizeImageCanvas, type ImageAuditResult } from '@/lib/engines/imageEngine';
+import { auditImageQuality, standardizeImageCanvas } from '@/lib/engines/imageEngine';
 
 const initialForm = {
   name: '',
@@ -114,11 +113,6 @@ interface Product {
   wholesale_stock_reserve?: number;
 }
 
-interface Hub {
-    id: string;
-    name: string;
-}
-
 export default function AdminUploadPage() {
     return (
         <Suspense fallback={<div className="p-24 text-center animate-pulse font-black text-slate-400 uppercase">Establishing Stock Sync...</div>}>
@@ -128,27 +122,16 @@ export default function AdminUploadPage() {
 }
 
 function UploadContent() {
-  const { role, email } = useAdmin();
+  const { role } = useAdmin();
   const { settings } = useSettings();
-  const [activeTab, setActiveTab] = useState<'live' | 'proposals'>('live');
   const [form, setForm] = useState(initialForm);
-  const [variantStock, setVariantStock] = useState<Record<string, string>>({});
-  const [beverageSpecs, setBeverageSpecs] = useState<{ key: string, value: string }[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [existingImages, setExistingImages] = useState<string[]>([]);
-  const [selectedVideo, setSelectedVideo] = useState<File | null>(null);
-  const [videoPreviewUrl, setVideoPreviewUrl] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
-  const [hubs, setHubs] = useState<Hub[]>([]);
-  const [hubStock, setHubStock] = useState<Record<string, string>>({});
-  const [loadingProducts, setLoadingProducts] = useState(true);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [formSession, setFormSession] = useState(0);
-  const [isGenerating, setIsGenerating] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
-  const [isVisionScanning, setIsVisionScanning] = useState(false);
-  const [imageAudits, setImageAudits] = useState<Record<string, ImageAuditResult>>({});
 
   // Section States
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
@@ -169,11 +152,9 @@ function UploadContent() {
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
         const files = Array.from(e.target.files);
-        setLoadingProducts(true);
 
         for (const file of files) {
             const audit = await auditImageQuality(file);
-            setImageAudits(prev => ({ ...prev, [file.name]: audit }));
 
             if (audit.isApproved) {
                 const normalizedBlob = await standardizeImageCanvas(file);
@@ -183,12 +164,7 @@ function UploadContent() {
                 setSelectedFiles(prev => [...prev, file]);
             }
         }
-        setLoadingProducts(false);
     }
-  };
-
-  const removeNewFile = (index: number) => {
-    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
   };
 
   const removeExistingImage = (index: number) => {
@@ -200,19 +176,14 @@ function UploadContent() {
   const fetchProducts = async () => {
     if (!supabase) return;
     try {
-      setLoadingProducts(true);
-      const [prodRes, hubRes] = await Promise.all([
-        supabase.from('products').select('*').order('id', { ascending: false }),
-        supabase.from('hubs').select('id, name').eq('is_active', true)
+      const [prodRes] = await Promise.all([
+        supabase.from('products').select('*').order('id', { ascending: false })
       ]);
 
       if (prodRes.error) throw prodRes.error;
       setProducts(prodRes.data || []);
-      setHubs(hubRes.data || []);
     } catch (err) {
       console.error(err);
-    } finally {
-      setLoadingProducts(false);
     }
   };
 
@@ -230,41 +201,9 @@ function UploadContent() {
     return () => { delete (window as any).onBarScan; };
   }, []);
 
-  const triggerBarScanner = () => {
-    if ((window as any).BarNode?.triggerScanner) {
-        (window as any).BarNode?.triggerScanner();
-    } else {
-        alert("Native Scanner Node not detected. Use the Online Bar Mobile App.");
-    }
-  };
-
   const currentVariants = useMemo(() => {
     return (form?.sizes || '').split(',').map(s => s.trim()).filter(s => s);
   }, [form.sizes]);
-
-  const profitIntel = useMemo(() => {
-      const sell = Number(form.price) || 0;
-      const cost = Number(form.cost_price) || 0;
-      const profit = sell - cost;
-      const margin = sell > 0 ? (profit / sell) * 100 : 0;
-      return { profit, margin };
-  }, [form.price, form.cost_price]);
-
-  const stockIntelligence = useMemo(() => {
-      if (!editingId) return null;
-      const currentStock = Number(form.stock) || 0;
-      const avgDailySales = 1.2;
-      const daysRemaining = avgDailySales > 0 ? (currentStock / avgDailySales).toFixed(1) : '∞';
-      const reorderPoint = 8;
-      const isReorderUrgent = currentStock <= reorderPoint;
-      return { currentStock, avgDailySales, daysRemaining, reorderPoint, isReorderUrgent };
-  }, [editingId, form.stock]);
-
-  const formCompletion = useMemo(() => {
-      const fields = [form.name, form.price, form.category, form.description];
-      const completed = fields.filter(f => f).length;
-      return Math.round((completed / fields.length) * 100);
-  }, [form]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const target = e.target;
@@ -273,48 +212,7 @@ function UploadContent() {
     setForm(prev => ({ ...prev, [name]: val }));
   };
 
-  const handleVariantStockChange = (variant: string, value: string) => {
-    setVariantStock(prev => ({ ...prev, [variant]: value }));
-  };
-
-  const handleAddSpec = () => setBeverageSpecs([...beverageSpecs, { key: '', value: '' }]);
-  const handleSpecChange = (index: number, field: 'key' | 'value', value: string) => {
-      const newSpecs = [...beverageSpecs];
-      newSpecs[index][field] = value;
-      setBeverageSpecs(newSpecs);
-  };
-  const handleRemoveSpec = (index: number) => setBeverageSpecs(beverageSpecs.filter((_, i) => i !== index));
-
-  const handleGenerateDescription = async () => {
-    if (!form.name.trim()) return;
-    setIsGenerating(true);
-    try {
-        const res = await fetch('/api/admin/generate-description', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: form.name, category: form.category }),
-        });
-        const data = await res.json();
-        if (data.description) setForm(prev => ({ ...prev, description: data.description }));
-    } finally {
-        setIsGenerating(false);
-    }
-  };
-
-  const handleVisionScan = async () => {
-    if (selectedFiles.length === 0) return;
-    setIsVisionScanning(true);
-    try {
-        setMessage({ type: 'error', text: "Vision API Node not connected." });
-    } finally {
-        setIsVisionScanning(false);
-    }
-  };
-
   const startEditing = (product: Product) => {
-    const vStock: Record<string, string> = {};
-    if (product.variant_stock) Object.entries(product.variant_stock).forEach(([k, v]) => vStock[k] = v.toString());
-
     setForm({
       ...initialForm,
       name: product.name || '',
@@ -332,32 +230,16 @@ function UploadContent() {
     });
 
     setExistingImages(product.images || [product.image_url]);
-    setVariantStock(vStock);
-    setBeverageSpecs(product.beverage_specs ? Object.entries(product.beverage_specs).map(([key, value]) => ({ key, value })) : []);
     setEditingId(product.id);
     setFormSession(prev => prev + 1);
-
-    async function fetchHubStock() {
-        const { data } = await supabase!.from('hub_inventory').select('*').eq('product_id', product.id);
-        if (data) {
-            const hStock: Record<string, string> = {};
-            data.forEach((hs: any) => hStock[hs.hub_id] = String(hs.stock_level));
-            setHubStock(hStock);
-        }
-    }
-    fetchHubStock();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const cancelEditing = () => {
     setEditingId(null);
     setForm(initialForm);
-    setVariantStock({});
-    setBeverageSpecs([]);
     setSelectedFiles([]);
     setExistingImages([]);
-    setSelectedVideo(null);
-    setVideoPreviewUrl(null);
     setFormSession(0);
   };
 
@@ -380,12 +262,6 @@ function UploadContent() {
           imageUrls = [...imageUrls, ...newUrls];
       }
 
-      const vStock: Record<string, number> = {};
-      currentVariants.forEach(v => vStock[v] = Number(variantStock[v] || 0));
-
-      const specs: Record<string, string> = {};
-      beverageSpecs.forEach(s => { if (s.key) specs[s.key] = s.value; });
-
       const productData = {
           name: form.name.trim(),
           brand: form.brand.trim(),
@@ -395,9 +271,7 @@ function UploadContent() {
           image_url: imageUrls[0] || '',
           images: imageUrls,
           sizes: currentVariants,
-          stock: Object.values(vStock).reduce((a, b) => a + b, 0),
-          variant_stock: vStock,
-          beverage_specs: specs,
+          stock: Number(form.stock),
           category: form.category,
           is_featured: form.is_featured,
           is_snack: form.is_snack,
@@ -531,11 +405,6 @@ function UploadContent() {
                                   <input type="file" multiple accept="image/*" onChange={handleFileChange} className="hidden" />
                                   <Camera size={24} />
                                   <span className="text-[8px] font-black uppercase">Add Photo</span>
-                                  {selectedFiles.length > 0 && (
-                                      <div className="absolute -bottom-10 left-0 right-0 flex gap-1 z-20">
-                                          <Button type="button" onClick={handleVisionScan} className="flex-1 h-8 rounded-lg bg-indigo-600 text-white text-[7px] font-black uppercase"><Eye size={10} className="mr-1"/> Cloud Vision</Button>
-                                      </div>
-                                  )}
                               </label>
                           </div>
                       </CardContent>

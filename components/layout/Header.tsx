@@ -268,7 +268,7 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
 
   useEffect(() => {
     let isMounted = true;
-    let channel: any;
+    let channel: { unsubscribe: () => void } | null = null;
 
     async function initNotifications() {
         if (!supabase) return;
@@ -282,7 +282,7 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
         ]);
 
         if (isMounted) {
-            if (notifsRes.data) setNotifications(notifsRes.data as NotificationNode[]);
+            setNotifications((notifsRes.data as NotificationNode[]) || []);
             if (countRes.count !== null) setUnreadCount(countRes.count);
         }
 
@@ -296,11 +296,7 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
             }, (payload) => {
                 if (!isMounted) return;
                 const newNode = payload.new as NotificationNode;
-                setNotifications(prev => {
-                    const next = [newNode, ...prev.slice(0, 9)];
-                    setUnreadCount(next.filter(x => !x.is_read).length);
-                    return next;
-                });
+                setNotifications(prev => [newNode, ...prev.slice(0, 9)]);
             })
             .on('postgres_changes', {
                 event: 'UPDATE',
@@ -310,11 +306,7 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
             }, (payload) => {
                 if (!isMounted) return;
                 const updated = payload.new as NotificationNode;
-                setNotifications(current => {
-                    const next = current.map(n => n.id === updated.id ? updated : n);
-                    setUnreadCount(next.filter(x => !x.is_read).length);
-                    return next;
-                });
+                setNotifications(current => current.map(n => n.id === updated.id ? updated : n));
             })
             .subscribe();
     }
@@ -326,6 +318,13 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
         if(channel && supabase) supabase.removeChannel(channel);
     };
   }, [pathname]);
+
+  // 🛡️ [STABILITY_NODE] Derive unread count from notifications state safely
+  useEffect(() => {
+      if (Array.isArray(notifications)) {
+          setUnreadCount(notifications.filter(n => n && !n.is_read).length);
+      }
+  }, [notifications]);
 
   const handleMarkAllRead = async () => {
       if (!supabase) return;

@@ -54,15 +54,19 @@ export default function AnalyticsTracker() {
         lastInteractionRef.current = Date.now();
 
         // ⚡ [PERFORMANCE_NODE] Non-blocking initial track
-        const handleTracking = () => {
+        const handleTracking = async () => {
             try {
-                trackPage();
+                await trackPage();
             } catch (err) {
                 console.warn("[Analytics] Deferred sequence failed", err);
             }
         };
 
-        const timer = setTimeout(handleTracking, 1000);
+        if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+            (window as Window & { requestIdleCallback: (callback: () => void) => void }).requestIdleCallback(() => handleTracking());
+        } else {
+            setTimeout(handleTracking, 1000);
+        }
 
         async function trackPage() {
             if (!supabase) return;

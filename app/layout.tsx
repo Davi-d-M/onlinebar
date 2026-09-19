@@ -37,20 +37,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} font-sans antialiased bg-white`}>
+      <body className={`${inter.variable} font-sans antialiased bg-white text-foreground`}>
         <CartProvider>
           <WishlistProvider>
-            <Suspense fallback={
-                <div className="min-h-screen flex items-center justify-center bg-white p-20 text-center">
-                    <div className="space-y-4">
-                        <div className="h-10 w-10 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
-                        <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest animate-pulse">Syncing Bar OS...</p>
-                    </div>
-                </div>
-            }>
-                <PublicLayoutShield initialSettings={DEFAULT_SETTINGS}>
-                    {children}
-                </PublicLayoutShield>
+            <PublicLayoutShield initialSettings={DEFAULT_SETTINGS}>
+                {children}
+            </PublicLayoutShield>
+
+            <Suspense fallback={null}>
                 <AnalyticsTracker />
             </Suspense>
 
