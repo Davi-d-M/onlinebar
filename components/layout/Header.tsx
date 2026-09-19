@@ -316,7 +316,7 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
 
     return () => {
         isMounted = false;
-        if(channel && supabase) {
+        if (channel && supabase) {
             supabase.removeChannel(channel);
         }
     };
@@ -325,7 +325,8 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
   // 🛡️ [STABILITY_NODE] Derive unread count from notifications state safely
   useEffect(() => {
       if (Array.isArray(notifications)) {
-          setUnreadCount(notifications.filter(n => n && !n.is_read).length);
+          const count = notifications.filter(n => !n.is_read).length;
+          setUnreadCount(count);
       }
   }, [notifications]);
 

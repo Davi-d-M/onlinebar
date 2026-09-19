@@ -1,6 +1,4 @@
-- [ ] Define `NotificationNode` interface in `Header.tsx`
-- [ ] Implement `notifications` and `unreadCount` state in `Header` component
-- [ ] Add `fetchNotifications` and real-time subscription to `Header.tsx`
-- [ ] Implement `handleMarkAllRead` with Supabase persistence
-- [ ] Map real data to the Notifications Hub UI
-- [ ] Verify build and functionality
+- [ ] Wrap `Header` in `Suspense` in `PublicLayoutShield.tsx`
+- [ ] Refactor notification state update in `Header.tsx` to prevent loops
+- [ ] Harden `AnalyticsTracker.tsx` with non-blocking guards
+- [ ] Verify build and styling

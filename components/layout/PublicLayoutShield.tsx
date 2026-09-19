@@ -169,7 +169,9 @@ function ShieldContent({ children, initialSettings }: { children: React.ReactNod
             <ThemeSynchronizer />
             <LiveTicker />
             <AbandonedCartBar />
-            <Header initialSettings={settings} />
+            <Suspense fallback={<div className="h-20 bg-white border-b border-slate-50" />}>
+                <Header initialSettings={settings} />
+            </Suspense>
             <main className="flex-grow">{children}</main>
             <Footer initialSettings={settings} />
             <ExitIntentPopup />
