@@ -52,6 +52,7 @@ export default function ProductList({ initialProducts }: { initialProducts?: Pro
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('newest');
+  const [userTier, setUserTier] = useState('Explorer');
 
   // New Pro Filters
   const [minPrice, setMinPrice] = useState('');
@@ -62,7 +63,7 @@ export default function ProductList({ initialProducts }: { initialProducts?: Pro
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetchProducts() {
+    async function fetchInitialData() {
       try {
         if (!supabase) {
           setProducts([]);
@@ -70,18 +71,27 @@ export default function ProductList({ initialProducts }: { initialProducts?: Pro
           return;
         }
 
-        const { data, error } = await supabase
-          .from('products')
-          .select('*')
-          .order('created_at', { ascending: false });
+        const [prodRes, tierRes] = await Promise.all([
+            supabase.from('products').select('*').order('created_at', { ascending: false }),
+            supabase.auth.getSession().then(async ({ data: { session } }) => {
+                if (!session || !supabase) return { data: null };
+                return supabase.from('profiles').select('loyalty_points').eq('id', session.user.id).maybeSingle();
+            })
+        ]);
 
-        if (error) {
-          console.error('Supabase fetch error:', error.message || error);
+        if (prodRes.error) {
+          console.error('Supabase fetch error:', prodRes.error.message);
           setProducts([]);
-        } else if (data && data.length > 0) {
-          setProducts(data as Product[]);
         } else {
-          setProducts([]);
+          setProducts(prodRes.data as Product[] || []);
+        }
+
+        if (tierRes.data) {
+            const pts = tierRes.data.loyalty_points || 0;
+            if (pts >= 5000) setUserTier('Legend');
+            else if (pts >= 2000) setUserTier('Diamond');
+            else if (pts >= 1000) setUserTier('Gold');
+            else if (pts >= 500) setUserTier('Silver');
         }
       } catch (err) {
         console.error('Error fetching products:', err);
@@ -93,7 +103,7 @@ export default function ProductList({ initialProducts }: { initialProducts?: Pro
     }
 
     if (!initialProducts || initialProducts.length === 0) {
-        fetchProducts();
+        fetchInitialData();
     }
   }, [initialProducts]);
 
@@ -355,7 +365,7 @@ export default function ProductList({ initialProducts }: { initialProducts?: Pro
       {filteredProducts.length > 0 ? (
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6 lg:gap-8">
           {filteredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <ProductCard key={product.id} product={product} userTier={userTier} />
           ))}
         </div>
       ) : (

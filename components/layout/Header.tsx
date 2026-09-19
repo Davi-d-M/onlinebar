@@ -418,6 +418,7 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
                 <Link
                   key={href}
                   href={href}
+                  data-behavior-id={`nav.${label.toLowerCase().replace(' ', '_')}`}
                   className={`px-2.5 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all duration-200 whitespace-nowrap ${
                     pathname === href
                       ? "bg-primary/10 text-primary shadow-sm"
@@ -435,6 +436,7 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
             <div className="relative w-full">
               <input
                 type="search"
+                data-behavior-id="header.search_input"
                 placeholder="Search wine, spirits, snacks..."
                 value={searchQuery}
                 onFocus={() => setIsSearchFocused(true)}
@@ -458,6 +460,7 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
                                     {['Red Wine', 'Whiskey', 'Vodka', 'Gin', 'Beer', 'Chilled Snacks'].map(tag => (
                                         <button
                                             key={tag}
+                                            data-behavior-id={`header.search_chip.${tag.toLowerCase().replace(' ', '_')}`}
                                             onClick={() => handleGlobalSearch(tag)}
                                             className="px-6 h-16 rounded-2xl bg-slate-50 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-primary hover:text-white transition-all shadow-sm border border-slate-100 flex items-center justify-between group/chip"
                                         >

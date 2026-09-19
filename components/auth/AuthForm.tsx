@@ -273,14 +273,14 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
                 <div className="space-y-3">
                     <label className="text-[10px] font-black uppercase text-slate-400 ml-1 tracking-[0.15em]">Full Identity</label>
                     <div className="relative">
-                        <Input value={fullName} onChange={e => setFullName(e.target.value)} placeholder="Full Name" className="h-14 rounded-2xl bg-slate-50 border-slate-100 pl-12 font-bold input-premium" />
+                        <Input value={fullName} onChange={e => setFullName(e.target.value)} placeholder="Full Name" data-behavior-id="auth.signup.full_name" className="h-14 rounded-2xl bg-slate-50 border-slate-100 pl-12 font-bold input-premium" />
                         <Globe className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
                     </div>
                 </div>
                 <div className="space-y-3">
                     <label className="text-[10px] font-black uppercase text-slate-400 ml-1 tracking-[0.15em]">Mobile Uplink</label>
                     <div className="relative">
-                        <Input value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} placeholder="07XXXXXXXX" className="h-14 rounded-2xl bg-slate-50 border-slate-100 pl-12 font-bold input-premium" />
+                        <Input value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} placeholder="07XXXXXXXX" data-behavior-id="auth.signup.phone" className="h-14 rounded-2xl bg-slate-50 border-slate-100 pl-12 font-bold input-premium" />
                         <Smartphone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
                     </div>
                 </div>
@@ -307,7 +307,12 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300" />
               </div>
             </div>
-            <Button type="submit" disabled={loading || cooldown > 0} className="w-full h-16 rounded-2xl bg-primary text-white font-black uppercase text-xs tracking-widest shadow-xl shadow-primary/20 btn-premium mt-4">
+            <Button
+                type="submit"
+                data-behavior-id={isSignUp ? "auth.initialize_profile" : "auth.enter_vault"}
+                disabled={loading || cooldown > 0}
+                className="w-full h-16 rounded-2xl bg-primary text-white font-black uppercase text-xs tracking-widest shadow-xl shadow-primary/20 btn-premium mt-4"
+            >
                 {loading ? <Loader2 className="animate-spin" /> : cooldown > 0 ? `Ready in ${cooldown}s` : (isSignUp ? 'Initialize Profile' : 'Enter Vault')}
             </Button>
           </form>
@@ -329,7 +334,12 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
                     </div>
                 </div>
               )}
-              <Button type="submit" disabled={loading || cooldown > 0} className="w-full h-16 rounded-2xl bg-primary text-white font-black uppercase text-xs tracking-widest shadow-xl shadow-primary/20 btn-premium mt-4">
+              <Button
+                type="submit"
+                data-behavior-id={isSignUp ? "auth.initialize_profile" : "auth.enter_vault"}
+                disabled={loading || cooldown > 0}
+                className="w-full h-16 rounded-2xl bg-primary text-white font-black uppercase text-xs tracking-widest shadow-xl shadow-primary/20 btn-premium mt-4"
+            >
                   {loading ? <Loader2 className="animate-spin" /> : cooldown > 0 ? `Ready in ${cooldown}s` : (showOtpField ? 'Verify & Enter' : 'Send Access Code')}
               </Button>
               {showOtpField && <button type="button" onClick={() => setShowOtpField(false)} className="w-full text-[9px] font-black uppercase text-slate-400 hover:text-primary transition-colors tracking-widest">Change Phone Number</button>}
@@ -346,9 +356,9 @@ export default function AuthForm({ initialMode = 'signin', onSuccess }: AuthForm
               </div>
 
               {debugInfo && (
-                  <div className="p-4 bg-slate-900 rounded-2xl text-left overflow-hidden">
+                  <div className="p-4 bg-slate-50 border border-slate-100 rounded-2xl text-left overflow-hidden">
                       <p className="text-[8px] font-black uppercase text-rose-400 mb-2 tracking-widest">Technical Intel</p>
-                      <code className="text-[9px] text-slate-300 font-mono break-all">{debugInfo}</code>
+                      <code className="text-[9px] text-slate-400 font-mono break-all">{debugInfo}</code>
                   </div>
               )}
           </div>

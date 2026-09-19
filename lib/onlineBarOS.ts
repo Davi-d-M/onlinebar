@@ -55,8 +55,13 @@ export type OSEventType =
     | 'LEVEL_UP'
     | 'SCROLL_DEPTH'
     | 'SEARCH_SUBMITTED'
+    | 'SEARCH_FILTER_APPLIED'
+    | 'SEARCH_SORT_CHANGED'
     | 'ZERO_RESULTS'
     | 'PRODUCT_INTENT'
+    | 'PRODUCT_IMAGE_ZOOMED'
+    | 'PRODUCT_3D_STARTED'
+    | 'PRODUCT_3D_ROTATED'
     | 'TIME_ON_PAGE'
     | 'BUZZ_VIEW'
     | 'BUZZ_OPEN'
@@ -69,6 +74,10 @@ export type OSEventType =
     | 'NAV_BACKTRACK'
     | 'MPESA_TIMEOUT'
     | 'PAYMENT_FAIL'
+    | 'FORM_STARTED'
+    | 'FORM_FIELD_FOCUSED'
+    | 'FORM_FIELD_COMPLETED'
+    | 'FORM_VALIDATION_FAILED'
     | 'FORM_ABANDONED';
 
 interface OSEventPayload {

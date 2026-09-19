@@ -1,15 +1,7 @@
 import { CartProvider } from "@/context/CartContext";
 import { WishlistProvider } from "@/context/WishlistContext";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "@/app/globals.css";
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  display: "swap",
-  preload: false,
-});
 
 export const metadata: Metadata = {
   title: 'Online Bar | Premium Drinks',
@@ -37,7 +29,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} font-sans antialiased bg-white text-foreground`}>
+      <body className={`font-sans antialiased bg-white text-foreground`}>
         <CartProvider>
           <WishlistProvider>
             <PublicLayoutShield initialSettings={DEFAULT_SETTINGS}>

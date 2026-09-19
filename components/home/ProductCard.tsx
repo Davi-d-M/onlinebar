@@ -7,11 +7,10 @@ import { cn, formatPrice, normalizeImage } from "@/lib/utils";
 import { Check, Eye, Heart, ShoppingCart, X, ArrowUpDown, MessageSquare, TrendingUp, Lock } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import RestockNotifyButton from "@/components/product/RestockNotifyButton";
 import { useWishlist } from "@/context/WishlistContext";
 import { useSettings } from "@/lib/useSettings";
-import { supabase } from "@/lib/supabaseClient";
 import { useInteractionTracking } from "@/lib/utils/useInteractionTracking";
 
 interface Product {
@@ -46,36 +45,17 @@ const TIER_RANK: Record<string, number> = {
     'Legend': 4
 };
 
-export default function ProductCard({ product }: { product: Product }) {
+export default function ProductCard({ product, userTier = 'Explorer' }: { product: Product, userTier?: string }) {
   const [imageError, setImageError] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
   const [showQuickView, setShowQuickView] = useState(false);
   const [selectedVariant, setSelectedVariant] = useState<string>("");
-  const [userTier, setUserTier] = useState('Explorer');
 
   const { addToCart, toggleCompare, compareList } = useCart();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const { settings } = useSettings();
   const { trackClick } = useInteractionTracking();
-
-  useEffect(() => {
-      async function checkTier() {
-          if (!supabase) return;
-          const { data: { session } } = await supabase.auth.getSession();
-          if (session) {
-              const { data } = await supabase.from('profiles').select('loyalty_points').eq('id', session.user.id).maybeSingle();
-              if (data) {
-                  const pts = data.loyalty_points || 0;
-                  if (pts >= 5000) setUserTier('Legend');
-                  else if (pts >= 2000) setUserTier('Diamond');
-                  else if (pts >= 1000) setUserTier('Gold');
-                  else if (pts >= 500) setUserTier('Silver');
-              }
-          }
-      }
-      checkTier();
-  }, []);
 
   const imageUrl = normalizeImage(product.image || product.image_url);
   const isSale = product.old_price && Number(product.old_price) > Number(product.price);
@@ -295,6 +275,7 @@ export default function ProductCard({ product }: { product: Product }) {
             ) : (
                 <>
                     <Button
+                    data-behavior-id="product_card.add_to_bag"
                     className={cn(
                         'w-full h-11 sm:h-14 transition-all duration-300 rounded-xl sm:rounded-2xl font-black uppercase text-[10px] sm:text-xs tracking-widest shadow-xl active:scale-95',
                         isLocked ? 'bg-slate-50 text-slate-300 cursor-not-allowed border border-slate-100 shadow-none' :

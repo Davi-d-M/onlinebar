@@ -4,6 +4,7 @@
   /* Strictly Light Theme - No Black allowed */
   --background: #ffffff;
   --foreground: #334155; /* Slate-700 (Lighter than black) */
+  --font-inter: "Inter", system-ui, -apple-system, sans-serif;
   --card: #ffffff;
   --card-foreground: #334155;
   --popover: #ffffff;
@@ -27,6 +28,11 @@
   --sidebar-border: #e2e8f0;
 
   --radius: 1.225rem;
+
+  /* Titanium Accents */
+  --titanium-slate: #1e293b;
+  --titanium-border: #cbd5e1;
+  --titanium-bg: #f8fafc;
 
   color-scheme: light;
 }

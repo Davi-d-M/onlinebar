@@ -216,19 +216,29 @@ function UploadContent() {
       fetchProducts();
     }
 
-    (window as Window & { onBarScan?: (sku: string) => void }).onBarScan = (sku: string) => {
+    (window as Window & { onTitanScan?: (sku: string) => void }).onTitanScan = (sku: string) => {
         setForm(prev => ({ ...prev, sku: sku }));
         setMessage({ type: 'success', text: `Node Synced: ${sku}` });
         setTimeout(() => setMessage(null), 3000);
     };
 
-    return () => { delete (window as Window & { onBarScan?: (sku: string) => void }).onBarScan; };
+    (window as Window & { onTitanTriage?: (result: string) => void }).onTitanTriage = (result: string) => {
+        setMessage({ type: 'success', text: `AI Triage Signal: ${result}` });
+        // Optionally parse result to update description or category
+        if (result.toLowerCase().includes('wine')) setForm(prev => ({ ...prev, category: 'wine' }));
+        setTimeout(() => setMessage(null), 5000);
+    };
+
+    return () => {
+        delete (window as Window & { onTitanScan?: (sku: string) => void }).onTitanScan;
+        delete (window as Window & { onTitanTriage?: (result: string) => void }).onTitanTriage;
+    };
   }, []);
 
   const triggerBarScanner = () => {
-    const win = window as Window & { BarNode?: { triggerScanner: () => void } };
-    if (win.BarNode?.triggerScanner) {
-        win.BarNode.triggerScanner();
+    const win = window as Window & { TitanNode?: { triggerScanner: () => void } };
+    if (win.TitanNode?.triggerScanner) {
+        win.TitanNode.triggerScanner();
     } else {
         alert("Native Scanner Node not detected. Use the Online Bar Mobile App.");
     }
@@ -746,7 +756,7 @@ function UploadContent() {
 
               <div className="sticky bottom-10 z-[50]">
                   <div className="bg-white/80 backdrop-blur-xl p-4 rounded-[2.5rem] shadow-2xl flex gap-3 border border-slate-100">
-                      <Button type="submit" disabled={isSubmitting} className="flex-1 h-16 rounded-2xl bg-primary text-white font-black uppercase tracking-[0.2em] text-xs hover:bg-primary/90 transition-all active:scale-95 shadow-xl shadow-primary/20">
+                      <Button type="submit" data-behavior-id="upload.deploy_to_bar" disabled={isSubmitting} className="flex-1 h-16 rounded-2xl bg-primary text-white font-black uppercase tracking-[0.2em] text-xs hover:bg-primary/90 transition-all active:scale-95 shadow-xl shadow-primary/20">
                         {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin mr-3" /> : <Wine className="h-5 w-5 mr-3" />}
                         {editingId ? 'Refine Grid Node' : 'Deploy to Bar'}
                       </Button>

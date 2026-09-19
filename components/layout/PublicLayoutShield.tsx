@@ -40,7 +40,7 @@ function ReferralTracker() {
                     try {
                         await supabase.rpc('increment_referral_clicks', { code_input: ref });
                         sessionStorage.setItem(`tracked_${ref}`, 'true');
-                    } catch (e) { /* Ignore RPC errors in tracking */ }
+                    } catch { /* Ignore RPC errors in tracking */ }
                 })();
             }
         }
@@ -129,8 +129,9 @@ function ShieldContent({ children, initialSettings }: { children: React.ReactNod
         };
 
         sendHeartbeat();
-        const interval = setInterval(sendHeartbeat, 60000);
-        return () => clearInterval(interval);
+        // Consolidated into AnalyticsTracker for performance
+        // const interval = setInterval(sendHeartbeat, 60000);
+        // return () => clearInterval(interval);
     }, [pathname, mounted]);
 
     const isAdmin = pathname?.startsWith('/admin');

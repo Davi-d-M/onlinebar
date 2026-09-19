@@ -61,10 +61,34 @@ export default function WidgetRegistry({ pageRoute = '/' }: { pageRoute?: string
     return (
         <div className="space-y-24 sm:space-y-32">
             {widgets.map((widget) => (
-                <div key={widget.id} className="animate-in fade-in slide-in-from-bottom-8 duration-1000">
-                    {renderWidget(widget.widget_key, widget.config)}
-                </div>
+                <WidgetIntersectionNode key={widget.id} widget={widget} />
             ))}
+        </div>
+    );
+}
+
+function WidgetIntersectionNode({ widget }: { widget: WidgetNode }) {
+    const [isVisible, setIsVisible] = React.useState(false);
+    const nodeRef = React.useRef<HTMLDivElement>(null);
+
+    React.useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setIsVisible(true);
+                    observer.disconnect();
+                }
+            },
+            { rootMargin: '200px' } // Load 200px before reaching viewport
+        );
+
+        if (nodeRef.current) observer.observe(nodeRef.current);
+        return () => observer.disconnect();
+    }, []);
+
+    return (
+        <div ref={nodeRef} className="animate-in fade-in slide-in-from-bottom-8 duration-1000">
+            {isVisible ? renderWidget(widget.widget_key, widget.config) : <div className="h-96 bg-slate-50/50 rounded-[3rem]" />}
         </div>
     );
 }

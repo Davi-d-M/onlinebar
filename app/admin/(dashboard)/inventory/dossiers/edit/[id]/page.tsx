@@ -315,10 +315,10 @@ export default function DossierEditor() {
                     </Card>
 
                     {/* SECTION 4: KENYAN COMPLIANCE */}
-                    <Card className="p-10 rounded-[3.5rem] bg-slate-900 text-white border-none shadow-2xl space-y-10 text-left relative overflow-hidden">
+                    <Card className="p-10 rounded-[3.5rem] bg-white border border-slate-100 shadow-sm space-y-10 text-left relative overflow-hidden">
                         <div className="relative z-10 space-y-10">
                             <div className="flex items-center gap-4 border-l-4 border-primary pl-4">
-                                <h2 className="text-2xl font-black uppercase tracking-tight">4. Kenya Compliance Hub</h2>
+                                <h2 className="text-2xl font-black uppercase tracking-tight text-foreground">4. Kenya Compliance Hub</h2>
                             </div>
 
                             <div className="grid sm:grid-cols-2 gap-8">
@@ -327,7 +327,7 @@ export default function DossierEditor() {
                                     <textarea
                                         value={form.constituents_statement || ''}
                                         onChange={e => setForm({...form, constituents_statement: e.target.value})}
-                                        className="w-full h-24 rounded-2xl bg-white/5 border border-white/10 p-5 text-sm font-bold outline-none resize-none"
+                                        className="w-full h-24 rounded-2xl bg-slate-50 border border-slate-100 p-5 text-sm font-bold outline-none resize-none"
                                         placeholder="e.g. Contains Ethanol, Water, Botanicals..."
                                     />
                                 </div>
@@ -336,20 +336,20 @@ export default function DossierEditor() {
                                     <select
                                         value={form.kenyan_availability_status || 'AVAILABLE'}
                                         onChange={e => setForm({...form, kenyan_availability_status: e.target.value as 'AVAILABLE' | 'OUT_OF_STOCK' | 'DISCONTINUED'})}
-                                        className="w-full h-14 px-6 rounded-2xl bg-white/5 border border-white/10 text-sm font-black uppercase outline-none"
+                                        className="w-full h-14 px-6 rounded-2xl bg-slate-50 border border-slate-100 text-sm font-black uppercase outline-none"
                                     >
                                         <option value="AVAILABLE">Available for Dispatch</option>
                                         <option value="OUT_OF_STOCK">Out of Stock (Refilling)</option>
                                         <option value="DISCONTINUED">Expelled from Catalog</option>
                                     </select>
-                                    <div className="flex items-center gap-2 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
+                                    <div className="flex items-center gap-2 p-3 bg-emerald-50 border border-emerald-100 rounded-xl">
                                         <ShieldCheck size={14} className="text-emerald-500" />
-                                        <span className="text-[8px] font-black uppercase tracking-widest">Compliant with Alcoholic Drinks Control Act</span>
+                                        <span className="text-[8px] font-black uppercase tracking-widest text-emerald-600">Compliant with Alcoholic Drinks Control Act</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <Target className="absolute -bottom-10 -left-10 h-64 w-64 text-white/5 rotate-12 -z-0" />
+                        <Target className="absolute -bottom-10 -left-10 h-64 w-64 text-slate-50 rotate-12 -z-0" />
                     </Card>
                 </div>
 

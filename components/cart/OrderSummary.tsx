@@ -60,7 +60,12 @@ export default function OrderSummary() {
           className="w-full bg-primary text-white hover:bg-primary/90 rounded-2xl h-16 font-black uppercase tracking-widest text-xs shadow-xl shadow-primary/20 active:scale-95 transition-all"
           asChild
         >
-          <Link href="/checkout" className="flex items-center gap-2">
+          <Link
+            href="/checkout"
+            className="flex items-center gap-2"
+            data-behavior-id="cart.proceed_to_checkout"
+            data-behavior-event="CHECKOUT_START"
+          >
             <CreditCard className="h-4 w-4" />
             Proceed to Checkout
           </Link>

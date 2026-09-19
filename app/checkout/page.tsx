@@ -983,6 +983,8 @@ function CheckoutContent() {
 
               <Button
                 size="lg"
+                data-behavior-id="checkout.place_order"
+                data-behavior-event="PAYMENT_STARTED"
                 className="w-full h-20 bg-primary text-white hover:bg-primary/90 rounded-[1.8rem] font-black uppercase tracking-[0.2em] text-[11px] mt-4 shadow-2xl disabled:bg-slate-200 transition-all active:scale-95"
                 onClick={handlePlaceOrder}
                 disabled={isPlacingOrder || checkoutStatus.type === 'success'}

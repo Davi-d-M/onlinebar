@@ -39,7 +39,8 @@ import {
   GlassWater,
   Beer,
   Calendar,
-  Smartphone
+  Smartphone,
+  Zap
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -92,12 +93,12 @@ export default function AdminLayoutClient({
 
       // Phase 9: Bar Grid Bridge (Offline Sync Node)
       const barWindow = window as unknown as {
-        onBarOfflineSync: boolean;
-        onBarSyncOrder: (orderId: string) => Promise<void>;
+        onTitanOfflineSync: boolean;
+        onTitanSyncOrder: (orderId: string) => Promise<void>;
       };
 
-      barWindow.onBarOfflineSync = true;
-      barWindow.onBarSyncOrder = async (orderId: string) => {
+      barWindow.onTitanOfflineSync = true;
+      barWindow.onTitanSyncOrder = async (orderId: string) => {
           if (!supabase) return;
           try {
               const { error } = await supabase
@@ -113,8 +114,8 @@ export default function AdminLayoutClient({
 
       return () => {
           window.removeEventListener('keydown', handleKeyDown);
-          delete (barWindow as unknown as Record<string, unknown>).onBarOfflineSync;
-          delete (barWindow as unknown as Record<string, unknown>).onBarSyncOrder;
+          delete (barWindow as unknown as Record<string, unknown>).onTitanOfflineSync;
+          delete (barWindow as unknown as Record<string, unknown>).onTitanSyncOrder;
       };
   }, []);
 
@@ -145,6 +146,7 @@ export default function AdminLayoutClient({
     ]},
     { group: 'INVENTORY', items: [
       { name: 'Cellar Hub', href: '/admin/upload', icon: Wine, permission: 'can_manage_inventory' },
+      { name: 'Product Forge', href: '/admin/forge', icon: Zap, permission: 'can_manage_inventory' },
       { name: 'Munchie Hub', href: '/admin/munchies', icon: Cookie, permission: 'can_manage_inventory' },
       { name: 'Dispatch Queue', href: '/admin/orders', icon: ShoppingCart, permission: 'can_manage_orders' },
     ]},
@@ -185,6 +187,7 @@ export default function AdminLayoutClient({
     ]},
     { group: 'INTELLIGENCE', items: [
       { name: 'Bar Analytics', href: '/admin/analytics', icon: Activity, permission: 'can_view_revenue' },
+      { name: 'Behavioral OS', href: '/admin/behavior', icon: Target, permission: 'can_view_revenue' },
       { name: 'AI Shift Log', href: '/admin/messages?filter=ai', icon: Bot, permission: 'can_manage_customer_care' },
     ]},
     { group: 'ENTERPRISE', items: [

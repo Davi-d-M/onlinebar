@@ -14,7 +14,6 @@ import {
     Loader2,
     Database,
     Filter,
-    Download,
     Trash2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -123,10 +122,7 @@ export default function ProductDossierGrid() {
                     <p className="text-muted-foreground text-sm font-medium mt-1">Research, verification, and high-fidelity knowledge management.</p>
                 </div>
                 <div className="flex gap-2">
-                    <Button variant="outline" className="rounded-xl h-12 px-6 border-slate-200 bg-white font-black uppercase text-[10px] tracking-widest hover:bg-slate-50 transition-all shadow-sm">
-                        <Download size={14} className="mr-2" /> Batch Import
-                    </Button>
-                    <Button onClick={fetchData} variant="outline" className="rounded-xl h-12 px-6 border-slate-200 bg-white font-black uppercase text-[10px] tracking-widest hover:bg-slate-50 transition-all">
+                    <Button onClick={fetchData} variant="outline" className="rounded-xl h-12 px-6 border-slate-200 bg-white font-black uppercase text-[10px] tracking-widest hover:bg-slate-50 transition-all" data-behavior-id="dossier.sync_library">
                         <RefreshCcw className={cn("h-4 w-4 mr-2", loading && "animate-spin")} /> Sync Library
                     </Button>
                 </div>

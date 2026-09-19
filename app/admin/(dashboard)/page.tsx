@@ -285,7 +285,10 @@ export default function AdminDashboard() {
           </div>
           <div className="flex gap-2 w-full sm:w-auto">
               <Link href="/admin/marketing/create" className="w-full sm:w-auto">
-                  <Button className="w-full sm:w-auto h-12 sm:h-14 px-6 sm:px-8 rounded-xl sm:rounded-2xl bg-primary text-white font-black uppercase text-[10px] sm:text-xs tracking-widest shadow-xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all">
+                  <Button
+                    data-behavior-id="dash.launch_campaign"
+                    className="w-full sm:w-auto h-12 sm:h-14 px-6 sm:px-8 rounded-xl sm:rounded-2xl bg-primary text-white font-black uppercase text-[10px] sm:text-xs tracking-widest shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
+                  >
                       <Send className="h-4 w-4 mr-2" /> Launch Campaign
                   </Button>
               </Link>
@@ -493,12 +496,12 @@ export default function AdminDashboard() {
                     <h3 className="text-sm font-black uppercase text-slate-400 tracking-[0.4em]">Tactical Access</h3>
                     <div className="grid grid-cols-2 gap-6">
                         {[
-                            { label: 'Add Stock', icon: Package, href: '/admin/upload' },
-                            { label: 'Bar Runners', icon: Truck, href: '/admin/dispatch' },
-                            { label: 'Broadcast', icon: Send, href: '/admin/broadcast' },
-                            { label: 'Happy Hour', icon: GlassWater, href: '/admin/gamification' },
+                            { label: 'Add Stock', icon: Package, href: '/admin/upload', id: 'dash.add_stock' },
+                            { label: 'Bar Runners', icon: Truck, href: '/admin/dispatch', id: 'dash.runners' },
+                            { label: 'Broadcast', icon: Send, href: '/admin/broadcast', id: 'dash.broadcast' },
+                            { label: 'Happy Hour', icon: GlassWater, href: '/admin/gamification', id: 'dash.gamification' },
                         ].map(action => (
-                            <Link key={action.label} href={action.href} className="flex flex-col items-center gap-4 p-8 rounded-[2rem] bg-slate-50 border border-slate-100 hover:bg-primary hover:text-white transition-all group shadow-sm">
+                            <Link key={action.label} href={action.href} data-behavior-id={action.id} className="flex flex-col items-center gap-4 p-8 rounded-[2rem] bg-slate-50 border border-slate-100 hover:bg-primary hover:text-white transition-all group shadow-sm">
                                 <action.icon className="h-6 w-6 text-primary group-hover:text-white transition-colors" />
                                 <span className="text-[9px] font-black uppercase tracking-widest text-center">{action.label}</span>
                             </Link>

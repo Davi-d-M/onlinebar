@@ -6,6 +6,8 @@ import { Card } from '@/components/ui/card';
 import { Truck, Wine, DollarSign, Users, Bot, Zap } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+import { useRouter } from 'next/navigation';
+
 interface CommandStats {
     revenue: number;
     orders: number;
@@ -17,6 +19,7 @@ interface CommandStats {
 }
 
 export default function OperatingBrainHUD() {
+    const router = useRouter();
     const [stats, setStats] = React.useState<CommandStats>({
         revenue: 0,
         orders: 0,
@@ -109,7 +112,7 @@ export default function OperatingBrainHUD() {
                 {nodes.map((node) => (
                     <Card
                         key={node.label}
-                        onClick={() => window.location.href = node.href}
+                        onClick={() => router.push(node.href)}
                         className="aspect-[4/5] rounded-[4rem] bg-white border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-xl transition-all flex flex-col items-center justify-center gap-4 text-center p-4 min-w-[140px] cursor-pointer"
                     >
                         <div className={cn(

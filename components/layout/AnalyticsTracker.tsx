@@ -107,7 +107,7 @@ export default function AnalyticsTracker() {
                         if (utmId) sessionStorage.setItem('ob_attribution_id', utmId);
                         if (utmContent) sessionStorage.setItem('ob_content_variant', utmContent);
                         if (source === 'mobile_widget') sessionStorage.setItem('ob_widget_engagement', 'true');
-                    } catch (e) { /* Ignore quota errors */ }
+                    } catch { /* Ignore quota errors */ }
                 }
 
                 const commonProps = {
@@ -184,7 +184,7 @@ export default function AnalyticsTracker() {
                 await supabase.rpc('increment_session_active_time', {
                     sess_id: activeSessId,
                     inc_active_ms: activeTimeRef.current,
-                    inc_dwell_ms: 15000
+                    inc_dwell_ms: 30000
                 });
                 // Reset active time for this chunk
                 activeTimeRef.current = 0;
@@ -194,7 +194,7 @@ export default function AnalyticsTracker() {
                 userId: session?.user?.id,
                 details: { path: pathname }
             });
-        }, 15000); // Higher resolution heartbeat (15s)
+        }, 30000); // Reduce frequency to 30s
 
         return () => {
             clearInterval(heartbeat);
@@ -222,10 +222,18 @@ export default function AnalyticsTracker() {
 
             // 1. Capture Click Metadata
             const interactive = target.closest('button, a, input, select, [role="button"]');
-            const elementId = target.id || target.getAttribute('data-audit-id');
+            const elementId = target.id || target.getAttribute('data-audit-id') || target.getAttribute('data-behavior-id');
             const elementText = target.innerText?.substring(0, 30).trim();
 
             if (interactive) {
+                // Tracking behavior-specific events if marked
+                const behaviorEvent = target.getAttribute('data-behavior-event');
+                if (behaviorEvent) {
+                    OB_OS.track(behaviorEvent as OSEventType, {
+                        details: { id: elementId, text: elementText }
+                    });
+                }
+
                 OB_OS.track('UI_INTERACTION', {
                     details: {
                         type: target.tagName,
@@ -258,25 +266,39 @@ export default function AnalyticsTracker() {
             if (clickHistoryRef.current.length > 20) clickHistoryRef.current.shift();
         };
 
+        const handleFocus = (e: FocusEvent) => {
+            const target = e.target as HTMLElement;
+            const behaviorId = target.getAttribute('data-behavior-id');
+            if (behaviorId && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) {
+                OB_OS.track('FORM_FIELD_FOCUSED', { details: { id: behaviorId } });
+            }
+        };
+
         window.addEventListener('click', handleClick);
-        return () => window.removeEventListener('click', handleClick);
+        window.addEventListener('focusin', handleFocus);
+        return () => {
+            window.removeEventListener('click', handleClick);
+            window.removeEventListener('focusin', handleFocus);
+        };
     }, [pathname]);
 
     // 3. Active Engagement Timer
     useEffect(() => {
+        let lastLoggedTime = Date.now();
+
         const updateActiveTime = () => {
             if (document.visibilityState === 'visible') {
                 const now = Date.now();
                 const diff = now - lastInteractionRef.current;
                 // If last interaction was within 30s, count it as active time
                 if (diff < 30000) {
-                    activeTimeRef.current += diff;
+                    activeTimeRef.current += (now - lastLoggedTime);
                 }
-                lastInteractionRef.current = now;
+                lastLoggedTime = now;
             }
         };
 
-        const interval = setInterval(updateActiveTime, 5000);
+        const interval = setInterval(updateActiveTime, 10000); // Reduce frequency to 10s
         const handleInteraction = () => { lastInteractionRef.current = Date.now(); };
 
         window.addEventListener('mousemove', handleInteraction);
@@ -297,22 +319,30 @@ export default function AnalyticsTracker() {
     useEffect(() => {
         if (typeof window === 'undefined') return;
 
-        const handleScroll = () => {
-            const h = document.documentElement,
-                  b = document.body,
-                  st = 'scrollTop',
-                  sh = 'scrollHeight';
-            const percent = Math.round((h[st]||b[st]) / ((h[sh]||b[sh]) - h.clientHeight) * 100);
+        let ticking = false;
 
-            [25, 50, 75, 90].forEach(milestone => {
-                if (percent >= milestone && !scrollMilestonesRef.current.has(milestone)) {
-                    scrollMilestonesRef.current.add(milestone);
-                    const eventName = `SCROLL_${milestone}` as OSEventType;
-                    OB_OS.track(eventName, {
-                        details: { path: pathname }
+        const handleScroll = () => {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    const h = document.documentElement,
+                          b = document.body,
+                          st = 'scrollTop',
+                          sh = 'scrollHeight';
+                    const percent = Math.round((h[st]||b[st]) / ((h[sh]||b[sh]) - h.clientHeight) * 100);
+
+                    [25, 50, 75, 90].forEach(milestone => {
+                        if (percent >= milestone && !scrollMilestonesRef.current.has(milestone)) {
+                            scrollMilestonesRef.current.add(milestone);
+                            const eventName = `SCROLL_${milestone}` as OSEventType;
+                            OB_OS.track(eventName, {
+                                details: { path: pathname }
+                            });
+                        }
                     });
-                }
-            });
+                    ticking = false;
+                });
+                ticking = true;
+            }
         };
 
         window.addEventListener('scroll', handleScroll, { passive: true });

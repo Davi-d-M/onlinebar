@@ -379,8 +379,14 @@ fun TitanHubWebBridge(url: String, onWebViewCreated: (WebView) -> Unit) {
                     domStorageEnabled = true
                     loadWithOverviewMode = true
                     useWideViewPort = true
-                    cacheMode = WebSettings.LOAD_DEFAULT
+                    cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK // High-speed local caching
                     setSupportMultipleWindows(true)
+                    
+                    // Node Optimization: Database & Acceleration
+                    databaseEnabled = true
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        setSafeBrowsingEnabled(true)
+                    }
                 }
 
                 if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
