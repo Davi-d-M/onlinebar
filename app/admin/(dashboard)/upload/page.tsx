@@ -256,12 +256,6 @@ function UploadContent() {
       return { currentStock, avgDailySales, daysRemaining, reorderPoint, isReorderUrgent };
   }, [editingId, form.stock]);
 
-  const formCompletion = useMemo(() => {
-      const fields = [form.name, form.price, form.category, form.description];
-      const completed = fields.filter(f => f).length;
-      return Math.round((completed / fields.length) * 100);
-  }, [form]);
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const target = e.target;
     const { name, value, type } = target;
