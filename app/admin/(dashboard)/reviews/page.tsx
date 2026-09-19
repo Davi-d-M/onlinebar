@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { supabase } from '@/lib/supabaseClient';
+import Image from 'next/image';
 import {
   MessageSquare,
   ShieldCheck,
@@ -316,8 +317,7 @@ export default function AdminReviewHub() {
                                       <div className="flex gap-3">
                                           {review.photo_urls.map((url, i) => (
                                               <div key={i} className="h-20 w-20 rounded-2xl border border-slate-50 overflow-hidden bg-slate-50 flex items-center justify-center shadow-sm">
-                                                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                  <img src={url} alt="" className="max-h-full w-auto object-contain" />
+                                                  <Image src={url} width={80} height={80} alt="" className="max-h-full w-auto object-contain" />
                                               </div>
                                           ))}
                                       </div>

@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { useAdmin } from '@/context/AdminContext';
 import { supabase } from '@/lib/supabaseClient';
+import Image from 'next/image';
 import {
     Box,
     RefreshCcw,
@@ -46,7 +47,7 @@ export default function SupplierInventory() {
 
             if (error) throw error;
             setProducts(data || []);
-        } catch (err) {
+        } catch (err: unknown) {
             console.error(err);
         } finally {
             setLoading(false);
@@ -68,7 +69,7 @@ export default function SupplierInventory() {
 
             if (error) throw error;
             setProducts(prev => prev.map(p => p.id === id ? { ...p, stock: newStock } : p));
-        } catch (err) {
+        } catch (err: unknown) {
             console.error(err);
         } finally {
             setUpdatingId(null);
@@ -114,8 +115,7 @@ export default function SupplierInventory() {
                     <Card key={p.id} className="p-8 rounded-[3rem] bg-white border border-slate-100 shadow-sm hover:shadow-xl transition-all group overflow-hidden">
                         <div className="flex items-center gap-6 mb-8">
                             <div className="h-20 w-20 rounded-[2rem] bg-slate-50 p-3 border border-slate-100 flex items-center justify-center shrink-0">
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img src={p.image_url || '/images/NoImage.jpg'} alt="" className="max-h-full w-auto object-contain" />
+                                <Image src={p.image_url || '/images/NoImage.jpg'} width={80} height={80} alt="" className="max-h-full w-auto object-contain" />
                             </div>
                             <div className="min-w-0">
                                 <h3 className="text-lg font-black text-foreground uppercase tracking-tight truncate">{p.name}</h3>

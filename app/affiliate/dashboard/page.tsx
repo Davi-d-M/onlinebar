@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { supabase } from '@/lib/supabaseClient';
+import Image from 'next/image';
 import {
     DollarSign,
     MousePointer2,
@@ -96,7 +97,7 @@ export default function AffiliateCommandCenter() {
                 })));
             }
 
-        } catch (err) {
+        } catch (err: unknown) {
             console.error(err);
         } finally {
             setLoading(false);
@@ -135,7 +136,7 @@ export default function AffiliateCommandCenter() {
             alert("Withdrawal protocol initialized! 🛰️ Check Payouts tab for status.");
             setIsWithdrawing(false);
             fetchAffiliateData();
-        } catch (err) { console.error(err); }
+        } catch (err: unknown) { console.error(err); }
         finally { setLoading(false); }
     };
 
@@ -335,8 +336,7 @@ export default function AffiliateCommandCenter() {
                             {products.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase())).map(product => (
                                 <Card key={product.id} className="group rounded-[3rem] bg-white border border-slate-100 shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden flex flex-col">
                                     <div className="aspect-square bg-slate-50 p-8 flex items-center justify-center relative overflow-hidden">
-                                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                                        <img src={product.image_url} alt={product.name} className="max-h-full w-auto object-contain transition-transform duration-700 group-hover:scale-110" />
+                                        <Image src={product.image_url} width={200} height={200} alt={product.name} className="max-h-full w-auto object-contain transition-transform duration-700 group-hover:scale-110" />
                                         <div className="absolute bottom-4 left-4 right-4 translate-y-20 group-hover:translate-y-0 transition-transform duration-500">
                                             <Button
                                                 onClick={() => {

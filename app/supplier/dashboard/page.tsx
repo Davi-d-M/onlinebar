@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import Image from 'next/image';
 import {
     Building2,
     Package,
@@ -147,8 +148,7 @@ export default function SupplierDashboard() {
                                 <Card key={p.id} className="p-6 rounded-[2.5rem] bg-white border border-slate-100 shadow-sm flex items-center justify-between group hover:border-primary/20 transition-all">
                                     <div className="flex items-center gap-6">
                                         <div className="h-16 w-16 rounded-2xl bg-slate-50 border border-slate-100 p-2 flex items-center justify-center shrink-0">
-                                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                                            <img src={p.image_url} alt="" className="max-h-full w-auto object-contain" />
+                                            <Image src={p.image_url} width={64} height={64} alt="" className="max-h-full w-auto object-contain" />
                                         </div>
                                         <div>
                                             <h3 className="text-lg font-black text-foreground uppercase tracking-tight leading-none">{p.name}</h3>

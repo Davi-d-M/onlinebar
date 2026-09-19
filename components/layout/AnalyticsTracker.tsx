@@ -57,15 +57,19 @@ export default function AnalyticsTracker() {
         const handleTracking = async () => {
             try {
                 await trackPage();
-            } catch (err) {
+            } catch (err: unknown) {
                 console.warn("[Analytics] Deferred sequence failed", err);
             }
         };
 
         if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
-            (window as Window & { requestIdleCallback: (callback: () => void) => void }).requestIdleCallback(() => handleTracking());
+            (window as Window & { requestIdleCallback: (callback: () => void) => void }).requestIdleCallback(() => {
+                handleTracking().catch(err => console.warn("[Analytics] Deferred sequence failed", err));
+            });
         } else {
-            setTimeout(handleTracking, 1000);
+            setTimeout(() => {
+                handleTracking().catch(err => console.warn("[Analytics] Deferred sequence failed", err));
+            }, 1000);
         }
 
         async function trackPage() {
@@ -153,7 +157,7 @@ export default function AnalyticsTracker() {
                 if (query) {
                     await OB_OS.track('SEARCH', { ...commonProps, details: { query } });
                 }
-            } catch (err) {
+            } catch (err: unknown) {
                 console.warn("[Analytics] Tracking sequence interrupted:", err);
             }
         }

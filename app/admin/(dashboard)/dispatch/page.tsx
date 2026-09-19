@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
+import Image from 'next/image';
 import {
   Truck,
   RefreshCcw,
@@ -142,8 +143,8 @@ export default function AdminDispatchPage() {
             const { DispatchControl } = await import('@/lib/engines/dispatchEngine');
             const batchOpts = await DispatchControl.identifyBatchOpportunities();
             setBatches(batchOpts);
-        } catch {
-            console.error("Pipeline link unstable.");
+        } catch (err) {
+            console.error("Pipeline link unstable.", err);
         } finally {
             setLoading(false);
         }
@@ -206,8 +207,8 @@ export default function AdminDispatchPage() {
 
             setMessage({ type: 'success', text: `Unit ${rider.rider_name} dispatched! 🚚` });
             setTimeout(() => setMessage(null), 3000);
-        } catch {
-            console.error("Dispatch sequence failed.");
+        } catch (err) {
+            console.error("Dispatch sequence failed.", err);
             setMessage({ type: 'error', text: 'Dispatch sequence failed.' });
             setTimeout(() => setMessage(null), 5000);
         } finally {
@@ -231,7 +232,8 @@ export default function AdminDispatchPage() {
             setRiders(prev => prev.map(r => r.rider_phone === phone ? { ...r, verification_status: 'Verified', pin } : r));
             setMessage({ type: 'success', text: `Unit Authorized. Issued PIN: ${pin}. ✅` });
             setTimeout(() => setMessage(null), 10000);
-        } catch {
+        } catch (err) {
+            console.error("Authorization Failed.", err);
             setMessage({ type: 'error', text: "Authorization Failed." });
         }
     }, []);
@@ -633,8 +635,7 @@ export default function AdminDispatchPage() {
                                             <p className="text-[8px] font-black text-slate-400 uppercase ml-2">Rider Selfie</p>
                                             <div className="h-40 rounded-[2rem] bg-slate-100 border border-slate-200 overflow-hidden relative group/img">
                                                 {selectedRider.rider_photo_url ? (
-                                                    /* eslint-disable-next-line @next/next/no-img-element */
-                                                    <img src={selectedRider.rider_photo_url} alt="" className="w-full h-full object-cover transition-transform group-hover/img:scale-110" />
+                                                    <Image src={selectedRider.rider_photo_url} fill className="w-full h-full object-cover transition-transform group-hover/img:scale-110" alt="" />
                                                 ) : <div className="w-full h-full flex items-center justify-center text-slate-300"><User size={24} /></div>}
                                             </div>
                                         </div>
@@ -642,8 +643,7 @@ export default function AdminDispatchPage() {
                                             <p className="text-[8px] font-black text-slate-400 uppercase ml-2">Vehicle Log</p>
                                             <div className="h-40 rounded-[2rem] bg-slate-100 border border-slate-200 overflow-hidden relative group/img">
                                                 {selectedRider.vehicle_photo_url ? (
-                                                    /* eslint-disable-next-line @next/next/no-img-element */
-                                                    <img src={selectedRider.vehicle_photo_url} alt="" className="w-full h-full object-cover transition-transform group-hover/img:scale-110" />
+                                                    <Image src={selectedRider.vehicle_photo_url} fill className="w-full h-full object-cover transition-transform group-hover/img:scale-110" alt="" />
                                                 ) : <div className="w-full h-full flex items-center justify-center text-slate-300"><Truck size={24} /></div>}
                                             </div>
                                         </div>

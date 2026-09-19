@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo } from 'react';
 import { supabase } from '@/lib/supabaseClient';
+import Image from 'next/image';
 import {
   BookOpen,
   Trash2,
@@ -83,7 +84,7 @@ export default function AdminBlogPage() {
 
       if (error) throw error;
       setPosts(data || []);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error(err);
     } finally {
       setLoading(false);
@@ -170,7 +171,7 @@ export default function AdminBlogPage() {
       setForm(initialForm);
       setEditingId(null);
       fetchPosts();
-    } catch (err) {
+    } catch (err: unknown) {
       console.error("Save Error:", err);
     } finally {
       setIsSubmitting(false);
@@ -207,7 +208,7 @@ export default function AdminBlogPage() {
           if (error) throw error;
           await logAuditAction(adminEmail, 'DELETE_BLOG', { id });
           fetchPosts();
-      } catch (err) {
+      } catch (err: unknown) {
           console.error(err);
       }
   };
@@ -418,8 +419,7 @@ export default function AdminBlogPage() {
                               <div className="flex items-center gap-8 flex-1 text-left">
                                   <div className="h-24 w-40 rounded-3xl bg-slate-100 border border-slate-100 overflow-hidden shrink-0 flex items-center justify-center shadow-lg transition-all">
                                       {post.image_url ? (
-                                          /* eslint-disable-next-line @next/next/no-img-element */
-                                          <img src={post.image_url} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                                          <Image src={post.image_url} width={160} height={96} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                                       ) : (
                                           <ImageIcon className="h-8 w-8 text-slate-300" />
                                       )}

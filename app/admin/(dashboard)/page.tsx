@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import Image from 'next/image';
 import {
   History as HistoryIcon,
   Send,
@@ -163,7 +164,7 @@ export default function AdminDashboard() {
         if (ledgerRes.data) setLedger(ledgerRes.data as LedgerRecord[]);
         if (ridersRes.data) setRiders(ridersRes.data as { id: string; rider_name: string; status: string; battery_level: number }[]);
 
-      } catch (err) {
+      } catch (err: unknown) {
         console.error('Error loading dashboard stats:', err);
       } finally {
         setIsLoading(false);
@@ -462,8 +463,7 @@ export default function AdminDashboard() {
                           <div key={p.id} className="p-8 rounded-[3rem] bg-white border border-slate-100 flex items-center justify-between group hover:border-rose-200 transition-all shadow-sm">
                               <div className="flex items-center gap-4 min-w-0">
                                   <div className="h-16 w-16 rounded-[1.5rem] bg-slate-50 p-2 shrink-0 border border-slate-100 flex items-center justify-center relative overflow-hidden">
-                                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                                      <img src={p.image_url} alt="" className="max-h-full w-auto object-contain mx-auto" />
+                                      <Image src={p.image_url} width={64} height={64} alt="" className="max-h-full w-auto object-contain mx-auto" />
                                   </div>
                                   <div className="min-w-0">
                                       <p className="text-[11px] font-black text-foreground uppercase truncate tracking-tight">{p.name}</p>

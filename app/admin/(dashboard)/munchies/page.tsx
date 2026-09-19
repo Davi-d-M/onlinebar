@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -109,7 +110,7 @@ function MunchieContent() {
 
       if (error) throw error;
       setSnacks(data || []);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error(err);
     } finally {
       setLoadingSnacks(false);
@@ -275,8 +276,7 @@ function MunchieContent() {
                             <label className="w-full h-48 rounded-[2.5rem] border-2 border-dashed border-slate-200 bg-slate-50 flex flex-col items-center justify-center gap-4 cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all text-slate-300 hover:text-primary group">
                                 <input type="file" onChange={handleFileChange} className="hidden" accept="image/*" />
                                 {selectedFiles.length > 0 ? (
-                                    /* eslint-disable-next-line @next/next/no-img-element */
-                                    <img src={URL.createObjectURL(selectedFiles[0])} alt="Preview" className="h-full w-full object-contain p-4" />
+                                    <Image src={URL.createObjectURL(selectedFiles[0])} alt="Preview" width={200} height={200} className="h-full w-full object-contain p-4" />
                                 ) : (
                                     <>
                                         <Camera size={40} className="group-hover:scale-110 transition-transform" />
@@ -345,8 +345,7 @@ function MunchieContent() {
                                 )}>
                                     <div className="flex items-center gap-5">
                                         <div className="h-14 w-14 rounded-2xl bg-white p-2 border border-slate-100 overflow-hidden flex items-center justify-center shrink-0 shadow-sm">
-                                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                                            <img src={s.image_url} alt="" className="max-h-full w-auto object-contain" />
+                                            <Image src={s.image_url} alt="" width={50} height={50} className="max-h-full w-auto object-contain" />
                                         </div>
                                         <div>
                                             <p className="text-xs font-black text-foreground uppercase tracking-tight">{s.name}</p>

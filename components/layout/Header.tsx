@@ -4,10 +4,12 @@ import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { getLocalSession } from "@/lib/localAuth";
 import { supabase } from "../../lib/supabaseClient";
+import Image from 'next/image';
 import { Menu, Search, ShoppingCart, Heart, X, Wine, Zap, Package, User as UserIcon, Bell, CheckCircle, ChevronRight, History, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
+import type { RealtimeChannel } from '@supabase/supabase-js';
 import { formatPrice, cn } from "@/lib/utils";
 import { useSettings, type StoreSettings } from "@/lib/useSettings";
 
@@ -174,7 +176,7 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
 
   useEffect(() => {
     const handleOverlay = (e: Event) => {
-        const detail = (e as CustomEvent).detail;
+        const detail = (e as CustomEvent<{ active?: string }>).detail;
         if (detail?.active && !['SEARCH', 'NOTIFICATIONS'].includes(detail.active)) {
             setIsSearchFocused(false);
             setIsSearchOpen(false);
@@ -268,7 +270,7 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
 
   useEffect(() => {
     let isMounted = true;
-    let channel: { unsubscribe: () => void } | null = null;
+    let channel: RealtimeChannel | null = null;
 
     async function initNotifications() {
         if (!supabase) return;
@@ -315,7 +317,7 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
 
     return () => {
         isMounted = false;
-        if(channel && supabase) supabase.removeChannel(channel);
+        if(channel) channel.unsubscribe();
     };
   }, [pathname]);
 
@@ -341,7 +343,7 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
             .update({ is_read: true })
             .eq('user_id', session.user.id)
             .eq('is_read', false);
-      } catch (err) {
+      } catch (err: unknown) {
           console.error("Mark read failed", err);
       }
   };
@@ -395,8 +397,7 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
               aria-label="Online Bar Home"
             >
               {settings?.branding?.logo_url ? (
-                  /* eslint-disable-next-line @next/next/no-img-element */
-                  <img src={settings.branding.logo_url} alt="Logo" className="h-6 sm:h-8 w-auto" />
+                  <Image src={settings.branding.logo_url} alt="Logo" width={100} height={40} className="h-6 sm:h-8 w-auto" priority />
               ) : (
                   <>
                     <Wine className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
@@ -474,8 +475,7 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
                                     {recentlyViewed.length > 0 ? recentlyViewed.slice(0, 3).map(item => (
                                         <Link key={item.id} href={`/shop/${item.id}`} className="flex items-center gap-4 p-3 hover:bg-slate-50 rounded-2xl transition-all group">
                                             <div className="h-12 w-12 rounded-xl bg-slate-50 border border-slate-100 p-1 flex items-center justify-center shrink-0 shadow-inner group-hover:scale-105 transition-transform">
-                                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                <img src={item.image} alt="" className="max-h-full w-auto object-contain" />
+                                                <Image src={item.image} alt="" width={40} height={40} className="max-h-full w-auto object-contain" />
                                             </div>
                                             <div className="min-w-0">
                                                 <p className="text-[10px] font-black uppercase text-foreground truncate group-hover:text-primary transition-colors">{item.name}</p>
@@ -510,8 +510,7 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
                         {searchResults.map((product) => (
                             <Link key={product.id} href={`/shop/${product.id}`} className="flex items-center gap-6 p-4 hover:bg-slate-50 transition-all rounded-[2rem] group border border-transparent hover:border-slate-100 hover:shadow-xl" onClick={() => setSearchResults([])}>
                                 <div className="h-16 w-16 rounded-2xl bg-white flex items-center justify-center overflow-hidden shrink-0 border border-slate-100 shadow-inner group-hover:scale-105 transition-transform">
-                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                    <img src={product.image_url} alt="" className="max-h-full w-auto object-contain" />
+                                    <Image src={product.image_url} alt="" width={60} height={60} className="max-h-full w-auto object-contain" />
                                 </div>
                                 <div className="flex-1 min-w-0 text-left">
                                     <p className="text-sm font-black uppercase text-foreground truncate tracking-tight">{product.name}</p>
@@ -661,8 +660,7 @@ export default function Header({ initialSettings }: { initialSettings?: StoreSet
                             className="flex items-center gap-4 p-3 hover:bg-slate-50 transition-colors rounded-2xl"
                         >
                             <div className="h-10 w-10 rounded-xl bg-slate-50 flex items-center justify-center overflow-hidden shrink-0 border border-slate-100">
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img src={product.image_url} alt="" className="max-h-full w-auto object-contain" />
+                                <Image src={product.image_url} alt="" width={40} height={40} className="max-h-full w-auto object-contain" />
                             </div>
                             <div className="flex-1 min-w-0">
                                 <p className="text-[10px] font-black uppercase text-foreground truncate">{product.name}</p>

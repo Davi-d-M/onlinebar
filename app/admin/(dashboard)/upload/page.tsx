@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState, useEffect, Suspense } from 'react';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
@@ -182,7 +183,7 @@ function UploadContent() {
 
       if (prodRes.error) throw prodRes.error;
       setProducts(prodRes.data || []);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error(err);
     }
   };
@@ -192,13 +193,13 @@ function UploadContent() {
       fetchProducts();
     }
 
-    (window as any).onBarScan = (sku: string) => {
+    (window as Window & { onBarScan?: (sku: string) => void }).onBarScan = (sku: string) => {
         setForm(prev => ({ ...prev, sku: sku }));
         setMessage({ type: 'success', text: `Node Synced: ${sku}` });
         setTimeout(() => setMessage(null), 3000);
     };
 
-    return () => { delete (window as any).onBarScan; };
+    return () => { delete (window as Window & { onBarScan?: (sku: string) => void }).onBarScan; };
   }, []);
 
   const currentVariants = useMemo(() => {
@@ -287,20 +288,21 @@ function UploadContent() {
       fetchProducts();
       setMessage({ type: 'success', text: 'Grid Node Synchronized! 🛰️' });
       setTimeout(() => setMessage(null), 3000);
-    } catch (err: any) {
-        setMessage({ type: 'error', text: err.message });
+    } catch (err: unknown) {
+        const error = err as Error;
+        setMessage({ type: 'error', text: error.message });
     } finally {
         setIsSubmitting(false);
     }
   };
 
-  const handleDeleteProduct = async (id: number, name: string) => {
+  const handleDeleteProduct = async (id: number) => {
     if (!supabase || !canManageInventory) return;
     try {
         await supabase.from('products').delete().eq('id', id);
         fetchProducts();
         cancelEditing();
-    } catch (err: any) {
+    } catch (err: unknown) {
         console.error(err);
     }
   };
@@ -397,7 +399,7 @@ function UploadContent() {
                           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                               {existingImages.map((url, i) => (
                                   <div key={i} className="aspect-square rounded-2xl bg-slate-50 border border-slate-100 relative group overflow-hidden">
-                                      <img src={url} className="w-full h-full object-contain" alt="" />
+                                      <Image src={url} width={400} height={400} className="w-full h-full object-contain" alt="" />
                                       <button type="button" onClick={() => removeExistingImage(i)} className="absolute top-2 right-2 bg-rose-500 text-white rounded-lg p-1 opacity-0 group-hover:opacity-100 transition-opacity"><X size={12}/></button>
                                   </div>
                               ))}
@@ -418,7 +420,7 @@ function UploadContent() {
                         {editingId ? 'Refine Grid Node' : 'Deploy to Bar'}
                       </Button>
                       {editingId && (
-                          <Button type="button" onClick={() => handleDeleteProduct(editingId, form.name)} variant="ghost" className="h-16 px-8 rounded-2xl text-rose-500 bg-rose-50 hover:bg-rose-100"><Trash2 size={20}/></Button>
+                          <Button type="button" onClick={() => handleDeleteProduct(editingId)} variant="ghost" className="h-16 px-8 rounded-2xl text-rose-500 bg-rose-50 hover:bg-rose-100"><Trash2 size={20}/></Button>
                       )}
                   </div>
               </div>
@@ -437,7 +439,7 @@ function UploadContent() {
                           <div key={p.id} onClick={() => startEditing(p)} className={cn("p-6 flex items-center justify-between hover:bg-slate-50 cursor-pointer transition-all", editingId === p.id && "bg-primary/5 border-l-4 border-primary")}>
                               <div className="flex items-center gap-4 min-w-0">
                                   <div className="h-12 w-12 rounded-xl bg-slate-50 border border-slate-100 p-1 flex items-center justify-center shrink-0">
-                                      <img src={p.image_url} className="max-h-full w-auto object-contain" alt="" />
+                                      <Image src={p.image_url} width={100} height={100} className="max-h-full w-auto object-contain" alt="" />
                                   </div>
                                   <div className="min-w-0">
                                       <p className="text-xs font-black uppercase truncate text-foreground">{p.name}</p>

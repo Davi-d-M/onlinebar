@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { supabase } from '@/lib/supabaseClient';
 import { useAdmin } from '@/context/AdminContext';
 import { logAuditAction } from '@/lib/auditService';
@@ -443,8 +444,7 @@ export default function AdminSettingsPage() {
                                         className="flex-1 p-8 rounded-3xl bg-secondary border border-border flex flex-col items-center gap-4 group cursor-pointer hover:border-primary/20 transition-all overflow-hidden"
                                     >
                                         {logoPreview ? (
-                                            /* eslint-disable-next-line @next/next/no-img-element */
-                                            <img src={logoPreview} className="h-10 w-auto object-contain" alt="Bar Logo Preview" />
+                                            <Image src={logoPreview} width={100} height={40} className="h-10 w-auto object-contain" alt="Bar Logo Preview" />
                                         ) : (
                                             <ImageIcon className="h-10 w-10 text-muted group-hover:text-primary transition-colors" />
                                         )}
@@ -456,8 +456,7 @@ export default function AdminSettingsPage() {
                                         className="flex-1 p-8 rounded-3xl bg-secondary border border-border flex flex-col items-center gap-4 group cursor-pointer hover:border-primary/20 transition-all overflow-hidden"
                                     >
                                         {faviconPreview ? (
-                                            /* eslint-disable-next-line @next/next/no-img-element */
-                                            <img src={faviconPreview} className="h-10 w-10 object-contain rounded-lg" alt="Favicon Preview" />
+                                            <Image src={faviconPreview} width={40} height={40} className="h-10 w-10 object-contain rounded-lg" alt="Favicon Preview" />
                                         ) : (
                                             <div className="h-10 w-10 bg-muted rounded-lg flex items-center justify-center text-background font-black group-hover:bg-primary transition-all text-xs">B</div>
                                         )}
@@ -515,8 +514,7 @@ export default function AdminSettingsPage() {
                                             className="w-full h-64 rounded-[2.5rem] border-2 border-dashed border-border bg-secondary flex flex-col items-center justify-center gap-4 cursor-pointer hover:border-primary/30 transition-all overflow-hidden group"
                                         >
                                             {heroPreview ? (
-                                                /* eslint-disable-next-line @next/next/no-img-element */
-                                                <img src={heroPreview} alt="Hero Preview" className="h-full w-full object-cover" />
+                                                <Image src={heroPreview} fill alt="Hero Preview" className="h-full w-full object-cover" />
                                             ) : (
                                                 <>
                                                     <ImageIcon className="h-10 w-10 text-muted-foreground group-hover:text-primary transition-colors" />
@@ -1121,8 +1119,7 @@ export default function AdminSettingsPage() {
                                 <div className="flex items-center gap-2 text-left">
                                     <div className="h-6 w-6 rounded-lg bg-primary/10 flex items-center justify-center text-primary shadow-sm overflow-hidden">
                                         {logoPreview ? (
-                                            /* eslint-disable-next-line @next/next/no-img-element */
-                                            <img src={logoPreview} alt="Logo Preview" className="h-full w-full object-contain" />
+                                            <Image src={logoPreview} width={40} height={40} alt="Logo Preview" className="h-full w-full object-contain" />
                                         ) : (
                                             <Wine className="h-3.5 w-3.5" />
                                         )}
@@ -1133,8 +1130,7 @@ export default function AdminSettingsPage() {
                             {/* Mini Hero */}
                             <div className="p-10 text-center space-y-6 relative overflow-hidden bg-secondary min-h-[350px] flex flex-col justify-center text-left">
                                 {heroPreview && (
-                                    /* eslint-disable-next-line @next/next/no-img-element */
-                                    <img src={heroPreview} alt="Hero Preview" className="absolute inset-0 w-full h-full object-cover opacity-20" />
+                                    <Image src={heroPreview} fill alt="Hero Preview" className="absolute inset-0 w-full h-full object-cover opacity-20" />
                                 )}
                                 <div className="relative z-10 space-y-4 text-left">
                                     <h4 className="text-2xl font-black uppercase tracking-tighter text-foreground leading-[0.9] break-words text-left">
